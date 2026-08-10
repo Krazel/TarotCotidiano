@@ -106,7 +106,7 @@ struct SettingsView: View {
                                 ForEach(AppLanguage.allCases) { language in
                                     Text(language.autonym)
                                         .tag(language)
-                                        .accessibilityLanguage(language.accessibilityCode)
+                                        .environment(\.locale, language.locale)
                                 }
                             }
                             .pickerStyle(.segmented)

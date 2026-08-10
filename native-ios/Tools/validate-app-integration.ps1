@@ -346,14 +346,16 @@ $languageContracts = @(
     "defaults.set(candidate.rawValue, forKey: Self.preferenceKey)",
     "AppLocalization.configure(language: candidate, bundle: bundle)",
     "UIAccessibility.post(notification: .announcement",
-    ".environment(\.locale, languageStore.language.locale)",
-    ".accessibilityLanguage(languageStore.language.accessibilityCode)"
+    ".environment(\.locale, languageStore.language.locale)"
 )
 $languageContractSource = "$localizationSource`n$shellSource`n$appSource"
 foreach ($contract in $languageContracts) {
     if ($languageContractSource -cnotmatch [regex]::Escape($contract)) {
         throw "A-031 language contract is missing: $contract"
     }
+}
+if ($languageContractSource -match '\.accessibilityLanguage\(|\baccessibilityCode\b') {
+    throw "A-031 must not use the nonexistent SwiftUI accessibilityLanguage modifier; explicit locale drives localized Text and announcements on iOS 16."
 }
 if ($localizationSource -match 'bundle\.path\(forResource:\s*(?:language\.rawValue|AppLanguage\.english\.rawValue|"en"),\s*ofType:\s*"lproj"\)') {
     throw "English source localization must validate from the main bundle without requiring en.lproj."

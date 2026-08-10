@@ -108,7 +108,6 @@ struct TarotDeckMainShell<ReadContent: View>: View {
         }
         .preferredColorScheme(.dark)
         .environment(\.locale, languageStore.language.locale)
-        .accessibilityLanguage(languageStore.language.accessibilityCode)
     }
 
     private static func configureTabBarAppearance() {

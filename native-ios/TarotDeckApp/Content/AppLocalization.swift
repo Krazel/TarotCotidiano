@@ -12,10 +12,6 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         Locale(identifier: self == .spanish ? "es_ES" : "en_US")
     }
 
-    var accessibilityCode: String {
-        self == .spanish ? "es-ES" : "en-US"
-    }
-
     var autonym: String {
         self == .spanish ? "Español" : "English"
     }

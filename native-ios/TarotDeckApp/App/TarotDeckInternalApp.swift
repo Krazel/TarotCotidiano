@@ -80,7 +80,6 @@ struct TarotDeckInternalApp: App {
                 }
             }
             .environment(\.locale, languageStore.language.locale)
-            .accessibilityLanguage(languageStore.language.accessibilityCode)
 #else
             // This unsigned internal scheme is intentionally Debug-only. A distributable release
             // target, signing identity and final bundle identity remain separately unauthorized.
