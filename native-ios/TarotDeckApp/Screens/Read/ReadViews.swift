@@ -24,12 +24,6 @@ struct ReadRootView: View {
                         openSettings: { showsSettings = true }
                     )
 
-                case .layoutChoice:
-                    LayoutChoiceView(model: model)
-
-                case .spreadChoice:
-                    ThreeCardSpreadChoiceView(model: model)
-
                 case .table:
                     ReadingTableView(
                         model: model,
@@ -56,26 +50,6 @@ struct ReadRootView: View {
             model.surface == .table || model.surface == .restoring ? .hidden : .visible,
             for: .tabBar
         )
-        .alert("Start a new reading?", isPresented: $model.showsReplaceReadingAlert) {
-            Button("Start New Reading", role: .destructive) {
-                model.confirmReplaceReading()
-            }
-            Button("Keep Current Reading", role: .cancel) {
-                model.cancelReplaceReading()
-            }
-        } message: {
-            Text("Your current reading will be cleared.")
-        }
-        .alert("End this reading?", isPresented: $model.showsEndReadingAlert) {
-            Button("End Reading", role: .destructive) {
-                model.confirmEndReading()
-            }
-            Button("Keep Reading", role: .cancel) {
-                model.cancelEndReading()
-            }
-        } message: {
-            Text("The cards will return to the deck. This reading won't be saved.")
-        }
         .alert(model.issueTitle, isPresented: $model.showsIssueAlert) {
             if model.canRetryIssue {
                 Button("Try Again") {
@@ -140,11 +114,7 @@ private struct ReadHomeView: View {
         ZStack {
             CeremonialBackdrop()
 
-            if let session = model.session, let layout = model.layout {
-                activeHome(layout: layout, session: session)
-            } else {
-                emptyHome
-            }
+            emptyHome
         }
         .overlay(alignment: .topTrailing) {
             Button(action: openSettings) {
@@ -166,410 +136,258 @@ private struct ReadHomeView: View {
 
     private var emptyHome: some View {
         GeometryReader { proxy in
-            let usableHeight = max(proxy.size.height - homeControlClearance, 1)
-            let regularDeckWidth = min(
-                max(proxy.size.width - 64, 220),
-                320,
-                max(usableHeight - 180, 260) * CeremonialObsidianTheme.deckAspectRatio
-            )
-            let compactDeckWidth = min(
-                max(proxy.size.width - 80, 180),
-                238,
-                max(usableHeight - 150, 220) * CeremonialObsidianTheme.deckAspectRatio
-            )
+            let isLandscape = proxy.size.width > proxy.size.height && !dynamicTypeSize.isAccessibilitySize
 
-            VStack(spacing: 0) {
-                HStack(spacing: 0) {
-                    Spacer(minLength: 0)
-                    Color.clear
-                        .frame(
-                            width: homeControlClearance,
-                            height: homeControlClearance
-                        )
-                        .accessibilityHidden(true)
+            if dynamicTypeSize.isAccessibilitySize {
+                ScrollView {
+                    portraitHomeComposition(
+                        size: CGSize(width: proxy.size.width, height: max(proxy.size.height, 900)),
+                        compact: true
+                    )
+                    .padding(.top, homeControlClearance)
+                    .padding(.bottom, 28)
                 }
-
-                Group {
-                    if dynamicTypeSize.isAccessibilitySize {
-                        ScrollView {
-                            emptyHomeComposition(
-                                deckWidth: min(compactDeckWidth, 210),
-                                compact: true
-                            )
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 28)
-                        }
-                        .scrollIndicators(.hidden)
-                    } else {
-                        ViewThatFits(in: .vertical) {
-                            emptyHomeComposition(deckWidth: regularDeckWidth, compact: false)
-                            emptyHomeComposition(deckWidth: compactDeckWidth, compact: true)
-                        }
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    }
+                .scrollIndicators(.hidden)
+            } else if isLandscape {
+                landscapeHomeComposition(size: proxy.size)
+            } else {
+                ViewThatFits(in: .vertical) {
+                    portraitHomeComposition(size: proxy.size, compact: false)
+                    portraitHomeComposition(size: proxy.size, compact: true)
                 }
             }
-            .padding(.horizontal, 28)
+        }
+    }
+
+    private func portraitHomeComposition(size: CGSize, compact: Bool) -> some View {
+        let carouselHeight: CGFloat = compact ? 132 : 154
+        let deckWidth = min(
+            max(size.width - (compact ? 128 : 106), 172),
+            compact ? 220 : 272,
+            max(size.height - carouselHeight - (compact ? 250 : 270), 230)
+                * CeremonialObsidianTheme.deckAspectRatio
+        )
+
+        return VStack(spacing: compact ? 8 : 13) {
+            homeTitle(compact: compact)
+
+            ReadingPresetCarousel(model: model, compact: compact)
+                .frame(height: carouselHeight)
+
+            heroDeck(width: deckWidth, compact: compact)
+
+            beginCue(compact: compact)
+        }
+        .padding(.top, compact ? homeControlClearance : 48)
+        .padding(.bottom, compact ? 12 : 18)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func landscapeHomeComposition(size: CGSize) -> some View {
+        let deckWidth = min(max(size.width * 0.19, 178), 250, max(size.height - 118, 240) * CeremonialObsidianTheme.deckAspectRatio)
+
+        return HStack(spacing: 22) {
+            VStack(spacing: 10) {
+                homeTitle(compact: true)
+                ReadingPresetCarousel(model: model, compact: true)
+                    .frame(height: 156)
+            }
+            .frame(width: size.width * 0.51)
+
+            VStack(spacing: 8) {
+                heroDeck(width: deckWidth, compact: true)
+                beginCue(compact: true)
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .padding(.top, 18)
+        .padding(.horizontal, 26)
+        .padding(.bottom, 12)
     }
 
-    private func emptyHomeComposition(deckWidth: CGFloat, compact: Bool) -> some View {
-        VStack(spacing: compact ? 10 : 16) {
-            Text("Tarot Deck")
-                .font(.system(compact ? .title : .largeTitle, design: .serif, weight: .semibold))
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityAddTraits(.isHeader)
-
-            Button {
-                model.requestNewReading()
-            } label: {
-                ZStack {
-                    CeremonialCardBack(spokenLabel: "")
-                        .offset(y: 12)
-                        .opacity(0.34)
-                        .accessibilityHidden(true)
-                    CeremonialCardBack(spokenLabel: "")
-                        .offset(y: 6)
-                        .opacity(0.62)
-                        .accessibilityHidden(true)
-                    CeremonialCardBack(spokenLabel: "")
-                }
-                .frame(width: deckWidth, height: deckWidth / CeremonialObsidianTheme.deckAspectRatio)
-                .shadow(color: CeremonialObsidianTheme.brightGold.opacity(0.23), radius: 18)
-            }
-            .buttonStyle(.plain)
-            .disabled(model.isBusy)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Start a Reading")
-            .accessibilityHint("Complete 78-card tarot deck")
-
-            Text("Tap the deck to begin")
-                .font(.system(compact ? .body : .title3, design: .serif, weight: .medium))
-                .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-        }
-        .padding(.top, compact ? 24 : 38)
-        .padding(.bottom, compact ? 18 : 22)
-        .fixedSize(horizontal: false, vertical: true)
+    private func homeTitle(compact: Bool) -> some View {
+        Text("Tarot Deck")
+            .font(.system(compact ? .title : .largeTitle, design: .serif, weight: .semibold))
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+            .accessibilityAddTraits(.isHeader)
     }
 
-    private func activeHome(layout: ReadingLayout, session: DeckSession) -> some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                VStack(spacing: 7) {
-                    Text("Tarot Deck")
-                        .font(.system(.largeTitle, design: .serif, weight: .semibold))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibilityAddTraits(.isHeader)
-
-                    Text("Your deck, always with you.")
-                        .font(.system(.title3, design: .serif))
-                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                }
-
-                CeremonialCardBack(spokenLabel: "Complete 78-card tarot deck")
-                    .frame(maxWidth: 260)
-                    .padding(.vertical, 4)
-
-                activeReading(layout: layout, session: session)
+    private func heroDeck(width: CGFloat, compact: Bool) -> some View {
+        Button {
+            model.startSelectedPreset()
+        } label: {
+            ZStack {
+                CeremonialCardBack(spokenLabel: "")
+                    .offset(y: 12)
+                    .opacity(0.34)
+                    .accessibilityHidden(true)
+                CeremonialCardBack(spokenLabel: "")
+                    .offset(y: 6)
+                    .opacity(0.62)
+                    .accessibilityHidden(true)
+                CeremonialCardBack(spokenLabel: "")
             }
-            .frame(maxWidth: 680)
-            .padding(.horizontal, 26)
-            .padding(.top, 70)
-            .padding(.bottom, 30)
-            .frame(maxWidth: .infinity)
+            .frame(width: width, height: width / CeremonialObsidianTheme.deckAspectRatio)
+            .shadow(color: CeremonialObsidianTheme.brightGold.opacity(0.23), radius: 18)
         }
-        .scrollIndicators(.hidden)
+        .buttonStyle(.plain)
+        .disabled(model.isBusy)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Start a Reading")
+        .accessibilityValue(model.selectedPreset.title)
+        .accessibilityHint("Complete 78-card tarot deck")
     }
 
-    private func activeReading(layout: ReadingLayout, session: DeckSession) -> some View {
-        VStack(spacing: 14) {
-            VStack(spacing: 6) {
-                Text("Reading in progress")
-                    .font(.system(.body, design: .serif))
-                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
-
-                Text(layout.title)
-                    .font(.system(.largeTitle, design: .serif, weight: .semibold))
-
-                if let spread = model.spread {
-                    Text(spread.title)
-                        .font(.system(.body, design: .serif))
-                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                        .multilineTextAlignment(.center)
-                }
-
-                HStack(spacing: 12) {
-                    ForEach(0..<layout.cardLimit, id: \.self) { index in
-                        Circle()
-                            .fill(index < session.drawnCards.count
-                                  ? CeremonialObsidianTheme.brightGold
-                                  : CeremonialObsidianTheme.cardEdge)
-                            .frame(width: 12, height: 12)
-                    }
-                }
-                .accessibilityElement(children: .ignore)
-                .accessibilityLabel(
-                    AppLocalization.format(
-                        "%d of %d cards drawn",
-                        session.drawnCards.count,
-                        layout.cardLimit
-                    )
-                )
-            }
-
-            Button("Resume Reading") {
-                model.resumeReading()
-            }
-            .buttonStyle(CeremonialPrimaryButtonStyle())
-            .disabled(model.isBusy)
-
-            Button("New Reading") {
-                model.requestNewReading()
-            }
-            .font(.system(.body, design: .serif, weight: .medium))
-            .foregroundStyle(CeremonialObsidianTheme.parchment)
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .background(Capsule().stroke(CeremonialObsidianTheme.gold.opacity(0.55)))
-            .buttonStyle(.plain)
-            .disabled(model.isBusy)
-        }
-        .padding(20)
-        .background {
-            RoundedRectangle(cornerRadius: 22)
-                .fill(CeremonialObsidianTheme.cardSurface.opacity(0.95))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 22)
-                        .stroke(CeremonialObsidianTheme.gold.opacity(0.6), lineWidth: 1)
-                }
-        }
+    private func beginCue(compact: Bool) -> some View {
+        Text("Tap the deck to begin")
+            .font(.system(compact ? .body : .title3, design: .serif, weight: .medium))
+            .foregroundStyle(CeremonialObsidianTheme.brightGold)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
     }
+
 }
 
-private struct LayoutChoiceView: View {
+private struct ReadingPresetCarousel: View {
     @ObservedObject var model: ReadFlowModel
+    let compact: Bool
+    @State private var dragOffset: CGFloat = 0
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
+
+    private var presets: [ReadingPreset] { ReadingPreset.allCases }
 
     var body: some View {
-        ZStack {
-            CeremonialBackdrop()
+        GeometryReader { proxy in
+            let tileWidth = min(max(proxy.size.width * (compact ? 0.48 : 0.56), 154), compact ? 218 : 238)
+            let spacing: CGFloat = compact ? 14 : 16
+            let selectedIndex = presets.firstIndex(of: model.selectedPreset) ?? 0
+            let centeredOffset = proxy.size.width / 2 - tileWidth / 2
+                - CGFloat(selectedIndex) * (tileWidth + spacing)
 
-            ScrollView {
-                VStack(spacing: 22) {
-                    HStack {
-                        Button {
-                            model.cancelLayoutChoice()
-                        } label: {
-                            Label("Cancel", systemImage: "chevron.left")
-                                .frame(minHeight: 44)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                        Spacer()
-                    }
-
-                    VStack(spacing: 7) {
-                        Text("Choose a Reading")
-                            .font(.system(.largeTitle, design: .serif, weight: .semibold))
-                            .multilineTextAlignment(.center)
-                            .accessibilityAddTraits(.isHeader)
-
-                        Text("Choose one card, a guided spread, or your own positions.")
-                            .font(.system(.title3, design: .serif))
-                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    layoutButton(
-                        layout: .oneCard,
-                        summary: "A single card for one clear focus."
-                    )
-                    layoutButton(
-                        layout: .threeCards,
-                        summary: "Choose position meanings or use an open reading."
-                    )
+            HStack(spacing: spacing) {
+                ForEach(presets) { preset in
+                    presetTile(preset, width: tileWidth)
                 }
-                .frame(maxWidth: 680)
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 30)
-                .frame(maxWidth: .infinity)
             }
-            .scrollIndicators(.hidden)
+            .offset(x: centeredOffset + dragOffset)
+            .animation(CeremonialMotion.screen, value: model.selectedPreset)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 12)
+                    .onChanged { value in
+                        guard !voiceOverEnabled else { return }
+                        dragOffset = value.translation.width
+                    }
+                    .onEnded { value in
+                        guard !voiceOverEnabled else {
+                            dragOffset = 0
+                            return
+                        }
+                        let projected = value.predictedEndTranslation.width
+                        let threshold = tileWidth * 0.22
+                        let direction = projected < -threshold ? 1 : projected > threshold ? -1 : 0
+                        select(index: selectedIndex + direction)
+                        withAnimation(CeremonialMotion.screen) {
+                            dragOffset = 0
+                        }
+                    }
+            )
         }
-        .foregroundStyle(CeremonialObsidianTheme.parchment)
-        .toolbar(.hidden, for: .navigationBar)
+        .clipped()
+        .overlay(alignment: .bottom) {
+            pageIndicator
+        }
     }
 
-    private func layoutButton(layout: ReadingLayout, summary: String) -> some View {
-        Button {
-            model.selectLayout(layout)
-        } label: {
-            HStack(spacing: 22) {
-                HStack(spacing: -22) {
-                    ForEach(0..<layout.cardLimit, id: \.self) { _ in
-                        CeremonialCardBack(spokenLabel: "")
-                            .frame(width: layout == .oneCard ? 96 : 68)
-                    }
-                }
-                .accessibilityHidden(true)
+    private func presetTile(_ preset: ReadingPreset, width: CGFloat) -> some View {
+        let selected = preset == model.selectedPreset
 
-                VStack(alignment: .leading, spacing: 9) {
-                    Text(layout.title)
-                        .font(.system(.title, design: .serif, weight: .semibold))
-                    Text(AppLocalization.text(summary))
-                        .font(.system(.body, design: .serif))
-                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                        .multilineTextAlignment(.leading)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Image(systemName: "chevron.right")
-                    .font(.title2.weight(.semibold))
-                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
+        return Button {
+            withAnimation(CeremonialMotion.screen) {
+                model.selectPreset(preset)
             }
-            .padding(20)
-            .frame(minHeight: 188)
+        } label: {
+            VStack(spacing: compact ? 7 : 10) {
+                presetGlyph(preset)
+                    .frame(height: compact ? 52 : 62)
+                    .accessibilityHidden(true)
+
+                Text(preset.selectorDetail)
+                    .font(.system(compact ? .subheadline : .body, design: .serif, weight: .semibold))
+                    .foregroundStyle(selected ? CeremonialObsidianTheme.parchment : CeremonialObsidianTheme.secondaryText)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.75)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 8)
+            }
+            .frame(width: width, height: compact ? 108 : 126)
             .background {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(CeremonialObsidianTheme.cardSurface.opacity(0.96))
+                RoundedRectangle(cornerRadius: 18)
+                    .fill(CeremonialObsidianTheme.cardSurface.opacity(selected ? 0.98 : 0.90))
                     .overlay {
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(CeremonialObsidianTheme.gold.opacity(0.58), lineWidth: 1)
+                        RoundedRectangle(cornerRadius: 18)
+                            .stroke(
+                                selected ? CeremonialObsidianTheme.brightGold : CeremonialObsidianTheme.gold.opacity(0.42),
+                                lineWidth: selected ? 2 : 1
+                            )
                     }
+                    .shadow(
+                        color: selected ? CeremonialObsidianTheme.brightGold.opacity(0.32) : .clear,
+                        radius: 9
+                    )
             }
         }
         .buttonStyle(.plain)
         .disabled(model.isBusy)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(layout.title). \(AppLocalization.text(summary))")
-        .accessibilityHint("Starts this reading layout")
-    }
-}
-
-private struct ThreeCardSpreadChoiceView: View {
-    @ObservedObject var model: ReadFlowModel
-
-    var body: some View {
-        ZStack {
-            CeremonialBackdrop()
-
-            ScrollView {
-                VStack(spacing: 18) {
-                    HStack {
-                        Button {
-                            model.cancelSpreadChoice()
-                        } label: {
-                            Label("Reading", systemImage: "chevron.left")
-                                .frame(minHeight: 44)
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                        Spacer()
-                    }
-
-                    VStack(spacing: 7) {
-                        Text("Choose a Spread")
-                            .font(.system(.largeTitle, design: .serif, weight: .semibold))
-                            .multilineTextAlignment(.center)
-                            .accessibilityAddTraits(.isHeader)
-
-                        Text("Each position has a purpose.")
-                            .font(.system(.title3, design: .serif))
-                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    ForEach(ThreeCardSpread.namedCases, id: \.self) { spread in
-                        spreadButton(spread)
-                    }
-
-                    Button {
-                        model.selectSpread(.open)
-                    } label: {
-                        HStack(spacing: 10) {
-                            Text("Open reading · No assigned positions")
-                                .font(.system(.body, design: .serif, weight: .semibold))
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .font(.headline)
-                        }
-                        .padding(.horizontal, 20)
-                        .frame(maxWidth: .infinity, minHeight: 52)
-                        .background {
-                            RoundedRectangle(cornerRadius: 15)
-                                .fill(CeremonialObsidianTheme.cardSurface.opacity(0.94))
-                                .overlay {
-                                    RoundedRectangle(cornerRadius: 15)
-                                        .stroke(CeremonialObsidianTheme.gold.opacity(0.7), lineWidth: 1)
-                                }
-                        }
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                    .disabled(model.isBusy)
-                    .accessibilityLabel("Open reading. No assigned positions.")
-                    .accessibilityHint("Starts a free three-card reading")
-                }
-                .frame(maxWidth: 680)
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 30)
-                .frame(maxWidth: .infinity)
-            }
-            .scrollIndicators(.hidden)
-        }
-        .foregroundStyle(CeremonialObsidianTheme.parchment)
-        .toolbar(.hidden, for: .navigationBar)
+        .accessibilityLabel(preset.title)
+        .accessibilityHint("Selects this reading preset")
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
-    private func spreadButton(_ spread: ThreeCardSpread) -> some View {
-        Button {
-            model.selectSpread(spread)
-        } label: {
-            HStack(spacing: 18) {
-                HStack(spacing: -12) {
-                    ForEach(0..<3, id: \.self) { _ in
-                        CeremonialCardBack(spokenLabel: "")
-                            .frame(width: 56)
-                    }
-                }
-                .accessibilityHidden(true)
-
-                VStack(alignment: .leading, spacing: 7) {
-                    Text(spread.title)
-                        .font(.system(.title3, design: .serif, weight: .semibold))
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(spread.summary)
-                        .font(.system(.subheadline, design: .serif))
-                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                Image(systemName: "chevron.right")
-                    .font(.headline)
-                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
-            }
-            .padding(17)
-            .frame(minHeight: 142)
-            .background {
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(CeremonialObsidianTheme.cardSurface.opacity(0.96))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 20)
-                            .stroke(CeremonialObsidianTheme.gold.opacity(0.58), lineWidth: 1)
-                    }
+    private func presetGlyph(_ preset: ReadingPreset) -> some View {
+        HStack(spacing: preset == .oneCard ? 0 : -9) {
+            ForEach(0..<(preset == .oneCard ? 1 : 3), id: \.self) { index in
+                CeremonialCardBack(spokenLabel: "")
+                    .frame(width: compact ? 32 : 38)
+                    .rotationEffect(
+                        preset == .oneCard ? .zero : .degrees(Double(index - 1) * 8)
+                    )
             }
         }
-        .buttonStyle(.plain)
-        .disabled(model.isBusy)
+    }
+
+    private var pageIndicator: some View {
+        HStack(spacing: 10) {
+            ForEach(presets) { preset in
+                Circle()
+                    .fill(
+                        preset == model.selectedPreset
+                            ? CeremonialObsidianTheme.brightGold
+                            : CeremonialObsidianTheme.secondaryText.opacity(0.48)
+                    )
+                    .frame(width: 7, height: 7)
+            }
+        }
+        .frame(minWidth: 44, minHeight: 24)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(spread.title). \(spread.summary)")
-        .accessibilityHint("Selects this three-card spread")
+        .accessibilityLabel("Reading preset")
+        .accessibilityValue(model.selectedPreset.title)
+        .accessibilityHint("Swipe up or down to choose the previous or next preset")
+        .accessibilityAdjustableAction { direction in
+            guard let index = presets.firstIndex(of: model.selectedPreset) else { return }
+            switch direction {
+            case .increment: select(index: index + 1)
+            case .decrement: select(index: index - 1)
+            @unknown default: break
+            }
+        }
+    }
+
+    private func select(index: Int) {
+        let boundedIndex = min(max(index, presets.startIndex), presets.index(before: presets.endIndex))
+        model.selectPreset(presets[boundedIndex])
     }
 }
 
@@ -678,10 +496,11 @@ private struct ReadingTableView: View {
                 HStack {
                     backButton
                     Spacer(minLength: 0)
+                    resetButton
                 }
 
                 VStack(spacing: 3) {
-                    Text(model.layout?.title ?? AppLocalization.text("Reading"))
+                    Text(model.readingTitle)
                         .font(.system(.title2, design: .serif, weight: .semibold))
                         .multilineTextAlignment(.center)
                         .accessibilityAddTraits(.isHeader)
@@ -714,12 +533,18 @@ private struct ReadingTableView: View {
     }
 
     private var header: some View {
-        ZStack(alignment: .leading) {
+        ZStack {
             backButton
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            resetButton
+                .frame(maxWidth: .infinity, alignment: .trailing)
 
             VStack(spacing: 4) {
-                Text(model.layout?.title ?? AppLocalization.text("Reading"))
+                Text(model.readingTitle)
                     .font(.system(.title, design: .serif, weight: .semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.65)
                     .accessibilityAddTraits(.isHeader)
                 Text(statusText)
                     .font(.body)
@@ -734,6 +559,7 @@ private struct ReadingTableView: View {
 
     private var backButton: some View {
         Button {
+            cancelTransientMotion(establishing: visualState)
             model.leaveTable()
         } label: {
             Image(systemName: "chevron.left")
@@ -743,11 +569,23 @@ private struct ReadingTableView: View {
         .buttonStyle(.plain)
         .disabled(model.isBusy)
         .accessibilityLabel("Back")
-        .accessibilityHint(
-            AppLocalization.text(
-                model.hasActiveReading ? "Returns to Read home" : "Returns to layout choice"
-            )
-        )
+        .accessibilityHint("Ends this reading and returns to Read home")
+    }
+
+    private var resetButton: some View {
+        Button {
+            cancelTransientMotion(establishing: visualState)
+            model.resetReading()
+        } label: {
+            Image(systemName: "arrow.counterclockwise")
+                .font(.title3.weight(.semibold))
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(model.isBusy)
+        .accessibilityLabel("Reset Reading")
+        .accessibilityHint("Clears the cards and keeps this reading preset")
     }
 
     @ViewBuilder
@@ -901,13 +739,30 @@ private struct ReadingTableView: View {
         let presentedCount = visualBaseline?.drawnCardIDs.count
             ?? model.session?.drawnCards.count
             ?? layout.cardLimit
-        return presentedCount < layout.cardLimit
+        if presentedCount < layout.cardLimit { return true }
+        let presentedRevealed = visualBaseline?.revealed
+            ?? model.session?.drawnCards.map(\.isRevealed)
+            ?? []
+        return presentedRevealed.count == layout.cardLimit && presentedReadingIsCompleteAndRevealed
+    }
+
+    private var presentedReadingIsCompleteAndRevealed: Bool {
+        guard let layout = model.layout else { return false }
+        let presentedIDs = visualBaseline?.drawnCardIDs
+            ?? model.session?.drawnCards.map { $0.id.rawValue }
+            ?? []
+        let presentedRevealed = visualBaseline?.revealed
+            ?? model.session?.drawnCards.map(\.isRevealed)
+            ?? []
+        return presentedIDs.count == layout.cardLimit
+            && presentedRevealed.count == layout.cardLimit
+            && presentedRevealed.allSatisfy { $0 }
     }
 
     private var canUseDeck: Bool {
         if model.isReadyToShuffle { return true }
         guard let session = model.session, let layout = model.layout else { return false }
-        return session.drawnCards.count < layout.cardLimit
+        return session.drawnCards.count < layout.cardLimit || model.canPrepareAnotherReading
     }
 
     private var deckControl: some View {
@@ -915,6 +770,9 @@ private struct ReadingTableView: View {
         return Button {
             if model.isReadyToShuffle {
                 model.shuffleDeck()
+            } else if model.canPrepareAnotherReading {
+                cancelTransientMotion(establishing: visualState)
+                model.resetReading()
             } else {
                 model.drawCard()
             }
@@ -924,7 +782,9 @@ private struct ReadingTableView: View {
                 reduceMotion: usesReducedMotion,
                 spokenLabel: model.isReadyToShuffle
                     ? AppLocalization.text("Complete deck, not yet shuffled")
-                    : AppLocalization.format("Deck with %d cards remaining", remaining)
+                    : model.canPrepareAnotherReading
+                        ? AppLocalization.text("Complete deck, ready for another reading")
+                        : AppLocalization.format("Deck with %d cards remaining", remaining)
             )
             .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
         }
@@ -932,7 +792,11 @@ private struct ReadingTableView: View {
         .disabled(interactionLocked || !canUseDeck)
         .accessibilityHint(
             AppLocalization.text(
-                model.isReadyToShuffle ? "Shuffles the deck" : "Draws the next card"
+                model.isReadyToShuffle
+                    ? "Shuffles the deck"
+                    : model.canPrepareAnotherReading
+                        ? "Starts another reading with the same preset"
+                        : "Draws the next card"
             )
         )
     }
@@ -1137,21 +1001,21 @@ private struct ReadingTableView: View {
     }
 
     private var actionArea: some View {
-        VStack(spacing: 12) {
-            Text(instructionText)
-                .font(.body)
-                .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                .multilineTextAlignment(.center)
-
-            Button("End Reading") {
-                model.requestEndReading()
+        VStack(spacing: 5) {
+            if let meaningInstructionText {
+                Text(meaningInstructionText)
+                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
             }
-            .font(.system(.body, design: .rounded, weight: .medium))
-            .foregroundStyle(CeremonialObsidianTheme.brightGold)
-            .frame(minWidth: 44, minHeight: 44)
-            .buttonStyle(.plain)
-            .disabled(interactionLocked)
+            Text(instructionText)
+                .foregroundStyle(
+                    presentedReadingIsCompleteAndRevealed
+                        ? CeremonialObsidianTheme.brightGold
+                        : CeremonialObsidianTheme.secondaryText
+                )
         }
+        .font(.body)
+        .multilineTextAlignment(.center)
+        .fixedSize(horizontal: false, vertical: true)
     }
 
     private var statusText: String {
@@ -1159,12 +1023,13 @@ private struct ReadingTableView: View {
         guard let session = model.session, let layout = model.layout else { return "" }
         if session.drawnCards.isEmpty { return AppLocalization.text("Deck shuffled") }
         if layout == .oneCard {
-            return session.drawnCards[0].isRevealed
+            let presentedRevealed = visualBaseline?.revealed.first
+                ?? session.drawnCards[0].isRevealed
+            return presentedRevealed
                 ? AppLocalization.text("Card revealed")
                 : AppLocalization.text("Card drawn")
         }
-        if session.drawnCards.count == layout.cardLimit,
-           session.drawnCards.allSatisfy(\.isRevealed) {
+        if presentedReadingIsCompleteAndRevealed {
             return AppLocalization.text("All cards revealed")
         }
         return AppLocalization.format(
@@ -1178,16 +1043,21 @@ private struct ReadingTableView: View {
         if model.isReadyToShuffle { return AppLocalization.text("Tap the deck to shuffle.") }
         guard let session = model.session, let layout = model.layout else { return "" }
         if session.drawnCards.isEmpty { return AppLocalization.text("Tap the deck to draw.") }
-        if session.drawnCards.count == layout.cardLimit,
-           session.drawnCards.allSatisfy(\.isRevealed) {
-            return layout == .oneCard
-                ? AppLocalization.text("Tap the card to explore its meaning.")
-                : AppLocalization.text("Tap a card to explore its meaning.")
+        if presentedReadingIsCompleteAndRevealed {
+            return AppLocalization.text("Tap the deck for another reading.")
         }
         if layout == .oneCard, session.drawnCards.count == 1 {
             return AppLocalization.text("Tap the card to reveal it.")
         }
         return AppLocalization.text("Tap a face-down card to turn it over.")
+    }
+
+    private var meaningInstructionText: String? {
+        guard let layout = model.layout,
+              presentedReadingIsCompleteAndRevealed else { return nil }
+        return layout == .oneCard
+            ? AppLocalization.text("Tap the card to explore its meaning.")
+            : AppLocalization.text("Tap a card to explore its meaning.")
     }
 
     private func baselineContainsCard(at index: Int) -> Bool {

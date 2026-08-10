@@ -1,119 +1,207 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "1.0.0",
+  "contentVersion": "2.0.0",
   "language": "en",
   "title": "Learn to Read Tarot",
-  "introduction": "A simple guide to reading the cards in your own way. Tarot offers images and themes for reflection, while you remain responsible for the question, the connections you make, and the meaning you take from a reading.",
+  "introduction": "Eight practical tutorials help you prepare, choose a spread, read each position, connect the cards, and close with care. Tarot has no single official reading method: these lessons distinguish documented tradition, widespread modern practice, and our responsible editorial adaptations.",
   "articles": [
     {
-      "id": "start-with-a-question",
+      "id": "prepare-a-reading",
       "order": 1,
-      "title": "Start with a Question",
-      "summary": "Frame an open, useful question and prepare a calm space for your reading.",
+      "title": "Prepare a Reading",
+      "summary": "Set a useful question, choose positions before shuffling, and create a simple process you can repeat.",
+      "readingPresetID": null,
       "sections": [
         {
-          "heading": "Tarot as a Reflection Tool",
-          "body": "A standard tarot deck has 78 cards: 22 Major Arcana and 56 Minor Arcana. Major Arcana often frame broad turning points or lessons, while Minor Arcana often frame everyday actions, feelings, thoughts, and practical matters. Each card offers symbols and themes that can help you reflect. A reading is an interpretation, not a fixed answer or settled fact, and your context matters more than memorizing one perfect definition."
+          "heading": "Purpose and Background",
+          "body": "Tarot began as a card game, and reading practices developed later in many different forms. Choosing a question before shuffling and deciding the layout in advance are documented parts of historical methods. The calm, reflective wording used here is a modern editorial adaptation, not a required ritual or an official system."
         },
         {
-          "heading": "Frame the Question",
-          "body": "Choose a question that leaves room for reflection. Questions beginning with what, where, or how are usually more useful than asking for a fixed yes or no. Keep it simple and focused on what you can understand or influence, rather than trying to establish facts about another person."
+          "heading": "Choose Before You Shuffle",
+          "body": "There are no positions in this preparation lesson. First choose One Card or one of the four three-card presets. If the spread has named positions, read those meanings before you begin and keep them unchanged. Frame one concrete question around something you can understand or influence; the app never asks you to enter or save it."
         },
         {
-          "heading": "Prepare Your Reading",
-          "body": "Choose a quiet moment, decide whether you want one card or three, and keep the same question throughout the spread. You do not need to enter or save the question in the app. Treat the reading as one perspective that can help you think, not as an instruction you must follow."
+          "heading": "Prepare Step by Step",
+          "body": "1. Find a moment when you can pay attention. 2. State one question in plain language. 3. Choose the spread and fix its positions. 4. Shuffle while keeping the topic in mind, then stop when you are ready. 5. Draw in position order. 6. Observe each image before opening its reference meaning. No special object, timing, or ceremony is necessary."
+        },
+        {
+          "heading": "Read Together and Close",
+          "body": "For one card, connect the image, a keyword, and your question. For three cards, read every position first and then notice one relationship across the spread. Close with a sentence such as, 'One possibility to consider is...' Tarot is reflective, not evidence, an instruction, or a substitute for reliable information and qualified support."
         }
       ]
     },
     {
-      "id": "shuffle-and-draw",
+      "id": "one-card-focus",
       "order": 2,
-      "title": "Shuffle and Draw",
-      "summary": "Prepare the deck, shuffle with your question in mind, and reveal each card deliberately.",
+      "title": "One Card Focus",
+      "summary": "Use one card to explore what deserves attention now without forcing a complete answer.",
+      "readingPresetID": "oneCard",
       "sections": [
         {
-          "heading": "Shuffle with Purpose",
-          "body": "Hold your question in mind and shuffle until you feel ready. There is no required ritual or correct amount of time. Shuffling creates a fresh order for the full deck; it does not make the app decide what the cards mean."
+          "heading": "Purpose and Position",
+          "body": "This is a widespread modern practice rather than a historical canonical spread. Its single position is: What deserves attention now? Use it for a focused reflection, a quality you may need, or a perspective you may be overlooking. A single image can offer a useful lens without having to explain every part of the situation."
         },
         {
-          "heading": "Draw Deliberately",
-          "body": "Draw one card at a time. Cards are placed face down so you can reveal them deliberately, in any order that helps you concentrate. Use the same question for every card in the spread, and pause before checking a meaning to notice your first response to the image."
+          "heading": "Draw One Card",
+          "body": "1. Ask a present-focused question. 2. Choose One Card and shuffle. 3. Draw and turn over the card. 4. Describe the first visible detail that attracts you. 5. Choose one keyword and then consult the upright reference meaning. 6. Ask how that detail and keyword meet the situation you actually know."
+        },
+        {
+          "heading": "Build the Reading",
+          "body": "Read the image, keyword, reference meaning, and question together. Complete one sentence: 'One possibility is...' Then add one gentle question or small action you could consider. If two ideas seem possible, keep both instead of forcing the card into a single answer. Your own context gives the card its useful focus."
+        },
+        {
+          "heading": "Close with Care",
+          "body": "Stop after the one card instead of drawing repeatedly until you see a preferred answer. The card does not establish a fact, predict a fixed outcome, or tell you what you must do. For high-stakes health, legal, money, or safety decisions, rely on appropriate information and qualified people rather than a tarot reading."
         }
       ]
     },
     {
-      "id": "read-one-card",
+      "id": "past-present-possible-direction",
       "order": 3,
-      "title": "Read One Card",
-      "summary": "Use one image, a few keywords, and your context to form a clear reflection.",
+      "title": "Past, Present, Possible Direction",
+      "summary": "Explore how a situation developed, what is active now, and where the current pattern may lead.",
+      "readingPresetID": "pastPresentFuture",
       "sections": [
         {
-          "heading": "Use a Clear Snapshot",
-          "body": "A one-card reading offers a focused snapshot. Ask what deserves attention, what quality could help, or what perspective you may be missing. The card does not need to answer every part of the situation."
+          "heading": "Purpose and Positions",
+          "body": "Three-part timelines are a recognizable modern spread practice. Our third position uses conditional wording instead of promising a fixed future. The positions are: 1. Past influence. 2. Present situation. 3. Possible direction if the current pattern continues. Decide the topic and, if useful, a time frame before you shuffle."
         },
         {
-          "heading": "Connect Image and Context",
-          "body": "Name the first detail that catches your eye, then choose one keyword that fits your situation. Read the reference meaning after making your own observation. Finish by connecting one useful idea to the question rather than forcing a complete or certain answer."
+          "heading": "Read Left to Right",
+          "body": "1. Draw three cards from left to right. 2. Read the first as an influence that helped shape the situation, not as a complete history. 3. Read the second as what is active now. 4. Read the third only as a direction the present pattern may support. 5. Keep each card tied to its position before combining them."
+        },
+        {
+          "heading": "Read the Sequence",
+          "body": "Look for what continues, changes, or contradicts itself across the three positions. Ask whether an image, suit, number, mood, or movement develops from the first card to the last. Summarize conditionally: 'This may develop toward... if the current pattern continues,' and name what could alter that direction."
+        },
+        {
+          "heading": "Close with Possibility",
+          "body": "Keep one useful connection and let the rest remain open. The past card is not a complete account, the present card is not an objective statement of fact, and the final card is not destiny. New choices, other people, and information outside the spread can change what happens next."
         }
       ]
     },
     {
-      "id": "read-three-cards",
+      "id": "situation-challenge-guidance",
       "order": 4,
-      "title": "Read Three Cards",
-      "summary": "Choose clear position meanings, then read each card and the relationship among all three.",
+      "title": "Situation, Challenge, Guidance",
+      "summary": "Clarify an issue, examine an influencing factor, and consider a grounded perspective.",
+      "readingPresetID": "situationChallengeAdvice",
       "sections": [
         {
-          "heading": "Choose the Positions First",
-          "body": "A three-card spread gives each position a purpose before you draw. Past, Present, and Possible Future explores origins, the current moment, and one possible direction rather than a fixed prediction. Situation, Challenge, and Advice examines what is happening, what complicates it, and what may help. You, The Other Person, and Connection offers two perspectives and the relationship between them. You can also choose an open reading with no assigned positions."
+          "heading": "Purpose and Positions",
+          "body": "This is a modern quick-insight structure with responsible editorial framing. The positions are: 1. Situation. 2. Challenge or influencing factor. 3. Guidance or perspective. Guidance is something to consider, not an instruction, and the challenge card is not automatically negative; it may complicate, strengthen, or redirect the situation."
         },
         {
-          "heading": "Read Each Card First",
-          "body": "Observe and consider each card on its own before building a combined meaning. Notice whether the sequence develops, contrasts, or repeats a theme. Do not force every detail to match; use the connections that feel relevant to your question."
+          "heading": "Work Through Each Role",
+          "body": "1. Ask an open question about the issue. 2. Draw three cards from left to right. 3. Read the first as the core condition you are exploring. 4. Read the second as the main tension or influence. 5. Read the third as a perspective that may help. 6. Check each reference meaning only after noticing the image in its assigned role."
         },
         {
-          "heading": "Look Across the Spread",
-          "body": "After reading each card, look across all three. Repeated suits or numbers may strengthen a theme, while contrasting images may show tension or alternatives. Ask what changes from the first image to the last, and let one clear connection be enough."
+          "heading": "Connect the Three",
+          "body": "Ask how the influencing factor changes your understanding of the situation, then how the guidance responds to both. Repetition may reinforce a theme; contrast may show a tradeoff or another path. Form one sentence: 'Given this situation and influence, one perspective worth considering is...'"
+        },
+        {
+          "heading": "Close Without Commands",
+          "body": "Keep the guidance as an option, question, or perspective. Do not treat it as an order from the deck, and do not make the challenge card into proof that something is wrong. Important decisions still require your judgment, relevant facts, and help from an appropriate qualified person when needed."
         }
       ]
     },
     {
-      "id": "notice-symbols-and-patterns",
+      "id": "you-other-person-connection",
       "order": 5,
-      "title": "Notice Symbols and Patterns",
-      "summary": "Observe the imagery closely, then notice repetition, contrast, movement, and mood.",
+      "title": "You, Other Person, Connection",
+      "summary": "Reflect on a relationship while respecting privacy, uncertainty, and what you can actually influence.",
+      "readingPresetID": "relationship",
       "sections": [
         {
-          "heading": "Begin with What Is Visible",
-          "body": "Look at the card before reaching for a definition. Notice figures, direction of movement, color, weather, objects, distance, and where your attention lands. Ask what appears active, still, open, guarded, near, or far away, then describe the scene in plain words."
+          "heading": "Purpose and Positions",
+          "body": "This is our editorial adaptation of a modern three-position relationship spread. The positions are: 1. Your perspective, needs, and actions. 2. The other person's observable role, or your perception of it. 3. The current connection and what you can influence. The second card never proves another person's private thoughts or feelings."
         },
         {
-          "heading": "Notice Relationships",
-          "body": "Consider the mood the image creates and which detail changes how you understand the card's keywords. Across several cards, look for repeated suits, numbers, figures, directions, or colors. Contrast can matter as much as repetition; use patterns as prompts for reflection rather than hidden rules."
+          "heading": "Keep the Question Ethical",
+          "body": "1. Frame the question around your experience and choices. 2. Draw three cards from left to right. 3. Read the first as your part of the dynamic. 4. Read the second only through behavior you have observed or the way you currently perceive it. 5. Read the third as the present connection, not the relationship's destiny."
         },
         {
-          "heading": "Return to the Question",
-          "body": "Connect the detail or pattern back to the question you began with. Personal associations can be useful when they remain grounded in what the image shows and in the context you actually know."
+          "heading": "Read the Dynamic",
+          "body": "Notice whether the first two cards echo, oppose, approach, or turn away from one another, then ask how the third card describes the shared pattern. Separate what you know, what you infer, and what remains unknown. Finish by identifying one boundary, conversation, or action that is genuinely under your control."
+        },
+        {
+          "heading": "Close with Consent",
+          "body": "Use the spread to examine your perspective, not to monitor, label, or control someone else. Respect privacy and consent, especially when the other person is absent. A card cannot establish secret motives or make decisions on another person's behalf; direct communication and observable information matter more."
         }
       ]
     },
     {
-      "id": "build-your-interpretation",
+      "id": "yes-or-no-with-context",
       "order": 6,
-      "title": "Build Your Interpretation",
-      "summary": "Combine your observations into a grounded reflection, then close the reading with care.",
+      "title": "A Yes-or-No Question, With Context",
+      "summary": "Explore what supports yes, what supports no or a pause, and what to consider before deciding.",
+      "readingPresetID": "open",
       "sections": [
         {
-          "heading": "Make One Clear Connection",
-          "body": "Bring together the image, one or two keywords, the card's reference meaning, and the original question. Build one short sentence that describes a useful possibility or perspective. You do not need to find hidden rules or make every symbol fit."
+          "heading": "Purpose and Positions",
+          "body": "There is no single historical standard for a three-card yes-or-no method; published modern systems disagree. This is our upright-only editorial adaptation, practised with Open Three Cards. The positions are: 1. What supports a yes. 2. What supports a no or a pause. 3. What to consider before deciding."
         },
         {
-          "heading": "Close the Reading",
-          "body": "Review the question and name the perspective you want to carry forward. Summarize the reading in one sentence and keep only the insight that feels constructive and grounded. You can end without certainty; when more cards would add noise rather than clarity, return the cards to the deck."
+          "heading": "Ask and Draw",
+          "body": "1. Use this only for a personal, low-risk choice. 2. Rewrite the question around your present decision, not another person's hidden intentions. 3. Fix the three positions before shuffling. 4. Draw three cards in order. 5. Do not assign universal yes or no values to particular cards; read each card only inside its position."
         },
         {
-          "heading": "Read with Care",
-          "body": "Read with consent, humility, and respect for uncertainty. Tarot is not evidence and cannot replace reliable information or qualified support. Keep other people's private lives out of a reading without their consent, and do not use cards to control someone, declare facts about them, or make important choices on their behalf. Frame interpretations as possibilities, questions, or personal reflections."
+          "heading": "Weigh the Context",
+          "body": "Compare the support, resistance, timing, missing information, and tradeoffs shown by the three positions. End with one of three qualified summaries: 'leans yes if...'; 'leans no or not yet because...'; or 'unclear - more information is needed.' The app does not classify the cards or calculate a verdict for you."
+        },
+        {
+          "heading": "Know When to Stop",
+          "body": "Do not redraw until the spread produces the answer you wanted. Treat uncertainty as useful information and seek facts before deciding. Do not use this method for high-stakes health, legal, money, or safety choices, or to establish another person's private thoughts. Tarot cannot remove your responsibility for the decision."
+        }
+      ]
+    },
+    {
+      "id": "open-three-cards",
+      "order": 7,
+      "title": "Open Three Cards",
+      "summary": "Read three cards without assigned meanings and let their sequence suggest the most useful structure.",
+      "readingPresetID": "open",
+      "sections": [
+        {
+          "heading": "Purpose and Positions",
+          "body": "Flexible three-card reading is a widespread modern practice. Open Three Cards gives the positions only neutral labels: 1. Card 1. 2. Card 2. 3. Card 3. There is no hidden role attached to any slot. Use it when you want to explore a topic without deciding a timeline, challenge, relationship, or decision structure in advance."
+        },
+        {
+          "heading": "Reveal Without Assigning Roles",
+          "body": "1. Ask one open question. 2. Choose Open Three Cards and shuffle. 3. Draw all three in order. 4. Observe each image on its own before naming a connection. 5. Let Card 1 open the theme, Card 2 develop or complicate it, and Card 3 add another perspective, while remembering that these are reading prompts rather than fixed meanings."
+        },
+        {
+          "heading": "Find a Coherent Thread",
+          "body": "Look for repetition, contrast, cause and response, movement, or a change in mood. Try more than one sequence if needed: the cards may read as a progression, three simultaneous factors, or three voices around the question. Choose the thread that stays grounded in the visible images and the context you actually know."
+        },
+        {
+          "heading": "Close Without Forcing It",
+          "body": "Summarize one connection across the three cards. If no coherent thread appears, it is valid to end with uncertainty instead of inventing a rule or drawing extra cards. Open does not mean unlimited: the same limits on privacy, evidence, high-stakes choices, and fixed predictions still apply."
+        }
+      ]
+    },
+    {
+      "id": "read-symbols-whole-spread",
+      "order": 8,
+      "title": "Read Symbols and the Whole Spread",
+      "summary": "Move from visible details to card meanings, position roles, patterns, and one grounded conclusion.",
+      "readingPresetID": null,
+      "sections": [
+        {
+          "heading": "Purpose and Context",
+          "body": "Reading image, card, position, and question together is a well-established modern teaching practice. Symbol work is observation, not a secret universal code. A color, figure, object, direction, number, or repeated suit may matter because of the pattern it creates in this spread and the association it has in your context."
+        },
+        {
+          "heading": "Read in Layers",
+          "body": "1. Describe what is visibly happening in each image. 2. Notice your first response without treating it as fact. 3. Consult keywords and the upright reference meaning. 4. Apply the meaning to the card's position, if it has one. 5. Return to the original question. 6. Repeat for every card before deciding what the spread says as a whole."
+        },
+        {
+          "heading": "Connect the Whole Spread",
+          "body": "Look for repeated suits, numbers, figures, colors, or directions, and also for meaningful contrast. Ask what changes from left to right, which card seems to answer another, and where tension remains. Build one or two sentences that connect all positions without forcing every detail to fit or turning a pattern into proof."
+        },
+        {
+          "heading": "Close and Check Limits",
+          "body": "Name the most useful perspective, one open question, and any reliable information you still need. End the reading even if it remains ambiguous. Keep interpretations tentative, respect consent and privacy, and never use tarot to replace evidence, professional help, or another person's agency. A thoughtful limit is part of a complete reading."
         }
       ]
     }

@@ -1,8 +1,8 @@
 # Tarot Deck — Product Brief
 
-Status: active expanded MVP baseline under A-020, A-021, A-022, A-027, A-028, A-030, and A-031
+Status: active expanded MVP baseline under A-020, A-021, A-022, A-027, A-028, A-030, A-031, and A-033
 First release: iPhone only, English and Spanish
-Date: 2026-08-10
+Date: 2026-08-11
 
 ## Product in one sentence
 
@@ -72,20 +72,20 @@ The MVP proves that promise through:
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
 10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
 11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
-12. **The deck is the control.** On Home the deck starts a reading; on the table the same visible deck shuffles or draws according to the current state. A duplicate primary button must not compete with it.
+12. **The deck is the control.** Home exposes one compact visual carousel of illustrated preset tiles before the deck is touched; it is never a dropdown or vertical text list. The deck then starts that preset directly; on the table it shuffles, draws, or offers another reading according to the current state. A duplicate large primary button must not compete with it.
 13. **The viewport does not jump.** Persistent controls, the deck frame, reading positions, and visible tab bar keep stable geometry while labels and logical states change; motion happens inside those bounds.
 
 ## Three product loops
 
 ### Read
 
-1. Open `Read`; when no reading exists, tap the prominent deck to start one, otherwise resume the active reading or deliberately replace it.
-2. Choose `One Card` or `Three Cards`; for three cards, choose a named spread or `Open reading`.
-3. Shuffle the complete deck.
+1. Open `Read`; choose `One Card` or one of the four three-card presets from the visual tile carousel above the deck.
+2. Tap the prominent deck to open that reading directly, with no layout or spread-choice screen.
+3. Tap the table deck to shuffle the complete deck.
 4. Draw cards one at a time; each arrives face down and cannot repeat.
 5. Turn cards over manually in any order.
 6. Tap a revealed card when a meaning is helpful, then return to the exact table state.
-7. End the reading deliberately, or leave it active to resume later.
+7. Back ends the reading and returns Home without a confirmation. A small reset control restarts the same preset; once every drawn card is revealed, the deck also offers another reading with that preset.
 
 The app never decides what the cards mean together. Reading completion is not rewarded, scored, or saved to history.
 
@@ -111,13 +111,13 @@ Browsing never changes the active reading or the shuffled order.
 
 The MVP has three primary iPhone destinations:
 
-- **Read:** deck home, setup, and active reading.
+- **Read:** deck home with inline preset selection, and the active reading table.
 - **Learn:** beginner guide index and articles.
 - **Cards:** complete library and card detail.
 
 A standard three-destination iOS navigation shell keeps them directly reachable. Its visible tab bar uses a stable opaque or strongly translucent Ceremonial Obsidian surface so labels and selected state remain legible and content never causes the bar to change height, opacity, or position. An active reading remains intact when the user visits Learn or Cards. Detail views return to their source context; a meaning opened from a reading returns to the same reading, while a card opened from the library returns to the same filter and position.
 
-A discreet settings gear overlays the `Read` safe area without reserving layout height. Settings is not a fourth primary destination and never replaces or interrupts the deck flow. The empty Home is a compact, non-scrolling first viewport: concise identity, one centered hero deck, its start cue, and the stable tab bar; it has no long introductory block or separate primary button.
+A discreet settings gear overlays the `Read` safe area without reserving layout height. Settings is not a fourth primary destination and never replaces or interrupts the deck flow. The empty Home is a compact, non-scrolling first viewport: concise identity, one horizontal carousel of illustrated preset tiles, one centered hero deck, its start cue, and the stable tab bar; it has no dropdown, long introductory block, separate setup screen, or duplicate primary button.
 
 Exact visual presentation remains governed by the registered screen images.
 
@@ -126,21 +126,24 @@ Exact visual presentation remains governed by the registered screen images.
 ### Included
 
 1. **Read**
-   - Compact empty Deck Home with the centered deck itself as `Start a Reading` / `Empezar lectura`; active Home retains `Resume Reading` and deliberate replacement.
-   - Neutral `One Card`, three named `Three Cards` spreads, and an open three-card option.
-   - Tap the table deck to shuffle when unshuffled and to draw the next card when shuffled; no duplicate primary shuffle/draw button.
-   - One-at-a-time draw, independent reveal, deliberate end, stable viewport, centered completed layouts, and professional motion governed by V-048.
+   - Compact Deck Home with one inline selector for `One Card`, the three named `Three Cards` spreads, or the open three-card option; the centered deck starts the selected preset directly.
+   - No `Layout Choice`, `Spread Choice`, active-reading replacement prompt, or visible `End Reading` action.
+   - Tap the table deck to shuffle when unshuffled and to draw the next card when shuffled; after every drawn card is revealed, it offers another reading with the same preset.
+   - One-at-a-time draw, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional motion governed by V-048.
    - Meaning available only after tapping a revealed card.
 
 2. **Learn**
-   - One static index with six concise articles:
-     1. `Start with a Question`
-     2. `Shuffle and Draw`
-     3. `Read One Card`
-     4. `Read Three Cards`
-     5. `Notice Symbols and Patterns`
-     6. `Build Your Interpretation`
-   - Articles use original English copy with a complete Spanish translation, plain examples, and ethical boundaries.
+   - One static index with eight practical tutorials:
+     1. `Prepare a Reading`
+     2. `One Card Focus`
+     3. `Past, Present, Possible Direction`
+     4. `Situation, Challenge, Guidance`
+     5. `You, Other Person, Connection`
+     6. `A Yes-or-No Question, With Context`
+     7. `Open Three Cards`
+     8. `Read Symbols and the Whole Spread`
+   - Every tutorial contains purpose, exact positions when applicable, steps, synthesis, and closing limits. Copy is original in English with a complete Spanish translation and briefly distinguishes documented tradition, widespread modern practice, and responsible editorial adaptation.
+   - `Try This Reading` maps only to an existing Read preset. The contextual yes-or-no method uses `Open Three Cards`; it adds no sixth preset, universal card classification, automatic verdict, or repeated draw for a preferred answer.
 
 3. **Cards**
    - All 78 cards in canonical order.
@@ -177,7 +180,7 @@ Exact visual presentation remains governed by the registered screen images.
 
 ### Why this remains small
 
-The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains six fixed articles, Cards reuses one meaning model across 78 identities, and Settings keeps optional support and legal links outside the core flow. No account, user-generated content, progression, social behavior, or purchase is required.
+The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains eight fixed tutorials, Cards reuses one meaning model across 78 identities, and Settings keeps optional support and legal links outside the core flow. No account, user-generated content, progression, social behavior, or purchase is required.
 
 ## Explicit exclusions
 
@@ -255,6 +258,7 @@ Reference copy describes possibilities, not certainties. It must not diagnose, p
 - `drawnCardIDs`: the first one or three IDs consumed from that order.
 - `faceUpCardIDs`: the subset currently turned over.
 - `phase`: setup, ready to shuffle, ready to draw, in progress, or complete.
+- `lastPreset`: the most recent Home selection for the current app use; it changes no card identity and creates no reading until the deck is tapped.
 
 The reading session, favorite card IDs, and explicit app-language choice are the only durable app-authored product state. `preferredLanguage` is either `en` or `es`, uses stable content IDs, and changes presentation without migrating or rewriting a session. A supporter entitlement is owned and verified through the App Store and may be cached locally for presentation; it is not an account, reading record, or access gate. Focused presentation, selected tab, Learn article, Cards filter, library position, and scroll offsets may reset without data loss.
 
@@ -291,7 +295,7 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - Reading positions, the deck frame, and persistent chrome do not jump during press, cut, interleave, deal, reveal, restoration, or orientation changes; the three-card composition remains mathematically centered horizontally and retains one fixed vertical slot anchor throughout the reading.
 - An interrupted reading resumes with the same order, cards, and face states.
 - Tapping a revealed card opens the correct meaning and returning leaves the table unchanged.
-- A learner can find and finish any of the six guide articles without creating progress state.
+- A learner can find and finish any of the eight tutorials without creating progress state, and can open a matching existing Read preset without creating a new mode.
 - The library displays exactly 78 cards; filters resolve to 22 Major and four groups of 14.
 - Previous and next move only within the active library filter and stop or wrap consistently as defined in the screen map.
 - Every card detail uses the same localized name and reference content as reading context.
@@ -308,7 +312,7 @@ The expanded MVP is release-candidate ready when:
 
 1. `Read`, `Learn`, and `Cards` are implemented from complete registered iPhone references in Ceremonial Obsidian.
 2. One-card and three-card readings work, restore locally, never duplicate a card, and preserve identity secrecy while face down.
-3. The six guide articles are complete, original, available in English and Spanish, bundled, readable offline, and reviewed for non-prescriptive language.
+3. The eight practical tutorials are complete, original, available in English and Spanish, bundled, readable offline, mapped only to the five existing presets, and reviewed for non-prescriptive language and ethical limits.
 4. The content manifest has exactly 78 identities and exactly 78 matching upright-reference records, with no missing or extra `cardID`.
 5. All 78 rights-cleared faces and the shared back are bundled; provenance is documented and no provisional asset is treated as production-ready.
 6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.
@@ -316,7 +320,7 @@ The expanded MVP is release-candidate ready when:
 8. Every visible string and all 78 card references are complete in English and Spanish; the internal selector changes the complete validated language bundle immediately, persists its explicit choice, and preserves all language-neutral IDs and reading state. Core flows work offline, and no account, analytics, notification, or personal-data collection exists.
 9. Settings is accessible from the overlaid Read gear and contains language, support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
 10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
-11. Home and Reading Table use the deck as the single phase-appropriate CTA, keep their required viewport geometry stable, center the completed three-card layout, and implement the professional V-048 press/cut/interleave/deal/flip sequence with an equivalent Reduce Motion path.
+11. Home selects the preset inline and uses the deck to start it directly. Reading Table uses the deck as the phase-appropriate CTA, provides only a small reset secondary action, ends transactionally through Back without confirmation, keeps viewport geometry stable, centers the completed three-card layout, and implements the professional V-048 press/cut/interleave/deal/flip sequence with an equivalent Reduce Motion path.
 12. `Upright meaning` / `Significado al derecho` renders as a semantic heading, never as a button, capsule, toggle, or promise of reversed meanings.
 13. Final implementation captures have been compared with the registered references at matching sizes.
 

@@ -65,7 +65,10 @@ struct TarotDeckInternalApp: App {
                         content: content,
                         languageStore: languageStore,
                         favoriteStore: favoriteStore,
-                        startThreeCardReading: { readModel.requestThreeCardReadingFromLearn() }
+                        startReading: { presetID in
+                            guard let preset = ReadingPreset(rawValue: presetID) else { return }
+                            readModel.requestReadingFromLearn(preset)
+                        }
                     ) { inspectRevealedCard in
                         ReadRootView(
                             model: readModel,

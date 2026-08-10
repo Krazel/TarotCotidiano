@@ -175,12 +175,14 @@ if ($null -ne $guide) {
     Test-TextLength -Value $guide.introduction -Minimum 100 -Maximum 400 -Label 'Guide introduction'
 
     $expectedArticles = @(
-        @{ id = 'start-with-a-question'; title = 'Start with a Question' },
-        @{ id = 'shuffle-and-draw'; title = 'Shuffle and Draw' },
-        @{ id = 'read-one-card'; title = 'Read One Card' },
-        @{ id = 'read-three-cards'; title = 'Read Three Cards' },
-        @{ id = 'notice-symbols-and-patterns'; title = 'Notice Symbols and Patterns' },
-        @{ id = 'build-your-interpretation'; title = 'Build Your Interpretation' }
+        @{ id = 'prepare-a-reading'; title = 'Prepare a Reading'; preset = $null },
+        @{ id = 'one-card-focus'; title = 'One Card Focus'; preset = 'oneCard' },
+        @{ id = 'past-present-possible-direction'; title = 'Past, Present, Possible Direction'; preset = 'pastPresentFuture' },
+        @{ id = 'situation-challenge-guidance'; title = 'Situation, Challenge, Guidance'; preset = 'situationChallengeAdvice' },
+        @{ id = 'you-other-person-connection'; title = 'You, Other Person, Connection'; preset = 'relationship' },
+        @{ id = 'yes-or-no-with-context'; title = 'A Yes-or-No Question, With Context'; preset = 'open' },
+        @{ id = 'open-three-cards'; title = 'Open Three Cards'; preset = 'open' },
+        @{ id = 'read-symbols-whole-spread'; title = 'Read Symbols and the Whole Spread'; preset = $null }
     )
 
     $rootFields = @($guide.PSObject.Properties.Name)
@@ -198,7 +200,7 @@ if ($null -ne $guide) {
         $article = $guide.articles[$index]
         $expected = $expectedArticles[$index]
         $label = "guide.articles[$index]"
-        $allowedArticleFields = @('id', 'order', 'title', 'summary', 'sections')
+        $allowedArticleFields = @('id', 'order', 'title', 'summary', 'readingPresetID', 'sections')
         foreach ($field in @($article.PSObject.Properties.Name)) {
             if ($field -notin $allowedArticleFields) { Add-ValidationError "$label has unexpected field '$field'." }
         }
@@ -209,12 +211,18 @@ if ($null -ne $guide) {
         if ($article.id -cne $expected.id) { Add-ValidationError "$label has unexpected id '$($article.id)'; expected '$($expected.id)'." }
         if ($article.title -cne $expected.title) { Add-ValidationError "$label has unexpected title '$($article.title)'; expected '$($expected.title)'." }
         if ($article.order -ne ($index + 1)) { Add-ValidationError "$label order must be $($index + 1)." }
+        if ($null -eq $expected.preset) {
+            if ($null -ne $article.readingPresetID) { Add-ValidationError "$label must not launch a reading preset." }
+        }
+        elseif ([string]$article.readingPresetID -cne [string]$expected.preset) {
+            Add-ValidationError "$label must map to reading preset '$($expected.preset)'."
+        }
         Test-TextLength -Value $article.summary -Minimum 40 -Maximum 180 -Label "$label summary"
         Test-EnglishEditorialText -Value $article.title -Label "$label title"
         Test-EnglishEditorialText -Value $article.summary -Label "$label summary"
 
-        if (@($article.sections).Count -lt 2 -or @($article.sections).Count -gt 4) {
-            Add-ValidationError "$label must contain 2-4 ordered sections."
+        if (@($article.sections).Count -ne 4) {
+            Add-ValidationError "$label must contain exactly four ordered sections covering purpose/positions, steps, synthesis, and limits."
         }
 
         for ($sectionIndex = 0; $sectionIndex -lt @($article.sections).Count; $sectionIndex++) {
@@ -233,6 +241,26 @@ if ($null -ne $guide) {
 
     Test-EnglishEditorialText -Value $guide.title -Label 'Guide title'
     Test-EnglishEditorialText -Value $guide.introduction -Label 'Guide introduction'
+
+    $yesNoArticle = @($guide.articles | Where-Object id -CEQ 'yes-or-no-with-context')[0]
+    $yesNoText = @($yesNoArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+    foreach ($requiredYesNoCopy in @(
+        'What supports a yes',
+        'What supports a no or a pause',
+        'What to consider before deciding',
+        'Open Three Cards',
+        'leans yes if',
+        'leans no or not yet because',
+        'unclear - more information is needed',
+        'does not classify the cards or calculate a verdict'
+    )) {
+        if (-not $yesNoText.Contains($requiredYesNoCopy)) {
+            Add-ValidationError "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
+        }
+    }
+    if ($yesNoText -match '(?i)universal yes or no values?[^.]*assign|automatic verdict|draw again until') {
+        Add-ValidationError 'Yes-or-no tutorial introduces card classification, an automatic verdict, or answer-seeking redraws.'
+    }
 }
 
 if ($errors.Count -gt 0) {
@@ -242,5 +270,5 @@ if ($errors.Count -gt 0) {
 
 Write-Output 'Education content validation passed.'
 Write-Output 'Canonical card IDs and names: 78/78 exact and ordered.'
-Write-Output 'Upright meanings and unique artwork descriptions: 78/78; beginner guide articles: 6; language: en.'
+Write-Output 'Upright meanings and unique artwork descriptions: 78/78; practical tutorials: 8/8; language: en.'
 exit 0

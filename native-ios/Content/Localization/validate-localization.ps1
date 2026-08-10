@@ -188,27 +188,45 @@ Assert-Unique $artworkDescriptions.ToArray() 'card-meanings artworkDescription'
 Assert-True ([int]$guide.schemaVersion -eq 1) 'beginner-guide schemaVersion must be 1.'
 Assert-True ([string]$guide.language -eq 'es') 'beginner-guide language must be es.'
 $expectedArticleIDs = @(
-    'start-with-a-question',
-    'shuffle-and-draw',
-    'read-one-card',
-    'read-three-cards',
-    'notice-symbols-and-patterns',
-    'build-your-interpretation'
+    'prepare-a-reading',
+    'one-card-focus',
+    'past-present-possible-direction',
+    'situation-challenge-guidance',
+    'you-other-person-connection',
+    'yes-or-no-with-context',
+    'open-three-cards',
+    'read-symbols-whole-spread'
+)
+$expectedPresetIDs = @(
+    $null,
+    'oneCard',
+    'pastPresentFuture',
+    'situationChallengeAdvice',
+    'relationship',
+    'open',
+    'open',
+    $null
 )
 $articles = @($guide.articles)
-Assert-True ($articles.Count -eq 6) 'beginner-guide must contain exactly six articles.'
+Assert-True ($articles.Count -eq 8) 'beginner-guide must contain exactly eight articles.'
 Assert-Text $guide.title 'beginner-guide.title'
 Assert-Text $guide.introduction 'beginner-guide.introduction'
 $userFacingText.Add([string]$guide.title)
 $userFacingText.Add([string]$guide.introduction)
 
-for ($index = 0; $index -lt 6; $index++) {
+for ($index = 0; $index -lt 8; $index++) {
     $article = $articles[$index]
     Assert-True ([string]$article.id -ceq $expectedArticleIDs[$index]) "Article ID/order mismatch at index $index."
     Assert-True ([int]$article.order -eq ($index + 1)) "Article order mismatch for $($article.id)."
+    if ($null -eq $expectedPresetIDs[$index]) {
+        Assert-True ($null -eq $article.readingPresetID) "$($article.id) must not launch a reading preset."
+    }
+    else {
+        Assert-True ([string]$article.readingPresetID -ceq [string]$expectedPresetIDs[$index]) "$($article.id) reading preset mismatch."
+    }
     Assert-Text $article.title "$($article.id).title"
     Assert-Text $article.summary "$($article.id).summary"
-    Assert-True (@($article.sections).Count -gt 0) "$($article.id) must have sections."
+    Assert-True (@($article.sections).Count -eq 4) "$($article.id) must have exactly four sections."
     $userFacingText.Add([string]$article.title)
     $userFacingText.Add([string]$article.summary)
 
@@ -220,16 +238,21 @@ for ($index = 0; $index -lt 6; $index++) {
     }
 }
 
-$threeCardArticle = $articles | Where-Object { $_.id -eq 'read-three-cards' }
-$threeCardText = @($threeCardArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
-foreach ($requiredPreset in @(
-    "Pasado / Presente / Posible direcci$([char]0x00F3)n",
-    "Situaci$([char]0x00F3)n / Reto / Consejo",
-    "T$([char]0x00FA) / La otra persona / V$([char]0x00ED)nculo"
+$yesNoArticle = $articles | Where-Object { $_.id -eq 'yes-or-no-with-context' }
+$yesNoText = @($yesNoArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+foreach ($requiredYesNoCopy in @(
+    [regex]::Unescape('Qu\u00E9 favorece el s\u00ED'),
+    [regex]::Unescape('Qu\u00E9 favorece el no o la pausa'),
+    [regex]::Unescape('Qu\u00E9 considerar antes de decidir'),
+    'Tres cartas abiertas',
+    [regex]::Unescape('se inclina al s\u00ED si'),
+    [regex]::Unescape('se inclina al no o todav\u00EDa no porque'),
+    [regex]::Unescape('no est\u00E1 claro; falta informaci\u00F3n'),
+    'no clasifica las cartas ni calcula un veredicto'
 )) {
-    Assert-True ($threeCardText.Contains($requiredPreset)) "Three-card guide is missing preset: $requiredPreset"
+    Assert-True ($yesNoText.Contains($requiredYesNoCopy)) "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
 }
-Assert-True ($threeCardText -match '(?i)posibilidad') 'Three-card guide must frame results as possibilities.'
+Assert-True ($yesNoText -match '(?i)solo significados al derecho') 'Yes-or-no tutorial must remain upright-only.'
 
 $englishPattern = '(?i)\b(the|and|with|card|reading|question|future|present|past|situation|challenge|guidance|relationship|other person|you)\b'
 $predictivePattern = '(?i)\b(ocurrir\u00E1|suceder\u00E1|pasar\u00E1|garantiza|predice|inevitable|inevitablemente)\b|sin duda|certeza absoluta|tienes que'
@@ -242,4 +265,4 @@ foreach ($value in $userFacingText) {
 Write-Output 'Localization validation passed.'
 Write-Output 'Card copy: 78/78 IDs, names and accessibility labels.'
 Write-Output 'Card meanings: 78/78 records, upright-only, four keywords each.'
-Write-Output 'Beginner guide: 6/6 articles and all three approved spread presets.'
+Write-Output 'Practical tutorials: 8/8, five Read presets mapped, contextual yes-or-no method included.'

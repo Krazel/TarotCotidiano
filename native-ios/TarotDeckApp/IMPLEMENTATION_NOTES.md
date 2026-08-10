@@ -17,11 +17,11 @@ Favorites follows V-042/V-043 without adding a tab or account.
 - `Internal/ReadFlowModel.swift`: one durable reading coordinator plus layout continuity metadata.
 - `Internal/FavoriteCardsStore.swift`: one app-owned set of canonical favorite IDs with versioned atomic JSON persistence.
 - `Screens/Read/ReadViews.swift`: responsive Read Home, Layout Choice and generic One/Three Card table. Empty Home keeps its normal-size non-scrolling V-044 composition, uses a compact fitting variant on small iPhones, and permits scrolling only for accessibility Dynamic Type while the Settings gear remains overlaid.
-- `Screens/Learn/LearnViews.swift`: six-article beginner guide.
+- `Screens/Learn/LearnViews.swift`: eight bilingual practical tutorials using the approved S05/S06 composition, with optional `Try This Reading` mapping to an existing Read preset.
 - `Screens/Cards/CardsViews.swift`: 78-card library, Favorites plus six deck filters, empty Favorites state, upright meaning, non-wrapping previous/next and Dynamic Type-aware one/two-column presentation.
 - `Screens/Settings/SettingsView.swift`: approved Settings index with safe internal-build availability feedback and bundle-derived version display.
 - `Content/AppLocalization.swift`: one persistent iOS 16 language store, language-specific String Catalog lookup and atomic content swapping. English is the String Catalog source language read from the main bundle and does not require a physical `en.lproj`; Spanish requires `es.lproj`. Before commit it resolves every key listed in the versioned runtime interface manifest, so an incomplete language cannot produce a mixed snapshot.
-- `Content/TarotContent.swift`: strict language-explicit 78/78/6 loading and required artwork descriptions.
+- `Content/TarotContent.swift`: strict language-explicit 78/78/8 loading, exact tutorial order/preset parity, and required artwork descriptions.
 - `Resources/required-interface-keys.v1.json`: target-bundled manifest that must exactly match every String Catalog key and is validated for the candidate language before selection commits.
 - `Components/TarotArtworkView.swift`: local hash-verified historical candidates and an explicit `ART PENDING` ceremonial fallback.
 - `Design/CeremonialMotion.swift`: approved iOS 16 press/cut/interleave/settle/deal/flip tokens and post-landing haptics.
@@ -53,6 +53,8 @@ V-048 and `design/tarot-deck/MOTION_SPEC.md` define the live motion language. Re
 Motion observes only the already-published `DeckSession` signature, so a failed save cannot trigger a success haptic or animation. Presentation keeps its own cancellable token and stable visual baseline; the success haptic fires only after settle, landing or flip completion while the scene remains active. Restoration, rotation, backgrounding or leaving the table cancels overlays and establishes the latest committed state without replay. Reduce Motion and VoiceOver replace displacement, scale and 3D turns with short opacity changes; decorative packets and dealt overlays remain hidden from accessibility while the committed position supplies semantics. The implementation uses only SwiftUI/UIKit APIs available on iOS 16 and contains no looping ambience, particles or iOS 17 motion APIs.
 
 ## Artwork boundary
+
+The owner-selected D — Three-Card Fan icon is installed as `Resources/Assets.xcassets/AppIcon.appiconset`. Its single universal iOS rendition is a byte-identical copy of the prepared design master at `design/tarot-deck/app-icon-masters/app-icon-d-three-card-fan-1024.png`: 1024 × 1024, 8-bit opaque sRGB RGB PNG, no alpha/transparency and no baked iOS mask, SHA-256 `FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E`. The generated 1254 × 1254 concept and every other icon concept remain preserved. Both target build configurations use `ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon`; the existing `Assets.xcassets` Resources membership includes the icon set without adding a second catalog reference.
 
 `native-ios/Tools/sync-verified-candidate-assets.ps1` reads `Content/CandidateRWS/local-evidence.v2.json`, verifies each local candidate against recorded SHA-1, bytes and dimensions, and copies it to the single app asset catalog without deleting valid assets. Rerun it whenever the candidate downloader produces a newer evidence snapshot, including at 78 candidates.
 

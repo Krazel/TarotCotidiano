@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LearnIndexView: View {
     let content: TarotContent
-    let startThreeCardReading: () -> Void
+    let startReading: (String) -> Void
 
     var body: some View {
         ZStack {
@@ -16,7 +16,7 @@ struct LearnIndexView: View {
                         NavigationLink {
                             LearnArticleView(
                                 article: article,
-                                startThreeCardReading: startThreeCardReading
+                                startReading: startReading
                             )
                         } label: {
                             LearnArticleRow(
@@ -109,11 +109,14 @@ private struct LearnArticleRow: View {
 
     private var iconName: String {
         switch article.id {
-        case "start-with-a-question": return "sun.max"
-        case "shuffle-and-draw": return "rectangle.stack"
-        case "read-one-card": return "rectangle.portrait"
-        case "read-three-cards": return "rectangle.stack.fill"
-        case "notice-symbols-and-patterns": return "eye"
+        case "prepare-a-reading": return "sun.max"
+        case "one-card-focus": return "rectangle.portrait"
+        case "past-present-possible-direction": return "arrow.right"
+        case "situation-challenge-guidance": return "scope"
+        case "you-other-person-connection": return "person.2"
+        case "yes-or-no-with-context": return "arrow.left.arrow.right"
+        case "open-three-cards": return "rectangle.stack.fill"
+        case "read-symbols-whole-spread": return "eye"
         default: return "text.book.closed"
         }
     }
@@ -121,7 +124,7 @@ private struct LearnArticleRow: View {
 
 struct LearnArticleView: View {
     let article: TarotGuideArticle
-    let startThreeCardReading: () -> Void
+    let startReading: (String) -> Void
 
     var body: some View {
         ZStack {
@@ -131,23 +134,23 @@ struct LearnArticleView: View {
                 VStack(alignment: .leading, spacing: 22) {
                     header
 
-                    if article.id == "read-three-cards" {
-                        threeCardIllustration
+                    if let readingPresetID = article.readingPresetID {
+                        readingIllustration(cardCount: readingPresetID == "oneCard" ? 1 : 3)
                     }
 
                     ForEach(Array(article.sections.enumerated()), id: \.offset) { index, section in
                         articleSection(number: index + 1, section: section)
                     }
 
-                    if article.id == "read-three-cards" {
+                    if let readingPresetID = article.readingPresetID {
                         Button {
-                            startThreeCardReading()
+                            startReading(readingPresetID)
                         } label: {
-                            Label("Try a Three-Card Reading", systemImage: "chevron.right")
+                            Label("Try This Reading", systemImage: "chevron.right")
                                 .labelStyle(.titleAndIcon)
                         }
                         .buttonStyle(CeremonialPrimaryButtonStyle())
-                        .accessibilityHint("Opens a three-card reading or resumes the current reading")
+                        .accessibilityHint("Selects this reading preset or returns to the current reading")
                     }
                 }
                 .frame(maxWidth: 680)
@@ -182,13 +185,14 @@ struct LearnArticleView: View {
         .padding(.bottom, 6)
     }
 
-    private var threeCardIllustration: some View {
+    private func readingIllustration(cardCount: Int) -> some View {
         HStack(spacing: 14) {
-            ForEach(1...3, id: \.self) { position in
+            ForEach(1...cardCount, id: \.self) { position in
                 CeremonialCardBack(
                     spokenLabel: AppLocalization.format(
-                        "Example card %d of 3, face down",
-                        position
+                        "Example card %d of %d, face down",
+                        position,
+                        cardCount
                     )
                 )
                     .frame(maxWidth: 105)

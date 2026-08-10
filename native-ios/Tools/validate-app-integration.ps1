@@ -9,6 +9,51 @@ $projectFile = Join-Path $native.Path "TarotDeck.xcodeproj/project.pbxproj"
 $appRoot = Join-Path $native.Path "TarotDeckApp"
 $contentRoot = Join-Path $native.Path "Content"
 
+function Get-PngMetadata {
+    param([Parameter(Mandatory = $true)][string]$Path)
+
+    $bytes = [IO.File]::ReadAllBytes($Path)
+    $signature = [byte[]](137, 80, 78, 71, 13, 10, 26, 10)
+    if ($bytes.Length -lt 33) { throw "PNG is too short: $Path" }
+    for ($index = 0; $index -lt $signature.Length; $index++) {
+        if ($bytes[$index] -ne $signature[$index]) { throw "Invalid PNG signature: $Path" }
+    }
+
+    $readUInt32BE = {
+        param([byte[]]$Data, [int]$Offset)
+        return [uint32](
+            ([uint32]$Data[$Offset] -shl 24) -bor
+            ([uint32]$Data[$Offset + 1] -shl 16) -bor
+            ([uint32]$Data[$Offset + 2] -shl 8) -bor
+            [uint32]$Data[$Offset + 3]
+        )
+    }
+
+    $chunks = [Collections.Generic.List[string]]::new()
+    $offset = 8
+    while ($offset -le $bytes.Length - 12) {
+        $length = [int](& $readUInt32BE $bytes $offset)
+        if ($length -lt 0 -or $offset + 12 + $length -gt $bytes.Length) {
+            throw "Invalid PNG chunk length: $Path"
+        }
+        $type = [Text.Encoding]::ASCII.GetString($bytes, $offset + 4, 4)
+        $chunks.Add($type)
+        $offset += 12 + $length
+        if ($type -ceq "IEND") { break }
+    }
+    if ($chunks.Count -eq 0 -or $chunks[0] -cne "IHDR" -or $chunks[$chunks.Count - 1] -cne "IEND") {
+        throw "PNG chunk structure is incomplete: $Path"
+    }
+
+    return [pscustomobject]@{
+        Width = [int](& $readUInt32BE $bytes 16)
+        Height = [int](& $readUInt32BE $bytes 20)
+        BitDepth = [int]$bytes[24]
+        ColorType = [int]$bytes[25]
+        Chunks = @($chunks)
+    }
+}
+
 $deck = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "tarot-deck.v1.json") | ConvertFrom-Json
 $meanings = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Education/card-meanings.v1.json") | ConvertFrom-Json
 $guide = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Education/beginner-guide.v1.json") | ConvertFrom-Json
@@ -18,15 +63,30 @@ $spanishGuide = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Localizat
 
 if ($deck.cards.Count -ne 78) { throw "Deck must contain 78 cards." }
 if ($meanings.cards.Count -ne 78) { throw "Meanings must contain 78 cards." }
-if ($guide.articles.Count -ne 6) { throw "Guide must contain 6 articles." }
+if ($guide.articles.Count -ne 8) { throw "Guide must contain 8 tutorials." }
 if ($spanishCopy.language -cne "es" -or $spanishCopy.cards.Count -ne 78) {
     throw "Spanish card copy must contain exactly 78 records."
 }
 if ($spanishMeanings.language -cne "es" -or $spanishMeanings.cards.Count -ne 78) {
     throw "Spanish meanings must contain exactly 78 records."
 }
-if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 6) {
-    throw "Spanish guide must contain exactly 6 articles."
+if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 8) {
+    throw "Spanish guide must contain exactly 8 tutorials."
+}
+$expectedGuideIDs = @(
+    "prepare-a-reading",
+    "one-card-focus",
+    "past-present-possible-direction",
+    "situation-challenge-guidance",
+    "you-other-person-connection",
+    "yes-or-no-with-context",
+    "open-three-cards",
+    "read-symbols-whole-spread"
+)
+if (@(Compare-Object $expectedGuideIDs @($guide.articles.id)).Count -gt 0 -or
+    @(Compare-Object @($guide.articles.id) @($spanishGuide.articles.id)).Count -gt 0 -or
+    (@($guide.articles.readingPresetID) -join '|') -cne (@($spanishGuide.articles.readingPresetID) -join '|')) {
+    throw "English and Spanish tutorial IDs or preset mappings are incomplete or inconsistent."
 }
 
 $missingArtworkDescriptions = @($meanings.cards | Where-Object {
@@ -64,6 +124,7 @@ $requiredSources = @(
     "FavoriteCardsStore.swift"
 )
 $requiredResources = @(
+    "Assets.xcassets in Resources",
     "tarot-deck.v1.json in Resources",
     "card-meanings.v1.json in Resources",
     "beginner-guide.v1.json in Resources",
@@ -83,6 +144,48 @@ foreach ($resource in $requiredResources) {
     if ($project -notmatch [regex]::Escape($resource)) {
         throw "$resource is missing from the app target Resources phase."
     }
+}
+if ([regex]::Matches($project, '(?m)^\s*ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;\s*$').Count -ne 2) {
+    throw "Debug and Release must both select the AppIcon asset catalog set."
+}
+
+$approvedIconSource = Join-Path $native.Path "../design/tarot-deck/app-icon-concepts/app-icon-d-three-card-fan.png"
+$appIconMaster = Join-Path $native.Path "../design/tarot-deck/app-icon-masters/app-icon-d-three-card-fan-1024.png"
+$appIconSet = Join-Path $appRoot "Resources/Assets.xcassets/AppIcon.appiconset"
+$appIconAsset = Join-Path $appIconSet "AppIcon-1024.png"
+$appIconContentsPath = Join-Path $appIconSet "Contents.json"
+$approvedIconSourceSHA256 = "7F2DC4CE3A0A70DC9626D1C5FE9CF482CCB336DBD0971B7E8255771167031163"
+$appIconSHA256 = "FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E"
+foreach ($iconPath in @($approvedIconSource, $appIconMaster, $appIconAsset, $appIconContentsPath)) {
+    if (-not (Test-Path -LiteralPath $iconPath -PathType Leaf)) {
+        throw "Required approved AppIcon file is missing: $iconPath"
+    }
+}
+if ((Get-FileHash -LiteralPath $approvedIconSource -Algorithm SHA256).Hash -cne $approvedIconSourceSHA256) {
+    throw "The approved D icon concept changed."
+}
+foreach ($rendition in @($appIconMaster, $appIconAsset)) {
+    if ((Get-FileHash -LiteralPath $rendition -Algorithm SHA256).Hash -cne $appIconSHA256) {
+        throw "The prepared D AppIcon rendition hash changed: $rendition"
+    }
+    $png = Get-PngMetadata -Path $rendition
+    if ($png.Width -ne 1024 -or $png.Height -ne 1024 -or $png.BitDepth -ne 8 -or $png.ColorType -ne 2) {
+        throw "AppIcon must be a 1024x1024 8-bit opaque RGB PNG: $rendition"
+    }
+    if ($png.Chunks -notcontains "sRGB" -or $png.Chunks -contains "tRNS") {
+        throw "AppIcon must declare sRGB and contain no transparency: $rendition"
+    }
+}
+$appIconContents = Get-Content -Raw -LiteralPath $appIconContentsPath | ConvertFrom-Json
+$appIconImages = @($appIconContents.images)
+if ($appIconImages.Count -ne 1 -or
+    [string]$appIconImages[0].filename -cne "AppIcon-1024.png" -or
+    [string]$appIconImages[0].idiom -cne "universal" -or
+    [string]$appIconImages[0].platform -cne "ios" -or
+    [string]$appIconImages[0].size -cne "1024x1024" -or
+    [string]$appIconContents.info.author -cne "xcode" -or
+    [int]$appIconContents.info.version -ne 1) {
+    throw "AppIcon Contents.json does not define the single universal 1024x1024 iOS rendition."
 }
 if ($project -match [regex]::Escape("ProvisionalApprovedReadingHarness.swift in Sources")) {
     throw "The superseded provisional reading harness remains in the app target."
@@ -154,6 +257,8 @@ foreach ($check in $artworkIntegrationChecks) {
 $contentSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Content/TarotContent.swift")
 if ($contentSource -cnotmatch [regex]::Escape("static func load(language: AppLanguage, bundle: Bundle = .main)") -or
     $contentSource -cnotmatch [regex]::Escape("guard language == .spanish else { return english }") -or
+    $contentSource -cnotmatch [regex]::Escape("private static let expectedGuideIDs") -or
+    $contentSource -cnotmatch [regex]::Escape("guideIsValid(spanishGuide.articles)") -or
     $contentSource -cnotmatch [regex]::Escape("throw TarotContentLoadError.invalidLocalizedContent") -or
     ([regex]::Matches($contentSource, [regex]::Escape("return english"))).Count -ne 1) {
     throw "Spanish loading must be bundle-aware, atomic, and fail rather than mix languages."
@@ -216,6 +321,7 @@ foreach ($record in $verifiedRecords) {
 }
 
 $readSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Read/ReadViews.swift")
+$activeReadSource = [regex]::Replace($readSource, '(?s)#if false.*?#endif', '')
 $readModelSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/ReadFlowModel.swift")
 if ("$readSource`n$readModelSource" -match '\b(print|debugPrint|NSLog|Logger|os_log)\s*\(') {
     throw "Read implementation contains logging that could expose session state."
@@ -233,13 +339,15 @@ $requiredRecoveryContracts = @(
     "knownCardIDs == canonicalCardIDs",
     "presentIssue",
     "retryIssue",
-    "requestThreeCardReadingFromLearn"
-    "case spreadChoice"
-    "enum ThreeCardSpread"
-    "case pastPresentFuture"
-    "case situationChallengeAdvice"
-    "case relationship"
-    "case open"
+    "requestReadingFromLearn",
+    "enum ThreeCardSpread",
+    "enum ReadingPreset",
+    "case resetting",
+    "selectedPreset: ReadingPreset = .pastPresentFuture",
+    "startSelectedPreset",
+    "func leaveTable()",
+    "func resetReading()",
+    "canPrepareAnotherReading"
 )
 foreach ($contract in $requiredRecoveryContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
@@ -251,11 +359,35 @@ $sessionWrite = $readModelSource.IndexOf("self.coordinator.startSession()")
 if ($readyWrite -lt 0 -or $sessionWrite -lt 0 -or $readyWrite -gt $sessionWrite) {
     throw "The ready continuity record must be persisted before startSession."
 }
+$leaveStart = $readModelSource.IndexOf("func leaveTable()")
+$leaveSessionClear = $readModelSource.IndexOf("try await self.coordinator.clearSession()", $leaveStart)
+$leaveContinuityClear = $readModelSource.IndexOf("try self.continuityStore.clear()", $leaveSessionClear)
+$leavePublishHome = $readModelSource.IndexOf("self.resetToHome()", $leaveContinuityClear)
+if ($leaveStart -lt 0 -or $leaveSessionClear -lt 0 -or $leaveContinuityClear -lt 0 -or
+    $leavePublishHome -lt 0 -or $leaveSessionClear -gt $leaveContinuityClear -or
+    $leaveContinuityClear -gt $leavePublishHome) {
+    throw "Back must clear durable session/continuity before publishing Home."
+}
+$resetStart = $readModelSource.IndexOf("func resetReading()")
+$resetIntent = $readModelSource.IndexOf(".resetting(", $resetStart)
+$resetSessionClear = $readModelSource.IndexOf("try await self.coordinator.clearSession()", $resetIntent)
+$resetReady = $readModelSource.IndexOf("try self.continuityStore.save(.ready(layout, spread: currentSpread))", $resetSessionClear)
+$resetPublish = $readModelSource.IndexOf("self.session = nil", $resetReady)
+if ($resetStart -lt 0 -or $resetIntent -lt 0 -or $resetSessionClear -lt 0 -or
+    $resetReady -lt 0 -or $resetPublish -lt 0 -or $resetIntent -gt $resetSessionClear -or
+    $resetSessionClear -gt $resetReady -or $resetReady -gt $resetPublish) {
+    throw "Reset must persist intent, clear the session, persist ready state, then publish UI."
+}
 $shellSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckMainShell.swift")
 $appSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckInternalApp.swift")
-if ($shellSource -cnotmatch [regex]::Escape("startThreeCardReading()") -or
-    $appSource -cnotmatch [regex]::Escape("readModel.requestThreeCardReadingFromLearn()")) {
-    throw "The Learn three-card CTA is not connected to ReadFlowModel."
+if ($shellSource -cnotmatch [regex]::Escape("startReading(presetID)") -or
+    $appSource -cnotmatch [regex]::Escape("readModel.requestReadingFromLearn(preset)")) {
+    throw "Learn preset CTAs are not connected to ReadFlowModel."
+}
+if ($readModelSource -cnotmatch [regex]::Escape("else if layout == nil") -or
+    $readModelSource -cnotmatch [regex]::Escape("selectedPreset = preset") -or
+    $readModelSource -match 'requestReadingFromLearn(?s).*?(layoutChoice|spreadChoice)') {
+    throw "Learn CTAs must preselect an existing preset or prepare it directly without a choice screen."
 }
 if ($readModelSource -match '\bUserDefaults\b' -or
     $readModelSource -cnotmatch [regex]::Escape("options: .atomic") -or
@@ -263,14 +395,14 @@ if ($readModelSource -match '\bUserDefaults\b' -or
     $appSource -cnotmatch [regex]::Escape('reading-continuity.v1.json')) {
     throw "Reading continuity must use a distinct atomic JSON sidecar next to the active session."
 }
-if ($readModelSource -cnotmatch [regex]::Escape("pendingReplacementLayout = .threeCards") -or
-    $readModelSource -cnotmatch [regex]::Escape("layout == .threeCards")) {
-    throw "The Learn CTA does not distinguish resumable Three Cards from confirmed replacement."
+if ($readModelSource -match 'case\s+(layoutChoice|spreadChoice)\b|pendingReplacement|showsReplace|showsEndReading|requestEndReading|confirmEndReading' -or
+    $activeReadSource -match 'LayoutChoiceView|ThreeCardSpreadChoiceView|activeHome|End Reading|Start a new reading\?') {
+    throw "A-033 retired setup, replacement, active-Home, or End Reading behavior is still user-facing."
 }
-if ($readSource -cnotmatch [regex]::Escape("ThreeCardSpreadChoiceView") -or
-    $readSource -cnotmatch [regex]::Escape("let railWidth = min(max(size.width * 0.22, 154), 200)") -or
-    $readSource -cnotmatch [regex]::Escape("let groupWidth = cardWidth * count + gap * max(count - 1, 0)")) {
-    throw "Named spread selection or the approved large landscape table is missing."
+if ($activeReadSource -cnotmatch [regex]::Escape("ReadingPresetCarousel") -or
+    $activeReadSource -cnotmatch [regex]::Escape("let railWidth = min(max(size.width * 0.22, 154), 200)") -or
+    $activeReadSource -cnotmatch [regex]::Escape("let groupWidth = cardWidth * count + gap * max(count - 1, 0)")) {
+    throw "The direct visual preset selector or the approved large landscape table is missing."
 }
 
 $motionSourcePath = Join-Path $appRoot "Design/CeremonialMotion.swift"
@@ -325,6 +457,21 @@ foreach ($entry in $a031VisualReferences.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
         (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
         throw "An approved A-031 visual reference is absent or changed: $($entry.Key)"
+    }
+}
+
+$a033VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/read-home-visual-preset-carousel-spanish-a-ceremonial-obsidian.png") = "8D02A2AF9BFB395B8DE9998FC55203C9B571A9CBE7E2C7A36C93A3B16E1B1682"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-visual-preset-carousel-landscape-spanish-a-ceremonial-obsidian.png") = "F454660DDB68388A1FCC408806A86762F15283C71CAC30548B151D63F2F4040A"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-quick-restart-all-revealed-spanish-a-ceremonial-obsidian.png") = "D30E951A91CE53049D5871E964DB05D4E9215B59BCECED12C159CA63E4E777E9"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-quick-restart-landscape-spanish-a-ceremonial-obsidian.png") = "1A7749728BA62E51D1E2F75463B077329E9397AA04E30C856998E04FE242FE10"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-one-card-quick-restart-spanish-a-ceremonial-obsidian.png") = "EDFCDC1C87D5F9D32194A58B7AD2F82862DAE9080467E4B44612DC2041628BF4"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-one-card-quick-restart-landscape-spanish-a-ceremonial-obsidian.png") = "B6591843EB4670CACEBE297D8D8836411C8FF9CAD52321120B6795CA1DC9A7FB"
+}
+foreach ($entry in $a033VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "An approved A-033 visual reference is absent or changed: $($entry.Key)"
     }
 }
 
@@ -407,36 +554,43 @@ foreach ($contract in $settingsLanguageContracts) {
     }
 }
 
-$homeStart = $readSource.IndexOf("private struct ReadHomeView")
-$homeEnd = $readSource.IndexOf("private struct LayoutChoiceView")
+$homeStart = $activeReadSource.IndexOf("private struct ReadHomeView")
+$homeEnd = $activeReadSource.IndexOf("private struct ReadingTableView")
 if ($homeStart -lt 0 -or $homeEnd -le $homeStart) {
     throw "Read Home source boundaries could not be validated."
 }
-$homeSource = $readSource.Substring($homeStart, $homeEnd - $homeStart)
+$homeSource = $activeReadSource.Substring($homeStart, $homeEnd - $homeStart)
 $emptyStart = $homeSource.IndexOf("private var emptyHome")
-$activeStart = $homeSource.IndexOf("private func activeHome")
-if ($emptyStart -lt 0 -or $activeStart -le $emptyStart -or
+if ($emptyStart -lt 0 -or
     $homeSource -cnotmatch [regex]::Escape('Button(action: openSettings)') -or
     $homeSource -cnotmatch [regex]::Escape('homeControlClearance: CGFloat = 64') -or
-    $homeSource -cnotmatch [regex]::Escape('width: homeControlClearance') -or
-    $homeSource -cnotmatch [regex]::Escape('height: homeControlClearance') -or
     $homeSource -cnotmatch [regex]::Escape('if dynamicTypeSize.isAccessibilitySize') -or
     $homeSource -cnotmatch [regex]::Escape('ViewThatFits(in: .vertical)') -or
-    $homeSource -cnotmatch [regex]::Escape('emptyHomeComposition(deckWidth:') -or
+    $homeSource -cnotmatch [regex]::Escape('ReadingPresetCarousel') -or
+    $homeSource -cnotmatch [regex]::Escape('ScrollView') -or
+    $homeSource -cnotmatch [regex]::Escape('DragGesture(minimumDistance: 12)') -or
+    $homeSource -cnotmatch [regex]::Escape('predictedEndTranslation.width') -or
+    $homeSource -cnotmatch [regex]::Escape('.accessibilityAdjustableAction') -or
+    $homeSource -cnotmatch [regex]::Escape('.accessibilityAddTraits(selected ? .isSelected : [])') -or
+    $homeSource -cnotmatch [regex]::Escape('model.startSelectedPreset()') -or
     $homeSource -cnotmatch [regex]::Escape('Text("Tap the deck to begin")') -or
     $homeSource -cnotmatch [regex]::Escape('.accessibilityLabel("Start a Reading")') -or
     $homeSource -match [regex]::Escape('.accessibilityLabel("Complete 78-card tarot deck")')) {
-    throw "V-044 Home must keep a fitted non-scrolling normal state, an accessibility-safe fallback, an overlaid gear, and one deck CTA."
+    throw "V-054/V-055 Home must keep its fixed visual carousel, direct/adjustable accessibility, overlaid gear, and one deck CTA."
 }
-$homeClearanceBand = $homeSource.IndexOf("width: homeControlClearance")
+if ($homeSource -match '\bMenu\s*\{|\bList\s*\{' -or
+    $homeSource -match 'ScrollView\s*\(\s*\.vertical') {
+    throw "A-033 Home must not expose a dropdown or vertical preset list."
+}
 $homeAccessibilityScroll = $homeSource.IndexOf("ScrollView", $homeSource.IndexOf("if dynamicTypeSize.isAccessibilitySize"))
-if ($homeClearanceBand -lt 0 -or $homeAccessibilityScroll -le $homeClearanceBand) {
-    throw "V-044 must reserve its 64-point top-trailing control band before scrollable content."
+$homeAccessibilityClearance = $homeSource.IndexOf(".padding(.top, homeControlClearance)", $homeAccessibilityScroll)
+if ($homeAccessibilityScroll -lt 0 -or $homeAccessibilityClearance -le $homeAccessibilityScroll) {
+    throw "Home must reserve its 64-point top control clearance before accessibility-size content."
 }
 
-$readingTableStart = $readSource.IndexOf("private struct ReadingTableView")
-$readingTableEnd = $readSource.IndexOf("private enum ReadingMotionAnchor")
-$readingTableSource = $readSource.Substring($readingTableStart, $readingTableEnd - $readingTableStart)
+$readingTableStart = $activeReadSource.IndexOf("private struct ReadingTableView")
+$readingTableEnd = $activeReadSource.IndexOf("private enum ReadingMotionAnchor")
+$readingTableSource = $activeReadSource.Substring($readingTableStart, $readingTableEnd - $readingTableStart)
 $readingContracts = @(
     "ReadingMotionAnchorPreferenceKey",
     "anchorPreference",
@@ -455,14 +609,20 @@ $readingContracts = @(
     ".disabled(interactionLocked || !canUseDeck)",
     "proxy.size.height * 0.34",
     "Tap the deck to shuffle.",
-    "Tap the deck to draw."
+    "Tap the deck to draw.",
+    "Tap the deck for another reading.",
+    "model.canPrepareAnotherReading",
+    "model.resetReading()",
+    "cancelTransientMotion(establishing: visualState)",
+    ".frame(width: 44, height: 44)",
+    "Reset Reading"
 )
 foreach ($contract in $readingContracts) {
     if ($readingTableSource -cnotmatch [regex]::Escape($contract)) {
         throw "V-048 reading-table contract is missing: $contract"
     }
 }
-if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"') {
+if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("End Reading"|requestEndReading') {
     throw "The reading table still contains a duplicate primary shuffle/draw CTA."
 }
 if ($readingTableSource -match 'sin\(\.pi \* dealProgress\)|let firstHalf = min\(progress \* 2') {
@@ -596,7 +756,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.1"'
+    'fallbackVersion = "0.2"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -625,23 +785,39 @@ if ($learnSource -match '\.font\(\.system\(size:\s*52\b' -or
     $learnSource -cnotmatch [regex]::Escape("lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 3)")) {
     throw "Learn Dynamic Type adaptations are missing."
 }
+$requiredLearnContracts = @(
+    "article.readingPresetID",
+    "Try This Reading",
+    "startReading(readingPresetID)",
+    "Example card %d of %d, face down",
+    "Selects this reading preset or returns to the current reading"
+)
+foreach ($contract in $requiredLearnContracts) {
+    if ($learnSource -cnotmatch [regex]::Escape($contract)) {
+        throw "A-034 Learn integration contract is missing: $contract"
+    }
+}
+if ($learnSource -match 'Try a Three-Card Reading|article\.id\s*==\s*"read-three-cards"') {
+    throw "Learn still contains the retired generic three-card tutorial CTA."
+}
 $artworkSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Components/TarotArtworkView.swift")
 if ($readSource -match '\.font\(\.system\(size:\s*50\b' -or
     $artworkSource -cnotmatch [regex]::Escape("lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 3)")) {
     throw "Read or artwork Dynamic Type adaptations are missing."
 }
 $requiredReadCopy = @(
-    "Start a new reading?",
-    "Your current reading will be cleared.",
-    "Start New Reading",
-    "Keep Current Reading",
-    "End this reading?",
-    "The cards will return to the deck. This reading won't be saved.",
-    "End Reading",
-    "Keep Reading"
+    "Start a Reading",
+    "Reading preset",
+    "Selects this reading preset",
+    "Reset Reading",
+    "Clears the cards and keeps this reading preset",
+    "Ends this reading and returns to Read home",
+    "Complete deck, ready for another reading",
+    "Starts another reading with the same preset",
+    "Tap the deck for another reading."
 )
 foreach ($copy in $requiredReadCopy) {
-    if ($readSource -cnotmatch [regex]::Escape($copy)) {
+    if ($activeReadSource -cnotmatch [regex]::Escape($copy)) {
         throw "Required approved Read copy is missing: $copy"
     }
 }
@@ -680,4 +856,4 @@ if ($ReleaseGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot: atomic English/Spanish selection, complete localized UI/content and printf parity, compact Home, opaque tab bar, one deck CTA, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, upright editorial heading, local atomic favorites, 78 cards and 6 guide articles per language, approved A-031 visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.2 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-054/V-055 direct visual preset carousel, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards and 8 practical tutorials per language, approved A-031/A-033 visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

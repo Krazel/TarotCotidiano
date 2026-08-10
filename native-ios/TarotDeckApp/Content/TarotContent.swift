@@ -101,6 +101,7 @@ struct TarotGuideArticle: Decodable, Identifiable, Hashable {
     let order: Int
     let title: String
     let summary: String
+    let readingPresetID: String?
     let sections: [Section]
 }
 
@@ -140,7 +141,7 @@ enum TarotContentLoadError: LocalizedError {
         case .missingArtworkDescriptions:
             return AppLocalization.text("Every card meaning requires an artwork description.")
         case .invalidGuideCount(let count):
-            return AppLocalization.format("Expected 6 guide articles, found %d.", count)
+            return AppLocalization.format("Expected 8 guide articles, found %d.", count)
         case .mismatchedCardIDs:
             return AppLocalization.text("The deck and meaning card identifiers do not match.")
         case .invalidLocalizedContent:
@@ -150,6 +151,24 @@ enum TarotContentLoadError: LocalizedError {
 }
 
 enum TarotContentLoader {
+    private static let expectedGuideIDs = [
+        "prepare-a-reading",
+        "one-card-focus",
+        "past-present-possible-direction",
+        "situation-challenge-guidance",
+        "you-other-person-connection",
+        "yes-or-no-with-context",
+        "open-three-cards",
+        "read-symbols-whole-spread"
+    ]
+    private static let allowedReadingPresetIDs: Set<String> = [
+        "oneCard",
+        "pastPresentFuture",
+        "situationChallengeAdvice",
+        "relationship",
+        "open"
+    ]
+
     private struct DeckDocument: Decodable {
         let cards: [TarotCardRecord]
     }
@@ -198,8 +217,11 @@ enum TarotContentLoader {
         }) else {
             throw TarotContentLoadError.missingArtworkDescriptions
         }
-        guard guide.articles.count == 6 else {
+        guard guide.articles.count == expectedGuideIDs.count else {
             throw TarotContentLoadError.invalidGuideCount(guide.articles.count)
+        }
+        guard guideIsValid(guide.articles) else {
+            throw TarotContentLoadError.invalidLocalizedContent
         }
 
         guard Set(deck.cards.map(\.id)).count == deck.cards.count,
@@ -246,7 +268,13 @@ enum TarotContentLoader {
             guard copy.language == "es",
                   copy.cards.count == 78,
                   spanishMeanings.cards.count == 78,
-                  spanishGuide.articles.count == 6 else {
+                  spanishGuide.articles.count == expectedGuideIDs.count,
+                  guideIsValid(spanishGuide.articles),
+                  zip(guide.articles, spanishGuide.articles).allSatisfy({ english, spanish in
+                      english.id == spanish.id
+                        && english.order == spanish.order
+                        && english.readingPresetID == spanish.readingPresetID
+                  }) else {
                 throw TarotContentLoadError.invalidLocalizedContent
             }
 
@@ -289,5 +317,23 @@ enum TarotContentLoader {
             throw TarotContentLoadError.missingResource("\(name).json")
         }
         return try decoder.decode(T.self, from: Data(contentsOf: url))
+    }
+
+    private static func guideIsValid(_ articles: [TarotGuideArticle]) -> Bool {
+        let ordered = articles.sorted { $0.order < $1.order }
+        guard ordered.map(\.id) == expectedGuideIDs,
+              ordered.map(\.order) == Array(1...expectedGuideIDs.count),
+              Set(ordered.map(\.id)).count == expectedGuideIDs.count else {
+            return false
+        }
+
+        return ordered.allSatisfy { article in
+            article.sections.count == 4
+                && article.sections.allSatisfy {
+                    !$0.heading.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        && !$0.body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                }
+                && article.readingPresetID.map(allowedReadingPresetIDs.contains) != false
+        }
     }
 }

@@ -1,119 +1,207 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "1.0.0",
+  "contentVersion": "2.0.0",
   "language": "es",
   "title": "Aprende a leer el tarot",
-  "introduction": "Una guía sencilla para leer las cartas a tu manera. El tarot ofrece imágenes y temas para reflexionar; tú sigues siendo responsable de la pregunta, de las conexiones que estableces y del sentido que extraes de la tirada.",
+  "introduction": "Ocho tutoriales prácticos te ayudan a preparar la lectura, elegir una tirada, interpretar cada posición, relacionar las cartas y cerrar con cuidado. No existe un único método oficial: estas lecciones distinguen tradición documentada, práctica moderna extendida y adaptaciones editoriales responsables.",
   "articles": [
     {
-      "id": "start-with-a-question",
+      "id": "prepare-a-reading",
       "order": 1,
-      "title": "Empieza con una pregunta",
-      "summary": "Formula una pregunta abierta y útil, y prepara un espacio tranquilo para la tirada.",
+      "title": "Preparar una lectura",
+      "summary": "Define una pregunta útil, elige las posiciones antes de barajar y crea un proceso sencillo que puedas repetir.",
+      "readingPresetID": null,
       "sections": [
         {
-          "heading": "El tarot como herramienta de reflexión",
-          "body": "Una baraja de tarot estándar tiene 78 cartas: 22 Arcanos Mayores y 56 Arcanos Menores. Los Mayores suelen enmarcar grandes cambios o aprendizajes, mientras que los Menores suelen hablar de acciones cotidianas, sentimientos, pensamientos y asuntos prácticos. Cada carta ofrece símbolos y temas que pueden ayudarte a reflexionar. Una tirada es una interpretación, no una respuesta fija ni un hecho demostrado, y tu contexto importa más que memorizar una única definición perfecta."
+          "heading": "Propósito y contexto",
+          "body": "El tarot nació como juego de cartas y sus prácticas de lectura aparecieron después de formas muy diversas. Elegir una pregunta antes de barajar y decidir previamente la disposición forman parte de métodos históricos documentados. El lenguaje tranquilo y reflexivo de esta guía es una adaptación editorial moderna, no un ritual obligatorio ni un sistema oficial."
         },
         {
-          "heading": "Formula la pregunta",
-          "body": "Elige una pregunta que deje espacio para reflexionar. Las que empiezan por qué, dónde o cómo suelen resultar más útiles que pedir un sí o un no inamovible. Procura que sea sencilla y se centre en lo que puedes comprender o influir, en lugar de intentar establecer hechos sobre otra persona."
+          "heading": "Elige antes de barajar",
+          "body": "Esta lección de preparación no tiene posiciones. Elige Una carta o una de las cuatro tiradas de tres cartas. Si la tirada asigna funciones, léelas antes de empezar y no las cambies. Formula una pregunta concreta sobre algo que puedas comprender o influir; la aplicación no te pide que la escribas ni la guarda."
         },
         {
-          "heading": "Prepara la tirada",
-          "body": "Busca un momento tranquilo, decide si quieres una carta o tres y mantén la misma pregunta durante toda la tirada. No necesitas introducir ni guardar la pregunta en la app. Considera la lectura como una perspectiva que puede ayudarte a pensar, no como una instrucción obligatoria."
+          "heading": "Prepara la lectura paso a paso",
+          "body": "1. Busca un momento en el que puedas prestar atención. 2. Expresa una pregunta con palabras sencillas. 3. Elige la tirada y fija sus posiciones. 4. Baraja manteniendo el tema presente y detente cuando estés listo. 5. Saca las cartas en orden. 6. Observa cada imagen antes de consultar su significado. No necesitas objetos, tiempos ni ceremonias especiales."
+        },
+        {
+          "heading": "Lee el conjunto y cierra",
+          "body": "Con una carta, relaciona la imagen, una palabra clave y la pregunta. Con tres, lee primero cada posición y después busca una relación en el conjunto. Cierra con una frase como «Una posibilidad que puedo considerar es…». El tarot invita a reflexionar: no es una prueba, una orden ni un sustituto de información fiable o ayuda cualificada."
         }
       ]
     },
     {
-      "id": "shuffle-and-draw",
+      "id": "one-card-focus",
       "order": 2,
-      "title": "Baraja y saca cartas",
-      "summary": "Prepara la baraja, mézclala pensando en tu pregunta y revela cada carta de forma consciente.",
+      "title": "Enfoque de una carta",
+      "summary": "Usa una sola carta para explorar qué merece atención ahora sin forzar una respuesta completa.",
+      "readingPresetID": "oneCard",
       "sections": [
         {
-          "heading": "Baraja con intención",
-          "body": "Mantén la pregunta en mente y baraja hasta que te sientas preparado. No hay un ritual obligatorio ni una duración correcta. Al barajar se crea un orden nuevo para la baraja completa; la app no decide por ello qué significan las cartas."
+          "heading": "Propósito y posición",
+          "body": "Es una práctica moderna extendida, no una tirada histórica canónica. Su única posición es: ¿Qué merece atención ahora? Úsala para centrar una reflexión, explorar una cualidad que podrías necesitar o descubrir una perspectiva que quizá pasas por alto. Una sola imagen puede aportar un enfoque útil sin explicar toda la situación."
         },
         {
-          "heading": "Saca cada carta con atención",
-          "body": "Saca las cartas de una en una. Se colocan boca abajo para que puedas revelarlas conscientemente y en el orden que mejor te ayude a concentrarte. Usa la misma pregunta para todas las cartas y, antes de consultar un significado, detente a observar tu primera reacción ante la imagen."
+          "heading": "Saca una carta",
+          "body": "1. Formula una pregunta centrada en el momento actual. 2. Elige Una carta y baraja. 3. Saca la carta y dale la vuelta. 4. Describe el primer detalle visible que te atrae. 5. Elige una palabra clave y consulta después el significado al derecho. 6. Pregunta cómo se relacionan ese detalle y esa palabra con la situación que realmente conoces."
+        },
+        {
+          "heading": "Construye la interpretación",
+          "body": "Relaciona la imagen, la palabra clave, el significado de referencia y tu pregunta. Completa una frase: «Una posibilidad es…». Añade después una pregunta amable o una acción pequeña que podrías considerar. Si aparecen dos ideas posibles, conserva ambas en lugar de obligar a la carta a dar una sola respuesta."
+        },
+        {
+          "heading": "Cierra con cuidado",
+          "body": "Detente tras esa carta en vez de sacar más hasta encontrar la respuesta deseada. La carta no demuestra hechos, no fija el resultado ni te obliga a actuar. Para decisiones importantes de salud, asuntos jurídicos, dinero o seguridad, apóyate en información adecuada y personas cualificadas, no en una lectura de tarot."
         }
       ]
     },
     {
-      "id": "read-one-card",
+      "id": "past-present-possible-direction",
       "order": 3,
-      "title": "Lee una carta",
-      "summary": "Combina una imagen, unas pocas palabras clave y tu contexto para formar una reflexión clara.",
+      "title": "Pasado, presente, posible dirección",
+      "summary": "Explora cómo evolucionó una situación, qué está activo ahora y hacia dónde podría avanzar el patrón actual.",
+      "readingPresetID": "pastPresentFuture",
       "sections": [
         {
-          "heading": "Obtén una instantánea clara",
-          "body": "Una tirada de una carta ofrece una visión concentrada. Pregunta qué merece atención, qué cualidad podría ayudar o qué perspectiva quizá estés pasando por alto. La carta no necesita responder a todos los aspectos de la situación."
+          "heading": "Propósito y posiciones",
+          "body": "Las secuencias temporales de tres cartas son una práctica moderna reconocible. Nuestra tercera posición usa lenguaje condicional y no promete un futuro fijo. Las posiciones son: 1. Influencia pasada. 2. Situación presente. 3. Posible dirección si continúa el patrón actual. Define el tema y, si resulta útil, un periodo antes de barajar."
         },
         {
-          "heading": "Relaciona imagen y contexto",
-          "body": "Nombra el primer detalle que atraiga tu atención y elige después una palabra clave que encaje con tu situación. Consulta el significado de referencia tras hacer tu propia observación. Termina relacionando una idea útil con la pregunta, sin forzar una respuesta total o segura."
+          "heading": "Lee de izquierda a derecha",
+          "body": "1. Saca tres cartas de izquierda a derecha. 2. Lee la primera como una influencia que ayudó a formar la situación, no como una historia completa. 3. Lee la segunda como lo que está activo ahora. 4. Lee la tercera solo como una dirección que el patrón actual podría favorecer. 5. Mantén cada carta unida a su posición antes de combinarlas."
+        },
+        {
+          "heading": "Lee la secuencia",
+          "body": "Busca qué continúa, cambia o se contradice entre las tres posiciones. Observa si una imagen, palo, número, ambiente o movimiento se desarrolla de la primera carta a la última. Resume de forma condicional: «Esto podría avanzar hacia… si continúa el patrón actual», y nombra qué podría modificar esa dirección."
+        },
+        {
+          "heading": "Cierra con una posibilidad",
+          "body": "Conserva una relación útil y deja abierto lo demás. La carta del pasado no cuenta toda la historia, la del presente no es un diagnóstico objetivo y la última no marca el destino. Nuevas decisiones, otras personas e información que no aparece en la tirada pueden cambiar lo que suceda después."
         }
       ]
     },
     {
-      "id": "read-three-cards",
+      "id": "situation-challenge-guidance",
       "order": 4,
-      "title": "Lee tres cartas",
-      "summary": "Elige una tirada libre o un esquema de tres posiciones y lee las cartas primero por separado y después en conjunto.",
+      "title": "Situación, reto, orientación",
+      "summary": "Aclara un asunto, examina un factor influyente y considera una perspectiva razonable.",
+      "readingPresetID": "situationChallengeAdvice",
       "sections": [
         {
-          "heading": "Elige las posiciones antes de barajar",
-          "body": "La app ofrece una tirada libre y tres esquemas. En la tirada libre, tú decides el papel de cada carta o las lees como una secuencia. Pasado / Presente / Posible dirección explora lo que ha influido, lo que está activo ahora y hacia dónde podría avanzar la situación si nada esencial cambia. Situación / Reto / Consejo observa el núcleo del asunto, la tensión principal y una perspectiva que conviene considerar. Tú / La otra persona / Vínculo examina tu posición, la posición de la otra persona tal como tú la percibes y la dinámica compartida. Mantén las posiciones elegidas durante toda la tirada."
+          "heading": "Propósito y posiciones",
+          "body": "Es una estructura moderna de comprensión rápida con un encuadre editorial responsable. Las posiciones son: 1. Situación. 2. Reto o factor influyente. 3. Orientación o perspectiva. La orientación es algo que puedes considerar, no una instrucción, y el reto no es automáticamente negativo: puede complicar, reforzar o desviar la situación."
         },
         {
-          "heading": "Lee primero cada carta",
-          "body": "Observa y considera cada carta por separado antes de construir un significado conjunto. Pregunta cómo encaja la imagen con la función de su posición. En la tirada de vínculo, evita convertir una carta en una afirmación sobre los pensamientos privados de otra persona: solo puede ayudarte a explorar tu propia perspectiva y la información que realmente conoces."
+          "heading": "Trabaja cada función",
+          "body": "1. Formula una pregunta abierta sobre el asunto. 2. Saca tres cartas de izquierda a derecha. 3. Lee la primera como el núcleo que quieres explorar. 4. Lee la segunda como la tensión o influencia principal. 5. Lee la tercera como una perspectiva que podría ayudar. 6. Consulta cada significado de referencia solo después de observar la imagen dentro de su función."
         },
         {
-          "heading": "Mira el conjunto como una posibilidad",
-          "body": "Después de leer cada carta, contempla las tres. Los palos o números repetidos pueden reforzar un tema, mientras que las imágenes opuestas pueden señalar tensión o alternativas. Una posible dirección no es un futuro fijo; un consejo no es una orden, y una carta no demuestra hechos. Formula la conclusión como una posibilidad, una pregunta o una reflexión personal."
+          "heading": "Relaciona las tres cartas",
+          "body": "Pregunta cómo cambia el factor influyente tu forma de entender la situación y después cómo responde la orientación a las dos primeras cartas. La repetición puede reforzar un tema y el contraste puede mostrar una alternativa. Resume así: «Ante esta situación y esta influencia, una perspectiva que merece consideración es…»."
+        },
+        {
+          "heading": "Cierra sin dar órdenes",
+          "body": "Conserva la orientación como opción, pregunta o punto de vista. No la trates como una orden de la baraja ni conviertas el reto en una prueba de que algo está mal. Las decisiones importantes siguen necesitando tu criterio, hechos pertinentes y, cuando proceda, ayuda de una persona cualificada."
         }
       ]
     },
     {
-      "id": "notice-symbols-and-patterns",
+      "id": "you-other-person-connection",
       "order": 5,
-      "title": "Observa símbolos y patrones",
-      "summary": "Mira la imagen con atención y después observa repeticiones, contrastes, movimiento y ambiente.",
+      "title": "Tú, otra persona, vínculo",
+      "summary": "Reflexiona sobre una relación respetando la privacidad, la incertidumbre y aquello en lo que sí puedes influir.",
+      "readingPresetID": "relationship",
       "sections": [
         {
-          "heading": "Empieza por lo visible",
-          "body": "Mira la carta antes de buscar una definición. Observa las figuras, la dirección del movimiento, el color, el tiempo, los objetos, la distancia y el lugar al que se dirige tu atención. Pregunta qué parece activo, quieto, abierto, protegido, cercano o lejano y describe la escena con palabras sencillas."
+          "heading": "Propósito y posiciones",
+          "body": "Es nuestra adaptación editorial de una tirada moderna de tres posiciones. Las posiciones son: 1. Tu perspectiva, necesidades y acciones. 2. El papel observable de la otra persona, o cómo lo percibes. 3. El vínculo actual y aquello en lo que puedes influir. La segunda carta nunca demuestra pensamientos o sentimientos privados."
         },
         {
-          "heading": "Observa las relaciones",
-          "body": "Considera el ambiente que crea la imagen y qué detalle cambia tu manera de entender las palabras clave. Entre varias cartas, busca palos, números, figuras, direcciones o colores que se repitan. El contraste puede importar tanto como la repetición; usa los patrones como puntos de partida para reflexionar, no como reglas ocultas."
+          "heading": "Formula una pregunta ética",
+          "body": "1. Centra la pregunta en tu experiencia y tus decisiones. 2. Saca tres cartas de izquierda a derecha. 3. Lee la primera como tu parte en la dinámica. 4. Lee la segunda solo mediante conductas que hayas observado o la forma en que ahora las percibes. 5. Lee la tercera como vínculo presente, no como destino de la relación."
         },
         {
-          "heading": "Vuelve a la pregunta",
-          "body": "Relaciona el detalle o el patrón con la pregunta inicial. Las asociaciones personales pueden ser útiles cuando siguen ancladas en lo que muestra la imagen y en el contexto que realmente conoces."
+          "heading": "Lee la dinámica",
+          "body": "Observa si las dos primeras cartas se reflejan, se oponen, se acercan o se alejan, y pregunta después cómo describe la tercera el patrón compartido. Separa lo que sabes, lo que supones y lo que sigue siendo desconocido. Termina identificando un límite, una conversación o una acción que dependa realmente de ti."
+        },
+        {
+          "heading": "Cierra con consentimiento",
+          "body": "Usa la tirada para examinar tu perspectiva, no para vigilar, juzgar o controlar a otra persona. Respeta su privacidad y su consentimiento, sobre todo si no está presente. Una carta no revela motivos secretos ni decide en nombre de nadie; la comunicación directa y la información observable importan más."
         }
       ]
     },
     {
-      "id": "build-your-interpretation",
+      "id": "yes-or-no-with-context",
       "order": 6,
-      "title": "Construye tu interpretación",
-      "summary": "Reúne tus observaciones en una reflexión con los pies en la tierra y cierra la tirada con cuidado.",
+      "title": "Una pregunta de sí o no, con contexto",
+      "summary": "Explora qué favorece el sí, qué favorece el no o la pausa y qué conviene considerar antes de decidir.",
+      "readingPresetID": "open",
       "sections": [
         {
-          "heading": "Establece una conexión clara",
-          "body": "Reúne la imagen, una o dos palabras clave, el significado de referencia y la pregunta original. Construye una frase breve que describa una posibilidad o perspectiva útil. No necesitas descubrir reglas ocultas ni hacer que todos los símbolos encajen."
+          "heading": "Propósito y posiciones",
+          "body": "No existe un estándar histórico único para responder sí o no con tres cartas; los sistemas modernos publicados discrepan. Esta es nuestra adaptación editorial y usa solo significados al derecho dentro de Tres cartas abiertas. Las posiciones son: 1. Qué favorece el sí. 2. Qué favorece el no o la pausa. 3. Qué considerar antes de decidir."
         },
         {
-          "heading": "Cierra la tirada",
-          "body": "Repasa la pregunta y nombra la perspectiva que quieres conservar. Resume la lectura en una frase y quédate solo con la idea que te parezca constructiva y razonable. Puedes terminar sin tener certeza; cuando más cartas añadirían ruido en lugar de claridad, devuelve las cartas a la baraja."
+          "heading": "Pregunta y saca las cartas",
+          "body": "1. Úsala solo para una decisión personal de bajo riesgo. 2. Reformula la pregunta en torno a tu decisión actual, no a intenciones ocultas de otra persona. 3. Fija las tres posiciones antes de barajar. 4. Saca tres cartas en orden. 5. No asignes un valor universal de sí o no a cartas concretas; interpreta cada una solo dentro de su posición."
         },
         {
-          "heading": "Lee con cuidado",
-          "body": "Lee con consentimiento, humildad y respeto por la incertidumbre. El tarot no es una prueba y no sustituye información fiable ni ayuda profesional cualificada. No incluyas la vida privada de otras personas sin su consentimiento y no uses las cartas para controlar a alguien, declarar hechos sobre esa persona ni tomar decisiones importantes en su nombre. Expresa las interpretaciones como posibilidades, preguntas o reflexiones personales."
+          "heading": "Valora el contexto",
+          "body": "Compara el apoyo, la resistencia, el momento, la información que falta y las contrapartidas de las tres posiciones. Termina con uno de tres resúmenes prudentes: «se inclina al sí si…», «se inclina al no o todavía no porque…» o «no está claro; falta información». La aplicación no clasifica las cartas ni calcula un veredicto."
+        },
+        {
+          "heading": "Reconoce cuándo parar",
+          "body": "No repitas la tirada hasta obtener la respuesta que querías. Considera la incertidumbre como información útil y busca hechos antes de decidir. No uses este método para decisiones importantes de salud, asuntos jurídicos, dinero o seguridad ni para establecer pensamientos privados. El tarot no elimina tu responsabilidad sobre la decisión."
+        }
+      ]
+    },
+    {
+      "id": "open-three-cards",
+      "order": 7,
+      "title": "Tres cartas abiertas",
+      "summary": "Lee tres cartas sin funciones asignadas y deja que su secuencia sugiera la estructura más útil.",
+      "readingPresetID": "open",
+      "sections": [
+        {
+          "heading": "Propósito y posiciones",
+          "body": "La lectura flexible de tres cartas es una práctica moderna extendida. Tres cartas abiertas solo usa etiquetas neutrales: 1. Carta 1. 2. Carta 2. 3. Carta 3. Ningún lugar tiene una función oculta. Úsala cuando quieras explorar un tema sin elegir previamente una estructura temporal, de reto, de vínculo o de decisión."
+        },
+        {
+          "heading": "Revela sin asignar funciones",
+          "body": "1. Formula una pregunta abierta. 2. Elige Tres cartas abiertas y baraja. 3. Saca las tres en orden. 4. Observa cada imagen por separado antes de buscar conexiones. 5. Deja que la Carta 1 abra el tema, la Carta 2 lo desarrolle o complique y la Carta 3 aporte otra perspectiva, recordando que son propuestas de lectura, no significados fijos."
+        },
+        {
+          "heading": "Encuentra un hilo coherente",
+          "body": "Busca repetición, contraste, causa y respuesta, movimiento o un cambio de ambiente. Prueba más de una secuencia si hace falta: las cartas pueden leerse como progresión, tres factores simultáneos o tres voces alrededor del asunto. Elige el hilo que permanezca anclado en las imágenes visibles y en el contexto que de verdad conoces."
+        },
+        {
+          "heading": "Cierra sin forzar",
+          "body": "Resume una relación entre las tres cartas. Si no aparece un hilo coherente, puedes terminar con incertidumbre en lugar de inventar una regla o sacar más cartas. Que sea abierta no significa que no tenga límites: siguen vigentes el respeto a la privacidad, los hechos, las decisiones importantes y la ausencia de predicciones fijas."
+        }
+      ]
+    },
+    {
+      "id": "read-symbols-whole-spread",
+      "order": 8,
+      "title": "Leer símbolos y el conjunto",
+      "summary": "Pasa de los detalles visibles a los significados, las posiciones, los patrones y una conclusión razonable.",
+      "readingPresetID": null,
+      "sections": [
+        {
+          "heading": "Propósito y contexto",
+          "body": "Relacionar imagen, carta, posición y pregunta es una práctica pedagógica moderna bien asentada. Los símbolos se observan; no forman un código secreto universal. Un color, una figura, un objeto, una dirección, un número o un palo repetido puede importar por el patrón que crea en esta tirada y por su asociación dentro de tu contexto."
+        },
+        {
+          "heading": "Lee por capas",
+          "body": "1. Describe qué sucede de forma visible en cada imagen. 2. Observa tu primera reacción sin tratarla como un hecho. 3. Consulta las palabras clave y el significado al derecho. 4. Aplica el significado a la posición, si existe. 5. Vuelve a la pregunta original. 6. Repite el proceso con todas las cartas antes de decidir qué expresa el conjunto."
+        },
+        {
+          "heading": "Relaciona todo el conjunto",
+          "body": "Busca palos, números, figuras, colores o direcciones que se repiten y también contrastes significativos. Pregunta qué cambia de izquierda a derecha, qué carta parece responder a otra y dónde permanece una tensión. Construye una o dos frases que relacionen todas las posiciones sin obligar a cada detalle a encajar ni convertir un patrón en una prueba."
+        },
+        {
+          "heading": "Cierra y comprueba los límites",
+          "body": "Nombra la perspectiva más útil, una pregunta que sigue abierta y la información fiable que todavía necesitas. Termina aunque permanezca cierta ambigüedad. Mantén las interpretaciones como posibilidades, respeta consentimiento y privacidad y no sustituyas hechos, ayuda profesional ni la capacidad de decidir de otra persona. Un límite sensato forma parte de una lectura completa."
         }
       ]
     }

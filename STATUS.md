@@ -1,12 +1,12 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-08-10
+Actualizado: 2026-08-11
 
 ## Estado ejecutivo
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional; A-031 está integrada y A-032 fija la primera línea formal en `0.1 (1)`**. La IPA anterior `0.0.1 (1)` queda sustituida y no debe entregarse como build vigente. El CI run se conserva como evidencia, no como build del producto.
+Fase actual: **A-033 integrado localmente como `0.2 (1)` y pendiente de compilación macOS/IPA**. Read usa un carrusel visual horizontal de cinco presets —no un desplegable ni una lista vertical—, entrada directa, Back sin confirmación, reset pequeño y otra lectura desde el mazo. Los cinco validadores locales pasan; la IPA `0.1 (1)` sigue siendo la última compilación verificada hasta compilar `0.2 (1)`.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,11 +14,15 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. La propiedad única de A-031 terminó tras integrar, validar y cerrar la revisión independiente sin hallazgos pendientes.
+Propietaria activa de implementación: **`/root/tarot_ipa_02` exclusivamente para integrar Git y generar/verificar la IPA Local-QA `0.2 (1)`**. A-034 y AppIcon D quedaron integrados con los cinco validadores verdes; ninguna otra tarea modifica código o assets durante el build.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
+A-033 fue ordenada y corregida explícitamente por el propietario el 2026-08-11. V-054/V-055 sustituyen V-049–V-051: Home usa un carrusel visual de cinco fichas ilustradas, nunca un desplegable o lista vertical. V-052/V-053 y V-056/V-057 cubren el estado completo de Three Cards y One Card con reset/otra lectura. V-014, V-028, V-039, V-040 y V-044 quedan como referencias históricas allí donde A-033 las sustituye.
+
 Revisión de derechos de 2026-08-10: las 78 reproducciones históricas Rider-Waite-Smith siguen autorizadas solo como candidatos internos. España conserva una regla transitoria que remite al plazo de 80 años para autores fallecidos antes del 7 de diciembre de 1987; por prudencia, no se tratarán como distribuibles en España ni en un lanzamiento mundial hasta obtener revisión jurídica territorial o sustituirlas por arte propio. Settings puede avanzar porque no depende de distribuir esas imágenes.
+
+A-034 fue ordenada e integrada el 2026-08-11. La investigación confirmó que no existe una única lectura “oficial”: Waite y otros manuales históricos describen varios métodos. Learn contiene ocho tutoriales prácticos y bilingües. El tutorial de sí/no usa tres posiciones transparentes —qué favorece el sí, qué favorece el no o la pausa y qué considerar— dentro de `Open Three Cards`; no añade un sexto preset ni un veredicto automático. Las exploraciones visuales de carrusel de seis fichas se conservan como no seleccionadas y no autorizan implementación.
 
 La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el arnés P1 antiguo seguía intacto, sin una corrección de código parcial que reconciliar. V-037/V-038 quedaron registradas como sustitutas de V-033/V-034 antes de reabrir UI.
 
@@ -52,6 +56,8 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - V-005 y V-006 quedaron aprobadas conjuntamente por A-017 como referencias responsivas del mismo estado.
 - V-007 y V-008 quedaron aprobadas por A-018 para S03.3.
 - Asset derivado del reverso aprobado: `design/assets/ceremonial-card-back-v1.png`, 1024×1536, SHA-256 `8F3329F2949B6052B4684B50DB21745FFA3956C4868BB7777F7C3B9735DCC00C`.
+- `design/tarot-deck/app-icon-concepts/` conserva A — The Card y D/E/F con exactamente tres cartas. C — The Deck queda descartado porque mostraba cuatro siluetas. D — Three-Card Fan fue aprobado e instalado como AppIcon por A-035.
+- A-035 integra D — Three-Card Fan como AppIcon: master y catálogo 1024×1024 RGB opaco sRGB, SHA-256 `FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E`; A y las demás variantes permanecen preservadas.
 
 ### Técnica
 
@@ -68,12 +74,12 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - IPA bilingüe A-031 iOS 16 histórica y **sustituida por A-032**: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31427009585\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, SHA-256 `8fe68def507c263051e5be4caf223f481808cea856d362b253e6b2c58f3024f9`. Se preserva como evidencia, pero no cumple la primera línea formal `0.1 (1)` ni el nombre/manifiesto con CI run y no debe entregarse como vigente.
 - IPA formal vigente A-032 iOS 16: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31429098272\contents\TarotDeck-0.1-1-ci11-ae0838cd5aed-Local-QA-unsigned.ipa`, 72,662,232 bytes, SHA-256 `1e0480ad381d2a1e1640614cce6c502bb6af154bbdf35a696bc7c68b2b7b845f`. Hash, manifiesto y nombre coinciden en app, versión `0.1`, build `1`, commit, CI run `11` y propósito `Local-QA`; confirma Debug `iphoneos`, mínimo `16.0` y ausencia de firma. El ZIP contiene solo `Payload/TarotDeckInternal.app`, con ejecutable e `Info.plist`, sin `_CodeSignature` ni `embedded.mobileprovision`.
 - Los IPA locales anteriores, incluido `run-31414355150`, quedan preservados como históricos y sustituidos para las pruebas del propietario.
-- `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y seis artículos; su validador confirma IDs/nombres/orden 78/78, unicidad y English/ASCII.
-- `native-ios/Content/Localization/` contiene 78 nombres, 78 significados, 78 descripciones accesibles y los seis artículos en castellano, validados uno a uno contra los IDs canónicos. `MEANING_METHODOLOGY.md` documenta que el copy es original y moderno, contrastado con la tradición RWS/Waite, no una cita ni una definición canónica única.
+- `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y ocho tutoriales prácticos; su validador confirma IDs/nombres/orden 78/78, unicidad, estructura de cuatro secciones, cinco mappings de preset y el método contextual de sí/no.
+- `native-ios/Content/Localization/` contiene 78 nombres, 78 significados, 78 descripciones accesibles y los ocho tutoriales en castellano, validados contra los IDs y mappings ingleses. `MEANING_METHODOLOGY.md` documenta que el copy de cartas es original y moderno; `THREE_CARD_SPREADS.md` distingue tradición documentada, práctica moderna y adaptación editorial.
 
 ### Implementación visual aprobada
 
-- `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home vacío/activo, Layout Choice, One Card y Three Cards completos, significados de cartas reveladas, seis artículos, biblioteca 78, filtros y anterior/siguiente sin wrap.
+- `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home con carrusel directo de cinco presets, One Card y Three Cards completos, significados de cartas reveladas, ocho tutoriales con `Try This Reading`, biblioteca 78, filtros y anterior/siguiente sin wrap.
 - Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.1`.
 - `ReadFlowModel` representa la `DeckSession` real, exige exactamente los 78 IDs canónicos y usa dos JSON atómicos —sesión y continuidad— con write-ahead/reconciliación. Restore, errores, replace y end solo publican estados persistidos; no quedan callbacks activos vacíos ni exposición de identidad face-down.
 - CTA Learn abre Three Cards realmente: reanuda Three activa, abre Three nueva sin sesión y protege una One activa mediante confirmación de reemplazo.
@@ -82,7 +88,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - Integra `ceremonial-card-back` como asset independiente con el mismo SHA-256 que el master de diseño.
 - Incluye controles semánticos, targets de 44 puntos, descripciones visuales, posiciones neutrales, Dynamic Type adaptativo y estado S00 no interactivo durante restauración.
 - Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI, XCTest y empaquetado iOS 16 están verdes; previews y comparación de capturas siguen pendientes.
-- A-027/A-028 están integradas localmente: en primera instalación iOS elige inglés o castellano y A-031 añade un selector interno persistente `English / Español`; una lectura de tres cartas ofrece `Past · Present · Future`, `Situation · Challenge · Advice`, `You · The other person · Connection` u opción abierta; idioma y preset no alteran IDs ni orden.
+- A-027/A-028 están integradas localmente: en primera instalación iOS elige inglés o castellano y A-031 añade un selector interno persistente `English / Español`; una lectura de tres cartas ofrece `Past · Present · Future`, `Situation · Challenge · Advice`, `You · The other person · Connection` u opción abierta; idioma y preset no alteran IDs ni orden. A-033 conserva esas opciones pero sustituye las pantallas de selección por un selector inline antes de tocar el mazo.
 - V-039 registra la selección de tirada en castellano y V-040 sustituye las proporciones anteriores de Three Cards landscape con rail compacto y cartas ocupando casi toda la altura disponible.
 - V-041 y `design/tarot-deck/MOTION_SPEC.md` registran el storyboard y contrato de movimiento. La implementación iOS 16 añade transiciones breves, shuffle, draw, giro reveal/conceal, respuesta táctil de botones y haptics solo después de un estado durable. Reduce Motion y VoiceOver usan variantes de opacidad; restaurar, rotar o volver de segundo plano no reproduce efectos.
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
@@ -108,15 +114,15 @@ El modelo y los identificadores deben permitir sustituir en el futuro cada image
 
 ## Bloqueos y puertas
 
-1. **Cerrado:** A-031/A-032 compiladas en macOS/Xcode y empaquetadas en `run-31429098272`; la IPA formal `0.1 (1)` local y verificada contiene selector interno, Home/mesa corregidos y motion V2.
+1. **Abierto:** verificar `0.2 (1)` en macOS/Xcode y generar una nueva IPA solo cuando el propietario lo ordene expresamente. La integración y los cinco validadores locales ya están verdes.
 2. Resolver revisión territorial y aprobación de distribución del arte antes de cualquier release. El gate release falla intencionalmente solo por `candidateOnly/finalAsset/distributionApproved/territorial`.
-3. Resolver bundle identifier e historial de distribución antes de firma de distribución.
-4. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, ficha App Store, secretos, firma de distribución, subida y publicación siguen sin autorización.
+3. El identificador definitivo propuesto para registro es `com.krazel.tarotdeck`; la ficha de App Store Connect queda preparada pero no se crea hasta la confirmación final de los campos permanentes. No hay firma ni build de distribución.
+4. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, secretos, firma de distribución, subida y publicación siguen sin autorización. La autorización actual alcanza solo el registro del App ID y la creación de la ficha iOS, no acuerdos, productos, builds ni review.
 
 La procedencia del arte debe quedar documentada antes de tratar cualquier cara como asset de producción. El historial de distribución y el bundle identifier se resuelven antes de firma o release; no bloquean el diseño conceptual.
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: instalar y probar en el iPhone la IPA `run-31429098272` mediante re-firma local con Sideloadly o AltStore, registrando cualquier defecto reproducible. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
+Siguiente punto exacto: tras confirmar los campos permanentes, registrar `com.krazel.tarotdeck` y crear la ficha iOS provisional en App Store Connect; después verificar `0.2 (1)` en macOS antes de una nueva IPA. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
 
 No aumentar límites de gasto, añadir métodos de pago, usar TestFlight, App Store ni publicar sin autorización expresa separada.

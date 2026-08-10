@@ -1,8 +1,8 @@
 # Tarot Deck — MVP Screen and State Map
 
-Status: active expanded functional baseline under A-020, A-021, A-022, A-027, A-028, A-030, and A-031
+Status: active expanded functional baseline under A-020, A-021, A-022, A-027, A-028, A-030, A-031, and A-033
 First release: iPhone only, English and Spanish
-Date: 2026-08-10
+Date: 2026-08-11
 
 ## Purpose and boundary
 
@@ -26,14 +26,16 @@ App launch
     └── Primary navigation
         ├── Read
         │   ├── Deck Home
-        │   │   ├── Tap hero deck / Start a Reading → Layout Choice
-        │   │   └── Resume Reading → Reading Table
+        │   │   ├── Select One Card or a three-card preset inline
+        │   │   └── Tap hero deck → selected Reading Table, ready to shuffle
         │   ├── Reading Table
         │       ├── Tap deck to shuffle
         │       ├── Tap deck to draw one at a time
         │       ├── Reveal independently
         │       ├── Revealed card → Card Meaning → exact table state
-        │       └── End Reading confirmation
+        │       ├── Small reset → same preset, ready to shuffle
+        │       ├── Completed deck → another reading with same preset
+        │       └── Back → end reading and return Home
         │   └── Settings gear
         │       ├── English / Español
         │       ├── Support the App → monthly support states
@@ -53,7 +55,7 @@ App launch
 - A discreet gear overlays the `Read` safe area without reserving vertical layout space and opens Settings. Settings is secondary navigation, not a fourth tab.
 - `Read` is the initial destination after local restoration.
 - Each destination owns its navigation stack. Switching destination does not end, reveal, draw, reshuffle, or otherwise mutate a reading.
-- `Read` returns to its current reading surface when the session is active; it returns to Deck Home after the user ends it.
+- `Read` returns directly to its current Reading Table when the session is active; Back ends it transactionally and returns to Deck Home.
 - A card opened from a reading returns to the exact table state and does not offer previous/next browsing.
 - A card opened from Cards returns to the same library filter and scroll position; previous/next stays within that filter.
 - A Learn article returns to the Learn index. Learn has no stored progress or completion state.
@@ -69,9 +71,9 @@ Restore the active reading before presenting the three destinations.
 
 | State | Content and behavior | Exit |
 |---|---|---|
-| `S00.1 Restoring` | Brief non-interactive native transition. No network, story splash, account, analytics, or permission request. | `S01.1` or `S01.2` in `Read`. |
+| `S00.1 Restoring` | Brief non-interactive native transition. No network, story splash, account, analytics, or permission request. | `S01.1` or the exact restored `S03` state in `Read`. |
 | `S00.2 No saved session` | A complete deck is available and no reading exists. | `S01.1`. |
-| `S00.3 Valid active session` | Restore layout, shuffled order, drawn IDs, and face states. | `S01.2`. |
+| `S00.3 Valid active session` | Restore preset, shuffled order, drawn IDs, and face states. | Exact matching `S03` state. |
 | `S00.4 Invalid local session` | Discard only the unreadable session, restore a complete deck, and keep Learn/Cards available. | `S01.1`; brief localized recovery feedback may appear. |
 
 Learn, card reference, and artwork are bundled, so there is no remote loading or offline-empty state.
@@ -80,90 +82,47 @@ Learn, card reference, and artwork are bundled, so there is no remote loading or
 
 ### Goal
 
-Make the deck understandable immediately and protect an active reading.
+Choose the intended reading in place and reach the table with one deck tap.
 
 ### S01.1 — No active reading
 
 Required information:
 
 - localized title: **Tarot Deck** / **Mazo de tarot**;
+- one compact selector above the deck showing the current preset;
 - one large, centered face-down hero deck that is itself the primary control;
 - visible cue: **Tap the deck to begin** / **Toca el mazo para empezar**;
 - accessible action name: **Start a Reading** / **Empezar lectura**;
 - a discreet, accessible Settings gear overlaid in the top safe area, visually secondary and excluded from content layout measurement;
 - the fixed, legible three-destination tab bar.
 
-Transition: tap the hero deck → `S02.1 Layout Choice`.
+Selector options:
 
-Composition invariants from V-044: the first viewport does not scroll; the title, hero deck, cue, and tab bar fit without a long explanatory block; the deck remains centered in the usable content area; the gear must not push the title or deck downward; and no separate primary button duplicates the deck action.
+- **One Card** / **Una carta**;
+- **Past · Present · Future** / **Pasado · Presente · Futuro**;
+- **Situation · Challenge · Advice** / **Situación · Reto · Consejo**;
+- **You · The other person · Connection** / **Tú · La otra persona · Conexión**;
+- **Open reading** / **Tirada libre**.
+
+The presets appear as a horizontal carousel of illustrated tiles: the selected tile is centered and highlighted, neighboring tiles remain partially visible, and a five-position indicator communicates the full set. Tapping a tile or swiping to it changes only the prospective preset. Tapping the hero deck creates that reading and opens `S03.1` directly. There is no dropdown, vertical text menu, layout-choice screen, or spread-choice screen.
+
+Composition invariants from V-054/V-055: the first viewport does not scroll; title, carousel, hero deck, cue, and tab bar fit without a long explanatory block; the deck remains centered in the usable content area; the gear must not push the title or deck downward; and no separate primary button duplicates the deck action. Swiping or selecting a tile changes only the tile selection inside a fixed carousel frame and does not relayout Home.
 
 Not present: card of the day, date, zodiac sign, generated interpretation, lesson promotion, account prompt, support promotion, notification prompt, or feed.
 
-### S01.2 — Active reading available
+### S01.2 — Another preset selected
 
-- Primary action: **Resume Reading**.
-- Secondary action: **New Reading**.
-- Concise status names `One Card` or `Three Cards` and the number drawn without exposing a face-down identity.
+The chosen visual tile moves to the central selected position and receives the gold selected treatment. The carousel remains in the same frame. VoiceOver exposes each tile as a direct button with its selected state and offers an adjustable previous/next action; no horizontal gesture is the only path. V-054 portrait and V-055 landscape govern every selected preset through the same component.
 
-Transitions:
+### Retired setup and replacement states
 
-- `Resume Reading` → exact matching `S03` state.
-- `New Reading` → `S01.3`.
-- `Learn` or `Cards` → chosen destination without changing the session.
-- `Settings` gear → `S09.1` without changing the session.
-
-### S01.3 — Replace active reading confirmation
-
-- Title: **Start a new reading?**
-- Message: **Your current reading will be cleared.**
-- Destructive action: **Start New Reading**.
-- Safe action: **Keep Current Reading**.
-
-Confirming clears only the active session and opens `S02.1`. Cancelling preserves it exactly.
-
-## S02 — Layout Choice
-
-### Goal
-
-Choose the card count and, for three cards, choose position roles before shuffling; leave the question and interpretation to the user.
-
-### S02.1 — Choice
-
-Options:
-
-- **One Card** — one neutral position.
-- **Three Cards** — continue to `S02.2 Spread Choice`.
-
-Supporting copy: **Choose one card, a guided spread, or your own positions.**
-
-Rules:
-
-- no question input or storage;
-- one-card selection creates a new unshuffled session;
-- dismissal before selection changes nothing.
-
-Transitions:
-
-- `One Card` → `S03.1` with one position.
-- `Three Cards` → `S02.2`.
-- `Cancel` → `S01`.
-
-### S02.2 — Three-card spread choice
-
-Options:
-
-- **Past · Present · Future** — origins, the present moment, and a possible direction; the third position is never framed as fixed prediction.
-- **Situation · Challenge · Advice** — what is happening, what complicates it, and what may help.
-- **You · The other person · Connection** — two perspectives and the relationship between them.
-- **Open reading** — card one, card two, and card three with no assigned roles.
-
-Choosing an option persists its stable spread ID and opens `S03.1`. Back returns to `S02.1`; no deck session exists until shuffle. Reference V-039 governs this surface.
+The former active-reading Home, `Start a new reading?` confirmation, `Layout Choice`, and separate `Three-card spread choice` are superseded by A-033. V-014, V-028, and V-039 remain historical references only. No user-facing transition may route through them.
 
 ## S03 — Reading Table
 
 ### Goal
 
-Represent `shuffle → draw → turn over → inspect → read → end` without generating a conclusion.
+Represent `shuffle → draw → turn over → inspect → read → repeat or leave` without generating a conclusion.
 
 ### Shared elements
 
@@ -171,7 +130,7 @@ Represent `shuffle → draw → turn over → inspect → read → end` without 
 - One neutral position, or three stable positions labelled from the selected spread. The open spread uses neutral `Card 1`, `Card 2`, and `Card 3` labels.
 - Face-down deck while cards remain, or a clear exhausted state. While present, the deck itself is the one phase-appropriate primary control.
 - Localized state copy explains the available deck action without duplicating it as a button.
-- Secondary `End Reading` action.
+- A small reset action with a 44-point accessible hit target, visually secondary to the deck.
 - Revealed card name; meaning remains behind an intentional tap.
 - No prediction, combined interpretation, question field, prompt, save, share, upsell, or progress reward.
 
@@ -209,7 +168,7 @@ Transitions:
 
 - `Turn card over` → `S03.4` or `S03.6`, depending on completion.
 - `Deck: Draw Next Card` → another `S03.3` until all positions are occupied.
-- `End Reading` → `S03.7`.
+- `Back` → transactionally delete the session → `S01.1`.
 
 ### S03.4 — Reading in progress, mixed face states
 
@@ -223,26 +182,18 @@ Transitions:
 
 - No draw action remains.
 - The deck no longer competes with the completed layout.
-- In portrait, three equal cards use equal gaps and a mathematically centered horizontal group as specified by corrected V-046/V-047. Their vertical slot anchor is identical before and after the deck disappears; completion copy and `End Reading` do not displace that group.
+- In portrait, three equal cards use equal gaps and a mathematically centered horizontal group as specified by corrected V-046/V-047. Their vertical slot anchor is identical before and after the deck disappears; helper copy and reset do not displace that group.
 - Face-down cards remain under the user's control.
 - Tapping a revealed card opens `S04.1`.
-- `End Reading` remains available.
+- Back and reset remain available.
 
 ### S03.6 — Layout complete, all cards face up
 
 - The table is quiet and complete.
 - Every card can open `S04.1` independently.
-- The app adds no summary, combined meaning, celebration, score, or next-reading prompt.
-- Clear action: **End Reading**.
-
-### S03.7 — End reading confirmation
-
-- Title: **End this reading?**
-- Message: **The cards will return to the deck. This reading won't be saved.**
-- Destructive action: **End Reading**.
-- Safe action: **Keep Reading**.
-
-Confirm → delete session → `S01.1`. Cancel → exact prior `S03` state.
+- The app adds no summary, combined meaning, celebration, or score.
+- The small deck reappears in its reserved frame with **Tap the deck for another reading** / **Toca el mazo para otra lectura**. Tapping it clears the completed session and creates the same preset in `S03.1`, ready to shuffle.
+- V-052 portrait and V-053 landscape govern Three Cards; V-056 portrait and V-057 landscape govern One Card.
 
 ### Reading interaction rules
 
@@ -250,8 +201,9 @@ Confirm → delete session → `S01.1`. Cancel → exact prior `S03` state.
 - No card ID appears twice in one session.
 - A face-down card's identity never appears in visible copy, VoiceOver, logs intended for the user, resume status, or navigation state.
 - Shuffle order remains stable after app restoration.
-- The user cannot reshuffle midway; a new reading begins from a complete deck.
-- The deck accepts exactly one action for its phase: shuffle in `S03.1`, draw in `S03.2`–`S03.4` while a position remains, and no action once the layout is full. A second primary button never mirrors that action.
+- The user cannot reshuffle midway. Reset clears the current session and creates the same preset ready to shuffle; it never preserves prior drawn IDs.
+- The deck accepts exactly one action for its phase: shuffle in `S03.1`, draw in `S03.2`–`S03.4` while a position remains, no action while the layout is full with a face-down card, and another reading with the same preset once every position is face up. A second primary button never mirrors that action.
+- Back clears the active reading without a confirmation. If durable clear fails, the user remains on the exact table state with recoverable error feedback.
 - Tapping a face-down card reveals it; tapping a revealed card opens its meaning. Both actions have explicit VoiceOver alternatives.
 - Leaving `Read` for Learn or Cards preserves logical state without replaying motion.
 
@@ -303,16 +255,18 @@ Give a beginner a short, non-linear path to understanding how to read cards.
 ### S05.1 — Guide available
 
 Title: **Learn to Read Tarot**
-Intro: **A simple guide to reading the cards in your own way.**
+Intro: **Eight practical tutorials for reading the cards in your own way.**
 
 Articles appear in this fixed order:
 
-1. **Start with a Question** — frame an open, useful question without entering it in the app.
-2. **Shuffle and Draw** — prepare, shuffle, draw, and stay attentive without claims about supernatural certainty.
-3. **Read One Card** — connect imagery, keywords, context, and personal observation.
-4. **Read Three Cards** — choose one of three named position patterns or an open reading, then read each card and the relationship among all three.
-5. **Notice Symbols and Patterns** — notice suit, number, figures, direction, repetition, contrast, and mood.
-6. **Build Your Interpretation** — combine observations into a grounded reading and keep ethical limits.
+1. **Prepare a Reading** / **Preparar una lectura** — define the question, choose positions, shuffle, draw, and close.
+2. **One Card Focus** / **Enfoque de una carta** — use the exact position `What deserves attention now?` and map `Try This Reading` to `One Card`.
+3. **Past, Present, Possible Direction** / **Pasado, presente, posible dirección** — teach past influence, present situation, and a conditional direction; map to the existing timeline preset.
+4. **Situation, Challenge, Guidance** / **Situación, reto, orientación** — teach situation, challenge or influence, and guidance as perspective; map to the existing Situation/Challenge/Advice preset.
+5. **You, Other Person, Connection** / **Tú, otra persona, vínculo** — teach observable roles, privacy, agency, and connection; map to the existing relationship preset.
+6. **A Yes-or-No Question, With Context** / **Una pregunta de sí o no, con contexto** — use `What supports a yes / What supports a no or a pause / What to consider before deciding`; map to `Open Three Cards` without classifying cards or calculating a verdict.
+7. **Open Three Cards** / **Tres cartas abiertas** — read neutral Card 1/2/3 as a flexible sequence; map to `Open Three Cards`.
+8. **Read Symbols and the Whole Spread** / **Leer símbolos y el conjunto** — combine visible details, reference meaning, position, question, pattern, and limits.
 
 Each row has title, one-sentence summary, and a clear disclosure indicator. Tapping opens `S06.1`.
 
@@ -320,7 +274,7 @@ Not present: progress bars, completed marks, bookmarks, lesson locks, quizzes, c
 
 ### S05.2 — Content integrity failure
 
-Missing or malformed bundled guide content is a development/release failure, not a normal user-facing empty state. Internal builds may show a clearly labelled diagnostic; production must ship with all six articles.
+Missing, reordered, mismatched, or malformed bundled tutorial content is a development/release failure, not a normal user-facing empty state. Internal builds may show a clearly labelled diagnostic; production must ship with all eight tutorials and identical preset mappings in English and Spanish.
 
 ## S06 — Learn Article
 
@@ -332,15 +286,17 @@ Teach one practical concept in a short, readable format.
 
 - Back action to `Learn`.
 - Article title and summary.
-- Ordered sections with short paragraphs and optional simple examples.
+- Four ordered sections covering purpose/context and exact positions where applicable, steps, whole-reading synthesis, and closing limits.
 - Clear heading structure for VoiceOver navigation.
-- An optional final link to one existing Cards filter when the article genuinely benefits from deck examples.
+- An optional `Try This Reading` CTA only when the tutorial maps cleanly to one of the five existing Read presets.
 
 Article behavior:
 
 - reading position and completion are not stored;
 - no interactive quiz, question field, notes, sharing, external link, comments, or next-lesson gate;
 - the copy teaches a method and possibilities, never a guaranteed divination claim or high-stakes instruction;
+- the yes-or-no tutorial opens `Open Three Cards`, never assigns universal yes/no values, never uses opposite orientations, and never calculates a verdict;
+- an existing reading is never silently replaced; the Read model preserves its current safe behavior when a tutorial CTA is used;
 - Dynamic Type may reflow the article vertically without truncation.
 
 Transition: `Back` → same Learn index. Choosing the optional Cards link opens `S07.1` with its declared filter and does not affect a reading.
@@ -616,21 +572,21 @@ There are no app-account, notification-permission, synchronization, remote tarot
 
 ### A. First one-card reading with meaning
 
-`Launch` → `Read` → tap hero deck → `One Card` → tap deck to shuffle → tap deck to draw → reveal → tap revealed card → read upright meaning → `Back to Reading` → `End Reading`
+`Launch` → `Read` → select `One Card` inline → tap hero deck → tap table deck to shuffle → tap deck to draw → reveal → tap revealed card → read upright meaning → `Back to Reading` → table Back
 
 Result: the user receives deck utility and optional knowledge without an automatic interpretation; the table is unchanged after meaning dismissal.
 
 ### B. Three-card reading with independent reveals
 
-`New Reading` → `Three Cards` → `Situation · Challenge · Advice` → shuffle → draw three → reveal Challenge → inspect its meaning → return → reveal Situation → leave Advice face down
+`Read Home` → select `Situation · Challenge · Advice` inline → tap hero deck → shuffle → draw three → reveal Challenge → inspect its meaning → return → reveal Situation → leave Advice face down
 
 Result: draw order and selected roles stay stable, meanings do not reveal other cards, and the app does not combine meanings or generate a conclusion.
 
 ### C. Learn the basic method
 
-`Learn` → `Read Three Cards` → read article → `Back` → `Notice Symbols and Patterns`
+`Learn` → `A Yes-or-No Question, With Context` → confirm the three positions and limits → `Try This Reading` → `Open Three Cards`
 
-Result: both articles are available offline and no progress, account, quiz, or personal question is stored.
+Result: the existing Open preset is selected without adding a sixth mode; no verdict is generated, and no progress, account, quiz, personal question, or interpretation is stored.
 
 ### D. Browse the deck one by one
 
@@ -646,21 +602,21 @@ Result: the exact shuffled order, drawn cards, face states, and positions remain
 
 ### F. Resume after interruption
 
-`Three Cards` → draw two → reveal one → inspect meaning → close app → reopen → `Resume Reading`
+`Three Cards` → draw two → reveal one → inspect meaning → close app → reopen
 
 Result: the same two cards and face states return; focused presentation is dismissed and the third position remains empty.
 
-### G. Protect an active reading
+### G. Leave and restart without friction
 
-`Resume available` → `New Reading` → `Keep Current Reading`
+`Reading Table` → Back → `Read Home` → choose another preset → tap hero deck
 
-Result: nothing changes. Confirming instead deletes only that session and opens layout choice with a complete deck.
+Result: Back durably clears only the active session and returns Home without confirmation. On a completed all-revealed table, tapping the reappeared deck instead creates another reading with the same preset, ready to shuffle.
 
 ### H. Content and privacy integrity
 
 Run manifest validation, exercise Read/Learn/Cards in airplane mode, then inspect visible and accessibility text across all destinations.
 
-Result: 78 identities map one-to-one to complete English and Spanish upright references; six guide articles exist in both languages; the three core destinations make no network request; favorites persist only as canonical IDs; and no reverse meaning, Zodiac content, app account, analytics, question capture, notes, or history appears. Settings connectivity is limited to separately configured Apple commerce, legal, subscription-management, and rating destinations.
+Result: 78 identities map one-to-one to complete English and Spanish upright references; eight tutorials exist in both languages with identical preset mappings; the three core destinations make no network request; favorites persist only as canonical IDs; and no opposite-orientation meaning, Zodiac content, app account, analytics, question capture, notes, or history appears. Settings connectivity is limited to separately configured Apple commerce, legal, subscription-management, and rating destinations.
 
 ### I. Inspect support without losing a reading
 
@@ -688,7 +644,7 @@ Result: Settings changes immediately to Spanish, the exact spread, order, drawn 
 
 ### M. Deck-led table motion without viewport jumps
 
-`Read empty` → tap hero deck → choose `Three Cards` → tap table deck to shuffle → tap it three times to deal → tap each card to reveal
+`Read empty` → choose a three-card preset inline → tap hero deck → tap table deck to shuffle → tap it three times to deal → tap each card to reveal → tap the reappeared deck for another reading
 
 Result: no duplicate primary shuffle/draw button appears; one tap causes one durable action; the V-048 sequence stays inside fixed bounds; all three completed cards are centered with equal gaps; backgrounding or Reduce Motion yields the same logical state without replay.
 
@@ -705,8 +661,8 @@ Additional registered references under A-021:
 
 5. `S03.6 Three Cards / complete, all face up` — V-017/V-018.
 6. `S03.1 Three Cards / ready to shuffle` — V-015/V-016.
-7. `S01.1 Read / Deck Home / empty` — V-044, which supersedes V-024 with the compact no-scroll deck CTA, overlaid gear, and stable tab bar; English uses the same composition.
-8. `S02 Layout Choice` — V-014.
+7. `S01.1 Read / Deck Home / visual preset carousel` — V-054 portrait and V-055 landscape, which supersede V-044/V-049–V-051 for Home; English uses the same composition.
+8. `S01.2 Read / Deck Home / another carousel preset selected` — the same V-054/V-055 component with a different tile centered and selected.
 9. `S04 Card Meaning from Reading` — V-019.
 10. `S05 Learn Index` — V-020.
 11. `S06 Learn Article` — V-021.
@@ -714,12 +670,12 @@ Additional registered references under A-021:
 13. `S08 Card Detail from Library / previous-next` — V-023.
 14. `S09 Settings` — V-045, which supersedes V-025 with the internal `English / Español` selector.
 15. `S10 Support the App / not active` — V-027, which supersedes V-026 with `ios-app-launch` copy; its displayed prices are illustrative and not live product configuration.
-16. `S01.2 Read / Deck Home / active Three Cards reading` — V-028.
+16. `S01.2 Read / Deck Home / active Three Cards reading` — V-028, historical and superseded by direct table restoration under A-033.
 17. `S03.1 One Card / ready to shuffle` — V-029 portrait and V-030 landscape.
 18. `S03.2 One Card / shuffled` — V-031 portrait and V-032 landscape.
 19. `S03.3 One Card / drawn face down` — V-037 portrait and V-038 landscape, superseding V-033/V-034 so the exhausted deck no longer competes with the completed layout.
 20. `S03.6 One Card / The Hermit revealed` — V-035 portrait and V-036 landscape.
-21. `S02.2 Three-card spread choice / Spanish` — V-039.
+21. `S02.2 Three-card spread choice / Spanish` — V-039, historical and superseded by V-049–V-051 under A-033.
 22. `S03 Three Cards / Past · Present · Future / large landscape / Spanish` — V-040, which supersedes the previous landscape proportions for the three-card table.
 
 23. `S03 Reading Table / professional motion storyboard V2` — V-048, which supersedes V-041 with press, cut, interleave, deal, and flip inside a stable viewport.
@@ -727,6 +683,10 @@ Additional registered references under A-021:
 25. `S07.3 Cards / Favorites empty` — V-043.
 26. `S03.1 Three Cards / ready / deck tap`, portrait Spanish — V-046, which supersedes V-015 for portrait interaction; English uses the same composition.
 27. `S03.5 Three Cards / complete / all face down / centered`, portrait Spanish — V-047; English uses the same composition.
+28. `S03.6 Three Cards / all revealed / quick restart`, portrait Spanish — V-052.
+29. `S03.6 Three Cards / all revealed / quick restart`, landscape Spanish — V-053.
+30. `S03.6 One Card / revealed / quick restart`, portrait Spanish — V-056.
+31. `S03.6 One Card / revealed / quick restart`, landscape Spanish — V-057.
 
 Still requiring a complete reference before final implementation: the remaining `S10` supporter/restore/unavailable variants and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement the approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized.
 
@@ -734,7 +694,7 @@ A shared card-reference component may serve S04 and S08 only after both navigati
 
 ## MVP completion gate
 
-The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/meaning interaction conforms to V-044 and V-046–V-048, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the six Learn articles are bundled, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
+The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/meaning interaction conforms to V-046–V-048/V-052–V-057, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the eight Learn tutorials are bundled with exact bilingual parity and five-preset mappings, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
 
 Settings and support are complete at product-design level when S09/S10 references and states are registered, free access is invariant across every purchase state, equivalent levels and supporter acknowledgement are represented, Restore Purchases and renewal/cancellation disclosures are present, and Privacy, Terms, and Rate the App remain distinct destinations. Live StoreKit products, prices, contracts, tax/banking setup, builds, and purchase review require separate authority and do not block core completion.
 

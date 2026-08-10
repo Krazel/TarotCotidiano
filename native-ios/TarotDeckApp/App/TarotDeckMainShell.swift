@@ -11,7 +11,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
     let content: TarotContent
     @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var favoriteStore: FavoriteCardsStore
-    let startThreeCardReading: () -> Void
+    let startReading: (String) -> Void
     let readContent: (@escaping (String) -> Void) -> ReadContent
 
     @State private var selectedDestination: TarotPrimaryDestination = .read
@@ -21,13 +21,13 @@ struct TarotDeckMainShell<ReadContent: View>: View {
         content: TarotContent,
         languageStore: AppLanguageStore,
         favoriteStore: FavoriteCardsStore,
-        startThreeCardReading: @escaping () -> Void,
+        startReading: @escaping (String) -> Void,
         @ViewBuilder readContent: @escaping (@escaping (String) -> Void) -> ReadContent
     ) {
         self.content = content
         self.languageStore = languageStore
         self.favoriteStore = favoriteStore
-        self.startThreeCardReading = startThreeCardReading
+        self.startReading = startReading
         self.readContent = readContent
         Self.configureTabBarAppearance()
     }
@@ -48,8 +48,8 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             NavigationStack {
                 LearnIndexView(
                     content: content,
-                    startThreeCardReading: {
-                        startThreeCardReading()
+                    startReading: { presetID in
+                        startReading(presetID)
                         selectedDestination = .read
                     }
                 )
