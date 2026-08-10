@@ -1,99 +1,120 @@
-# Daily Card — Preliminary iOS Visual Directions
+# Daily Tarot — iOS Visual Direction and Screen References
 
-Updated: 2026-08-08
+Updated: 2026-08-09
 
-## Status and scope
+> Historical reference. Daily Tarot was superseded by the Tarot Deck product on 2026-08-09. Preserve this document and its images; use `design/TAROT_DECK_VISUAL_BRIEF.md` for current work. The Ceremonial Obsidian direction remains selected, but these Daily Tarot compositions do not approve any new screen.
 
-- Platform: iOS only.
+## Product constraints
+
+- Platform: iPhone/iOS only.
 - Product language: English only.
-- Screen: the main `Daily Card` screen, shown in its revealed state.
-- Purpose: compare three preliminary visual directions before any UI implementation.
-- Approval status: **none selected or approved**.
-- The previous interface informed the ritual, central card, and bottom-navigation concepts only. It is not an approved visual reference.
+- Approved implementation direction: native SwiftUI.
+- No UI implementation is authorized from an image until that exact screen/state is explicitly approved.
+- The previous Expo interface is conceptual reference only.
 
-All three concepts use the same content and state so the comparison stays focused on visual direction:
-
-- Date: `Saturday, August 8`
-- Category: `MOMENTUM`
-- Card: `The Inner Dawn`
-- Reflection: `Choose one bright gesture and let the day arrange itself around it.`
-- Primary action: `Save`
-- Navigation: `Today`, `Explore`, `Saved`, `Settings`
-
-Each image shows a complete modern iPhone with credible safe areas, Dynamic Island, status bar, tab navigation, and home indicator. These are visual references rather than final copy or implementation specifications.
-
-## A — Ceremonial Obsidian
+## Approved direction — A, Ceremonial Obsidian
 
 ![Ceremonial Obsidian](concepts/daily-card-a-ceremonial-obsidian.png)
 
-Path: `design/concepts/daily-card-a-ceremonial-obsidian.png`
+- Screen and state: `Daily Card`, revealed.
+- Relative path: `design/concepts/daily-card-a-ceremonial-obsidian.png`.
+- Absolute reference: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\concepts\daily-card-a-ceremonial-obsidian.png`.
+- Approval date: 2026-08-08.
+- Status: **definitively approved; do not reopen this choice**.
+- Requested changes: none.
 
-Direction: a dark, tactile evening ritual built around a centered tarot object. Midnight navy, matte black paper, antique-gold line work, warm ivory type, and restrained celestial detailing create the strongest connection to traditional tarot without becoming theatrical.
+Direction: a dark, tactile ritual built around a centered tarot object. Midnight navy, matte black paper, antique-gold line work, warm ivory type, and restrained celestial detailing provide a distinctive tarot identity without becoming theatrical.
 
-Best qualities:
+Approved invariants:
 
-- Most distinctive tarot identity.
-- Strong focus on the card as a daily ritual object.
-- Premium, calm, and highly legible hierarchy.
+- complete modern iPhone composition with credible safe areas, status bar, Dynamic Island, bottom navigation, and home indicator;
+- centered tactile card as the dominant ritual object;
+- midnight navy and matte black surfaces;
+- antique-gold celestial line work and controls;
+- warm ivory text with restrained hierarchy;
+- English-only interface;
+- four navigation destinations: `Today`, `Explore`, `Saved`, `Settings`.
 
-Watchouts:
+Native and accessibility adaptations allowed: safe-area adjustments, Dynamic Type, VoiceOver labels, contrast corrections, minimum native tap targets, standard iOS symbols or materials, and Reduced Motion behavior, provided that hierarchy, spacing, palette, proportions, and ceremonial character remain faithful.
 
-- Decorative detail must remain restrained in implementation.
-- Dark surfaces require careful contrast and Dynamic Type testing.
+Approval boundary: this record applies only to the revealed `Daily Card` screen. Every other screen or materially different state requires its own visual reference and explicit approval.
 
-Prompt brief: high-fidelity native iOS product UI; full modern iPhone; dark ceremonial card centered in a midnight interface; antique-gold sunrise line art; exact shared English copy and four-tab navigation; no web or Android patterns.
+## Preserved alternatives
 
-## B — Dawn Journal
+### B — Dawn Journal
 
 ![Dawn Journal](concepts/daily-card-b-dawn-journal.png)
 
-Path: `design/concepts/daily-card-b-dawn-journal.png`
+- Path: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\concepts\daily-card-b-dawn-journal.png`.
+- Status: not approved; preserved as historical alternative.
+- Direction: warm editorial journal with ivory paper, apricot and terracotta.
 
-Direction: a luminous editorial journal for a gentle morning check-in. Warm ivory, oat, apricot, terracotta, plum ink, subtle paper texture, and an expansive sunrise illustration make the experience approachable and reflective rather than overtly mystical.
-
-Best qualities:
-
-- Brightest and most approachable direction.
-- Excellent reading comfort and editorial calm.
-- Feels optimistic and compatible with a daily morning habit.
-
-Watchouts:
-
-- The tarot identity is subtler and may need a distinctive icon or illustration system.
-- Paper texture and serif typography must not reduce native clarity.
-
-Prompt brief: high-fidelity native iOS product UI; full modern iPhone; warm editorial wellness journal; illustrated sunrise card on ivory paper; exact shared English copy and four-tab navigation; no dark occult, web, or Android patterns.
-
-## C — Celestial Threshold
+### C — Celestial Threshold
 
 ![Celestial Threshold](concepts/daily-card-c-celestial-threshold.png)
 
-Path: `design/concepts/daily-card-c-celestial-threshold.png`
+- Path: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\concepts\daily-card-c-celestial-threshold.png`.
+- Status: not approved; preserved as historical alternative.
+- Direction: immersive cobalt and violet celestial portal with translucent material.
 
-Direction: an immersive contemporary ritual where the card becomes an edge-to-edge celestial scene. Cobalt, smoky violet, aurora cyan, moon white, a coral action, and one translucent native material panel create the most cinematic and modern option.
+B and C must not influence new references while A remains active.
 
-Best qualities:
+## Historical approved state — Today, unrevealed
 
-- Strongest immediate visual impact.
-- Feels contemporary and emotionally transporting.
-- Uses native material and hierarchy while avoiding a literal card frame.
+![Today unrevealed — Ceremonial Obsidian](concepts/today-unrevealed-a-ceremonial-obsidian.png)
 
-Watchouts:
+- Screen and state: `Today / Daily Card`, unrevealed.
+- Relative path: `design/concepts/today-unrevealed-a-ceremonial-obsidian.png`.
+- Absolute reference: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\concepts\today-unrevealed-a-ceremonial-obsidian.png`.
+- SHA-256: `48B53E8A64857206771224D90155603944283DC829C0829161AD6EBE1BB209F9`.
+- Dimensions: `862 × 1825`.
+- Status: **approved historically on 2026-08-08; no longer an implementation target after the 2026-08-09 product change**.
 
-- Requires a disciplined illustration and asset system to reproduce faithfully.
-- Text contrast must stay reliable across artwork and accessibility settings.
+Purpose and behavior:
 
-Prompt brief: high-fidelity native iOS product UI; full modern iPhone; immersive cobalt-to-violet celestial portal; readable native translucent content panel; exact shared English copy and four-tab navigation; no paper, gold, web, or Android patterns.
+- hide category, card title, message, question, save, and share until reveal;
+- show one face-down obsidian card as the dominant object;
+- let both the card and the explicit `Reveal Card` button perform the same action;
+- preserve the approved A hierarchy, palette, materials, safe areas, and navigation;
+- provide an explicit native-style button for clarity, VoiceOver, and a reliable touch target.
 
-## Decision required
+Exact visible English copy:
 
-Choose **A**, **B**, or **C**, or request a targeted iteration. A hybrid is not assumed: if combining elements is desired, the combination should be described and regenerated as a new image before approval.
+- `Daily Card`
+- `Saturday, August 8`
+- `Your card is ready`
+- `Take a breath, then reveal the message for your day.`
+- `Reveal Card`
+- `Today`
+- `Explore`
+- `Saved`
+- `Settings`
 
-No concept becomes an implementation reference until the user explicitly approves its image.
+Visual QA:
 
-## Generation record
+- complete modern iPhone and safe areas visible;
+- no content leaks before reveal;
+- no Android or web conventions;
+- no elements from B or C;
+- practical SwiftUI-reproducible hierarchy;
+- text is legible and English-only;
+- Today is visibly active in the four-tab navigation.
+
+## Generation record for the unrevealed candidate
 
 - Mode: built-in ImageGen.
 - Use case: `ui-mockup`.
-- Inputs: no image inputs; the existing app was inspected as a conceptual reference only.
-- Shared constraints: iOS only, English only, one full modern iPhone, complete safe areas and navigation, legible exact English copy, no watermark, no web layout, and no Android UI.
+- Reference: A — Ceremonial Obsidian as the approved direction; B and C explicitly excluded.
+- Generated: 2026-08-08.
+
+Final prompt summary:
+
+> Create a complete high-fidelity native iOS `Today / Daily Card` unrevealed state in the approved Ceremonial Obsidian direction. Preserve the full iPhone frame, midnight navy interface, tactile matte-black card, antique-gold celestial detailing, warm ivory typography, safe areas and four-tab navigation. Center a face-down card, hide all card content, and show the exact English readiness copy with one gold `Reveal Card` button. Exclude all Dawn Journal, Celestial Threshold, Android, web, watermark, logo and extra-tab elements.
+
+## Next step after approval
+
+If the unrevealed candidate is approved:
+
+1. record its approval date, requested changes, and accessibility allowances here and in `DECISIONS.md`;
+2. continue automatically to the next required screen/state without waiting for another instruction;
+3. do not implement it until the remaining implementation gates in `STATUS.md` are closed and one task owns implementation.

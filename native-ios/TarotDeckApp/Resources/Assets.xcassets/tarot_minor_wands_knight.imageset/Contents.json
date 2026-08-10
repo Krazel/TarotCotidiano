@@ -1,0 +1,16 @@
+{
+    "images":  [
+                   {
+                       "scale":  "1x",
+                       "filename":  "candidate.jpg",
+                       "idiom":  "universal"
+                   }
+               ],
+    "properties":  {
+                       "preserves-vector-representation":  false
+                   },
+    "info":  {
+                 "author":  "xcode",
+                 "version":  1
+             }
+}

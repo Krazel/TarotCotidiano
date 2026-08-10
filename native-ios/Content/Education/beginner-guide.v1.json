@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "1.0.0",
+  "language": "en",
+  "title": "Learn to Read Tarot",
+  "introduction": "A simple guide to reading the cards in your own way. Tarot offers images and themes for reflection, while you remain responsible for the question, the connections you make, and the meaning you take from a reading.",
+  "articles": [
+    {
+      "id": "start-with-a-question",
+      "order": 1,
+      "title": "Start with a Question",
+      "summary": "Frame an open, useful question and prepare a calm space for your reading.",
+      "sections": [
+        {
+          "heading": "Tarot as a Reflection Tool",
+          "body": "A standard tarot deck has 78 cards: 22 Major Arcana and 56 Minor Arcana. Major Arcana often frame broad turning points or lessons, while Minor Arcana often frame everyday actions, feelings, thoughts, and practical matters. Each card offers symbols and themes that can help you reflect. A reading is an interpretation, not a fixed answer or settled fact, and your context matters more than memorizing one perfect definition."
+        },
+        {
+          "heading": "Frame the Question",
+          "body": "Choose a question that leaves room for reflection. Questions beginning with what, where, or how are usually more useful than asking for a fixed yes or no. Keep it simple and focused on what you can understand or influence, rather than trying to establish facts about another person."
+        },
+        {
+          "heading": "Prepare Your Reading",
+          "body": "Choose a quiet moment, decide whether you want one card or three, and keep the same question throughout the spread. You do not need to enter or save the question in the app. Treat the reading as one perspective that can help you think, not as an instruction you must follow."
+        }
+      ]
+    },
+    {
+      "id": "shuffle-and-draw",
+      "order": 2,
+      "title": "Shuffle and Draw",
+      "summary": "Prepare the deck, shuffle with your question in mind, and reveal each card deliberately.",
+      "sections": [
+        {
+          "heading": "Shuffle with Purpose",
+          "body": "Hold your question in mind and shuffle until you feel ready. There is no required ritual or correct amount of time. Shuffling creates a fresh order for the full deck; it does not make the app decide what the cards mean."
+        },
+        {
+          "heading": "Draw Deliberately",
+          "body": "Draw one card at a time. Cards are placed face down so you can reveal them deliberately, in any order that helps you concentrate. Use the same question for every card in the spread, and pause before checking a meaning to notice your first response to the image."
+        }
+      ]
+    },
+    {
+      "id": "read-one-card",
+      "order": 3,
+      "title": "Read One Card",
+      "summary": "Use one image, a few keywords, and your context to form a clear reflection.",
+      "sections": [
+        {
+          "heading": "Use a Clear Snapshot",
+          "body": "A one-card reading offers a focused snapshot. Ask what deserves attention, what quality could help, or what perspective you may be missing. The card does not need to answer every part of the situation."
+        },
+        {
+          "heading": "Connect Image and Context",
+          "body": "Name the first detail that catches your eye, then choose one keyword that fits your situation. Read the reference meaning after making your own observation. Finish by connecting one useful idea to the question rather than forcing a complete or certain answer."
+        }
+      ]
+    },
+    {
+      "id": "read-three-cards",
+      "order": 4,
+      "title": "Read Three Cards",
+      "summary": "Read three neutral positions as a sequence, a contrast, or a set of related ideas.",
+      "sections": [
+        {
+          "heading": "Keep the Positions Neutral",
+          "body": "Three cards offer more context without imposing a fixed spread. The positions are card one, card two, and card three. Before drawing, you may give them your own roles, or simply read them as a sequence of ideas. If you choose roles, keep them consistent throughout the reading."
+        },
+        {
+          "heading": "Read Each Card First",
+          "body": "Observe and consider each card on its own before building a combined meaning. Notice whether the sequence develops, contrasts, or repeats a theme. Do not force every detail to match; use the connections that feel relevant to your question."
+        },
+        {
+          "heading": "Look Across the Spread",
+          "body": "After reading each card, look across all three. Repeated suits or numbers may strengthen a theme, while contrasting images may show tension or alternatives. Ask what changes from the first image to the last, and let one clear connection be enough."
+        }
+      ]
+    },
+    {
+      "id": "notice-symbols-and-patterns",
+      "order": 5,
+      "title": "Notice Symbols and Patterns",
+      "summary": "Observe the imagery closely, then notice repetition, contrast, movement, and mood.",
+      "sections": [
+        {
+          "heading": "Begin with What Is Visible",
+          "body": "Look at the card before reaching for a definition. Notice figures, direction of movement, color, weather, objects, distance, and where your attention lands. Ask what appears active, still, open, guarded, near, or far away, then describe the scene in plain words."
+        },
+        {
+          "heading": "Notice Relationships",
+          "body": "Consider the mood the image creates and which detail changes how you understand the card's keywords. Across several cards, look for repeated suits, numbers, figures, directions, or colors. Contrast can matter as much as repetition; use patterns as prompts for reflection rather than hidden rules."
+        },
+        {
+          "heading": "Return to the Question",
+          "body": "Connect the detail or pattern back to the question you began with. Personal associations can be useful when they remain grounded in what the image shows and in the context you actually know."
+        }
+      ]
+    },
+    {
+      "id": "build-your-interpretation",
+      "order": 6,
+      "title": "Build Your Interpretation",
+      "summary": "Combine your observations into a grounded reflection, then close the reading with care.",
+      "sections": [
+        {
+          "heading": "Make One Clear Connection",
+          "body": "Bring together the image, one or two keywords, the card's reference meaning, and the original question. Build one short sentence that describes a useful possibility or perspective. You do not need to find hidden rules or make every symbol fit."
+        },
+        {
+          "heading": "Close the Reading",
+          "body": "Review the question and name the perspective you want to carry forward. Summarize the reading in one sentence and keep only the insight that feels constructive and grounded. You can end without certainty; when more cards would add noise rather than clarity, return the cards to the deck."
+        },
+        {
+          "heading": "Read with Care",
+          "body": "Read with consent, humility, and respect for uncertainty. Tarot is not evidence and cannot replace reliable information or qualified support. Keep other people's private lives out of a reading without their consent, and do not use cards to control someone, declare facts about them, or make important choices on their behalf. Frame interpretations as possibilities, questions, or personal reflections."
+        }
+      ]
+    }
+  ]
+}

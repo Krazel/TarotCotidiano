@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "manifestVersion": "1.0.0",
+  "records": [
+    {
+      "id": "rws-1909-original-artwork-candidate",
+      "kind": "historical-original-work",
+      "title": "Rider-Waite-Smith tarot card artwork, original 1909 edition",
+      "creators": [
+        {
+          "name": "Pamela Colman Smith",
+          "role": "illustrator",
+          "deathYear": 1951
+        },
+        {
+          "name": "Arthur Edward Waite",
+          "role": "author and deck designer",
+          "deathYear": 1942
+        }
+      ],
+      "firstPublicationYear": 1909,
+      "status": "candidate-public-domain-original-work",
+      "distributionApproved": false,
+      "sourceFilesBundled": false,
+      "scope": "The original 1909 card illustrations only. This record does not cover later scans, photographs, restorations, recolorings, borders, typography, card backs, packaging, guidebooks, trademarks, or modern editions.",
+      "jurisdictionNotes": {
+        "unitedStates": "The U.S. Copyright Office states that works published in the United States before January 1, 1931 are in the public domain as of 2026. A candidate file must still be verified as a faithful reproduction of the original work and checked for separate rights.",
+        "unitedKingdom": "Official UK guidance gives the usual term for artistic works as 70 years after the author's death. Older works and particular source reproductions can require additional analysis.",
+        "europeanUnion": "Directive 2006/116/EC generally sets life plus 70 years for literary and artistic works. Territory-specific rules, source-file rights, and the intended App Store storefronts must be reviewed before release."
+      },
+      "officialReferences": [
+        {
+          "authority": "U.S. Copyright Office",
+          "title": "What is Copyright?",
+          "url": "https://copyright.gov/what-is-copyright/",
+          "checkedOn": "2026-08-09"
+        },
+        {
+          "authority": "UK Intellectual Property Office",
+          "title": "How long copyright lasts",
+          "url": "https://www.gov.uk/copyright/how-long-copyright-lasts",
+          "checkedOn": "2026-08-09"
+        },
+        {
+          "authority": "EUR-Lex",
+          "title": "Directive 2006/116/EC on the term of protection of copyright and related rights",
+          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006L0116",
+          "checkedOn": "2026-08-09"
+        }
+      ],
+      "prohibitedAssumptions": [
+        "A modern edition is safe because it depicts the original RWS composition.",
+        "A file marked public domain by one uploader is cleared for every intended storefront.",
+        "A scan, photograph, restoration, recoloring, crop, border, or card back has no separate rights.",
+        "The Rider-Waite-Smith name, packaging, or commercial presentation is cleared by the age of the original illustrations."
+      ]
+    },
+    {
+      "id": "tarot-cotidiano-original-artwork-future",
+      "kind": "future-original-work",
+      "title": "Future Tarot Cotidiano original 78-card artwork",
+      "creators": [],
+      "firstPublicationYear": null,
+      "status": "future-placeholder",
+      "distributionApproved": false,
+      "sourceFilesBundled": false,
+      "scope": "Reserved provenance identity for a future internally created or commissioned 78-card art set. Do not reference from production cards until ownership or license terms and every asset record are complete.",
+      "requiredRightsEvidence": [
+        "Named creator or commissioning party",
+        "Written ownership or distribution license",
+        "Permitted territories and storefronts",
+        "Permitted modifications and derivative uses",
+        "Attribution requirements",
+        "Final source file and SHA-256 for every face and card back"
+      ]
+    }
+  ],
+  "assetEvidence": [],
+  "assetEvidenceRequiredFields": [
+    "artworkAsset",
+    "provenanceID",
+    "sourceURLOrContractReference",
+    "acquiredOn",
+    "sourceRightsStatement",
+    "sha256",
+    "pixelWidth",
+    "pixelHeight",
+    "manualReviewOutcome"
+  ]
+}

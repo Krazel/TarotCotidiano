@@ -1,0 +1,192 @@
+name: Tarot local QA unsigned IPA
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-local-qa-ipa:
+    name: INTERNAL ONLY - unsigned device IPA
+    runs-on: macos-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository without retained credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Validate local QA workflow boundaries
+        shell: pwsh
+        run: ./native-ios/Tools/validate-local-qa-ipa-workflow.ps1
+
+      - name: Report Apple and Swift toolchains
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          swift --version
+
+      - name: Validate canonical 78-card content
+        shell: pwsh
+        run: ./native-ios/Content/validate-content.ps1
+
+      - name: Validate English education content
+        shell: pwsh
+        run: ./native-ios/Content/Education/validate-education.ps1
+
+      - name: Validate internal app snapshot
+        shell: pwsh
+        run: ./native-ios/Tools/validate-app-integration.ps1
+
+      - name: Run structural Swift tests
+        shell: bash
+        run: swift test --package-path native-ios --parallel
+
+      - name: Build unsigned Debug app for a physical iPhone
+        shell: bash
+        run: |
+          set -euo pipefail
+          DERIVED_DATA="$RUNNER_TEMP/TarotDeckLocalQADevice"
+
+          xcodebuild \
+            -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal \
+            -configuration Debug \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$DERIVED_DATA" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            AD_HOC_CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            build
+
+      - name: Verify device app and package exact IPA payload
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          DERIVED_DATA="$RUNNER_TEMP/TarotDeckLocalQADevice"
+          APP_PATH="$DERIVED_DATA/Build/Products/Debug-iphoneos/TarotDeckInternal.app"
+          INFO_PLIST="$APP_PATH/Info.plist"
+          OUTPUT_DIR="$RUNNER_TEMP/tarot-local-qa-output"
+          STAGING_DIR="$(mktemp -d "$RUNNER_TEMP/tarot-local-qa.XXXXXX")"
+
+          if [[ ! -d "$APP_PATH" ]]; then
+            echo "::error::Expected physical-device app was not produced at $APP_PATH"
+            exit 1
+          fi
+          if [[ ! -f "$INFO_PLIST" ]]; then
+            echo "::error::Built app is missing Info.plist."
+            exit 1
+          fi
+
+          EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
+          EXECUTABLE_PATH="$APP_PATH/$EXECUTABLE_NAME"
+          PLATFORM_NAME="$(/usr/libexec/PlistBuddy -c 'Print :DTPlatformName' "$INFO_PLIST")"
+          SDK_NAME="$(/usr/libexec/PlistBuddy -c 'Print :DTSDKName' "$INFO_PLIST")"
+          VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")"
+          BUILD_NUMBER="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")"
+          BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")"
+
+          if [[ -z "$EXECUTABLE_NAME" || ! -f "$EXECUTABLE_PATH" ]]; then
+            echo "::error::CFBundleExecutable does not resolve to a built executable."
+            exit 1
+          fi
+          if [[ "$PLATFORM_NAME" != "iphoneos" || "$SDK_NAME" != iphoneos* ]]; then
+            echo "::error::Refusing to package a non-device build: platform=$PLATFORM_NAME sdk=$SDK_NAME"
+            exit 1
+          fi
+
+          EXECUTABLE_DESCRIPTION="$(file "$EXECUTABLE_PATH")"
+          if [[ "$EXECUTABLE_DESCRIPTION" != *arm64* || "$EXECUTABLE_DESCRIPTION" == *x86_64* ]]; then
+            echo "::error::Built executable is not an arm64 physical-device binary: $EXECUTABLE_DESCRIPTION"
+            exit 1
+          fi
+          if codesign -dv "$APP_PATH" >/dev/null 2>&1; then
+            echo "::error::The local QA app unexpectedly contains a code signature."
+            exit 1
+          fi
+
+          mkdir -p "$OUTPUT_DIR" "$STAGING_DIR/Payload"
+          /usr/bin/ditto "$APP_PATH" "$STAGING_DIR/Payload/TarotDeckInternal.app"
+
+          BASE_NAME="TarotDeck-${VERSION}-${BUILD_NUMBER}-local-qa-unsigned"
+          IPA_PATH="$OUTPUT_DIR/${BASE_NAME}.ipa"
+          MANIFEST_PATH="$OUTPUT_DIR/${BASE_NAME}.manifest.json"
+          SHA_PATH="$OUTPUT_DIR/${BASE_NAME}.sha256"
+
+          (
+            cd "$STAGING_DIR"
+            /usr/bin/zip -qry "$IPA_PATH" Payload
+          )
+
+          ZIP_LIST="$RUNNER_TEMP/tarot-local-qa-ipa-entries.txt"
+          zipinfo -1 "$IPA_PATH" > "$ZIP_LIST"
+          INVALID_ENTRIES="$(awk '!/^Payload\/$/ && !/^Payload\/TarotDeckInternal\.app(\/|$)/ { print }' "$ZIP_LIST")"
+          if [[ -n "$INVALID_ENTRIES" ]]; then
+            echo "::error::IPA contains entries outside Payload/TarotDeckInternal.app: $INVALID_ENTRIES"
+            exit 1
+          fi
+          if ! grep -qx 'Payload/TarotDeckInternal.app/Info.plist' "$ZIP_LIST"; then
+            echo "::error::Packaged IPA is missing Payload/TarotDeckInternal.app/Info.plist."
+            exit 1
+          fi
+          if ! grep -Fqx "Payload/TarotDeckInternal.app/$EXECUTABLE_NAME" "$ZIP_LIST"; then
+            echo "::error::Packaged IPA is missing the exact CFBundleExecutable at Payload/TarotDeckInternal.app/$EXECUTABLE_NAME."
+            exit 1
+          fi
+
+          IPA_SHA256="$(shasum -a 256 "$IPA_PATH" | awk '{print $1}')"
+          printf '%s  %s\n' "$IPA_SHA256" "$(basename "$IPA_PATH")" > "$SHA_PATH"
+
+          GENERATED_AT="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+          jq -n \
+            --arg app "TarotDeckInternal" \
+            --arg version "$VERSION" \
+            --arg build "$BUILD_NUMBER" \
+            --arg bundleID "$BUNDLE_ID" \
+            --arg configuration "Debug" \
+            --arg platform "$PLATFORM_NAME" \
+            --arg sdk "$SDK_NAME" \
+            --arg sha256 "$IPA_SHA256" \
+            --arg commit "$GITHUB_SHA" \
+            --arg generatedAtUTC "$GENERATED_AT" \
+            --arg notice "INTERNAL ONLY - provisional RWS artwork - not for redistribution" \
+            '{
+              schemaVersion: 1,
+              app: $app,
+              version: $version,
+              build: $build,
+              bundleID: $bundleID,
+              configuration: $configuration,
+              platform: $platform,
+              sdk: $sdk,
+              signed: false,
+              installation: "Requires user-side re-signing with Sideloadly or AltStore.",
+              sha256: $sha256,
+              commit: $commit,
+              generatedAtUTC: $generatedAtUTC,
+              notice: $notice
+            }' > "$MANIFEST_PATH"
+
+          test "$(find "$OUTPUT_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "3"
+          echo "artifact_name=tarot-deck-${VERSION}-${BUILD_NUMBER}-local-qa-unsigned" >> "$GITHUB_OUTPUT"
+          echo "INTERNAL ONLY - provisional RWS artwork - not for redistribution"
+
+      - name: Upload private local QA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.package.outputs.artifact_name }}
+          path: ${{ runner.temp }}/tarot-local-qa-output/
+          if-no-files-found: error
+          retention-days: 3
+          compression-level: 0
+          include-hidden-files: false

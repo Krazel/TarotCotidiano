@@ -1,245 +1,320 @@
-# Daily Tarot — Product Brief
+# Tarot Deck — Product Brief
 
-Status: product proposal for owner approval  
-First release: iPhone only, English only  
-Date: 2026-08-08
+Status: active expanded MVP baseline under A-020, A-021, and A-022
+First release: iPhone only, English only
+Date: 2026-08-09
 
 ## Product in one sentence
 
-Daily Tarot is a private daily reflection ritual: one card, one grounded message, and one question that helps a person choose a useful intention in under two minutes.
+Tarot Deck puts a complete tarot deck and a calm learning reference on the iPhone, so people can make their own readings, understand the cards, and grow as readers without the app interpreting for them.
 
-It uses tarot-inspired symbolism without claiming to predict the future, replace professional advice, or produce definitive answers.
+`Tarot Deck` is a working product name, not an approved launch identity.
 
 ## Target user
 
 ### Primary user
 
-An English-speaking adult who:
+An English-speaking iPhone owner who reads tarot, is learning to read it, or occasionally reads with friends and wants both a usable deck and a concise reference when a physical deck or guidebook is not available.
 
-- is curious about tarot, symbolism, or mindful rituals but needs no prior tarot knowledge;
-- wants a brief pause at the start of the day or during a stressful moment;
-- prefers a gentle, practical prompt to a long meditation or endless content feed;
-- values privacy and does not want an account, public profile, or writing obligation;
-- uses an iPhone as their primary device.
+They value:
 
-### Core situation
+- control over the question, positions, reveal order, and final interpretation;
+- familiar deck actions: shuffle, draw without replacement, place, turn over, and clear;
+- an explanation they can consult without surrendering the reading to an automated reader;
+- a complete 78-card library they can browse at their own pace;
+- a private, offline tool without engagement mechanics or an account.
 
-They open the app once a day, often after an optional reminder. They reveal one card, read its message and reflection question, then return to their day. At other times, they can revisit a saved card or browse a category that matches what they need.
+### Core situations
+
+1. **Do a reading:** choose a neutral one-card or three-card layout, shuffle, draw, reveal, and interpret.
+2. **Understand a revealed card:** tap it to inspect its art, canonical identity, and concise upright meaning, then return to the unchanged table.
+3. **Learn the method:** read a short guide explaining how to prepare, notice imagery, combine cards, and form an interpretation.
+4. **Study the deck:** browse all 78 cards, filter by arcana or suit, and move through them one by one.
 
 ### Not the primary MVP user
 
-- Someone seeking fortune-telling, complex spreads, reversed cards, or traditional tarot instruction.
-- Someone seeking therapy, diagnosis, crisis support, or professional advice.
-- Someone seeking a social network, long-form journal, or infinite stream of new content.
+- Someone asking the app to predict an outcome, answer a question, or write a personalized reading.
+- Someone seeking a daily horoscope, zodiac magazine, automatic card of the day, or reminder habit.
+- Someone requiring reversals, advanced custom spreads, multiple decks, certification-style lessons, quizzes, or progress tracking.
+- Someone seeking medical, psychological, legal, financial, or crisis advice.
 
 ## Problem and job to be done
 
-When people want a small moment of direction, they often encounter content that is generic, time-consuming, or optimized to keep them scrolling. Daily Tarot offers a bounded alternative: one thought to read, one question to consider, and permission to leave.
+A physical deck and guidebook are not always nearby or practical. Many tarot apps replace the deck with automatic readings, subscriptions, or engagement loops; basic reference apps can also separate learning from actual practice.
 
-> “Help me pause and find a useful intention for today without asking for much time, personal data, or public participation.”
+> “Give me a complete deck on my phone, teach me the essentials, and let me check a card when I need help—while leaving the reading to me.”
 
 ## Core promise
 
-**One card a day turns a pause of less than two minutes into a clear, compassionate intention.**
+**A real tarot deck in your pocket, with the knowledge to read it yourself.**
 
-The MVP proves this promise through:
+The MVP proves that promise through:
 
-- one card that stays stable for the local calendar day;
-- one concise message and one open reflection question;
-- no account, purchase, connection, or required setup;
-- optional save and share actions;
-- one optional local daily reminder.
+- one complete, recognizable 78-card deck;
+- a fair shuffle and draws without duplicates in a reading;
+- neutral one-card and three-card layouts;
+- user-controlled draw and turn-over actions;
+- an optional upright meaning for every revealed card;
+- one concise beginner guide and a complete card library;
+- no generated interpretation, required question, account, or connection;
+- local restoration of the active reading.
 
 ## Product principles
 
-1. **Reflection, not prediction.** Cards offer a perspective or action, never certainty about the future.
-2. **A ritual with an ending.** The daily experience can be completed in under two minutes and does not lead into a feed.
-3. **Low friction.** The card can be revealed without registration, connectivity, payment, or a mandatory tutorial.
-4. **Private by default.** Saved cards and reminder preferences remain on the iPhone in the MVP.
-5. **Curated and finite.** The 36-card collection is the product, not a placeholder for automatically generated content.
-6. **User agency.** Saving, sharing, browsing, and enabling reminders are choices, not completion requirements.
+1. **The user is the reader.** The app supplies cards and knowledge, not a verdict or personalized answer.
+2. **The deck remains the core.** Read is the primary destination; Learn and Cards support actual practice.
+3. **Reference is optional and contextual.** Meaning is available on demand, never pushed over the table or revealed automatically.
+4. **Physical actions stay legible.** Shuffle, draw, place, turn over, inspect, and clear are distinct actions.
+5. **Complete means complete.** All 78 canonical identities, artwork records, and upright meanings ship together.
+6. **Simple layouts, open meanings.** Position labels such as past, present, or future are not imposed.
+7. **Private and local.** The app collects no question, notes, account, analytics profile, or cloud record.
+8. **Bounded learning.** The guide teaches a usable method; it is not a course, feed, streak, or content program.
+9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
+10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
+11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
 
-## Daily loop
+## Three product loops
 
-1. **Optional cue:** a local notification arrives at the time chosen by the user.
-2. **Arrival:** the app opens on Today with the daily card ready and unrevealed.
-3. **Ritual:** the user taps once to reveal it.
-4. **Reflection:** they read the title, message, and question and choose an intention outside the app.
-5. **Optional keeping:** they save the card or share it through the native iOS share sheet.
-6. **Closure:** they leave with nothing else required; the next new card arrives on the next local day.
+### Read
 
-Revealing and reading completes the loop. Saving, sharing, and browsing are supporting actions, not success gates.
+1. Open `Read` and resume the active reading or start a new one.
+2. Choose `One Card` or `Three Cards`.
+3. Shuffle the complete deck.
+4. Draw cards one at a time; each arrives face down and cannot repeat.
+5. Turn cards over manually in any order.
+6. Tap a revealed card when a meaning is helpful, then return to the exact table state.
+7. End the reading deliberately, or leave it active to resume later.
+
+The app never decides what the cards mean together. Reading completion is not rewarded, scored, or saved to history.
+
+### Learn
+
+1. Open `Learn`.
+2. Choose one short article from the fixed beginner guide.
+3. Read a practical method or concept.
+4. Return to the index or move to `Read` or `Cards` to apply it.
+
+There is no enrollment, progress state, quiz, lesson lock, reminder, or completion badge.
+
+### Cards
+
+1. Open `Cards` to see the complete deck in canonical order.
+2. Show all cards or filter by `Major`, `Wands`, `Cups`, `Swords`, or `Pentacles`.
+3. Tap a card to see its art and upright reference.
+4. Move to the previous or next card inside the active filter to study the deck one by one.
+
+Browsing never changes the active reading or the shuffled order.
+
+## Compact navigation
+
+The MVP has three primary iPhone destinations:
+
+- **Read:** deck home, setup, and active reading.
+- **Learn:** beginner guide index and articles.
+- **Cards:** complete library and card detail.
+
+A standard three-destination iOS navigation shell keeps them directly reachable. An active reading remains intact when the user visits Learn or Cards. Detail views return to their source context; a meaning opened from a reading returns to the same reading, while a card opened from the library returns to the same filter and position.
+
+A discreet settings gear in `Read` opens secondary controls. Settings is not a fourth primary destination and never replaces or interrupts the deck flow.
+
+Exact visual presentation remains governed by the registered screen images.
 
 ## Small MVP
 
 ### Included
 
-1. **Today**
-   - One card for the current local date.
-   - Unrevealed and revealed states.
-   - English category name, card title, message, and reflection question.
-   - Save, remove from saved, and share.
+1. **Read**
+   - Deck home with `New Reading` or `Resume Reading`.
+   - Neutral `One Card` and `Three Cards` layouts.
+   - Explicit shuffle, one-at-a-time draw, independent reveal, and deliberate end.
+   - Meaning available only after tapping a revealed card.
 
-2. **Explore**
-   - The 12 existing concepts adapted into English categories.
-   - Three cards per category, for all 36 existing concepts.
-   - Full card reading, save, and share.
+2. **Learn**
+   - One static index with six concise articles:
+     1. `Start with a Question`
+     2. `Shuffle and Draw`
+     3. `Read One Card`
+     4. `Read Three Cards`
+     5. `Notice Symbols and Patterns`
+     6. `Build Your Interpretation`
+   - Articles use original English copy, plain examples, and ethical boundaries.
 
-3. **Saved**
-   - A local collection of cards deliberately saved by the user.
-   - Empty and populated states.
-   - Read, share, and remove actions.
+3. **Cards**
+   - All 78 cards in canonical order.
+   - Filters for all cards, Major Arcana, and the four suits.
+   - Large card detail with identity, upright keywords, concise meaning, practical reading note, and previous/next browsing.
 
-4. **Settings**
-   - Enable or disable one local daily reminder.
-   - Choose one valid local time.
-   - Handle notification permission granted, denied, or restricted.
+4. **Deck and content integrity**
+   - Standard 22 Major Arcana plus 56 Minor Arcana.
+   - Upright orientation only.
+   - Canonical English names, bundled art, and original bundled reference copy.
+   - Stable IDs allow historical launch art to be replaced later with original in-house art without changing readings or meanings.
 
-5. **Foundations**
-   - No account and no network requirement for core use.
-   - Local persistence for saved cards, the last explored category, reveal state, and reminder settings.
-   - Designed, implemented, and validated for iPhone only.
-   - All user-facing product language and card content are English only.
+5. **Local continuity and privacy**
+   - The active reading, shuffled order, drawn cards, and face states survive app closure.
+   - Ending a reading deletes the session; no history is created.
+   - Learn and Cards content is bundled and requires no connection.
+   - No question, interpretation, note, favorite, reading history, or learning progress is collected.
+
+6. **Release foundations**
+   - iPhone/iOS only and all app-owned copy in English.
+   - VoiceOver, Dynamic Type, sufficient contrast, Reduce Motion compatibility, and 44-point touch targets.
+   - Core use works in airplane mode and requests no permission.
+
+7. **Settings and planned voluntary support**
+   - A discreet settings gear in `Read`; no fourth tab.
+   - Separate rows for `Support the App`, `Restore Purchases`, `Privacy`, `Terms`, and `Rate the App`.
+   - Three provisional monthly levels—`Monthly Supporter`, `Kind Supporter`, and `Generous Supporter`—with equivalent product access and benefits. Exact product identifiers and prices are not defined here.
+   - A clear supporter state and thank-you after a verified entitlement.
+   - Before any purchase, the live App Store price and monthly duration, automatic-renewal behavior, how to manage or cancel, restoration, Privacy, and Terms must be visible.
+   - Cancellation, failed purchase, unavailable products, or no restored purchase never limits Read, Learn, Cards, or meanings.
+   - `Rate the App` is a separate user-initiated action, never a purchase benefit or condition.
 
 ### Why this remains small
 
-The MVP has four functional destinations and one central action: reveal today's card. Explore reuses the fixed 36-card set and does not introduce a second reading mode. Saved and the reminder support return behavior without adding progress systems.
+The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains six fixed articles, Cards reuses one meaning model across 78 identities, and Settings keeps optional support and legal links outside the core flow. No account, user-generated content, progression, social behavior, or purchase is required.
 
 ## Explicit exclusions
 
-- Android, iPad, web, and cross-device synchronization.
-- Any language other than English, language selection, translation workflow, or localization planning.
-- Registration, profiles, login, cloud backup, or data recovery.
-- Subscriptions, purchases, advertising, or locked cards.
-- Multi-card spreads, reversed cards, question-based draws, predictions, or traditional tarot lessons.
-- AI-generated content, chat, or personalized interpretations.
-- Journaling, notes, history, calendar, streaks, achievements, statistics, or automatic tracking of viewed cards.
-- Community, comments, followers, messaging, or a social feed.
-- New cards, categories, decks, remote content management, or content import.
-- Widgets, Apple Watch, Live Activities, and multiple reminders.
-- Medical, psychological, financial, or legal claims or advice.
-- Multi-page onboarding, a mandatory tutorial, or a notification request on first launch.
-- A user-facing “test notification” action. It may remain an internal testing aid until technical validation is complete.
+- Automatic card of the day, daily reminder, streak, calendar, or notification.
+- Zodiac signs, horoscope copy, daily magazine cards, or any Zodiac/Horoscope mode.
+- App-generated spreads, guided readings, AI chat, predictions, personalized answers, or card-combination interpretations.
+- Reflection messages, prompts, or the 12 thematic categories from the prior prototype.
+- Reversed cards or randomized card orientation.
+- Named spreads, imposed position meanings, custom layouts, free placement, or spreads larger than three cards.
+- Search, favorites, saved cards, bookmarks, history, journaling, notes, tags, reading statistics, or learning progress.
+- Quizzes, courses, certificates, gated lessons, glossary expansion, or an encyclopedia beyond the defined guide and 78 card entries.
+- Sharing cards or readings.
+- Multiple visual decks, alternate card backs, themes, imports, or downloadable content.
+- Accounts, profiles, login, sync, cloud backup, or cross-device recovery.
+- Required purchase, paywall, locked card, feature entitlement, advertising, or supporter-only content. The only planned commerce is the equivalent monthly voluntary support defined by A-022.
+- One-time tips, consumables, paid deck packs, premium readings, or differing functional benefits between support levels.
+- Network-fetched tarot or learning content, remote content management, analytics, or generative content. Future StoreKit support, restoration, legal links, and App Store rating may use Apple or system services without making core use network-dependent.
+- Promotional support prompts in the first-use experience, during a reading, while revealing or inspecting a card, or during another critical task. The MVP keeps support discoverable in Settings instead of interrupting use.
+- Onboarding carousel or mandatory tutorial.
+- Android, iPad, web, Apple Watch, widgets, other languages, or localization planning.
+- Publishing, App Store submission, or external services without separate authorization.
 
-## Content model
+## Deck and content model
 
-### Verified source set
+### Canonical deck
 
-The existing project contains **36 complete Spanish source cards**, each with a unique identifier, arranged evenly as **12 categories × 3 cards**. Every card references a valid category and contains a title, message, and prompt.
+`native-ios/Content/tarot-deck.v1.json` is the current identity manifest. It contains exactly 78 unique stable IDs:
 
-For the English-only MVP, those Spanish texts are conceptual source material, not production copy. The production set must contain exactly 36 professionally edited English adaptations with the same conceptual coverage and identifiers. This is content adaptation for the first version, not a localization feature.
+- 22 Major Arcana, ordered `major-00-the-fool` through `major-21-the-world`;
+- 14 Wands, `minor-wands-ace` through `minor-wands-king`;
+- 14 Cups, `minor-cups-ace` through `minor-cups-king`;
+- 14 Swords, `minor-swords-ace` through `minor-swords-king`;
+- 14 Pentacles, `minor-pentacles-ace` through `minor-pentacles-king`.
 
-### Working English content inventory
+The first version may use verified scans of original public-domain Rider–Waite–Smith artwork. Modern commercial editions, recolorings, or restorations are not interchangeable with the historical source. The existing 36 Spanish reflective cards remain historical oracle-style material and are not mapped into this deck.
 
-These are target English names for product definition. Final English prose still needs an editorial pass before implementation.
+### Card identity fields
 
-| Stable ID | English category | Editorial purpose | Three working card titles |
-|---|---|---|---|
-| `animo` | Encouragement | Begin with clarity and self-directed momentum | Inner Dawn; The Steady Flame; The Low Sun |
-| `foco` | Focus | Direct attention and choose a priority | The Serene Eye; The Golden Needle; The Clear Table |
-| `calma` | Calm | Return to presence and create space | The Still Bowl; The Night Bloom; The Blue Mist |
-| `disciplina` | Discipline | Move through sustainable consistency | The Patient Mountain; The Narrow Gate; The Constant Thread |
-| `autoestima` | Self-Worth | Relate to oneself with truth and kindness | The Noble Mirror; The Crowned Heart; A Home Within |
-| `gratitud` | Gratitude | Notice support and resources already present | Open Hands; The Full Cup; Shared Bread |
-| `valentia` | Courage | Act with calm, responsible bravery | The Golden Lion; The Torch; The Threshold |
-| `habitos` | Habits | Make small actions repeatable | The Seed; The Inner Garden; The Simple Key |
-| `creatividad` | Creativity | Open play, variation, and intuition | The Creative Moon; The Spark; The Secret Workshop |
-| `resiliencia` | Resilience | Adapt without abandoning direction | The Waves; The Warm Stone; The Bridge |
-| `relaciones` | Relationships | Practice listening, reciprocity, and boundaries | The Two Candles; The Loose Knot; The Golden Boundary |
-| `energia` | Energy | Choose where to place effort and rest | The Guiding Star; The Solar Circle; The Blue Fire |
+- `id`: stable, language-neutral key from the canonical manifest.
+- `order`: canonical whole-deck order.
+- `name`: canonical English display name.
+- `arcana`: `major` or `minor`.
+- `majorNumber`: Major Arcana number when applicable.
+- `suit`: `wands`, `cups`, `swords`, or `pentacles` for Minor Arcana.
+- `rank`: `ace`, `two` through `ten`, `page`, `knight`, `queen`, or `king` for Minor Arcana.
+- `artworkAsset`: bundled card-face asset.
+- `accessibilityLabel`: concise English identity.
 
-### Entities and fields
+### Upright reference fields
 
-**Category**
+Every canonical card ID resolves to exactly one English reference record:
 
-- `id`: stable internal key; existing keys may remain internal.
-- `name`: English user-facing name.
-- `description`: short English thematic promise.
-- `symbol`: symbolic reference.
-- `color` and `softColor`: existing presentation metadata; final use depends on the approved visual direction.
+- `cardID`: exact foreign key to the identity manifest.
+- `keywords`: three to five concise upright concepts.
+- `meaning`: two or three original sentences explaining the card generally.
+- `readingNote`: one original, non-prescriptive sentence suggesting what to notice in a reading.
+- `artworkDescription`: concise factual description of the principal imagery for accessibility and study.
 
-**Card**
+Reference copy describes possibilities, not certainties. It must not diagnose, predict, instruct high-stakes action, or imply that the app has interpreted the user's question.
 
-- `id`: unique stable key using the existing `<category>-<number>` convention.
-- `category`: required relation to one category.
-- `title`: evocative English card name.
-- `message`: concise, self-contained, non-predictive English interpretation.
-- `prompt`: open English question that turns the message into personal reflection.
+### Learn article fields
 
-**User state**
+- `id`: stable English-independent key.
+- `order`: fixed guide order.
+- `title`: English article title.
+- `summary`: one-sentence index description.
+- `sections`: ordered headings and original body paragraphs.
+- `relatedCardFilter`: optional link to one existing library filter; no remote link or generated recommendation.
 
-- saved card identifiers;
-- last selected category;
-- daily card reveal state and its local date;
-- reminder enabled or disabled;
-- reminder time.
+### Reading session fields
 
-### Editorial rules
+- `layout`: `oneCard` or `threeCards`.
+- `shuffledOrder`: a permutation of all 78 stable card IDs.
+- `drawnCardIDs`: the first one or three IDs consumed from that order.
+- `faceUpCardIDs`: the subset currently turned over.
+- `phase`: setup, ready to shuffle, ready to draw, in progress, or complete.
 
-- Each card belongs to exactly one category and retains the title + message + prompt structure.
-- English copy should sound natural and intentional, not like a literal translation from Spanish.
-- A message may invite or suggest, but must not command, promise outcomes, or claim supernatural certainty.
-- A prompt must be answerable mentally and must not require the user to enter personal data.
-- Tone is warm, concise, inclusive, contemporary, and free of gendered address.
-- Shared text contains only approved English product copy and is sent only after an explicit user action.
-- The 36-card set is frozen for the MVP. Content review improves English craft without expanding the collection.
+Only the reading session is durable app-authored product state. A supporter entitlement is owned and verified through the App Store and may be cached locally for presentation; it is not an account, reading record, or access gate. Focused presentation, selected tab, Learn article, Cards filter, library position, and scroll offsets may reset without data loss.
 
-### Reference daily selection rule
+### Voluntary support model
 
-To stay coherent with the existing product idea, the MVP baseline is:
+- `levelID`: provisional product mapping for `monthlySupporter`, `kindSupporter`, or `generousSupporter`; final App Store product IDs require separate authorization.
+- `billingPeriod`: monthly auto-renewable for every level.
+- `entitlement`: the same supporter recognition for every level; a higher level expresses greater voluntary support rather than buying more functionality.
+- `status`: unavailable, not supporting, purchase pending, active supporter, restore pending, restore found, restore not found, or recoverable error.
+- `displayPrice`: supplied by StoreKit after products and prices are separately configured; never hard-coded in product copy.
 
-- one card per local calendar date;
-- the card stays unchanged for that day;
-- all 36 cards participate in a deterministic rotation and repeat after the cycle;
-- the Explore category does not influence Today's card;
-- no automatic card history is stored.
+Read, Learn, Cards, all meanings, and future core fixes remain available whether the entitlement is absent, expired, cancelled, pending, unavailable, or failed. Creating products, choosing prices, accepting contracts, configuring tax/banking, uploading builds, or submitting purchases for review is outside the current authorization and does not block completion of the three core loops.
 
-The owner still needs to approve whether the sequence is common by date or personal to each device.
+### Artwork rule
+
+All 78 faces and the shared back must be coherent, legible at iPhone sizes, and have documented distribution rights. Production is not complete while any card uses an unverified, missing, or low-fidelity asset. Stable IDs and separate artwork references preserve the planned future replacement with original in-house art.
 
 ## Differentiation
 
-1. **Grounded tarot symbolism.** Each symbol leads to a practical question, not a theatrical prediction.
-2. **Deliberate closure.** One card and one question provide a satisfying endpoint instead of an engagement feed.
-3. **A visible, original collection.** All 36 concepts can be browsed through recognizable human needs.
-4. **Private core experience.** The ritual works locally without identity, profiling, or public participation.
-5. **Two compatible modes.** Today supports the habit; Explore supports intentional reflection without inventing another type of draw.
+1. **Deck first, learning beside it.** The product starts with an honest physical-deck metaphor and keeps reference one tap away.
+2. **Knowledge without takeover.** It explains individual cards and a reading method but never generates the reading's conclusion.
+3. **No engagement machinery.** There is no daily obligation, feed, streak, reminder, progression system, or artificial scarcity.
+4. **Private by construction.** Questions and interpretations are not entered, uploaded, saved, or profiled.
+5. **One coherent deck.** The first version earns trust through a complete 78-card system rather than a catalog of upsells.
+6. **Practice and study agree.** The same stable identity and upright meaning power both a revealed reading card and the library detail.
 
 ## MVP success signals
 
-These guide product testing and do not require remote analytics in the MVP.
-
-- A first-time user understands the action on Today without outside instruction.
-- They can reveal and read the card in under two minutes.
-- The card stays stable for the local date and changes on the next day.
-- All 36 cards are reachable: three within each of 12 English categories.
-- Save, remove, and share remain consistent from every defined entry point.
-- A user can enable, change, and disable the reminder, including after denying permission.
-- Core use works offline and after closing and reopening the app.
-- All visible production copy is English, with no Spanish fallback or mixed-language state.
-- VoiceOver, Dynamic Type, contrast, and touch targets are validated during implementation.
+- A first-time user can start a one-card or three-card reading without mandatory onboarding.
+- The user understands the deck's unshuffled, shuffled, drawn, revealed, and complete states.
+- Every draw is deliberate and no card repeats within a reading.
+- An interrupted reading resumes with the same order, cards, and face states.
+- Tapping a revealed card opens the correct meaning and returning leaves the table unchanged.
+- A learner can find and finish any of the six guide articles without creating progress state.
+- The library displays exactly 78 cards; filters resolve to 22 Major and four groups of 14.
+- Previous and next move only within the active library filter and stop or wrap consistently as defined in the screen map.
+- Every card detail uses the same canonical English name and reference content as reading context.
+- Core use works in airplane mode and requests no permission.
+- Settings is reachable from Read without creating a fourth tab, and dismissing it preserves the exact reading state.
+- Every planned support level communicates the same access and recognition; no purchase state changes core functionality.
+- Support clearly discloses monthly auto-renewal and Apple-managed cancellation before purchase, while Restore Purchases, Privacy, Terms, and a separate Rate the App action remain findable.
+- VoiceOver identifies tabs, reading positions and face states, library position, card identity, artwork description, headings, and actions.
 
 ## Definition of done
 
-Product definition is complete when the owner approves the promise, English-only scope, daily selection model, content direction, and screen map. The MVP becomes release-ready only after every screen has an approved full-screen visual reference, the iPhone implementation matches those references, all English content is editorially approved, and the defined states pass validation. Publishing or App Store submission is not authorized by this document.
+The expanded MVP is release-candidate ready when:
 
-## Owner decisions
+1. `Read`, `Learn`, and `Cards` are implemented from complete registered iPhone references in Ceremonial Obsidian.
+2. One-card and three-card readings work, restore locally, never duplicate a card, and preserve identity secrecy while face down.
+3. The six guide articles are complete, original, English, bundled, readable offline, and reviewed for non-prescriptive language.
+4. The content manifest has exactly 78 identities and exactly 78 matching upright-reference records, with no missing or extra `cardID`.
+5. All 78 rights-cleared faces and the shared back are bundled; provenance is documented and no provisional asset is treated as production-ready.
+6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.
+7. Functional, content-integrity, persistence, accessibility, orientation, and recovery tests pass on iPhone using macOS/Xcode.
+8. Every visible string is English, all core flows work offline, and no account, analytics, notification, or personal-data collection exists.
+9. Settings is accessible from Read and contains the separate support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
+10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
+11. Final implementation captures have been compared with the registered references at matching sizes.
 
-These should be reviewed as one decision set. They do not authorize implementation.
+Commit, push, TestFlight, App Store submission, and publication remain separate actions requiring explicit authorization.
 
-### Identity and content
+StoreKit product creation, pricing, contracts, tax/banking configuration, live purchase testing, and in-app purchase review are also separate authorized work. They do not block defining or completing `Read`, `Learn`, and `Cards`.
 
-1. **Product name:** approve `Daily Tarot` or choose another English name. Existing source materials use both “Tarot Cotidiano” and “Oráculo Cotidiano”; neither remains user-facing in the English-only MVP.
-2. **Positioning:** confirm tarot-inspired reflection without predictive claims, or request a more explicitly spiritual voice.
-3. **English titles:** approve the 12 category names and 36 working card titles as the basis for the editorial adaptation.
+## Preserved work
 
-### Daily card rule
-
-4. **Shared or personal sequence:** use one deterministic card for the local date across all devices, or generate a stable device-specific sequence.
-5. **Persistent reveal:** decide whether a revealed card remains face-up after reopening on the same day. Recommendation: yes.
-6. **36-day repetition:** accept the finite cycle as intentional. Any collection expansion belongs to a later milestone, not this MVP.
-
-### Scope and return
-
-7. **Explore in MVP:** confirm the 12-category collection as one of the four destinations. Recommendation: keep it because it makes the existing content useful without adding a new reading mechanic.
-8. **Notification timing:** confirm that iOS permission is requested only after the user enables the reminder in Settings. Recommendation: yes.
-9. **Share copy:** decide whether shared text includes the reflection question in addition to title, message, and product name.
+- The Expo prototype and its 36 Spanish reflective cards remain intact as historical and conceptual reference.
+- Existing Daily Tarot images remain aesthetic exploration, not functional approval for this product.
+- The SwiftUI restart, pure deck engine, local persistence, tests, and the already approved S03.2–S03.5 reading states remain valid foundations.
+- The old exclusion of meanings and a card browser is superseded by A-020. A-022 adds optional monthly support planning, but the exclusions of automated interpretation, Zodiac, accounts, remote tarot content, and saved user content remain in force.

@@ -1,0 +1,633 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "1.0.0",
+  "language": "en",
+  "orientationPolicy": "uprightOnly",
+  "cardCount": 78,
+  "cards": [
+    {
+      "cardID": "major-00-the-fool",
+      "canonicalName": "The Fool",
+      "keywords": ["beginnings", "openness", "curiosity", "leap of faith"],
+      "uprightMeaning": "The Fool represents an open beginning, where experience has not yet narrowed the possibilities. Curiosity and trust make movement possible, while awareness keeps freedom from becoming carelessness.",
+      "inAReading": "Consider where a fresh approach could help and what you need to understand before taking the first step.",
+      "artworkDescription": "A young traveler carrying a small bundle holds a white rose near a cliff edge, while a white dog leaps beside them beneath a bright sun and distant mountains."
+    },
+    {
+      "cardID": "major-01-the-magician",
+      "canonicalName": "The Magician",
+      "keywords": ["initiative", "skill", "focus", "resourcefulness"],
+      "uprightMeaning": "The Magician brings attention to the tools, abilities, and choices already within reach. Focused intention becomes useful when it is matched by deliberate action and honest use of resources.",
+      "inAReading": "Ask which ability or resource you can use now, and choose one concrete action that gives your intention form.",
+      "artworkDescription": "A red-and-white robed figure raises a wand above a table holding a cup, sword, wand, and pentacle, with an infinity mark overhead and flowers below."
+    },
+    {
+      "cardID": "major-02-the-high-priestess",
+      "canonicalName": "The High Priestess",
+      "keywords": ["intuition", "stillness", "mystery", "inner knowledge"],
+      "uprightMeaning": "The High Priestess values quiet observation and knowledge that has not yet been put into words. Not every uncertainty needs an immediate answer; attention may reveal what pressure obscures.",
+      "inAReading": "Pause before acting and notice what your instincts, silences, or incomplete information are asking you to examine.",
+      "artworkDescription": "A crowned woman in blue robes sits between black and white pillars marked B and J, holding a scroll before a pomegranate curtain and crescent moon."
+    },
+    {
+      "cardID": "major-03-the-empress",
+      "canonicalName": "The Empress",
+      "keywords": ["nurture", "abundance", "creativity", "embodiment"],
+      "uprightMeaning": "The Empress reflects growth supported by care, patience, and connection to the senses. Creative potential becomes sustainable when it receives time, protection, and practical nourishment.",
+      "inAReading": "Look for what is ready to grow and consider the kind of steady care that would help it flourish.",
+      "artworkDescription": "A crowned woman reclines on a cushioned throne beside wheat, trees, and a flowing stream, with a heart-shaped shield bearing the Venus sign at her feet."
+    },
+    {
+      "cardID": "major-04-the-emperor",
+      "canonicalName": "The Emperor",
+      "keywords": ["structure", "authority", "stability", "boundaries"],
+      "uprightMeaning": "The Emperor concerns order, responsibility, and the structures that make purposeful action possible. Clear boundaries can create security, provided authority remains accountable and flexible.",
+      "inAReading": "Identify where a firmer plan, boundary, or decision could create stability without becoming unnecessarily rigid.",
+      "artworkDescription": "An armored ruler in red robes sits on a stone throne carved with ram heads, holding a scepter and orb against a stark mountain landscape."
+    },
+    {
+      "cardID": "major-05-the-hierophant",
+      "canonicalName": "The Hierophant",
+      "keywords": ["tradition", "teaching", "shared values", "practice"],
+      "uprightMeaning": "The Hierophant points to established knowledge, community practices, and values passed between people. Tradition can offer a useful foundation when it is understood rather than followed without question.",
+      "inAReading": "Consider what a trusted teacher, tradition, or shared framework can offer, and decide what genuinely fits your values.",
+      "artworkDescription": "A robed religious figure wearing a triple crown sits between two pillars, raising one hand above crossed keys as two patterned-robed followers kneel below."
+    },
+    {
+      "cardID": "major-06-the-lovers",
+      "canonicalName": "The Lovers",
+      "keywords": ["choice", "connection", "alignment", "mutuality"],
+      "uprightMeaning": "The Lovers explores meaningful connection and choices that reveal personal values. Harmony grows when desire, responsibility, and honest communication are brought into alignment.",
+      "inAReading": "Ask what choice best reflects your values and whether the connections involved allow openness, respect, and reciprocity.",
+      "artworkDescription": "A nude woman and man stand beneath a winged angel and bright sun, with a fruit tree and serpent behind the woman and a flaming tree behind the man."
+    },
+    {
+      "cardID": "major-07-the-chariot",
+      "canonicalName": "The Chariot",
+      "keywords": ["direction", "determination", "self-command", "momentum"],
+      "uprightMeaning": "The Chariot gathers competing impulses into purposeful movement. Progress depends less on force than on choosing a direction and keeping energy, attention, and conduct aligned with it.",
+      "inAReading": "Clarify the direction you want to take, then notice which distractions or tensions need steady management.",
+      "artworkDescription": "A crowned armored figure stands in a canopied chariot above one black and one white sphinx, with a walled city and river behind."
+    },
+    {
+      "cardID": "major-08-strength",
+      "canonicalName": "Strength",
+      "keywords": ["courage", "patience", "compassion", "inner steadiness"],
+      "uprightMeaning": "Strength is courage expressed through patience, restraint, and compassionate self-command. It favors meeting intense feelings or difficult circumstances without denying them or being ruled by them.",
+      "inAReading": "Consider where calm persistence and kindness could be more effective than pressure, avoidance, or a show of force.",
+      "artworkDescription": "A woman in a white dress gently holds a lion's jaws beneath an infinity mark, with a garland around her waist and mountains in the distance."
+    },
+    {
+      "cardID": "major-09-the-hermit",
+      "canonicalName": "The Hermit",
+      "keywords": ["reflection", "solitude", "discernment", "inner guidance"],
+      "uprightMeaning": "The Hermit creates distance from noise so that experience can be examined carefully. Chosen solitude can clarify priorities, although insight eventually needs a path back into ordinary life.",
+      "inAReading": "Make room for independent reflection and ask which answer must be understood personally before it is shared.",
+      "artworkDescription": "A cloaked elder stands alone on a snowy peak, holding a staff and a lantern containing a six-pointed star against a muted sky."
+    },
+    {
+      "cardID": "major-10-wheel-of-fortune",
+      "canonicalName": "Wheel of Fortune",
+      "keywords": ["change", "cycles", "timing", "adaptation"],
+      "uprightMeaning": "Wheel of Fortune highlights movement within cycles and conditions that no one fully controls. A changing situation can invite adaptation, perspective, and attention to the choices that remain available.",
+      "inAReading": "Notice what is changing around you, distinguish influence from control, and consider how to respond with flexibility.",
+      "artworkDescription": "An orange wheel covered in letters and symbols fills the center, surrounded by a sphinx, snake, jackal-headed figure, and four winged readers in clouds."
+    },
+    {
+      "cardID": "major-11-justice",
+      "canonicalName": "Justice",
+      "keywords": ["fairness", "accountability", "clarity", "consequences"],
+      "uprightMeaning": "Justice asks for an honest view of actions, evidence, and consequences. Fair judgment requires clarity about responsibility as well as willingness to correct imbalance where possible.",
+      "inAReading": "Review the situation as impartially as you can and ask what accountable, proportionate response reflects your values.",
+      "artworkDescription": "A crowned figure in a red robe sits between stone pillars, holding an upright sword in one hand and balanced scales in the other."
+    },
+    {
+      "cardID": "major-12-the-hanged-man",
+      "canonicalName": "The Hanged Man",
+      "keywords": ["pause", "perspective", "surrender", "reconsideration"],
+      "uprightMeaning": "The Hanged Man marks a purposeful pause in which a familiar approach is released. Waiting can be active when it creates space to see the situation from an unfamiliar angle.",
+      "inAReading": "Consider what might become visible if you stop pushing for progress and temporarily loosen one assumption.",
+      "artworkDescription": "A person hangs upside down by one foot from a T-shaped wooden frame, wearing red trousers and a blue tunic with a bright halo around the head."
+    },
+    {
+      "cardID": "major-13-death",
+      "canonicalName": "Death",
+      "keywords": ["ending", "transition", "release", "renewal"],
+      "uprightMeaning": "Death represents a meaningful ending and the transition that follows it, not a literal event. Releasing an exhausted form can make room for change, even when the passage feels uncertain.",
+      "inAReading": "Ask what has reached its natural limit and what could become possible if you stop trying to preserve it unchanged.",
+      "artworkDescription": "A skeleton in black armor rides a white horse carrying a black flag, moving past a fallen ruler and standing figures toward two towers and a rising sun."
+    },
+    {
+      "cardID": "major-14-temperance",
+      "canonicalName": "Temperance",
+      "keywords": ["balance", "integration", "moderation", "adjustment"],
+      "uprightMeaning": "Temperance combines different elements gradually until a workable balance emerges. It favors patient adjustment, proportion, and solutions that integrate needs rather than choosing an extreme.",
+      "inAReading": "Look for a measured blend of approaches and identify the small adjustment that could improve the whole situation.",
+      "artworkDescription": "A winged figure stands with one foot on land and one in water, pouring liquid between two cups beside irises and a path leading toward distant hills."
+    },
+    {
+      "cardID": "major-15-the-devil",
+      "canonicalName": "The Devil",
+      "keywords": ["attachment", "temptation", "constraint", "self-awareness"],
+      "uprightMeaning": "The Devil illuminates attachments, habits, and bargains that reduce freedom while appearing difficult to change. Naming the pattern clearly is a first step toward recognizing where choice still exists.",
+      "inAReading": "Examine what keeps drawing your energy and ask whether fear, habit, or short-term comfort is narrowing your options.",
+      "artworkDescription": "A horned, winged figure sits above a pedestal with an inverted pentagram, while a nude man and woman stand loosely chained below with animal-like tails."
+    },
+    {
+      "cardID": "major-16-the-tower",
+      "canonicalName": "The Tower",
+      "keywords": ["disruption", "revelation", "instability", "rebuilding"],
+      "uprightMeaning": "The Tower depicts a structure or belief challenged by sudden clarity. Disruption can expose what was already unstable, creating a demanding but honest opportunity to rebuild on firmer ground.",
+      "inAReading": "Notice what assumption no longer holds and focus on the most truthful, stable element available for rebuilding.",
+      "artworkDescription": "Lightning strikes a crowned stone tower as flames burst from its windows and two figures fall through a dark sky filled with small fiery shapes."
+    },
+    {
+      "cardID": "major-17-the-star",
+      "canonicalName": "The Star",
+      "keywords": ["hope", "renewal", "openness", "inspiration"],
+      "uprightMeaning": "The Star offers quiet renewal after difficulty and restores a sense of possibility. Its hope is not certainty; it is the willingness to remain open, honest, and connected to what gives direction.",
+      "inAReading": "Ask what genuinely restores your confidence and which simple act could help you reconnect with that source.",
+      "artworkDescription": "A nude woman kneels beside a pool, pouring water from two jugs onto the land and into the pool beneath one large star and seven smaller stars."
+    },
+    {
+      "cardID": "major-18-the-moon",
+      "canonicalName": "The Moon",
+      "keywords": ["uncertainty", "imagination", "instinct", "ambiguity"],
+      "uprightMeaning": "The Moon enters territory shaped by uncertainty, emotion, and imagination. Perception may be incomplete, so intuition is useful when paired with patience and a willingness to question assumptions.",
+      "inAReading": "Move slowly, separate what you know from what you imagine, and notice which feeling is asking for closer attention.",
+      "artworkDescription": "A full moon hangs between two towers above a winding path, a dog and wolf face the sky, and a crayfish emerges from a pool in the foreground."
+    },
+    {
+      "cardID": "major-19-the-sun",
+      "canonicalName": "The Sun",
+      "keywords": ["clarity", "vitality", "joy", "openness"],
+      "uprightMeaning": "The Sun brings warmth, visibility, and direct engagement with life. Clear expression and shared enjoyment can make a situation easier to understand without pretending that every difficulty has vanished.",
+      "inAReading": "Recognize what is working, communicate plainly, and give genuine energy or appreciation room to be expressed.",
+      "artworkDescription": "A smiling nude child rides a white horse while holding a red banner, beneath a large radiant sun and four sunflowers rising over a wall."
+    },
+    {
+      "cardID": "major-20-judgement",
+      "canonicalName": "Judgement",
+      "keywords": ["awakening", "review", "calling", "responsibility"],
+      "uprightMeaning": "Judgement reflects an honest review that makes a new response possible. Past experience becomes useful when it is acknowledged clearly, learned from, and answered with present responsibility.",
+      "inAReading": "Review what has brought you here and ask what choice would show that you have listened to the lesson.",
+      "artworkDescription": "A winged figure sounds a trumpet above nude people rising from rectangular coffins, with blue water and snow-covered mountains in the distance."
+    },
+    {
+      "cardID": "major-21-the-world",
+      "canonicalName": "The World",
+      "keywords": ["completion", "integration", "wholeness", "transition"],
+      "uprightMeaning": "The World represents completion that gathers many parts into a coherent whole. Recognizing what has been achieved allows a cycle to close with perspective before another begins.",
+      "inAReading": "Take stock of what is complete, acknowledge the full journey, and decide what can now be carried forward.",
+      "artworkDescription": "A partly draped figure dances inside a large green wreath while holding two short batons, with a human, eagle, bull, and lion in clouds at the corners."
+    },
+    {
+      "cardID": "minor-wands-ace",
+      "canonicalName": "Ace of Wands",
+      "keywords": ["spark", "initiative", "enthusiasm", "potential"],
+      "uprightMeaning": "The Ace of Wands is the first spark of energy behind a project, desire, or creative direction. It offers potential that becomes meaningful through attention, choice, and a practical beginning.",
+      "inAReading": "Notice what excites you and choose a small first action that can test whether the spark has lasting energy.",
+      "artworkDescription": "A hand emerging from a cloud holds a sprouting wooden wand as loose leaves float above a river valley, trees, hills, and a distant castle."
+    },
+    {
+      "cardID": "minor-wands-two",
+      "canonicalName": "Two of Wands",
+      "keywords": ["planning", "possibility", "direction", "foresight"],
+      "uprightMeaning": "The Two of Wands surveys possibilities before committing to a direction. Vision expands beyond familiar limits, but progress asks for priorities and a plan rather than endless comparison.",
+      "inAReading": "Compare the available paths, decide what matters most, and identify what information would support a clear choice.",
+      "artworkDescription": "A red-cloaked figure stands on a castle wall holding a globe and one wand, while a second wand is fixed beside them above a wide view of sea and land."
+    },
+    {
+      "cardID": "minor-wands-three",
+      "canonicalName": "Three of Wands",
+      "keywords": ["expansion", "progress", "foresight", "connection"],
+      "uprightMeaning": "The Three of Wands looks beyond the first effort toward wider reach and longer development. Results depend on perspective, coordination, and readiness to respond as plans meet the larger world.",
+      "inAReading": "Look beyond the immediate task and consider which partnership, audience, or next stage deserves preparation.",
+      "artworkDescription": "A cloaked figure seen from behind stands on a high shore beside three upright wands, looking across the water at sailing ships and distant hills."
+    },
+    {
+      "cardID": "minor-wands-four",
+      "canonicalName": "Four of Wands",
+      "keywords": ["welcome", "stability", "celebration", "belonging"],
+      "uprightMeaning": "The Four of Wands marks a stable moment worth sharing and acknowledging. Community, welcome, and a dependable base allow effort to pause and achievement to be recognized.",
+      "inAReading": "Notice what foundation or shared milestone deserves appreciation, and include the people who helped create it.",
+      "artworkDescription": "Four upright wands support a flower-and-fruit garland as two figures raise bouquets near a group of people and a castle in the background."
+    },
+    {
+      "cardID": "minor-wands-five",
+      "canonicalName": "Five of Wands",
+      "keywords": ["friction", "competition", "difference", "practice"],
+      "uprightMeaning": "The Five of Wands shows energy meeting resistance through competing aims or styles. Friction can become useful practice when differences are expressed without turning every disagreement into a battle.",
+      "inAReading": "Identify the real point of conflict and ask whether clearer rules or a shared aim could make the tension productive.",
+      "artworkDescription": "Five young people in bright tunics cross raised wooden staffs in a loose cluster on open ground beneath a pale blue sky."
+    },
+    {
+      "cardID": "minor-wands-six",
+      "canonicalName": "Six of Wands",
+      "keywords": ["recognition", "confidence", "progress", "leadership"],
+      "uprightMeaning": "The Six of Wands reflects visible progress and the confidence that comes from recognition. Appreciation can support momentum when it remains connected to the effort and people behind the result.",
+      "inAReading": "Acknowledge what has gone well and consider how to carry confidence forward without depending entirely on applause.",
+      "artworkDescription": "A rider wearing a laurel wreath carries a laurel-topped wand on a decorated horse, surrounded by a crowd holding five more upright wands."
+    },
+    {
+      "cardID": "minor-wands-seven",
+      "canonicalName": "Seven of Wands",
+      "keywords": ["conviction", "defense", "challenge", "boundaries"],
+      "uprightMeaning": "The Seven of Wands holds a chosen position under pressure. Commitment may require boundaries and persistence, along with discernment about which challenges deserve energy and which do not.",
+      "inAReading": "Clarify what is worth defending, state your boundary plainly, and avoid spending effort on every provocation.",
+      "artworkDescription": "A figure on raised ground grips one wand with both hands while facing six wand tips rising from below, with green hills and water in the distance."
+    },
+    {
+      "cardID": "minor-wands-eight",
+      "canonicalName": "Eight of Wands",
+      "keywords": ["momentum", "movement", "communication", "coordination"],
+      "uprightMeaning": "The Eight of Wands gathers movement around a clear direction. Events, messages, or tasks may feel closely connected, making timely coordination more useful than hesitation or scattered effort.",
+      "inAReading": "Focus on what is already moving and make the communication or decision needed to keep it coherent.",
+      "artworkDescription": "Eight wooden wands fly diagonally across a clear sky above rolling green land, a winding river, and a small building in the distance."
+    },
+    {
+      "cardID": "minor-wands-nine",
+      "canonicalName": "Nine of Wands",
+      "keywords": ["resilience", "readiness", "experience", "limits"],
+      "uprightMeaning": "The Nine of Wands carries experience from earlier challenges into the present. Preparedness and resilience are strengths, though constant defensiveness can make it hard to recognize genuine support.",
+      "inAReading": "Use what experience has taught you while checking whether an old defense still fits the current situation.",
+      "artworkDescription": "A bandaged figure stands holding one wand before a close row of eight upright wands, with green hills visible beyond the wooden barrier."
+    },
+    {
+      "cardID": "minor-wands-ten",
+      "canonicalName": "Ten of Wands",
+      "keywords": ["burden", "responsibility", "effort", "priorities"],
+      "uprightMeaning": "The Ten of Wands shows commitment becoming heavy through accumulated responsibility. The work may matter, but its current form invites a review of priorities, delegation, and unnecessary load.",
+      "inAReading": "List what you are carrying and decide what must be completed, shared, simplified, or deliberately set down.",
+      "artworkDescription": "A bent figure carries a bundled load of ten long wands toward a cluster of buildings across a flat stretch of ground."
+    },
+    {
+      "cardID": "minor-wands-page",
+      "canonicalName": "Page of Wands",
+      "keywords": ["exploration", "message", "playfulness", "discovery"],
+      "uprightMeaning": "The Page of Wands approaches possibility with enthusiasm and an experimental spirit. Curiosity opens a path, while learning through small attempts keeps excitement connected to experience.",
+      "inAReading": "Follow the idea that makes you curious and give yourself permission to explore it before demanding mastery.",
+      "artworkDescription": "A young figure in a patterned yellow tunic stands in a dry landscape, holding a tall sprouting wand upright and looking toward its tip."
+    },
+    {
+      "cardID": "minor-wands-knight",
+      "canonicalName": "Knight of Wands",
+      "keywords": ["boldness", "adventure", "momentum", "impulse"],
+      "uprightMeaning": "The Knight of Wands moves with confidence, appetite, and speed. Bold action can break inertia, but sustaining the journey requires enough awareness to keep enthusiasm from outrunning purpose.",
+      "inAReading": "Use the available energy to move, then check that pace and direction still serve what you actually want.",
+      "artworkDescription": "An armored rider with a red plume raises a wand while a horse rears forward, with sandy ground and pyramid-shaped hills behind."
+    },
+    {
+      "cardID": "minor-wands-queen",
+      "canonicalName": "Queen of Wands",
+      "keywords": ["confidence", "warmth", "independence", "creative presence"],
+      "uprightMeaning": "The Queen of Wands combines self-possession with warmth and expressive energy. She suggests making room for your abilities while encouraging others rather than shrinking or competing for attention.",
+      "inAReading": "Bring your full presence to the situation and ask how confidence can become generous, clear, and constructive.",
+      "artworkDescription": "A crowned woman sits on a throne decorated with lions and sunflowers, holding a flowering wand and a sunflower as a black cat sits at her feet."
+    },
+    {
+      "cardID": "minor-wands-king",
+      "canonicalName": "King of Wands",
+      "keywords": ["vision", "leadership", "enterprise", "influence"],
+      "uprightMeaning": "The King of Wands turns creative vision into direction that others can understand. Effective leadership joins conviction with responsibility, delegation, and respect for the people carrying out the work.",
+      "inAReading": "State the larger purpose clearly and consider how your choices can create both momentum and trust.",
+      "artworkDescription": "A crowned ruler sits on a throne decorated with lions and salamanders, holding a flowering wand above a small salamander on the ground."
+    },
+    {
+      "cardID": "minor-cups-ace",
+      "canonicalName": "Ace of Cups",
+      "keywords": ["feeling", "openness", "connection", "renewal"],
+      "uprightMeaning": "The Ace of Cups opens space for feeling, care, and emotional connection. It is an invitation to receive and express what matters, while allowing a new bond or inner response to develop naturally.",
+      "inAReading": "Notice which feeling wants honest expression and where a receptive, compassionate response could open connection.",
+      "artworkDescription": "A hand emerging from a cloud holds a large cup marked with a W, where a dove descends with a small disc and five streams pour into a lily-covered pool."
+    },
+    {
+      "cardID": "minor-cups-two",
+      "canonicalName": "Two of Cups",
+      "keywords": ["partnership", "reciprocity", "trust", "meeting"],
+      "uprightMeaning": "The Two of Cups represents a meeting based on mutual recognition and exchange. Connection becomes meaningful through consent, honesty, and the willingness of both sides to participate.",
+      "inAReading": "Consider what each person brings to the connection and whether expectations, respect, and effort are genuinely mutual.",
+      "artworkDescription": "A woman and man face each other and exchange raised cups beneath a winged lion head and a staff entwined by two serpents."
+    },
+    {
+      "cardID": "minor-cups-three",
+      "canonicalName": "Three of Cups",
+      "keywords": ["friendship", "celebration", "support", "community"],
+      "uprightMeaning": "The Three of Cups finds strength and enjoyment in supportive company. Shared experience, appreciation, and cooperation can restore perspective and remind individuals that they need not carry everything alone.",
+      "inAReading": "Look toward trustworthy companionship and ask what can be celebrated, shared, or supported together.",
+      "artworkDescription": "Three women in flowing dresses raise their cups together while dancing in a circle on ground scattered with grapes, squash, and other fruit."
+    },
+    {
+      "cardID": "minor-cups-four",
+      "canonicalName": "Four of Cups",
+      "keywords": ["withdrawal", "reflection", "discontent", "reassessment"],
+      "uprightMeaning": "The Four of Cups turns inward when familiar options feel unsatisfying. A pause can clarify genuine needs, but prolonged disengagement may hide possibilities that deserve a fresh look.",
+      "inAReading": "Respect the need to pause, then check whether disappointment or habit is preventing you from seeing a useful option.",
+      "artworkDescription": "A seated figure rests beneath a tree with folded arms, facing three cups on the grass while a hand from a cloud offers a fourth cup."
+    },
+    {
+      "cardID": "minor-cups-five",
+      "canonicalName": "Five of Cups",
+      "keywords": ["grief", "disappointment", "perspective", "what remains"],
+      "uprightMeaning": "The Five of Cups acknowledges disappointment and the attention loss demands. It also leaves room to notice what remains available, without rushing past the significance of what has changed.",
+      "inAReading": "Give the loss honest space, then gently identify one support, value, or possibility that is still present.",
+      "artworkDescription": "A cloaked figure looks down at three spilled cups while two upright cups stand behind, with a river, bridge, and distant buildings across the scene."
+    },
+    {
+      "cardID": "minor-cups-six",
+      "canonicalName": "Six of Cups",
+      "keywords": ["memory", "kindness", "familiarity", "past influence"],
+      "uprightMeaning": "The Six of Cups connects present feeling with memory, familiarity, and simple generosity. The past can offer comfort or context when it is remembered clearly rather than idealized.",
+      "inAReading": "Notice how an earlier experience shapes the present and keep the lesson that supports a kinder response now.",
+      "artworkDescription": "Two children stand in a village courtyard as the taller child offers a flower-filled cup; five more flower-filled cups surround them."
+    },
+    {
+      "cardID": "minor-cups-seven",
+      "canonicalName": "Seven of Cups",
+      "keywords": ["options", "imagination", "discernment", "projection"],
+      "uprightMeaning": "The Seven of Cups presents many appealing possibilities, not all equally grounded. Imagination expands choice, while discernment separates a workable desire from distraction, projection, or wishful thinking.",
+      "inAReading": "Name the real options, compare them with your values and resources, and choose what can be tested in reality.",
+      "artworkDescription": "A dark figure faces seven cups floating in clouds, each holding a different object or figure, including jewels, a castle, a snake, and a wreath."
+    },
+    {
+      "cardID": "minor-cups-eight",
+      "canonicalName": "Eight of Cups",
+      "keywords": ["departure", "search", "disillusionment", "deeper purpose"],
+      "uprightMeaning": "The Eight of Cups recognizes when emotional investment no longer provides meaning. Leaving is not presented as easy or automatic; it is a considered search for greater honesty and depth.",
+      "inAReading": "Ask what feels complete despite the effort already invested and what deeper value you are trying to honor.",
+      "artworkDescription": "A cloaked figure walks away from eight cups arranged in the foreground, crossing rocky ground toward mountains beneath a moonlit sky."
+    },
+    {
+      "cardID": "minor-cups-nine",
+      "canonicalName": "Nine of Cups",
+      "keywords": ["contentment", "gratitude", "enjoyment", "satisfaction"],
+      "uprightMeaning": "The Nine of Cups appreciates satisfaction, comfort, and desires that have found expression. Enjoyment becomes richer when gratitude is balanced with awareness of what fulfillment can and cannot provide.",
+      "inAReading": "Recognize what is genuinely satisfying and consider how to enjoy it without overlooking the wider context.",
+      "artworkDescription": "A seated figure with folded arms smiles before a curved table draped in blue, with nine golden cups displayed in a neat row behind."
+    },
+    {
+      "cardID": "minor-cups-ten",
+      "canonicalName": "Ten of Cups",
+      "keywords": ["belonging", "harmony", "shared joy", "emotional support"],
+      "uprightMeaning": "The Ten of Cups reflects emotional belonging built through care, shared values, and mutual support. Its harmony is a living relationship that benefits from participation rather than a permanent perfect state.",
+      "inAReading": "Consider which relationships feel like a supportive home and how you can contribute to their continuing care.",
+      "artworkDescription": "A couple raises their arms toward a rainbow of ten cups while two children play nearby, with a river, trees, and a house in the distance."
+    },
+    {
+      "cardID": "minor-cups-page",
+      "canonicalName": "Page of Cups",
+      "keywords": ["sensitivity", "wonder", "message", "creative feeling"],
+      "uprightMeaning": "The Page of Cups meets emotion and imagination with freshness. An unexpected feeling, invitation, or creative idea may deserve curiosity before it is judged or explained away.",
+      "inAReading": "Stay receptive to a subtle feeling or surprising idea and explore what it is trying to communicate.",
+      "artworkDescription": "A young figure in a patterned tunic holds a cup as a fish lifts its head from the rim, with rolling waves and a pale sky behind."
+    },
+    {
+      "cardID": "minor-cups-knight",
+      "canonicalName": "Knight of Cups",
+      "keywords": ["invitation", "idealism", "expression", "pursuit"],
+      "uprightMeaning": "The Knight of Cups follows an emotional or creative ideal and gives it expressive form. Sincerity matters, as does checking whether a compelling gesture is supported by realistic understanding.",
+      "inAReading": "Express what matters with care, and ask whether the invitation or ideal can be supported by consistent action.",
+      "artworkDescription": "An armored rider on a white horse carries a cup across a barren landscape, passing a river with distant cliffs and mountains."
+    },
+    {
+      "cardID": "minor-cups-queen",
+      "canonicalName": "Queen of Cups",
+      "keywords": ["empathy", "intuition", "receptivity", "emotional depth"],
+      "uprightMeaning": "The Queen of Cups offers attentive, intuitive understanding without losing contact with her own center. Emotional depth becomes supportive when compassion includes clear limits and self-awareness.",
+      "inAReading": "Listen beneath the surface while keeping enough perspective to distinguish empathy from absorbing everything around you.",
+      "artworkDescription": "A crowned woman sits on an ornate stone throne at the water's edge, holding a large lidded cup decorated with handles and small winged figures."
+    },
+    {
+      "cardID": "minor-cups-king",
+      "canonicalName": "King of Cups",
+      "keywords": ["emotional balance", "diplomacy", "care", "maturity"],
+      "uprightMeaning": "The King of Cups holds strong feeling with steadiness and thoughtful expression. He suggests responding with compassion and composure while remaining honest about emotional complexity.",
+      "inAReading": "Approach the situation with calm empathy and choose a response that respects both feeling and responsibility.",
+      "artworkDescription": "A crowned ruler sits on a stone throne surrounded by waves, holding a cup and scepter as a ship and a leaping fish appear behind."
+    },
+    {
+      "cardID": "minor-swords-ace",
+      "canonicalName": "Ace of Swords",
+      "keywords": ["clarity", "truth", "idea", "decision"],
+      "uprightMeaning": "The Ace of Swords brings a sharp idea, distinction, or moment of clarity. Insight becomes constructive when it is expressed precisely and followed by action that respects the full context.",
+      "inAReading": "Define the central issue in plain language and identify the clearest fact or principle available to guide you.",
+      "artworkDescription": "A hand emerging from a cloud holds an upright sword topped by a crown and hanging wreath, above a range of sharp gray mountains."
+    },
+    {
+      "cardID": "minor-swords-two",
+      "canonicalName": "Two of Swords",
+      "keywords": ["stalemate", "choice", "boundaries", "missing information"],
+      "uprightMeaning": "The Two of Swords holds tension between alternatives when neither feels easy. A temporary boundary can protect space for thought, but a decision may need more information or acknowledged feeling.",
+      "inAReading": "Name what makes the choice difficult and decide what fact, value, or conversation could help you move.",
+      "artworkDescription": "A blindfolded woman in a white robe sits beside the sea holding two crossed swords, with rocky islands and a crescent moon behind."
+    },
+    {
+      "cardID": "minor-swords-three",
+      "canonicalName": "Three of Swords",
+      "keywords": ["heartache", "truth", "separation", "acknowledgement"],
+      "uprightMeaning": "The Three of Swords gives painful truth a clear image. Acknowledging hurt or separation can prevent confusion from deepening, while compassion keeps honesty from becoming unnecessary cruelty.",
+      "inAReading": "Recognize what hurts without exaggerating or minimizing it, and ask what honest response would support repair or release.",
+      "artworkDescription": "A red heart floats against a stormy gray sky, pierced by three swords as rain falls in long diagonal lines."
+    },
+    {
+      "cardID": "minor-swords-four",
+      "canonicalName": "Four of Swords",
+      "keywords": ["rest", "pause", "recovery", "contemplation"],
+      "uprightMeaning": "The Four of Swords steps back from activity to restore attention and perspective. Deliberate rest can be part of meaningful work when it creates room to settle, reflect, and return with clarity.",
+      "inAReading": "Consider what can pause safely and give yourself enough quiet to process before choosing the next step.",
+      "artworkDescription": "A stone knight lies on a tomb beneath a stained-glass window, with three swords mounted on the wall and one sword carved along the tomb."
+    },
+    {
+      "cardID": "minor-swords-five",
+      "canonicalName": "Five of Swords",
+      "keywords": ["conflict", "cost", "self-interest", "aftermath"],
+      "uprightMeaning": "The Five of Swords examines conflict where winning may carry an overlooked cost. It asks whether tactics, pride, or self-protection have displaced the original purpose of the disagreement.",
+      "inAReading": "Look beyond who appears to win and assess the cost, the damaged trust, and the possibility of stepping out.",
+      "artworkDescription": "A figure gathers three swords and looks back toward two people walking away by the water, while two more swords lie on the ground under ragged clouds."
+    },
+    {
+      "cardID": "minor-swords-six",
+      "canonicalName": "Six of Swords",
+      "keywords": ["transition", "distance", "passage", "gradual change"],
+      "uprightMeaning": "The Six of Swords moves from a difficult condition toward a different one through steady passage. The transition may be incomplete, but distance and perspective can make thoughtful change possible.",
+      "inAReading": "Focus on the next manageable part of the transition and notice what support makes movement less burdensome.",
+      "artworkDescription": "A boatman rows a cloaked adult and child across calm water, with six swords standing in the boat and trees and land ahead."
+    },
+    {
+      "cardID": "minor-swords-seven",
+      "canonicalName": "Seven of Swords",
+      "keywords": ["strategy", "independence", "secrecy", "accountability"],
+      "uprightMeaning": "The Seven of Swords considers strategy, discretion, and action taken outside ordinary expectations. Cleverness can protect independence, but hidden choices also invite questions about trust and accountability.",
+      "inAReading": "Examine why discretion feels necessary and whether your method remains consistent with the outcome and values you want.",
+      "artworkDescription": "A figure carries five swords away from a cluster of tents while looking back at two swords left upright in the ground."
+    },
+    {
+      "cardID": "minor-swords-eight",
+      "canonicalName": "Eight of Swords",
+      "keywords": ["restriction", "fear", "perspective", "agency"],
+      "uprightMeaning": "The Eight of Swords depicts a sense of restriction shaped partly by perception and uncertainty. Real limits deserve respect, while careful examination may reveal choices or support that fear has hidden.",
+      "inAReading": "Separate actual constraints from assumptions and identify the smallest available choice that restores some agency.",
+      "artworkDescription": "A blindfolded and loosely bound woman stands among eight upright swords on wet ground, with a stone castle rising on a hill behind."
+    },
+    {
+      "cardID": "minor-swords-nine",
+      "canonicalName": "Nine of Swords",
+      "keywords": ["worry", "rumination", "night thoughts", "perspective"],
+      "uprightMeaning": "The Nine of Swords shows thought becoming repetitive and heavy in isolation. Naming concerns and bringing them into proportion can create distance from a mental loop without dismissing the underlying issue.",
+      "inAReading": "Write or say the concern plainly, check it against what you know, and choose one grounded source of support.",
+      "artworkDescription": "A person sits upright in bed with their face in their hands, beneath nine horizontal swords on a dark wall and a quilt patterned with small scenes."
+    },
+    {
+      "cardID": "minor-swords-ten",
+      "canonicalName": "Ten of Swords",
+      "keywords": ["ending", "exhaustion", "finality", "new perspective"],
+      "uprightMeaning": "The Ten of Swords portrays an ending that can no longer be argued away. Accepting finality may be difficult, yet it stops energy from being spent on a form that has already run its course.",
+      "inAReading": "Acknowledge what is finished, avoid adding another struggle to it, and turn attention toward what remains possible.",
+      "artworkDescription": "A prone figure lies beneath a dark sky with ten swords along the back, while golden light rises beyond calm water and distant hills."
+    },
+    {
+      "cardID": "minor-swords-page",
+      "canonicalName": "Page of Swords",
+      "keywords": ["inquiry", "alertness", "communication", "learning"],
+      "uprightMeaning": "The Page of Swords is curious, observant, and eager to understand through questions. Sharp attention is valuable when it is paired with patience, context, and care in communication.",
+      "inAReading": "Ask the useful question, verify what you hear, and let curiosity lead without rushing into a conclusion.",
+      "artworkDescription": "A young figure stands on a windy hill holding a raised sword with both hands, as clouds, birds, and bent trees move across the background."
+    },
+    {
+      "cardID": "minor-swords-knight",
+      "canonicalName": "Knight of Swords",
+      "keywords": ["decisiveness", "speed", "conviction", "direct action"],
+      "uprightMeaning": "The Knight of Swords moves quickly behind a strong idea or conviction. Direct action can cut through delay, though speed and certainty need enough reflection to avoid unnecessary damage.",
+      "inAReading": "Use clarity to act, but check the likely effect of your words and pace before committing all your momentum.",
+      "artworkDescription": "An armored rider charges forward on a white horse with a raised sword, beneath fast-moving gray clouds and windblown trees."
+    },
+    {
+      "cardID": "minor-swords-queen",
+      "canonicalName": "Queen of Swords",
+      "keywords": ["discernment", "independence", "honesty", "clear boundaries"],
+      "uprightMeaning": "The Queen of Swords values precise understanding, independent judgment, and honest boundaries. Her clarity is strongest when experience informs it without closing the door to empathy.",
+      "inAReading": "State what you understand and need with precision, while leaving room for relevant context and another perspective.",
+      "artworkDescription": "A crowned woman sits on a stone throne holding an upright sword and extending her other hand, with a single bird above distant clouds and trees."
+    },
+    {
+      "cardID": "minor-swords-king",
+      "canonicalName": "King of Swords",
+      "keywords": ["reason", "authority", "standards", "strategy"],
+      "uprightMeaning": "The King of Swords applies reason, standards, and strategic judgment to a complex situation. Authority is credible when decisions are consistent, explainable, and open to relevant evidence.",
+      "inAReading": "Define the principle that should guide the decision and apply it fairly, including to your own position.",
+      "artworkDescription": "A crowned ruler sits facing forward on a carved stone throne, holding an upright sword against a blue sky with trees and small birds behind."
+    },
+    {
+      "cardID": "minor-pentacles-ace",
+      "canonicalName": "Ace of Pentacles",
+      "keywords": ["opportunity", "foundation", "resources", "practical start"],
+      "uprightMeaning": "The Ace of Pentacles offers the seed of something tangible: a skill, resource, routine, or material opportunity. Its value grows through patient use and a realistic first step.",
+      "inAReading": "Identify the concrete opportunity in front of you and choose one small action that gives it a stable beginning.",
+      "artworkDescription": "A hand emerging from a cloud presents a large pentacle above a flower-filled garden, hedge arch, winding path, and distant mountain."
+    },
+    {
+      "cardID": "minor-pentacles-two",
+      "canonicalName": "Two of Pentacles",
+      "keywords": ["adaptation", "priorities", "rhythm", "balance"],
+      "uprightMeaning": "The Two of Pentacles manages changing practical demands through flexibility and rhythm. Balance is active rather than permanent, requiring priorities to be adjusted as conditions shift.",
+      "inAReading": "Review what needs attention now, simplify where possible, and create a rhythm that can change with circumstances.",
+      "artworkDescription": "A figure dances while holding two pentacles linked by a green infinity loop, with two ships riding high waves behind."
+    },
+    {
+      "cardID": "minor-pentacles-three",
+      "canonicalName": "Three of Pentacles",
+      "keywords": ["craft", "collaboration", "learning", "shared standards"],
+      "uprightMeaning": "The Three of Pentacles develops quality through skill, feedback, and coordinated effort. Individual contribution matters, and so does understanding how it fits a shared plan or standard.",
+      "inAReading": "Seek useful feedback, clarify roles, and focus on the part of the work that benefits from cooperation.",
+      "artworkDescription": "A craftsperson stands on a bench beneath a cathedral arch while two visitors hold plans, with three pentacles set into the carved stone above."
+    },
+    {
+      "cardID": "minor-pentacles-four",
+      "canonicalName": "Four of Pentacles",
+      "keywords": ["security", "holding", "control", "boundaries"],
+      "uprightMeaning": "The Four of Pentacles protects resources and stability through careful holding. Security can be sensible, although excessive control may prevent exchange, growth, or adaptation.",
+      "inAReading": "Ask what truly needs protection and where a tightly held resource, rule, or fear could safely loosen.",
+      "artworkDescription": "A crowned figure sits before a city holding one pentacle to the chest, with another on the crown and one beneath each foot."
+    },
+    {
+      "cardID": "minor-pentacles-five",
+      "canonicalName": "Five of Pentacles",
+      "keywords": ["hardship", "exclusion", "support", "scarcity"],
+      "uprightMeaning": "The Five of Pentacles acknowledges material strain, isolation, or the feeling of being left outside. Difficulty can narrow attention, making available support harder to recognize or request.",
+      "inAReading": "Name the practical difficulty clearly and look for a person, resource, or next step that reduces isolation.",
+      "artworkDescription": "Two people in worn clothing walk through falling snow beneath a lit stained-glass window containing five pentacles."
+    },
+    {
+      "cardID": "minor-pentacles-six",
+      "canonicalName": "Six of Pentacles",
+      "keywords": ["giving", "receiving", "fair exchange", "resources"],
+      "uprightMeaning": "The Six of Pentacles examines how resources, help, and influence move between people. Generosity is most constructive when dignity, consent, expectations, and power are kept visible.",
+      "inAReading": "Consider whether giving and receiving are transparent and respectful, and what would make the exchange more balanced.",
+      "artworkDescription": "A richly dressed figure holds scales and gives coins to one of two kneeling people, with six pentacles arranged across the upper scene."
+    },
+    {
+      "cardID": "minor-pentacles-seven",
+      "canonicalName": "Seven of Pentacles",
+      "keywords": ["patience", "assessment", "cultivation", "long view"],
+      "uprightMeaning": "The Seven of Pentacles pauses during a long effort to assess growth. Patience does not mean passive waiting; it includes reviewing results and deciding whether to continue, adjust, or redirect.",
+      "inAReading": "Measure progress against the original purpose and decide which part deserves more time or a different method.",
+      "artworkDescription": "A farmer leans on a hoe and studies a leafy vine bearing seven pentacles, with fields and blue hills in the distance."
+    },
+    {
+      "cardID": "minor-pentacles-eight",
+      "canonicalName": "Eight of Pentacles",
+      "keywords": ["practice", "craftsmanship", "focus", "improvement"],
+      "uprightMeaning": "The Eight of Pentacles builds ability through repetition, attention, and useful correction. Mastery develops from consistent practice that remains curious enough to improve rather than merely repeat.",
+      "inAReading": "Choose the skill or task worth practicing and focus on one specific improvement you can repeat consistently.",
+      "artworkDescription": "A seated craftsperson uses a tool on one pentacle while six finished pentacles hang on a post and another rests on the ground."
+    },
+    {
+      "cardID": "minor-pentacles-nine",
+      "canonicalName": "Nine of Pentacles",
+      "keywords": ["self-reliance", "enjoyment", "cultivation", "earned comfort"],
+      "uprightMeaning": "The Nine of Pentacles appreciates independence, cultivated skill, and the comfort created by sustained effort. Enjoying what has been built can coexist with gratitude for the conditions and support involved.",
+      "inAReading": "Recognize the capability you have developed and allow yourself to enjoy its results with grounded appreciation.",
+      "artworkDescription": "A robed woman stands in a vineyard with a falcon on one gloved hand, surrounded by nine pentacles, grapevines, trees, and a distant manor."
+    },
+    {
+      "cardID": "minor-pentacles-ten",
+      "canonicalName": "Ten of Pentacles",
+      "keywords": ["legacy", "continuity", "shared resources", "lasting structure"],
+      "uprightMeaning": "The Ten of Pentacles considers what endures across time through shared resources, customs, and responsibilities. Lasting stability is strengthened when its benefits and obligations are understood together.",
+      "inAReading": "Look at the longer-term effect of the choice and ask what structure or value you want to help sustain.",
+      "artworkDescription": "An elder sits with two dogs as a family stands beneath a stone archway, with ten pentacles arranged across the courtyard scene."
+    },
+    {
+      "cardID": "minor-pentacles-page",
+      "canonicalName": "Page of Pentacles",
+      "keywords": ["study", "opportunity", "practical curiosity", "beginner mind"],
+      "uprightMeaning": "The Page of Pentacles approaches the practical world as a willing student. A useful opportunity may begin modestly, asking for attention, reliable effort, and readiness to learn from experience.",
+      "inAReading": "Treat the opportunity as something to study and identify the first skill, fact, or routine it requires.",
+      "artworkDescription": "A young figure stands in a green field holding a pentacle up with both hands, with furrowed ground, trees, and blue mountains behind."
+    },
+    {
+      "cardID": "minor-pentacles-knight",
+      "canonicalName": "Knight of Pentacles",
+      "keywords": ["reliability", "method", "patience", "steady work"],
+      "uprightMeaning": "The Knight of Pentacles advances through dependable method rather than drama or speed. Consistency supports durable progress, provided routine continues to serve the purpose instead of becoming automatic.",
+      "inAReading": "Choose the dependable next step, follow through carefully, and review whether the routine still supports the goal.",
+      "artworkDescription": "An armored rider sits on a still black horse holding a pentacle, with plowed fields, trees, and distant hills under a yellow sky."
+    },
+    {
+      "cardID": "minor-pentacles-queen",
+      "canonicalName": "Queen of Pentacles",
+      "keywords": ["resourcefulness", "care", "grounding", "practical support"],
+      "uprightMeaning": "The Queen of Pentacles creates practical support through attentive care and capable use of resources. Nurturing others remains sustainable when comfort, boundaries, and personal needs also receive attention.",
+      "inAReading": "Ask what practical form of care would help most and include your own capacity when deciding what to offer.",
+      "artworkDescription": "A crowned woman sits on a carved throne amid flowers and greenery, holding a pentacle in her lap as a rabbit rests near her feet."
+    },
+    {
+      "cardID": "minor-pentacles-king",
+      "canonicalName": "King of Pentacles",
+      "keywords": ["stewardship", "stability", "experience", "responsibility"],
+      "uprightMeaning": "The King of Pentacles manages resources with patience, experience, and a long view. Material capability carries responsibility to build stable results without confusing possession with personal worth.",
+      "inAReading": "Use resources deliberately, favor durable choices, and consider how responsible stewardship can support others as well.",
+      "artworkDescription": "A crowned ruler sits on a vine-covered throne holding a pentacle and scepter, with grape clusters, bull carvings, and a castle behind."
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+name: Tarot iOS core and internal app
+
+on:
+  pull_request:
+    paths:
+      - "native-ios/**"
+      - ".github/workflows/tarot-core.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "native-ios/**"
+      - ".github/workflows/tarot-core.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  swift-package:
+    name: Core and unsigned internal app
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Locate the structural package
+        id: package
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [[ -f native-ios/Package.swift ]]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if git log --all --format='%H' -- native-ios/Package.swift | grep -q .; then
+            echo "::error file=native-ios/Package.swift::The Tarot core package existed in repository history but is missing from this revision."
+            exit 1
+          fi
+
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+          echo "::notice file=native-ios/Package.swift::The structural Swift package has not been introduced yet; core checks are waiting for its expected path."
+
+      - name: Report Swift toolchain
+        if: steps.package.outputs.exists == 'true'
+        shell: bash
+        run: swift --version
+
+      - name: Verify static core boundaries
+        if: steps.package.outputs.exists == 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+
+          $sourceRoot = "native-ios/Sources"
+          $swiftFiles = @(Get-ChildItem -LiteralPath $sourceRoot -Recurse -File -Filter "*.swift")
+          if ($swiftFiles.Count -eq 0) {
+            throw "The Tarot core has no Swift source files."
+          }
+
+          $visualImports = @(
+            $swiftFiles | Select-String -Pattern '^\s*import\s+(SwiftUI|UIKit)\b'
+          )
+          if ($visualImports.Count -gt 0) {
+            throw "The non-visual core imports SwiftUI or UIKit: $($visualImports.Path -join ', ')"
+          }
+
+          $networkUsage = @(
+            $swiftFiles | Select-String -Pattern '^\s*import\s+(Network|WebKit)\b|\bURLSession\b|\bNWConnection\b|\bWKWebView\b'
+          )
+          if ($networkUsage.Count -gt 0) {
+            throw "The offline core contains network or web runtime usage: $($networkUsage.Path -join ', ')"
+          }
+
+          $identitySourcePath = "native-ios/Sources/TarotDeckCore/TarotCardID.swift"
+          $identitySource = Get-Content -LiteralPath $identitySourcePath -Raw
+          $majorBlock = [regex]::Match(
+            $identitySource,
+            'let\s+majorArcana\s*=\s*\[(?<body>.*?)\]\.map',
+            [System.Text.RegularExpressions.RegexOptions]::Singleline
+          )
+          $suitBlock = [regex]::Match($identitySource, 'let\s+suits\s*=\s*\[(?<body>.*?)\]')
+          $rankBlock = [regex]::Match(
+            $identitySource,
+            'let\s+ranks\s*=\s*\[(?<body>.*?)\]',
+            [System.Text.RegularExpressions.RegexOptions]::Singleline
+          )
+          if (-not ($majorBlock.Success -and $suitBlock.Success -and $rankBlock.Success)) {
+            throw "Could not parse the canonical Swift card identity lists."
+          }
+
+          $readLiterals = {
+            param([string]$Body)
+            @([regex]::Matches($Body, '"(?<value>[^"]+)"') | ForEach-Object { $_.Groups['value'].Value })
+          }
+          $swiftIDs = [System.Collections.Generic.List[string]]::new()
+          & $readLiterals $majorBlock.Groups['body'].Value | ForEach-Object { $swiftIDs.Add($_) }
+          $suits = @(& $readLiterals $suitBlock.Groups['body'].Value)
+          $ranks = @(& $readLiterals $rankBlock.Groups['body'].Value)
+          foreach ($suit in $suits) {
+            foreach ($rank in $ranks) {
+              $swiftIDs.Add("minor-$suit-$rank")
+            }
+          }
+
+          $manifest = Get-Content -LiteralPath "native-ios/Content/tarot-deck.v1.json" -Raw | ConvertFrom-Json
+          $jsonIDs = @($manifest.cards | ForEach-Object { [string]$_.id })
+          if ($swiftIDs.Count -ne 78 -or $jsonIDs.Count -ne 78) {
+            throw "Swift and JSON identity inventories must each contain exactly 78 cards."
+          }
+          for ($index = 0; $index -lt 78; $index += 1) {
+            if ($swiftIDs[$index] -cne $jsonIDs[$index]) {
+              throw "Swift/JSON card identity mismatch at canonical index ${index}: '$($swiftIDs[$index])' != '$($jsonIDs[$index])'."
+            }
+          }
+
+          $secretPatterns = @(
+            '-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----',
+            '\bAKIA[0-9A-Z]{16}\b',
+            '\bAIza[0-9A-Za-z_-]{35}\b',
+            '\bgh[pousr]_[0-9A-Za-z]{36,255}\b',
+            '\bsk_live_[0-9A-Za-z]{20,}\b'
+          )
+          $scannableFiles = @(
+            Get-ChildItem -LiteralPath "native-ios" -Recurse -File |
+              Where-Object { $_.Extension -in @('.swift', '.json', '.md', '.ps1') -or $_.Name -eq 'Package.swift' }
+          )
+          $obviousSecrets = @($scannableFiles | Select-String -Pattern $secretPatterns)
+          if ($obviousSecrets.Count -gt 0) {
+            throw "Possible credential material found under native-ios: $($obviousSecrets.Path -join ', ')"
+          }
+
+      - name: Validate package manifest and dependency boundary
+        if: steps.package.outputs.exists == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          manifest="$RUNNER_TEMP/tarot-package.json"
+          swift package --package-path native-ios dump-package > "$manifest"
+
+          if ! jq -e '.dependencies | length == 0' "$manifest" > /dev/null; then
+            echo "::error file=native-ios/Package.swift::The MVP core must not declare external Swift package dependencies."
+            exit 1
+          fi
+
+      - name: Validate canonical 78-card content
+        if: steps.package.outputs.exists == 'true'
+        shell: pwsh
+        run: ./native-ios/Content/validate-content.ps1
+
+      - name: Validate English education content
+        if: steps.package.outputs.exists == 'true'
+        shell: pwsh
+        run: ./native-ios/Content/Education/validate-education.ps1
+
+      - name: Validate internal app snapshot
+        if: steps.package.outputs.exists == 'true'
+        shell: pwsh
+        run: ./native-ios/Tools/validate-app-integration.ps1
+
+      - name: Build core in release configuration
+        if: steps.package.outputs.exists == 'true'
+        shell: bash
+        run: swift build --package-path native-ios --configuration release
+
+      - name: Run structural tests
+        if: steps.package.outputs.exists == 'true'
+        shell: bash
+        run: swift test --package-path native-ios --parallel
+
+      - name: Build unsigned internal iPhone app
+        if: steps.package.outputs.exists == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild \
+            -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/TarotDeckDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
