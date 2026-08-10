@@ -207,6 +207,7 @@ Después de cada cambio material de estado:
 - Hacer commits pequeños e intencionales solo cuando se soliciten o formen parte inequívoca del encargo.
 - Un commit o push no equivale a autorización para publicar la app.
 - El remoto público registrado es `https://github.com/Krazel/TarotCotidiano.git`.
+- Para inspección del repositorio, dispatch y monitorización de Actions, releases y API de GitHub, usar exclusivamente la sesión global de `gh` almacenada en el llavero de Windows. Antes de informar de un problema de acceso, ejecutar `C:\Users\dmkra\Documents\ChatGPT\Brain\.agents\skills\ios-app-launch\scripts\verify-github-access.ps1` para `Krazel/TarotCotidiano`, con aprobación de red si el sandbox la requiere. No usar Chrome como alternativa ni pedir autenticación por proyecto. `CENTRAL_RECHECK_REQUIRED` se eleva a Brain general y no autoriza pedir login al propietario.
 
 ## Puertas actuales antes de implementar
 

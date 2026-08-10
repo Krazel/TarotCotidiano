@@ -27,6 +27,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
 - Rama: `main`; build iOS 16 e IPA bilingüe verificados sobre `63c459e18e97c375c578e8ef653f1d3805f8ad5e` en `origin/main`.
 - Remoto público por A-026: `https://github.com/Krazel/TarotCotidiano.git`.
+- Acceso GitHub central verificado el 2026-08-10 mediante el comprobador común: `status=OK`, login global `Krazel` desde el llavero de Windows, repo público, `origin` correcto y ambos workflows activos. Actions se opera solo con `gh`; no se usa Chrome ni autenticación por proyecto.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
 - `App.js` y `data/tarot.js` no se han modificado durante la redefinición.
 - La fuente existente contiene 12 categorías y 36 cartas reflexivas en español. No representa un tarot estándar de Arcanos Mayores y Menores.
