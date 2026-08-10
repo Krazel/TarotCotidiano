@@ -18,6 +18,68 @@ function Add-ValidationError {
     $validationErrors.Add($Message)
 }
 
+function Get-JpegDimensions {
+    param(
+        [Parameter(Mandatory = $true)]
+        [byte[]]$Bytes
+    )
+
+    if ($Bytes.Length -lt 4 -or
+        $Bytes[0] -ne 0xFF -or $Bytes[1] -ne 0xD8 -or
+        $Bytes[$Bytes.Length - 2] -ne 0xFF -or $Bytes[$Bytes.Length - 1] -ne 0xD9) {
+        throw "The file does not have a complete JPEG signature."
+    }
+
+    $startOfFrameMarkers = @(0xC0, 0xC1, 0xC2, 0xC3, 0xC5, 0xC6, 0xC7, 0xC9, 0xCA, 0xCB, 0xCD, 0xCE, 0xCF)
+    $offset = 2
+
+    while ($offset -lt $Bytes.Length) {
+        while ($offset -lt $Bytes.Length -and $Bytes[$offset] -eq 0xFF) {
+            $offset++
+        }
+        if ($offset -ge $Bytes.Length) {
+            break
+        }
+
+        $marker = [int]$Bytes[$offset]
+        $offset++
+
+        if ($marker -eq 0xD9) {
+            break
+        }
+        if ($marker -eq 0x01 -or ($marker -ge 0xD0 -and $marker -le 0xD8)) {
+            continue
+        }
+        if ($offset + 1 -ge $Bytes.Length) {
+            throw "The JPEG contains a truncated segment length."
+        }
+
+        $segmentLength = ([int]$Bytes[$offset] -shl 8) -bor [int]$Bytes[$offset + 1]
+        if ($segmentLength -lt 2 -or $offset + $segmentLength -gt $Bytes.Length) {
+            throw "The JPEG contains an invalid segment length."
+        }
+
+        if ($startOfFrameMarkers -contains $marker) {
+            if ($segmentLength -lt 7) {
+                throw "The JPEG start-of-frame segment is too short."
+            }
+            $height = ([int]$Bytes[$offset + 3] -shl 8) -bor [int]$Bytes[$offset + 4]
+            $width = ([int]$Bytes[$offset + 5] -shl 8) -bor [int]$Bytes[$offset + 6]
+            if ($width -le 0 -or $height -le 0) {
+                throw "The JPEG dimensions are invalid."
+            }
+            return [pscustomobject]@{
+                Width = $width
+                Height = $height
+            }
+        }
+
+        $offset += $segmentLength
+    }
+
+    throw "The JPEG does not contain a supported start-of-frame segment."
+}
+
 if ($deckManifest.schemaVersion -ne 1) { Add-ValidationError "Deck schemaVersion must be 1." }
 if ($deckManifest.manifestVersion -ne "1.0.0") { Add-ValidationError "Deck manifestVersion must be 1.0.0." }
 if ($deckManifest.language -ne "en") { Add-ValidationError "Deck language must be en." }
@@ -200,7 +262,6 @@ if (-not (Test-Path -LiteralPath $localEvidencePath)) {
         Add-ValidationError "CandidateRWS local records must map to The Star, The Moon, and The Sun."
     }
 
-    Add-Type -AssemblyName System.Drawing
     foreach ($localRecord in $localRecords) {
         $sourceEvidence = $evidenceRecords | Where-Object { $_.cardID -eq $localRecord.cardID } | Select-Object -First 1
         $candidatePath = Join-Path $PSScriptRoot $localRecord.localRelativePath
@@ -226,16 +287,13 @@ if (-not (Test-Path -LiteralPath $localEvidencePath)) {
         if ($headerBytes.Length -lt 2 -or $headerBytes[0] -ne 0xFF -or $headerBytes[1] -ne 0xD8) {
             Add-ValidationError "Candidate $($localRecord.cardID) lacks a JPEG signature."
         }
-        $image = [System.Drawing.Image]::FromFile((Resolve-Path -LiteralPath $candidatePath))
         try {
-            if ($image.Width -ne [int]$sourceEvidence.pixelWidth -or $image.Height -ne [int]$sourceEvidence.pixelHeight) {
+            $dimensions = Get-JpegDimensions -Bytes $headerBytes
+            if ($dimensions.Width -ne [int]$sourceEvidence.pixelWidth -or $dimensions.Height -ne [int]$sourceEvidence.pixelHeight) {
                 Add-ValidationError "Candidate $($localRecord.cardID) dimensions differ from Commons."
             }
-            if ($image.RawFormat.Guid.ToString() -ne "b96b3cae-0728-11d3-9d7b-0000f81ef32e") {
-                Add-ValidationError "Candidate $($localRecord.cardID) does not decode as JPEG."
-            }
-        } finally {
-            $image.Dispose()
+        } catch {
+            Add-ValidationError "Candidate $($localRecord.cardID) is not a structurally valid JPEG: $($_.Exception.Message)"
         }
     }
 }
@@ -282,8 +340,6 @@ if (-not (Test-Path -LiteralPath $LocalCandidateManifestPath)) {
     $candidateDirectory = Join-Path $PSScriptRoot "CandidateRWS"
     $candidateDirectoryFullPath = [System.IO.Path]::GetFullPath($candidateDirectory).TrimEnd([System.IO.Path]::DirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
     $manifestCandidatePaths = [System.Collections.Generic.List[string]]::new()
-    Add-Type -AssemblyName System.Drawing
-
     foreach ($localRecord in $localV2Records) {
         $sourceEvidence = $evidenceRecords | Where-Object { $_.cardID -eq $localRecord.cardID } | Select-Object -First 1
         if ($null -eq $sourceEvidence) {
@@ -347,21 +403,18 @@ if (-not (Test-Path -LiteralPath $LocalCandidateManifestPath)) {
             Add-ValidationError "CandidateRWS v2 file $($localRecord.cardID) lacks a complete JPEG signature."
         }
 
-        $image = [System.Drawing.Image]::FromFile($candidateFullPath)
         try {
-            if ($image.Width -ne [int]$sourceEvidence.pixelWidth -or
-                $image.Height -ne [int]$sourceEvidence.pixelHeight -or
-                $image.Width -ne [int]$localRecord.pixelWidth -or
-                $image.Height -ne [int]$localRecord.pixelHeight -or
+            $dimensions = Get-JpegDimensions -Bytes $fileBytes
+            if ($dimensions.Width -ne [int]$sourceEvidence.pixelWidth -or
+                $dimensions.Height -ne [int]$sourceEvidence.pixelHeight -or
+                $dimensions.Width -ne [int]$localRecord.pixelWidth -or
+                $dimensions.Height -ne [int]$localRecord.pixelHeight -or
                 [int]$localRecord.expectedPixelWidth -ne [int]$sourceEvidence.pixelWidth -or
                 [int]$localRecord.expectedPixelHeight -ne [int]$sourceEvidence.pixelHeight) {
                 Add-ValidationError "CandidateRWS v2 file $($localRecord.cardID) dimensions differ from evidence."
             }
-            if ($image.RawFormat.Guid.ToString() -ne "b96b3cae-0728-11d3-9d7b-0000f81ef32e") {
-                Add-ValidationError "CandidateRWS v2 file $($localRecord.cardID) does not decode as JPEG."
-            }
-        } finally {
-            $image.Dispose()
+        } catch {
+            Add-ValidationError "CandidateRWS v2 file $($localRecord.cardID) is not a structurally valid JPEG: $($_.Exception.Message)"
         }
     }
 
