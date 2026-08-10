@@ -14,7 +14,7 @@ Current build facts:
 - shared scheme: `TarotDeckInternal`;
 - configuration: `Debug`;
 - platform: generic physical iPhone (`iphoneos`), never Simulator;
-- minimum system: iOS 17.0;
+- minimum system: iOS 16.0;
 - provisional bundle identifier: `com.krazel.tarotdeck.internal.provisional`;
 - current version/build: `0.0.1 (1)`;
 - signing in CI: disabled.

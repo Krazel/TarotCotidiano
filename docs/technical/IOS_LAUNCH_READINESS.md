@@ -37,7 +37,7 @@ The principal release blockers are:
 | Working tree | Dirty, with the native restart, current documentation, design references, content, and workflow not included in `46127ce` | Current launch work is not represented by the remote commit. No commit or push was made in this task. |
 | Native project | `native-ios/TarotDeck.xcodeproj` | Internal Xcode container exists. |
 | Target / scheme | `TarotDeckInternal`; shared Debug scheme | Explicitly provisional, not a production target or archive scheme. |
-| Minimum OS | iOS 17.0 | Provisional deployment target; iPhone only. |
+| Minimum OS | iOS 16.0 | Verified target intent; iPhone only. No required iOS 17-only API is present. |
 | Device family | `TARGETED_DEVICE_FAMILY = 1` | iPhone, not iPad. |
 | Orientation | Portrait, landscape left, landscape right | Must still be verified on real Xcode/simulator builds. |
 | Development language | `en` | Consistent with English-only first release. |

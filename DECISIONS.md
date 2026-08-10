@@ -37,6 +37,7 @@ Actualizado: 2026-08-09
 | A-022 | Aplicar el sistema global de apoyo voluntario dentro de Settings cuando corresponda. | La app permanece usable gratis; se prevén niveles mensuales equivalentes, estado supporter, agradecimiento, restauración, privacidad/términos y reseña separada. Crear/configurar IAP, builds o review permanece sin autorizar. | Regla global de Brain general, 2026-08-09. |
 | A-023 | Aplicar la skill reutilizable `ios-app-launch` en todo trabajo de lanzamiento, StoreKit, privacidad, soporte, firma y assets de tienda. | Estandariza preparación y URLs sin autorizar productos, secretos, subidas, review, contratos ni publicación. | Actualización explícita de Brain general, 2026-08-09. |
 | A-024 | Preparar un IPA local de QA para instalar mediante sideload. | Autoriza adaptar el target y preparar la generación del artefacto para pruebas personales; no autoriza TestFlight, App Store, firma de distribución, secretos, publicación ni push implícito. | Petición explícita del propietario, 2026-08-10. |
+| A-025 | La primera versión debe funcionar en iOS 16 cuando no exista una dependencia imprescindible de iOS 17. | El deployment target del target y del paquete Swift baja de iOS 17 a iOS 16 sin eliminar funciones; debe verificarse con una compilación macOS antes de sustituir el IPA anterior. | Instrucción explícita del propietario, 2026-08-10. |
 
 ## Decisiones autónomas reversibles
 

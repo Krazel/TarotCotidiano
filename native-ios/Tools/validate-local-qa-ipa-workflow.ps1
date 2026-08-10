@@ -8,8 +8,9 @@ $workflowPath = Join-Path $root ".github/workflows/tarot-local-qa-ipa.yml"
 $appPath = Join-Path $root "native-ios/TarotDeckApp/App/TarotDeckInternalApp.swift"
 $projectPath = Join-Path $root "native-ios/TarotDeck.xcodeproj/project.pbxproj"
 $schemePath = Join-Path $root "native-ios/TarotDeck.xcodeproj/xcshareddata/xcschemes/TarotDeckInternal.xcscheme"
+$packagePath = Join-Path $root "native-ios/Package.swift"
 
-foreach ($path in @($workflowPath, $appPath, $projectPath, $schemePath)) {
+foreach ($path in @($workflowPath, $appPath, $projectPath, $schemePath, $packagePath)) {
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
         throw "Required local QA input is missing: $path"
     }
@@ -19,6 +20,7 @@ $workflow = Get-Content -Raw -LiteralPath $workflowPath
 $appSource = Get-Content -Raw -LiteralPath $appPath
 $project = Get-Content -Raw -LiteralPath $projectPath
 $scheme = Get-Content -Raw -LiteralPath $schemePath
+$package = Get-Content -Raw -LiteralPath $packagePath
 
 if ($workflow -notmatch '(?m)^on:\s*\r?\n\s{2}workflow_dispatch:\s*$') {
     throw "Local QA IPA workflow must be manual-only with workflow_dispatch."
@@ -109,7 +111,7 @@ $requiredProjectContracts = @(
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'MARKETING_VERSION = 0.0.1;',
     'CURRENT_PROJECT_VERSION = 1;',
-    'IPHONEOS_DEPLOYMENT_TARGET = 17.0;',
+    'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
     'TARGETED_DEVICE_FAMILY = 1;',
     'SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";'
 )
@@ -117,6 +119,10 @@ foreach ($contract in $requiredProjectContracts) {
     if ($project -cnotmatch [regex]::Escape($contract)) {
         throw "Project contract required by local QA IPA is missing: $contract"
     }
+}
+
+if ($package -cnotmatch [regex]::Escape('.iOS(.v16)')) {
+    throw "Swift package must declare iOS 16 support for the local QA build."
 }
 
 $requiredSchemeContracts = @(
