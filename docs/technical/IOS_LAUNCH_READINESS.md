@@ -31,7 +31,7 @@ The principal release blockers are:
 | Item | Verified state | Launch interpretation |
 |---|---|---|
 | Local repository | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative` | Correct project scope. |
-| Remote | Private `https://github.com/Krazel/TarotCotidiano.git` | Remote exists; no publication authority follows from this. |
+| Remote | Public `https://github.com/Krazel/TarotCotidiano.git` | Made public by A-026 after a current/history credential scan; app publication authority does not follow from repository visibility. |
 | Branch | `main` | Current local branch. |
 | Local `HEAD` | `46127ce` | Same commit as the locally recorded `origin/main`. |
 | Working tree | Dirty, with the native restart, current documentation, design references, content, and workflow not included in `46127ce` | Current launch work is not represented by the remote commit. No commit or push was made in this task. |
@@ -219,7 +219,7 @@ The result is **zero known secrets in the inspected working tree**, not a substi
 
 ### 🟢 Green — verified local foundation
 
-- [x] Private repository and `main` branch identified.
+- [x] Public repository and `main` branch identified; workflow is manual and contains no secrets.
 - [x] iPhone-only SwiftUI target exists with English development language.
 - [x] Internal version `0.0.1` and build `1` are recorded as provisional.
 - [x] Provisional bundle identifier is explicitly marked non-launch.

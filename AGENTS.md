@@ -85,7 +85,7 @@ El propietario aprobó expresamente V-011/V-012 y autorizó de antemano las dem�
 - No borrar, sobrescribir ni modernizar el prototipo Expo existente por iniciativa propia.
 - No ampliar el MVP mientras queden decisiones o criterios de cierre pendientes.
 - No contratar servicios, asumir costes ni añadir dependencias de producción sin decisión expresa.
-- El repositorio remoto autorizado es el repositorio privado `Krazel/TarotCotidiano`.
+- El repositorio remoto autorizado es el repositorio público `Krazel/TarotCotidiano` desde A-026. El código, historial, documentación y assets rastreados son visibles públicamente; no añadir secretos, certificados ni perfiles de firma.
 - No hacer push, abrir o fusionar PR, crear releases, desplegar, usar TestFlight, enviar a App Store ni publicar sin autorización explícita para esa acción en el turno actual.
 
 ## Apoyo voluntario y reseñas
@@ -206,7 +206,7 @@ Después de cada cambio material de estado:
 - Mantener dentro del repositorio código fuente, documentación, imágenes y archivos de diseño aprobados o preliminares.
 - Hacer commits pequeños e intencionales solo cuando se soliciten o formen parte inequívoca del encargo.
 - Un commit o push no equivale a autorización para publicar la app.
-- El remoto privado registrado es `https://github.com/Krazel/TarotCotidiano.git`.
+- El remoto público registrado es `https://github.com/Krazel/TarotCotidiano.git`.
 
 ## Puertas actuales antes de implementar
 

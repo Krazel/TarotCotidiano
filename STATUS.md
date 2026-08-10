@@ -6,7 +6,7 @@ Actualizado: 2026-08-10
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas neutrales, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera lecturas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional Read / Learn / Cards / Settings integrado; target iOS 16 preparado y validado estáticamente; recompilación macOS bloqueada por la facturación/límite de GitHub Actions; derechos de distribución y comparación visual final pendientes**.
+Fase actual: **MVP funcional Read / Learn / Cards / Settings integrado y compilado para iPhone/iOS 16; IPA local de QA sin firma descargado y verificado; derechos de distribución, prueba física y comparación visual final pendientes**.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. La preparación iOS 16 y el workflow manual están cerrados; la generación del nuevo IPA no puede continuar hasta disponer de un runner macOS utilizable. Cualquier nueva implementación deberá volver a declarar una única propietaria.
+Propietaria activa de implementación: **ninguna**. La preparación y generación del IPA iOS 16 están cerradas. Cualquier nueva implementación deberá volver a declarar una única propietaria.
 
 Revisión de derechos de 2026-08-10: las 78 reproducciones históricas Rider-Waite-Smith siguen autorizadas solo como candidatos internos. España conserva una regla transitoria que remite al plazo de 80 años para autores fallecidos antes del 7 de diciembre de 1987; por prudencia, no se tratarán como distribuibles en España ni en un lanzamiento mundial hasta obtener revisión jurídica territorial o sustituirlas por arte propio. Settings puede avanzar porque no depende de distribuir esas imágenes.
 
@@ -23,8 +23,8 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ## Hechos verificados
 
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
-- Rama: `main`; commit iOS 16 y verificación del `MinimumOSVersion` remotos: `a59e9b2` en `origin/main`.
-- Remoto privado: `https://github.com/Krazel/TarotCotidiano.git`.
+- Rama: `main`; build iOS 16 verificado sobre `1178c55` en `origin/main`.
+- Remoto público por A-026: `https://github.com/Krazel/TarotCotidiano.git`.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
 - `App.js` y `data/tarot.js` no se han modificado durante la redefinición.
 - La fuente existente contiene 12 categorías y 36 cartas reflexivas en español. No representa un tarot estándar de Arcanos Mayores y Menores.
@@ -58,11 +58,12 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `native-ios/Tests/TarotDeckCoreTests/`: 24 pruebas declaradas para reglas, persistencia, concurrencia, rollback y recuperación.
 - `native-ios/Content/`: 78 cartas canónicas, 78 registros de procedencia y 78/78 JPEG candidatos locales verificados por URL, SHA-1, SHA-256, bytes, JPEG y dimensiones. No hay parciales ni faltantes. Todos siguen fuera de producción: `candidateOnly=true`, `finalAsset=false`, `distributionApproved=false` y revisión territorial pendiente.
 - `.github/workflows/tarot-core.yml`: CI macOS de solo lectura, sin firma, secretos, publicación ni despliegue.
-- `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual, privado y sin secretos para compilar Debug `iphoneos`, exigir `MinimumOSVersion=16.0`, validar el binario arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app` como IPA de QA. La ejecución iOS 16 `31393030128` sobre `a59e9b2` falló el 2026-08-10 antes de iniciar ningún paso: GitHub indicó pagos recientes fallidos o necesidad de aumentar el límite de gasto. No se generó artefacto ni se incurrió deliberadamente en un coste. La ejecución histórica iOS 17 `31348569722` sobre `2ed6db8` sí produjo el artefacto `9048186554`.
+- `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual público y sin secretos para compilar Debug `iphoneos`, exigir `MinimumOSVersion=16.0`, validar el binario arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app` como IPA de QA. La ejecución `31394351514` completó correctamente el 2026-08-10 sobre `1178c55`; artefacto `9065035708`, disponible en GitHub hasta el 2026-08-13 13:45 UTC. La ejecución privada anterior `31393030128` no llegó a iniciar por facturación/límite.
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
-- Verificación macOS histórica superada con iOS 17: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, ausencia de firma y paquete IPA `Payload` exacto. La recompilación iOS 16 sigue pendiente porque el runner no llegó a arrancar.
-- IPA local histórico iOS 17 preservado: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31348569722\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,268,341 bytes, SHA-256 `cb5e82bac17c09581a61392c70f0d55d98a9571a8a4a7ce134eb30ff77012a69`. No sirve para probar en iOS 16. Requiere firma del usuario y permanece `INTERNAL ONLY`.
+- Verificación macOS iOS 16 superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, `MinimumOSVersion=16.0`, ausencia de firma y paquete IPA `Payload` exacto.
+- IPA iOS 16 verificado: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31394351514\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,278,156 bytes, SHA-256 `908e43d89c40ca8ca792fc9466f797279186c75a897b20a3f3f0b164d680020a`. El hash coincide con `.sha256` y manifiesto; el `Info.plist` binario confirma `iphoneos`, versión `0.0.1 (1)`, bundle provisional y mínimo `16.0`; el ZIP tiene solo `Payload`, ejecutable e `Info.plist`, sin `_CodeSignature` ni `embedded.mobileprovision`. Requiere firma local con Sideloadly o AltStore y permanece `INTERNAL ONLY`.
+- IPA local histórico iOS 17 preservado en `run-31348569722`; queda sustituido para las pruebas del propietario.
 - `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y seis artículos; su validador confirma IDs/nombres/orden 78/78, unicidad y English/ASCII.
 
 ### Implementación visual aprobada
@@ -72,10 +73,10 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `ReadFlowModel` representa la `DeckSession` real, exige exactamente los 78 IDs canónicos y usa dos JSON atómicos —sesión y continuidad— con write-ahead/reconciliación. Restore, errores, replace y end solo publican estados persistidos; no quedan callbacks activos vacíos ni exposición de identidad face-down.
 - CTA Learn abre Three Cards realmente: reanuda Three activa, abre Three nueva sin sesión y protege una One activa mediante confirmación de reemplazo.
 - El catálogo runtime contiene exactamente 79 image sets: 78 caras canónicas y `ceremonial-card-back`. No quedan placeholders ni el duplicado histórico `rws-the-moon`.
-- `native-ios/TarotDeck.xcodeproj` contiene el target interno `TarotDeckInternal`: iPhone/iOS 16+, portrait y landscape, paquete local `TarotDeckCore`, sin firma, icono final, archive de producción ni dependencias externas. La bajada desde iOS 17 fue solicitada por el propietario y la auditoría estática no encontró APIs exclusivas de iOS 17; queda pendiente confirmarla con un build Xcode/macOS que produzca `MinimumOSVersion=16.0`.
+- `native-ios/TarotDeck.xcodeproj` contiene el target interno `TarotDeckInternal`: iPhone/iOS 16+, portrait y landscape, paquete local `TarotDeckCore`, sin firma, icono final, archive de producción ni dependencias externas. La bajada desde iOS 17 fue solicitada por el propietario, la auditoría estática no encontró APIs exclusivas de iOS 17 y el build Xcode/macOS confirmó `MinimumOSVersion=16.0`.
 - Integra `ceremonial-card-back` como asset independiente con el mismo SHA-256 que el master de diseño.
 - Incluye controles semánticos, targets de 44 puntos, descripciones visuales, posiciones neutrales, Dynamic Type adaptativo y estado S00 no interactivo durante restauración.
-- Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI y XCTest estaban verdes con el target anterior; la regresión macOS específica de iOS 16, previews y comparación de capturas siguen pendientes.
+- Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI, XCTest y empaquetado iOS 16 están verdes; previews y comparación de capturas siguen pendientes.
 
 ## Qué se conserva y qué queda fuera
 
@@ -104,6 +105,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: resolver el bloqueo de GitHub Actions sin asumir costes —o compilar en un Mac disponible— y volver a lanzar `.github/workflows/tarot-local-qa-ipa.yml`. Solo cuando el manifiesto confirme `minimumOSVersion: 16.0` se descargará y probará el nuevo IPA mediante firma local del usuario. No tratar los 78 candidatos históricos como arte distribuible hasta cerrar derechos.
+Siguiente punto exacto: firmar localmente e instalar el IPA iOS 16 con Sideloadly o AltStore, ejecutar una prueba física de Read / Learn / Cards / Settings en portrait y landscape y registrar defectos. No tratar los 78 candidatos históricos como arte distribuible aunque ahora sean públicamente visibles; el gate de release sigue bloqueado hasta cerrar derechos.
 
 No aumentar límites de gasto, añadir métodos de pago, usar TestFlight, App Store ni publicar sin autorización expresa separada.

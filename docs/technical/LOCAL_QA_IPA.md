@@ -27,11 +27,11 @@ Workflow: `.github/workflows/tarot-local-qa-ipa.yml`.
 
 It runs only through `workflow_dispatch`. After an authorized commit places it on the repository's default branch and GitHub Actions is enabled:
 
-1. Open the private `Krazel/TarotCotidiano` repository on GitHub.
+1. Open the public `Krazel/TarotCotidiano` repository on GitHub.
 2. Open **Actions** → **Tarot local QA unsigned IPA**.
 3. Choose **Run workflow**. There are no inputs, secrets, signing options, or upload switches.
 4. Wait for the `INTERNAL ONLY - unsigned device IPA` job to finish.
-5. Download the private artifact named like `tarot-deck-0.0.1-1-local-qa-unsigned` before its short retention window ends.
+5. Download the Actions artifact named like `tarot-deck-0.0.1-1-local-qa-unsigned` before its short retention window ends.
 
 The job validates the 78-card content, English education content and integrated app, runs the Swift tests, and builds the shared scheme for generic `iphoneos` with code signing disabled. It rejects a Simulator executable, a missing executable or `Info.plist`, an unexpected signature, and any IPA entry outside the exact app payload.
 
@@ -88,7 +88,7 @@ Use the same Apple ID and unchanged bundle identifier when refreshing an existin
 - StoreKit support, purchase restoration, App Store rating and published legal destinations remain unavailable in this build.
 - GitHub stores the artifact only for a short QA window. Repository access controls govern who can download it.
 - Sideloading and Apple authentication happen outside this repository. Do not paste Apple credentials into GitHub, logs, issues or this documentation.
-- The workflow performs no archive, export, notarization, TestFlight upload, App Store submission, release creation or external network upload beyond GitHub's private Actions artifact storage.
+- The workflow performs no archive, export, notarization, TestFlight upload, App Store submission, release creation or external network upload beyond GitHub Actions artifact storage. Because the repository is public under A-026, treat the artifact and its provisional artwork as publicly exposed even though the IPA remains unsigned and marked `INTERNAL ONLY`.
 - Building and installing the IPA does not authorize redistribution, publishing or submission.
 
 If the physical-device build fails, preserve the log and fix only the compile or packaging problem. Do not add certificates, profiles, secrets, external upload steps or ReleaseGate bypasses to make it pass.

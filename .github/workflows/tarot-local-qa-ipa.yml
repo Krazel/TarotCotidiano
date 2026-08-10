@@ -188,7 +188,7 @@ jobs:
           echo "artifact_name=tarot-deck-${VERSION}-${BUILD_NUMBER}-local-qa-unsigned" >> "$GITHUB_OUTPUT"
           echo "INTERNAL ONLY - provisional RWS artwork - not for redistribution"
 
-      - name: Upload private local QA artifact
+      - name: Upload local QA artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.package.outputs.artifact_name }}

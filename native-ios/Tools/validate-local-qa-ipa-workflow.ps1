@@ -141,4 +141,4 @@ foreach ($contract in $requiredSchemeContracts) {
     }
 }
 
-Write-Host "Validated manual local QA IPA workflow: Debug iphoneos, unsigned exact Payload, private short-lived artifact, and no release/upload/signing boundary."
+Write-Host "Validated manual local QA IPA workflow: Debug iphoneos, unsigned exact Payload, short-lived Actions artifact, and no release/upload/signing boundary."
