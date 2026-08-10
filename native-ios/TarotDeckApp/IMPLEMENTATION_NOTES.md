@@ -10,15 +10,19 @@ Settings follows V-025; V-024's discreet gear opens it from both empty and activ
 
 ## Live source inventory
 
+Favorites follows V-042/V-043 without adding a tab or account.
+
 - `App/TarotDeckInternalApp.swift`: debug-only iPhone composition root using `SystemDeckShuffler`.
 - `App/TarotDeckMainShell.swift`: persistent `Read / Learn / Cards` shell and revealed-card meaning sheet.
 - `Internal/ReadFlowModel.swift`: one durable reading coordinator plus layout continuity metadata.
+- `Internal/FavoriteCardsStore.swift`: one app-owned set of canonical favorite IDs with versioned atomic JSON persistence.
 - `Screens/Read/ReadViews.swift`: responsive Read Home, Layout Choice and generic One/Three Card table.
 - `Screens/Learn/LearnViews.swift`: six-article beginner guide.
-- `Screens/Cards/CardsViews.swift`: 78-card library, six filters, upright meaning, non-wrapping previous/next and Dynamic Type-aware one/two-column presentation.
+- `Screens/Cards/CardsViews.swift`: 78-card library, Favorites plus six deck filters, empty Favorites state, upright meaning, non-wrapping previous/next and Dynamic Type-aware one/two-column presentation.
 - `Screens/Settings/SettingsView.swift`: approved Settings index with safe internal-build availability feedback and bundle-derived version display.
 - `Content/TarotContent.swift`: strict 78/78/6 loading and required artwork descriptions.
 - `Components/TarotArtworkView.swift`: local hash-verified historical candidates and an explicit `ART PENDING` ceremonial fallback.
+- `Design/CeremonialMotion.swift`: approved iOS 16 motion tokens, shuffle presentation, card-turn transition and post-commit haptics.
 
 The earlier S03.2–S03.4 fixture files remain in the repository as visual implementation history but are not compiled by the app target. The deleted provisional harness is no longer referenced by the Xcode project.
 
@@ -37,6 +41,14 @@ Restore, metadata, shuffle, draw, reveal, conceal and clear failures preserve th
 The Learn CTA selects a new Three Cards ready state when no session exists. An active Three Cards session resumes directly. An active One Card session is never relabelled or silently replaced: Read presents the standard native replacement confirmation over that exact table, cancellation preserves it, and confirmation durably clears it before atomically saving the new Three Cards ready sidecar.
 
 A face-down card is labelled only by position and face-down state. Its identity is never interpolated into visible copy, VoiceOver, error copy or logs. Meaning inspection is accepted only after `DeckSession` says that exact card is revealed.
+
+Favorites is independent from `DeckSession`. The single `FavoriteCardsStore` is created by the composition root and shared by meanings opened from Read and Cards. It persists only canonical IDs to `Application Support/TarotDeckInternal/favorites.v1.json`; the local directory is excluded from device backup, writes are atomic, and UI state publishes only after success. Missing storage means an empty set. Corrupt, duplicate or unknown IDs recover to an empty list with localized feedback and never block the deck. Ending a reading does not clear favorites.
+
+## Motion boundary
+
+V-041 and `design/tarot-deck/MOTION_SPEC.md` define the live motion language. Read surfaces cross-fade with a restrained scale, a committed shuffle performs a short two-cut settle, newly drawn cards arrive from the deck direction, and a committed reveal uses a vertical-axis card turn. Primary controls have a short tactile press response.
+
+Motion observes only the already-published `DeckSession` signature, so a failed save cannot trigger a success haptic or reveal animation. Restoration establishes a baseline without replay. Backgrounding or leaving the table cancels transient shuffle layers. Reduce Motion and VoiceOver replace displacement, scale and 3D turns with short opacity changes; decorative deck copies remain hidden from accessibility. The implementation uses only SwiftUI/UIKit APIs available on iOS 16 and contains no looping ambience, particles or iOS 17 motion APIs.
 
 ## Artwork boundary
 

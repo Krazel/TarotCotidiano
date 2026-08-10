@@ -13,25 +13,31 @@ struct SettingsView: View {
 
         var title: String {
             switch self {
-            case .supportUnavailable: return "Support Unavailable"
-            case .restoreUnavailable: return "Restore Unavailable"
+            case .supportUnavailable: return AppLocalization.text("Support Unavailable")
+            case .restoreUnavailable: return AppLocalization.text("Restore Unavailable")
             case .ratingUnavailable, .privacyUnavailable, .termsUnavailable:
-                return "Destination Unavailable"
+                return AppLocalization.text("Destination Unavailable")
             }
         }
 
         var message: String {
             switch self {
             case .supportUnavailable:
-                return "Support isn't available right now. You can keep using the full app."
+                return AppLocalization.text(
+                    "Support isn't available right now. You can keep using the full app."
+                )
             case .restoreUnavailable:
-                return "Restore Purchases isn't available in this internal build. You can keep using the full app."
+                return AppLocalization.text(
+                    "Restore Purchases isn't available in this internal build. You can keep using the full app."
+                )
             case .ratingUnavailable:
-                return "The App Store rating destination isn't available in this internal build."
+                return AppLocalization.text(
+                    "The App Store rating destination isn't available in this internal build."
+                )
             case .privacyUnavailable:
-                return "Privacy is unavailable in this internal build."
+                return AppLocalization.text("Privacy is unavailable in this internal build.")
             case .termsUnavailable:
-                return "Terms are unavailable in this internal build."
+                return AppLocalization.text("Terms are unavailable in this internal build.")
             }
         }
     }
@@ -123,7 +129,7 @@ struct SettingsView: View {
                                 .frame(height: 1)
                         }
 
-                        Text("Tarot Deck • Version \(appVersion)")
+                        Text(AppLocalization.format("Tarot Deck • Version %@", appVersion))
                             .font(.system(.body, design: .serif, weight: .medium))
                             .foregroundStyle(CeremonialObsidianTheme.brightGold)
 
@@ -175,7 +181,7 @@ struct SettingsView: View {
                 Image(systemName: "sparkle")
                     .font(.caption)
                     .accessibilityHidden(true)
-                Text(title.uppercased())
+                Text(AppLocalization.text(title).uppercased())
                     .font(.system(.headline, design: .serif, weight: .semibold))
                     .tracking(1.4)
                 Rectangle()
@@ -184,7 +190,7 @@ struct SettingsView: View {
             }
             .foregroundStyle(CeremonialObsidianTheme.brightGold)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(title)
+            .accessibilityLabel(AppLocalization.text(title))
             .accessibilityAddTraits(.isHeader)
 
             VStack(spacing: 0) {
@@ -220,12 +226,12 @@ private struct SettingsRow: View {
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(title)
+                    Text(AppLocalization.text(title))
                         .font(.system(.title3, design: .serif, weight: .medium))
                         .foregroundStyle(CeremonialObsidianTheme.parchment)
 
                     if let subtitle {
-                        Text(subtitle)
+                        Text(AppLocalization.text(subtitle))
                             .font(.system(.subheadline, design: .serif))
                             .foregroundStyle(CeremonialObsidianTheme.secondaryText)
                     }
@@ -246,8 +252,8 @@ private struct SettingsRow: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(title)
-        .accessibilityValue(subtitle ?? "")
+        .accessibilityLabel(AppLocalization.text(title))
+        .accessibilityValue(subtitle.map(AppLocalization.text) ?? "")
         .accessibilityHint("Shows availability information")
     }
 }

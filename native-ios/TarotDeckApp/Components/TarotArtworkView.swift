@@ -67,13 +67,20 @@ struct TarotArtworkView: View {
 
     var accessibilitySummary: String {
         guard UIImage(named: card.artworkAsset) != nil else {
-            return "Provisional artwork placeholder. Final artwork is not yet available."
+            return AppLocalization.text(
+                "Provisional artwork placeholder. Final artwork is not yet available."
+            )
         }
 
         let description = artworkDescription?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if description.isEmpty {
-            return "Verified historical artwork candidate. A detailed artwork description is not yet available."
+            return AppLocalization.text(
+                "Verified historical artwork candidate. A detailed artwork description is not yet available."
+            )
         }
-        return "Historical artwork candidate. Distribution approval is pending. \(description)"
+        return AppLocalization.format(
+            "Historical artwork candidate. Distribution approval is pending. %@",
+            description
+        )
     }
 }

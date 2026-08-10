@@ -74,14 +74,14 @@ La aprobación de imágenes es una puerta material obligatoria: cada pantalla nu
 
 ### Autorización visual permanente del propietario — 2026-08-09
 
-El propietario aprobó expresamente V-011/V-012 y autorizó de antemano las demás ilustraciones que este cerebro cree para completar el MVP ampliado. Para este proyecto, las imágenes nuevas quedan aprobadas al generarse y registrarse si respetan el producto, Ceremonial Obsidian, iPhone/English y el alcance vigente. El orden visual-first se mantiene —imagen completa antes de UI, registro, implementación fiel y verificación—, pero ya no se pausa para pedir aprobación pantalla por pantalla. Debe elevarse solo una desviación material de producto, coste, derechos, privacidad o publicación; no una preferencia visual reversible.
+El propietario aprobó expresamente V-011/V-012 y autorizó de antemano las demás ilustraciones que este cerebro cree para completar el MVP ampliado. Para este proyecto, las imágenes nuevas quedan aprobadas al generarse y registrarse si respetan el producto, Ceremonial Obsidian, iPhone, inglés/castellano y el alcance vigente. El orden visual-first se mantiene —imagen completa antes de UI, registro, implementación fiel y verificación—, pero ya no se pausa para pedir aprobación pantalla por pantalla. Debe elevarse solo una desviación material de producto, coste, derechos, privacidad o publicación; no una preferencia visual reversible.
 
 ## Límites permanentes
 
 - Primera versión exclusivamente para iPhone/iOS.
-- Primera versión y todo su copy de producto exclusivamente en inglés.
-- No trabajar Android, no mantener una variante Android y no planificar localización.
-- El contenido español antiguo es fuente conceptual preservada, no copy de producción.
+- Primera versión para iPhone en inglés y castellano por A-027; inglés sigue siendo fallback completo.
+- No trabajar Android ni mantener una variante Android. No añadir otros idiomas sin una nueva decisión del propietario.
+- El contenido español antiguo sigue siendo fuente conceptual preservada; el castellano de producción se traduce y valida desde el contenido vigente del Tarot Deck.
 - No borrar, sobrescribir ni modernizar el prototipo Expo existente por iniciativa propia.
 - No ampliar el MVP mientras queden decisiones o criterios de cierre pendientes.
 - No contratar servicios, asumir costes ni añadir dependencias de producción sin decisión expresa.

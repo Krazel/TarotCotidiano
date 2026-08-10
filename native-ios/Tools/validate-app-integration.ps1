@@ -12,10 +12,22 @@ $contentRoot = Join-Path $native.Path "Content"
 $deck = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "tarot-deck.v1.json") | ConvertFrom-Json
 $meanings = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Education/card-meanings.v1.json") | ConvertFrom-Json
 $guide = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Education/beginner-guide.v1.json") | ConvertFrom-Json
+$spanishCopy = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Localization/card-copy.es.v1.json") | ConvertFrom-Json
+$spanishMeanings = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Localization/card-meanings.es.v1.json") | ConvertFrom-Json
+$spanishGuide = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Localization/beginner-guide.es.v1.json") | ConvertFrom-Json
 
 if ($deck.cards.Count -ne 78) { throw "Deck must contain 78 cards." }
 if ($meanings.cards.Count -ne 78) { throw "Meanings must contain 78 cards." }
 if ($guide.articles.Count -ne 6) { throw "Guide must contain 6 articles." }
+if ($spanishCopy.language -cne "es" -or $spanishCopy.cards.Count -ne 78) {
+    throw "Spanish card copy must contain exactly 78 records."
+}
+if ($spanishMeanings.language -cne "es" -or $spanishMeanings.cards.Count -ne 78) {
+    throw "Spanish meanings must contain exactly 78 records."
+}
+if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 6) {
+    throw "Spanish guide must contain exactly 6 articles."
+}
 
 $missingArtworkDescriptions = @($meanings.cards | Where-Object {
     [string]::IsNullOrWhiteSpace([string]$_.artworkDescription)
@@ -29,6 +41,12 @@ $meaningIDs = @($meanings.cards.cardID | Sort-Object)
 if (Compare-Object $deckIDs $meaningIDs) {
     throw "Deck and meaning identifiers differ."
 }
+$spanishCopyIDs = @($spanishCopy.cards.cardID | Sort-Object)
+$spanishMeaningIDs = @($spanishMeanings.cards.cardID | Sort-Object)
+if (@(Compare-Object $deckIDs $spanishCopyIDs).Count -gt 0 -or
+    @(Compare-Object $deckIDs $spanishMeaningIDs).Count -gt 0) {
+    throw "Spanish content identifiers differ from the canonical deck."
+}
 
 $project = Get-Content -Raw -LiteralPath $projectFile
 $requiredSources = @(
@@ -40,12 +58,19 @@ $requiredSources = @(
     "ReadViews.swift",
     "LearnViews.swift",
     "CardsViews.swift",
-    "SettingsView.swift"
+    "SettingsView.swift",
+    "AppLocalization.swift",
+    "CeremonialMotion.swift",
+    "FavoriteCardsStore.swift"
 )
 $requiredResources = @(
     "tarot-deck.v1.json in Resources",
     "card-meanings.v1.json in Resources",
-    "beginner-guide.v1.json in Resources"
+    "beginner-guide.v1.json in Resources",
+    "Localizable.xcstrings in Resources",
+    "card-copy.es.v1.json in Resources",
+    "card-meanings.es.v1.json in Resources",
+    "beginner-guide.es.v1.json in Resources"
 )
 
 foreach ($source in $requiredSources) {
@@ -61,6 +86,31 @@ foreach ($resource in $requiredResources) {
 if ($project -match [regex]::Escape("ProvisionalApprovedReadingHarness.swift in Sources")) {
     throw "The superseded provisional reading harness remains in the app target."
 }
+if ($project -notmatch '(?s)knownRegions\s*=\s*\([^\)]*\bes\s*,') {
+    throw "The Xcode project does not declare Spanish as a known region."
+}
+
+$catalogPath = Join-Path $appRoot "Resources/Localizable.xcstrings"
+$catalogRaw = Get-Content -Raw -LiteralPath $catalogPath
+$catalog = $catalogRaw | ConvertFrom-Json
+$catalogKeyMatches = [regex]::Matches(
+    $catalogRaw,
+    '(?m)^\s{4}"((?:[^"\\]|\\.)+)"\s*:\s*\{\s*"localizations"'
+)
+$duplicateCatalogKeys = @(
+    $catalogKeyMatches |
+        ForEach-Object { $_.Groups[1].Value } |
+        Group-Object |
+        Where-Object Count -gt 1
+)
+if ($duplicateCatalogKeys.Count -gt 0) {
+    throw "The String Catalog contains duplicate keys: $($duplicateCatalogKeys.Name -join ', ')"
+}
+$catalogEntries = @($catalog.strings.PSObject.Properties)
+if ($catalogEntries.Count -lt 100 -or
+    @($catalogEntries | Where-Object { [string]::IsNullOrWhiteSpace([string]$_.Value.localizations.es.stringUnit.value) }).Count -gt 0) {
+    throw "The String Catalog must contain complete Spanish values for the app UI contract."
+}
 
 $artworkIntegrationChecks = @(
     @{ Path = "Content/TarotContent.swift"; Snippet = "let artworkDescription: String" },
@@ -73,6 +123,13 @@ foreach ($check in $artworkIntegrationChecks) {
     if ($integrationSource -cnotmatch [regex]::Escape($check.Snippet)) {
         throw "Artwork descriptions are not integrated in $($check.Path)."
     }
+}
+
+$contentSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Content/TarotContent.swift")
+if ($contentSource -cnotmatch [regex]::Escape("AppLocalization.isSpanish(bundle: bundle)") -or
+    $contentSource -cnotmatch [regex]::Escape("throw TarotContentLoadError.invalidLocalizedContent") -or
+    ([regex]::Matches($contentSource, [regex]::Escape("return english"))).Count -ne 1) {
+    throw "Spanish loading must be bundle-aware, atomic, and fail rather than mix languages."
 }
 
 $sourceText = Get-ChildItem -LiteralPath $appRoot -Recurse -File -Filter *.swift |
@@ -150,13 +207,19 @@ $requiredRecoveryContracts = @(
     "presentIssue",
     "retryIssue",
     "requestThreeCardReadingFromLearn"
+    "case spreadChoice"
+    "enum ThreeCardSpread"
+    "case pastPresentFuture"
+    "case situationChallengeAdvice"
+    "case relationship"
+    "case open"
 )
 foreach ($contract in $requiredRecoveryContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
         throw "Read recovery contract is missing: $contract"
     }
 }
-$readyWrite = $readModelSource.IndexOf("try self.continuityStore.save(.ready(layout))")
+$readyWrite = $readModelSource.IndexOf("try self.continuityStore.save(.ready(layout, spread: self.spread))")
 $sessionWrite = $readModelSource.IndexOf("self.coordinator.startSession()")
 if ($readyWrite -lt 0 -or $sessionWrite -lt 0 -or $readyWrite -gt $sessionWrite) {
     throw "The ready continuity record must be persisted before startSession."
@@ -176,6 +239,119 @@ if ($readModelSource -match '\bUserDefaults\b' -or
 if ($readModelSource -cnotmatch [regex]::Escape("pendingReplacementLayout = .threeCards") -or
     $readModelSource -cnotmatch [regex]::Escape("layout == .threeCards")) {
     throw "The Learn CTA does not distinguish resumable Three Cards from confirmed replacement."
+}
+if ($readSource -cnotmatch [regex]::Escape("ThreeCardSpreadChoiceView") -or
+    $readSource -cnotmatch [regex]::Escape("let railWidth = min(max(size.width * 0.21, 148), 190)") -or
+    $readSource -cnotmatch [regex]::Escape("positions(showLabels: model.layout == .threeCards)")) {
+    throw "Named spread selection or the approved large landscape table is missing."
+}
+
+$motionSourcePath = Join-Path $appRoot "Design/CeremonialMotion.swift"
+$motionSpecPath = Join-Path $native.Path "../design/tarot-deck/MOTION_SPEC.md"
+$motionStoryboardPath = Join-Path $native.Path "../design/tarot-deck/reading-table-motion-storyboard-a-ceremonial-obsidian.png"
+if (-not (Test-Path -LiteralPath $motionSourcePath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $motionSpecPath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $motionStoryboardPath -PathType Leaf)) {
+    throw "The approved motion source, specification, and storyboard must all be present."
+}
+$motionSource = Get-Content -Raw -LiteralPath $motionSourcePath
+$motionContracts = @(
+    "CeremonialShufflingDeck",
+    "UIImpactFeedbackGenerator",
+    "ceremonialCardReveal",
+    "CeremonialMotion.reduced"
+)
+foreach ($contract in $motionContracts) {
+    if ($motionSource -cnotmatch [regex]::Escape($contract)) {
+        throw "Professional motion contract is missing: $contract"
+    }
+}
+if ($readSource -cnotmatch [regex]::Escape("accessibilityReduceMotion") -or
+    $readSource -cnotmatch [regex]::Escape("accessibilityVoiceOverEnabled") -or
+    $readSource -cnotmatch [regex]::Escape("AccessibilityFocusState") -or
+    $readSource -cnotmatch [regex]::Escape("respondToDurableStateChange") -or
+    $readSource -cnotmatch [regex]::Escape("guard scenePhase == .active else { return }") -or
+    $readSource -cnotmatch [regex]::Escape("cancelTransientMotion")) {
+    throw "Read motion must respect accessibility and react only to published durable state."
+}
+if ($motionSource -match '\brepeatForever\b|\bPhaseAnimator\b|\bKeyframeAnimator\b|\bsensoryFeedback\b') {
+    throw "Motion source contains looping or iOS 17-only animation APIs."
+}
+$expectedMotionStoryboardSHA256 = "30D49233D041893FAC2783D72F90A9C737BA49F74A25EE547EC022D31CBC3E64"
+$actualMotionStoryboardSHA256 = (Get-FileHash -LiteralPath $motionStoryboardPath -Algorithm SHA256).Hash
+if ($actualMotionStoryboardSHA256 -cne $expectedMotionStoryboardSHA256) {
+    throw "The approved motion storyboard hash changed."
+}
+
+$favoritesSourcePath = Join-Path $appRoot "Internal/FavoriteCardsStore.swift"
+$cardsSourcePath = Join-Path $appRoot "Screens/Cards/CardsViews.swift"
+$favoriteDetailReference = Join-Path $native.Path "../design/tarot-deck/card-detail-library-favorite-saved-a-ceremonial-obsidian.png"
+$favoritesEmptyReference = Join-Path $native.Path "../design/tarot-deck/cards-library-favorites-empty-a-ceremonial-obsidian.png"
+if (-not (Test-Path -LiteralPath $favoritesSourcePath -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $favoriteDetailReference -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $favoritesEmptyReference -PathType Leaf)) {
+    throw "Favorites source and both approved visual references must be present."
+}
+$favoritesSource = Get-Content -Raw -LiteralPath $favoritesSourcePath
+$cardsSource = Get-Content -Raw -LiteralPath $cardsSourcePath
+$favoriteContracts = @(
+    "FavoriteCardsStore: ObservableObject",
+    "schemaVersion: 1",
+    "decodedIDs.isSubset(of: knownCardIDs)",
+    "options: .atomic",
+    "isExcludedFromBackup = true",
+    'appendingPathComponent("favorites.v1.json"',
+    'case favorites = "Favorites"',
+    "No favorites yet",
+    "favoriteStore.toggle(card.id)",
+    "dismissWhenRemovedFromFavorites",
+    "onChange(of: favoriteStore.cardIDs)"
+)
+$favoriteContractSource = "$favoritesSource`n$cardsSource`n$appSource"
+foreach ($contract in $favoriteContracts) {
+    if ($favoriteContractSource -cnotmatch [regex]::Escape($contract)) {
+        throw "Favorites contract is missing: $contract"
+    }
+}
+$favoriteWrite = $favoritesSource.IndexOf("try save(candidate)")
+$favoritePublish = $favoritesSource.IndexOf("cardIDs = candidate")
+if ($favoriteWrite -lt 0 -or $favoritePublish -lt 0 -or $favoriteWrite -gt $favoritePublish -or
+    $favoritesSource -cnotmatch [regex]::Escape("write(to: fileURL, options: .atomic)")) {
+    throw "Favorites must persist atomically before publishing the changed set."
+}
+if (([regex]::Matches($shellSource, "favoriteStore: favoriteStore")).Count -lt 2) {
+    throw "Read and Cards must share the single app-owned FavoriteCardsStore."
+}
+if ("$favoritesSource`n$cardsSource" -match '\bContentUnavailableView\b|@Observable\b|\.symbolEffect\b') {
+    throw "Favorites contains an API unavailable on iOS 16."
+}
+$favoriteVisualHashes = @{
+    $favoriteDetailReference = "5794D4C345BAF1BB52F783DE9C3D49D7D64DAA31BDA4083770AF3E2B8A957389"
+    $favoritesEmptyReference = "62AED89CC28393E7FD2BC9B06F99240D576EA61FC90F39C8511DBDBA11FFCA87"
+}
+foreach ($entry in $favoriteVisualHashes.GetEnumerator()) {
+    if ((Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "An approved Favorites visual reference hash changed: $($entry.Key)"
+    }
+}
+$requiredFavoriteCatalogKeys = @(
+    "Favorites",
+    "No favorites yet",
+    "Open a card and tap the heart to save it here.",
+    "Add %@ to Favorites",
+    "Remove %@ from Favorites",
+    "Favorite",
+    "Not favorite",
+    "Favorites Unavailable",
+    "Favorites couldn't be updated. Nothing was changed.",
+    "Selected filter",
+    "Your cards are still available. Add a favorite to start a new list."
+)
+foreach ($key in $requiredFavoriteCatalogKeys) {
+    if ($null -eq $catalog.strings.PSObject.Properties[$key] -or
+        [string]::IsNullOrWhiteSpace([string]$catalog.strings.$key.localizations.es.stringUnit.value)) {
+        throw "Favorites catalog key or Spanish translation is missing: $key"
+    }
 }
 $settingsSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
 $requiredSettingsCopy = @(
@@ -271,4 +447,4 @@ if ($ReleaseGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot: 78 cards, 78 meanings with artwork descriptions, 6 articles, Read/Learn/Cards/Settings target membership, approved Read alert copy, safe internal Settings feedback, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot: 78 English and 78 Spanish card records, 6 guide articles per language, Read/Learn/Cards/Settings target membership, local atomic favorites with approved detail/empty states, named three-card spreads, large landscape table, approved Read alert copy, safe internal Settings feedback, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

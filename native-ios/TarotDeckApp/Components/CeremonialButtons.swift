@@ -1,6 +1,9 @@
 import SwiftUI
 
 struct CeremonialPrimaryButtonStyle: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(.title3, design: .serif, weight: .semibold))
@@ -29,7 +32,15 @@ struct CeremonialPrimaryButtonStyle: ButtonStyle {
                         y: 5
                     )
             }
-            .scaleEffect(configuration.isPressed ? 0.985 : 1)
+            .scaleEffect(
+                reduceMotion || voiceOverEnabled ? 1 : (configuration.isPressed ? 0.985 : 1)
+            )
             .opacity(configuration.isPressed ? 0.90 : 1)
+            .animation(
+                reduceMotion || voiceOverEnabled
+                    ? CeremonialMotion.reduced
+                    : .easeOut(duration: 0.09),
+                value: configuration.isPressed
+            )
     }
 }

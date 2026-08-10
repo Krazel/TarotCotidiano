@@ -161,6 +161,11 @@ jobs:
         shell: pwsh
         run: ./native-ios/Content/Education/validate-education.ps1
 
+      - name: Validate Spanish localization
+        if: steps.package.outputs.exists == 'true'
+        shell: pwsh
+        run: ./native-ios/Content/Localization/validate-localization.ps1
+
       - name: Validate internal app snapshot
         if: steps.package.outputs.exists == 'true'
         shell: pwsh

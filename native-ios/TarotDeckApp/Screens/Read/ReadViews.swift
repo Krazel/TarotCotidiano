@@ -7,33 +7,50 @@ struct ReadRootView: View {
     let content: TarotContent
     let inspectRevealedCard: (String) -> Void
     @State private var showsSettings = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
 
     var body: some View {
-        Group {
-            switch model.surface {
-            case .restoring:
-                ReadRestoringView(model: model)
+        ZStack {
+            Group {
+                switch model.surface {
+                case .restoring:
+                    ReadRestoringView(model: model)
 
-            case .home:
-                ReadHomeView(
-                    model: model,
-                    openSettings: { showsSettings = true }
-                )
+                case .home:
+                    ReadHomeView(
+                        model: model,
+                        openSettings: { showsSettings = true }
+                    )
 
-            case .layoutChoice:
-                LayoutChoiceView(model: model)
+                case .layoutChoice:
+                    LayoutChoiceView(model: model)
 
-            case .table:
-                ReadingTableView(
-                    model: model,
-                    content: content,
-                    inspectRevealedCard: { cardID in
-                        guard model.canInspect(cardID) else { return }
-                        inspectRevealedCard(cardID.rawValue)
-                    }
-                )
+                case .spreadChoice:
+                    ThreeCardSpreadChoiceView(model: model)
+
+                case .table:
+                    ReadingTableView(
+                        model: model,
+                        content: content,
+                        inspectRevealedCard: { cardID in
+                            guard model.canInspect(cardID) else { return }
+                            inspectRevealedCard(cardID.rawValue)
+                        }
+                    )
+                }
             }
+            .id(model.surface)
+            .transition(
+                reduceMotion || voiceOverEnabled
+                    ? .opacity
+                    : .opacity.combined(with: .scale(scale: 0.985))
+            )
         }
+        .animation(
+            reduceMotion || voiceOverEnabled ? CeremonialMotion.reduced : CeremonialMotion.screen,
+            value: model.surface
+        )
         .toolbar(
             model.surface == .table || model.surface == .restoring ? .hidden : .visible,
             for: .tabBar
@@ -201,6 +218,13 @@ private struct ReadHomeView: View {
                 Text(layout.title)
                     .font(.system(.largeTitle, design: .serif, weight: .semibold))
 
+                if let spread = model.spread {
+                    Text(spread.title)
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                        .multilineTextAlignment(.center)
+                }
+
                 HStack(spacing: 12) {
                     ForEach(0..<layout.cardLimit, id: \.self) { index in
                         Circle()
@@ -211,7 +235,13 @@ private struct ReadHomeView: View {
                     }
                 }
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("\(session.drawnCards.count) of \(layout.cardLimit) cards drawn")
+                .accessibilityLabel(
+                    AppLocalization.format(
+                        "%d of %d cards drawn",
+                        session.drawnCards.count,
+                        layout.cardLimit
+                    )
+                )
             }
 
             Button("Resume Reading") {
@@ -269,7 +299,7 @@ private struct LayoutChoiceView: View {
                             .multilineTextAlignment(.center)
                             .accessibilityAddTraits(.isHeader)
 
-                        Text("You decide what each position means.")
+                        Text("Choose one card, a guided spread, or your own positions.")
                             .font(.system(.title3, design: .serif))
                             .foregroundStyle(CeremonialObsidianTheme.brightGold)
                             .multilineTextAlignment(.center)
@@ -281,7 +311,7 @@ private struct LayoutChoiceView: View {
                     )
                     layoutButton(
                         layout: .threeCards,
-                        summary: "Read three cards together in your own way."
+                        summary: "Choose position meanings or use an open reading."
                     )
                 }
                 .frame(maxWidth: 680)
@@ -312,7 +342,7 @@ private struct LayoutChoiceView: View {
                 VStack(alignment: .leading, spacing: 9) {
                     Text(layout.title)
                         .font(.system(.title, design: .serif, weight: .semibold))
-                    Text(summary)
+                    Text(AppLocalization.text(summary))
                         .font(.system(.body, design: .serif))
                         .foregroundStyle(CeremonialObsidianTheme.secondaryText)
                         .multilineTextAlignment(.leading)
@@ -337,8 +367,131 @@ private struct LayoutChoiceView: View {
         .buttonStyle(.plain)
         .disabled(model.isBusy)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(layout.title). \(summary)")
+        .accessibilityLabel("\(layout.title). \(AppLocalization.text(summary))")
         .accessibilityHint("Starts this reading layout")
+    }
+}
+
+private struct ThreeCardSpreadChoiceView: View {
+    @ObservedObject var model: ReadFlowModel
+
+    var body: some View {
+        ZStack {
+            CeremonialBackdrop()
+
+            ScrollView {
+                VStack(spacing: 18) {
+                    HStack {
+                        Button {
+                            model.cancelSpreadChoice()
+                        } label: {
+                            Label("Reading", systemImage: "chevron.left")
+                                .frame(minHeight: 44)
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                        Spacer()
+                    }
+
+                    VStack(spacing: 7) {
+                        Text("Choose a Spread")
+                            .font(.system(.largeTitle, design: .serif, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .accessibilityAddTraits(.isHeader)
+
+                        Text("Each position has a purpose.")
+                            .font(.system(.title3, design: .serif))
+                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                            .multilineTextAlignment(.center)
+                    }
+
+                    ForEach(ThreeCardSpread.namedCases, id: \.self) { spread in
+                        spreadButton(spread)
+                    }
+
+                    Button {
+                        model.selectSpread(.open)
+                    } label: {
+                        HStack(spacing: 10) {
+                            Text("Open reading · No assigned positions")
+                                .font(.system(.body, design: .serif, weight: .semibold))
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.headline)
+                        }
+                        .padding(.horizontal, 20)
+                        .frame(maxWidth: .infinity, minHeight: 52)
+                        .background {
+                            RoundedRectangle(cornerRadius: 15)
+                                .fill(CeremonialObsidianTheme.cardSurface.opacity(0.94))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .stroke(CeremonialObsidianTheme.gold.opacity(0.7), lineWidth: 1)
+                                }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                    .disabled(model.isBusy)
+                    .accessibilityLabel("Open reading. No assigned positions.")
+                    .accessibilityHint("Starts a free three-card reading")
+                }
+                .frame(maxWidth: 680)
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+                .padding(.bottom, 30)
+                .frame(maxWidth: .infinity)
+            }
+            .scrollIndicators(.hidden)
+        }
+        .foregroundStyle(CeremonialObsidianTheme.parchment)
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private func spreadButton(_ spread: ThreeCardSpread) -> some View {
+        Button {
+            model.selectSpread(spread)
+        } label: {
+            HStack(spacing: 18) {
+                HStack(spacing: -12) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        CeremonialCardBack(spokenLabel: "")
+                            .frame(width: 56)
+                    }
+                }
+                .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 7) {
+                    Text(spread.title)
+                        .font(.system(.title3, design: .serif, weight: .semibold))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(spread.summary)
+                        .font(.system(.subheadline, design: .serif))
+                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Image(systemName: "chevron.right")
+                    .font(.headline)
+                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
+            }
+            .padding(17)
+            .frame(minHeight: 142)
+            .background {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(CeremonialObsidianTheme.cardSurface.opacity(0.96))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(CeremonialObsidianTheme.gold.opacity(0.58), lineWidth: 1)
+                    }
+            }
+        }
+        .buttonStyle(.plain)
+        .disabled(model.isBusy)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("\(spread.title). \(spread.summary)")
+        .accessibilityHint("Selects this three-card spread")
     }
 }
 
@@ -348,6 +501,14 @@ private struct ReadingTableView: View {
     let inspectRevealedCard: (TarotCardID) -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @State private var shufflePhase = 0
+    @State private var previousVisualState: ReadingVisualState?
+    @State private var shuffleTask: Task<Void, Never>?
+    @AccessibilityFocusState private var focusedReadingPosition: Int?
 
     var body: some View {
         GeometryReader { proxy in
@@ -357,7 +518,7 @@ private struct ReadingTableView: View {
                 CeremonialBackdrop()
 
                 if isLandscape {
-                    landscapeContent
+                    landscapeContent(size: proxy.size)
                 } else {
                     portraitContent
                 }
@@ -365,13 +526,28 @@ private struct ReadingTableView: View {
         }
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .toolbar(.hidden, for: .navigationBar)
+        .onAppear {
+            // Restoration and rotation establish a baseline without replaying motion or haptics.
+            previousVisualState = visualState
+        }
+        .onChange(of: visualState) { newState in
+            respondToDurableStateChange(newState)
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase != .active {
+                cancelTransientMotion()
+            }
+        }
+        .onDisappear {
+            cancelTransientMotion()
+        }
     }
 
     private var portraitContent: some View {
         ScrollView {
             VStack(spacing: 18) {
                 header
-                positions
+                positions(showLabels: model.layout == .threeCards)
                     .frame(maxWidth: model.layout == .oneCard ? 360 : 620)
                     .padding(.horizontal, model.layout == .oneCard ? 52 : 18)
 
@@ -391,46 +567,53 @@ private struct ReadingTableView: View {
         .scrollIndicators(.hidden)
     }
 
-    private var landscapeContent: some View {
-        VStack(spacing: 4) {
-            header
+    private func landscapeContent(size: CGSize) -> some View {
+        let railWidth = min(max(size.width * 0.21, 148), 190)
 
-            HStack(spacing: 36) {
-                VStack(spacing: 12) {
+        return HStack(spacing: 16) {
+            ScrollView {
+                VStack(spacing: 10) {
+                    HStack {
+                        backButton
+                        Spacer(minLength: 0)
+                    }
+
+                    VStack(spacing: 3) {
+                        Text(model.layout?.title ?? AppLocalization.text("Reading"))
+                            .font(.system(.title2, design: .serif, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .accessibilityAddTraits(.isHeader)
+                        Text(statusText)
+                            .font(.subheadline)
+                            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                            .multilineTextAlignment(.center)
+                    }
+
                     if shouldShowDeck {
                         deck
-                            .frame(maxWidth: 190)
+                            .frame(maxHeight: model.layout == .oneCard ? 132 : 112)
                     }
+
                     actionArea
-                        .frame(maxWidth: 440)
                 }
                 .frame(maxWidth: .infinity)
-
-                positions
-                    .frame(maxWidth: model.layout == .oneCard ? 320 : 720, maxHeight: 360)
-                    .frame(maxWidth: .infinity)
             }
-            .padding(.horizontal, 40)
-            .padding(.bottom, 12)
+            .scrollIndicators(.hidden)
+            .frame(width: railWidth)
+
+            positions(showLabels: model.layout == .threeCards)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
     }
 
     private var header: some View {
         ZStack(alignment: .leading) {
-            Button {
-                model.leaveTable()
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.title2.weight(.semibold))
-                    .frame(width: 44, height: 44)
-            }
-            .buttonStyle(.plain)
-            .disabled(model.isBusy)
-            .accessibilityLabel("Back")
-            .accessibilityHint(model.hasActiveReading ? "Returns to Read home" : "Returns to layout choice")
+            backButton
 
             VStack(spacing: 4) {
-                Text(model.layout?.title ?? "Reading")
+                Text(model.layout?.title ?? AppLocalization.text("Reading"))
                     .font(.system(.title, design: .serif, weight: .semibold))
                     .accessibilityAddTraits(.isHeader)
                 Text(statusText)
@@ -444,16 +627,59 @@ private struct ReadingTableView: View {
         .frame(minHeight: 64)
     }
 
+    private var backButton: some View {
+        Button {
+            model.leaveTable()
+        } label: {
+            Image(systemName: "chevron.left")
+                .font(.title2.weight(.semibold))
+                .frame(width: 44, height: 44)
+        }
+        .buttonStyle(.plain)
+        .disabled(model.isBusy)
+        .accessibilityLabel("Back")
+        .accessibilityHint(
+            AppLocalization.text(
+                model.hasActiveReading ? "Returns to Read home" : "Returns to layout choice"
+            )
+        )
+    }
+
     @ViewBuilder
-    private var positions: some View {
+    private func positions(showLabels: Bool) -> some View {
         if let layout = model.layout {
-            HStack(spacing: layout == .oneCard ? 0 : 14) {
+            HStack(spacing: layout == .oneCard ? 0 : 11) {
                 ForEach(0..<layout.cardLimit, id: \.self) { index in
-                    position(at: index, total: layout.cardLimit)
+                    VStack(spacing: showLabels ? 4 : 0) {
+                        if showLabels {
+                            Text(positionTitle(at: index))
+                                .font(.system(.caption, design: .serif, weight: .semibold))
+                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.72)
+                                .frame(minHeight: 20)
+                                .accessibilityHidden(true)
+                        }
+                        position(at: index, total: layout.cardLimit)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 }
             }
             .accessibilityElement(children: .contain)
+            .animation(
+                usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.draw,
+                value: model.session?.drawnCards.count ?? 0
+            )
+            .animation(
+                usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.reveal,
+                value: model.session?.drawnCards.map(\.isRevealed) ?? []
+            )
         }
+    }
+
+    private func positionTitle(at index: Int) -> String {
+        model.spread?.positionTitle(at: index)
+            ?? AppLocalization.format("Card %d", index + 1)
     }
 
     @ViewBuilder
@@ -474,22 +700,41 @@ private struct ReadingTableView: View {
                 .buttonStyle(.plain)
                 .disabled(model.isBusy)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel("\(card.name), card position \(index + 1) of \(total), face up")
+                .accessibilityLabel(
+                    AppLocalization.format(
+                        "%@, %@, face up",
+                        positionTitle(at: index),
+                        card.name
+                    )
+                )
                 .accessibilityValue(artwork.accessibilitySummary)
                 .accessibilityHint("Opens the upright meaning")
                 .accessibilityAction(named: Text("Turn face down")) {
                     model.conceal(drawnCard.id)
                 }
+                .transition(usesReducedMotion ? .opacity : .ceremonialCardReveal)
+                .id("revealed-\(drawnCard.id.rawValue)")
+                .accessibilityFocused($focusedReadingPosition, equals: index)
             } else {
                 FaceDownReadingPosition(
                     position: index + 1,
                     total: total,
+                    positionName: positionTitle(at: index),
                     onReveal: { model.reveal(drawnCard.id) }
                 )
                 .disabled(model.isBusy)
+                .transition(drawTransition)
+                .id("face-down-\(drawnCard.id.rawValue)")
+                .accessibilityFocused($focusedReadingPosition, equals: index)
             }
         } else {
-            EmptyReadingPosition(position: index + 1, total: total)
+            EmptyReadingPosition(
+                position: index + 1,
+                total: total,
+                positionName: positionTitle(at: index)
+            )
+            .transition(.opacity)
+            .id("empty-\(index)")
         }
     }
 
@@ -501,11 +746,119 @@ private struct ReadingTableView: View {
 
     private var deck: some View {
         let remaining = model.session?.remainingCardCount ?? 78
-        return CeremonialCardBack(
+        return CeremonialShufflingDeck(
+            phase: shufflePhase,
+            reduceMotion: usesReducedMotion,
             spokenLabel: model.isReadyToShuffle
-                ? "Complete deck, not yet shuffled"
-                : "Deck with \(remaining) cards remaining"
+                ? AppLocalization.text("Complete deck, not yet shuffled")
+                : AppLocalization.format("Deck with %d cards remaining", remaining)
         )
+    }
+
+    private var drawTransition: AnyTransition {
+        if usesReducedMotion { return .opacity }
+        let comesFromSide = verticalSizeClass == .compact
+        return .asymmetric(
+            insertion: .offset(
+                x: comesFromSide ? -80 : 0,
+                y: comesFromSide ? 0 : 70
+            )
+            .combined(with: .scale(scale: 0.92))
+            .combined(with: .opacity),
+            removal: .opacity
+        )
+    }
+
+    private var usesReducedMotion: Bool {
+        reduceMotion || voiceOverEnabled
+    }
+
+    private var visualState: ReadingVisualState {
+        ReadingVisualState(
+            sessionID: model.session?.id,
+            drawnCardIDs: model.session?.drawnCards.map { $0.id.rawValue } ?? [],
+            revealed: model.session?.drawnCards.map(\.isRevealed) ?? []
+        )
+    }
+
+    @MainActor
+    private func respondToDurableStateChange(_ newState: ReadingVisualState) {
+        guard let previousVisualState else {
+            self.previousVisualState = newState
+            return
+        }
+        self.previousVisualState = newState
+
+        // A commit may finish after the app becomes inactive. Record its state without replaying
+        // presentation or haptics when the user returns.
+        guard scenePhase == .active else { return }
+
+        if previousVisualState.sessionID == nil,
+           newState.sessionID != nil,
+           newState.drawnCardIDs.isEmpty {
+            CeremonialHaptics.shuffled()
+            runShuffleSettle()
+            return
+        }
+
+        if newState.drawnCardIDs.count > previousVisualState.drawnCardIDs.count {
+            CeremonialHaptics.drawn()
+            moveVoiceOverFocus(to: newState.drawnCardIDs.count - 1)
+            return
+        }
+
+        for index in newState.revealed.indices where previousVisualState.revealed.indices.contains(index) {
+            if !previousVisualState.revealed[index], newState.revealed[index] {
+                CeremonialHaptics.revealed()
+                moveVoiceOverFocus(to: index)
+                return
+            }
+            if previousVisualState.revealed[index], !newState.revealed[index] {
+                CeremonialHaptics.concealed()
+                moveVoiceOverFocus(to: index)
+                return
+            }
+        }
+    }
+
+    @MainActor
+    private func moveVoiceOverFocus(to position: Int) {
+        guard voiceOverEnabled else { return }
+        Task { @MainActor in
+            await Task.yield()
+            focusedReadingPosition = position
+        }
+    }
+
+    @MainActor
+    private func runShuffleSettle() {
+        shuffleTask?.cancel()
+        shuffleTask = Task { @MainActor in
+            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.shuffle) {
+                shufflePhase = 1
+            }
+            try? await Task.sleep(nanoseconds: usesReducedMotion ? 120_000_000 : 160_000_000)
+            guard !Task.isCancelled else { return }
+
+            if !usesReducedMotion {
+                withAnimation(CeremonialMotion.shuffle) {
+                    shufflePhase = 2
+                }
+                try? await Task.sleep(nanoseconds: 160_000_000)
+                guard !Task.isCancelled else { return }
+            }
+
+            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.shuffle) {
+                shufflePhase = 0
+            }
+        }
+    }
+
+    @MainActor
+    private func cancelTransientMotion() {
+        shuffleTask?.cancel()
+        shuffleTask = nil
+        shufflePhase = 0
     }
 
     private var actionArea: some View {
@@ -539,44 +892,56 @@ private struct ReadingTableView: View {
     }
 
     private var primaryTitle: String? {
-        if model.isReadyToShuffle { return "Shuffle Deck" }
+        if model.isReadyToShuffle { return AppLocalization.text("Shuffle Deck") }
         guard let session = model.session, let layout = model.layout,
               session.drawnCards.count < layout.cardLimit else { return nil }
-        if session.drawnCards.isEmpty { return "Draw Card" }
+        if session.drawnCards.isEmpty { return AppLocalization.text("Draw Card") }
         return session.drawnCards.count + 1 == layout.cardLimit
-            ? "Draw Final Card"
-            : "Draw Next Card"
+            ? AppLocalization.text("Draw Final Card")
+            : AppLocalization.text("Draw Next Card")
     }
 
     private var statusText: String {
-        if model.isReadyToShuffle { return "Ready to shuffle" }
+        if model.isReadyToShuffle { return AppLocalization.text("Ready to shuffle") }
         guard let session = model.session, let layout = model.layout else { return "" }
-        if session.drawnCards.isEmpty { return "Deck shuffled" }
+        if session.drawnCards.isEmpty { return AppLocalization.text("Deck shuffled") }
         if layout == .oneCard {
-            return session.drawnCards[0].isRevealed ? "Card revealed" : "Card drawn"
+            return session.drawnCards[0].isRevealed
+                ? AppLocalization.text("Card revealed")
+                : AppLocalization.text("Card drawn")
         }
         if session.drawnCards.count == layout.cardLimit,
            session.drawnCards.allSatisfy(\.isRevealed) {
-            return "All cards revealed"
+            return AppLocalization.text("All cards revealed")
         }
-        return "\(session.drawnCards.count) of \(layout.cardLimit) drawn"
+        return AppLocalization.format(
+            "%d of %d drawn",
+            session.drawnCards.count,
+            layout.cardLimit
+        )
     }
 
     private var instructionText: String {
-        if model.isReadyToShuffle { return "Shuffle before drawing." }
+        if model.isReadyToShuffle { return AppLocalization.text("Shuffle before drawing.") }
         guard let session = model.session, let layout = model.layout else { return "" }
-        if session.drawnCards.isEmpty { return "Draw when you're ready." }
+        if session.drawnCards.isEmpty { return AppLocalization.text("Draw when you're ready.") }
         if session.drawnCards.count == layout.cardLimit,
            session.drawnCards.allSatisfy(\.isRevealed) {
             return layout == .oneCard
-                ? "Tap the card to explore its meaning."
-                : "Tap a card to explore its meaning."
+                ? AppLocalization.text("Tap the card to explore its meaning.")
+                : AppLocalization.text("Tap a card to explore its meaning.")
         }
         if layout == .oneCard, session.drawnCards.count == 1 {
-            return "Tap the card to reveal it."
+            return AppLocalization.text("Tap the card to reveal it.")
         }
-        return "Tap a face-down card to turn it over."
+        return AppLocalization.text("Tap a face-down card to turn it over.")
     }
+}
+
+private struct ReadingVisualState: Equatable {
+    let sessionID: UUID?
+    let drawnCardIDs: [String]
+    let revealed: [Bool]
 }
 
 private extension Collection {

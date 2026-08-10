@@ -1,12 +1,12 @@
 # Tarot Deck — MVP Screen and State Map
 
-Status: active expanded functional baseline under A-020, A-021, and A-022
-First release: iPhone only, English only
-Date: 2026-08-09
+Status: active expanded functional baseline under A-020, A-021, A-022, A-027, and A-028
+First release: iPhone only, English and Spanish
+Date: 2026-08-10
 
 ## Purpose and boundary
 
-This map defines the smallest coherent deck-and-learning product. It covers function, state, English copy intent, transitions, persistence, privacy, and accessibility. It does not itself approve a visual composition.
+This map defines the smallest coherent deck-and-learning product. It covers function, localized English/Spanish copy intent, transitions, persistence, privacy, and accessibility. It does not itself approve a visual composition.
 
 Every new screen or materially different visual state requires a complete iPhone reference before final UI implementation. Under A-021, an in-scope reference created by the project brain is approved when it is registered; implementation may then continue without returning to the owner for routine visual confirmation.
 
@@ -119,29 +119,39 @@ Confirming clears only the active session and opens `S02.1`. Cancelling preserve
 
 ### Goal
 
-Choose only the card count; leave the question, position roles, and interpretation to the user.
+Choose the card count and, for three cards, choose position roles before shuffling; leave the question and interpretation to the user.
 
 ### S02.1 — Choice
 
 Options:
 
 - **One Card** — one neutral position.
-- **Three Cards** — three neutral positions in draw order.
+- **Three Cards** — continue to `S02.2 Spread Choice`.
 
-Supporting copy: **Choose how many cards you want to draw. You decide what each position means.**
+Supporting copy: **Choose one card, a guided spread, or your own positions.**
 
 Rules:
 
-- no labels such as past, present, future, situation, obstacle, or advice;
 - no question input or storage;
-- selection creates a new unshuffled session;
+- one-card selection creates a new unshuffled session;
 - dismissal before selection changes nothing.
 
 Transitions:
 
 - `One Card` → `S03.1` with one position.
-- `Three Cards` → `S03.1` with three positions.
+- `Three Cards` → `S02.2`.
 - `Cancel` → `S01`.
+
+### S02.2 — Three-card spread choice
+
+Options:
+
+- **Past · Present · Future** — origins, the present moment, and a possible direction; the third position is never framed as fixed prediction.
+- **Situation · Challenge · Advice** — what is happening, what complicates it, and what may help.
+- **You · The other person · Connection** — two perspectives and the relationship between them.
+- **Open reading** — card one, card two, and card three with no assigned roles.
+
+Choosing an option persists its stable spread ID and opens `S03.1`. Back returns to `S02.1`; no deck session exists until shuffle. Reference V-039 governs this surface.
 
 ## S03 — Reading Table
 
@@ -152,7 +162,7 @@ Represent `shuffle → draw → turn over → inspect → read → end` without 
 ### Shared elements
 
 - Layout identity: `One Card` or `Three Cards`.
-- One or three neutral positions in stable draw order.
+- One neutral position, or three stable positions labelled from the selected spread. The open spread uses neutral `Card 1`, `Card 2`, and `Card 3` labels.
 - Face-down deck while cards remain, or a clear exhausted state.
 - One clear phase-appropriate primary action.
 - Secondary `End Reading` action.
@@ -194,7 +204,7 @@ Transitions:
 ### S03.4 — Reading in progress, mixed face states
 
 - At least one card is revealed; another drawn card may remain face down; an empty position may remain.
-- A revealed card shows its art and canonical English name at table scale.
+- A revealed card shows its art and localized name at table scale.
 - Tapping a revealed card opens `S04.1 Reading Card Meaning`.
 - A separate accessible action can turn a revealed card face down again.
 - Remaining positions can be filled without revealing existing cards.
@@ -244,7 +254,7 @@ Explain a revealed card without pretending to interpret the reading or disturbin
 Required content:
 
 - large bundled card art;
-- canonical English name;
+- localized English or Spanish name;
 - arcana identity and suit/rank where applicable;
 - section label **Upright**;
 - three to five keywords;
@@ -256,7 +266,8 @@ Rules:
 
 - only a face-up card can open this screen;
 - no previous/next control, so the user cannot browse into cards absent from the reading;
-- no question, generated interpretation, prediction, advice command, save, favorite, note, share, history, or related-card recommendation;
+- no question, generated interpretation, prediction, advice command, note, share, history, or related-card recommendation;
+- one favorite control saves or removes this canonical card locally without changing the reading;
 - dismissal returns to the exact card positions, face states, and deck order.
 
 If a developer content record is missing, this is a build-integrity failure. Production must never show a blank, invented, or remotely fetched meaning.
@@ -277,7 +288,7 @@ Articles appear in this fixed order:
 1. **Start with a Question** — frame an open, useful question without entering it in the app.
 2. **Shuffle and Draw** — prepare, shuffle, draw, and stay attentive without claims about supernatural certainty.
 3. **Read One Card** — connect imagery, keywords, context, and personal observation.
-4. **Read Three Cards** — read cards in sequence and relation without imposed position labels.
+4. **Read Three Cards** — choose one of three named position patterns or an open reading, then read each card and the relationship among all three.
 5. **Notice Symbols and Patterns** — notice suit, number, figures, direction, repetition, contrast, and mood.
 6. **Build Your Interpretation** — combine observations into a grounded reading and keep ethical limits.
 
@@ -324,7 +335,7 @@ Let the user inspect the complete deck and choose any card deliberately.
 - Count: **78 Cards**.
 - Active filter: **All**.
 - Cards appear in canonical manifest order: 22 Major Arcana, then Wands, Cups, Swords, and Pentacles.
-- Every item shows face art and canonical English name.
+- Every item shows face art and the localized English or Spanish name.
 
 Tap a card → `S08.1 Card Detail` at that library position.
 
@@ -332,6 +343,7 @@ Tap a card → `S08.1 Card Detail` at that library position.
 
 Available filters:
 
+- **Favorites** — zero to 78 locally saved cards, in canonical order.
 - **All** — 78 cards.
 - **Major** — 22 cards.
 - **Wands** — 14 cards.
@@ -339,13 +351,21 @@ Available filters:
 - **Swords** — 14 cards.
 - **Pentacles** — 14 cards.
 
-Changing filter resets the library to the beginning of the selected group. There is no search, favorites mode, sort menu, custom grouping, or empty result state in the MVP.
+Changing filter resets the library to the beginning of the selected group. There is no search, sort menu, or custom grouping in the MVP.
+
+### S07.3 — Favorites empty
+
+- Active filter: **Favorites**.
+- Title: **No favorites yet**.
+- Supporting copy: **Open a card and tap the heart to save it here.**
+- No CTA, account request, cloud prompt, or fabricated card appears.
 
 ### Library rules
 
 - Browsing does not reveal, draw, remove, or reorder a card in the reading engine.
 - Face-up art in Cards never exposes the identity of a face-down reading card because the library has no link to session positions.
 - The active filter and scroll position need only survive the current navigation session; they are not durable user data.
+- Favorite IDs survive app closure, remain independent of readings, and are displayed in canonical deck order.
 - A missing card, duplicate ID, bad filter count, absent meaning, or absent art is a release-blocking manifest error.
 
 ## S08 — Card Detail from Library
@@ -359,12 +379,13 @@ Study any of the 78 cards one by one with the same trustworthy reference used du
 Required content:
 
 - large bundled card art;
-- canonical English name;
+- localized English or Spanish name;
 - arcana identity and suit/rank where applicable;
 - **Upright** label;
 - the same keywords, meaning, reading note, and artwork description associated with this canonical `cardID`;
 - position text such as **17 of 78** or **4 of 14**, based on the active filter;
 - previous and next actions.
+- a 44-point favorite button showing outlined when unsaved and filled antique gold when saved.
 
 Navigation rules:
 
@@ -373,7 +394,7 @@ Navigation rules:
 - `Back to Cards` restores the same filter and library position.
 - Opening or moving between details does not mutate the reading session.
 
-Not present: reverse meaning, favorite, save, note, share, history, related cards, purchase, alternate deck, or generated explanation.
+Favoriting writes only the canonical `cardID`. It is available from library detail and from the meaning of a revealed reading card. Not present: reverse meaning, note, share, history, related cards, purchase, alternate deck, or generated explanation.
 
 ## Shared reference behavior
 
@@ -508,13 +529,14 @@ Creating product identifiers, choosing prices, accepting paid-app agreements, co
 | Cards filter / scroll / detail | Yes | No | Not applicable |
 | Question or interpretation | Not collected | Not collected | Not collected |
 | Reading history | No | No | No |
-| Favorites or notes | No | No | No |
+| Favorite card IDs | Yes | Yes, local JSON excluded from backup | Unchanged |
+| Notes | No | No | No |
 | Learning progress | No | No | No |
 | Account or cloud record | No | No | No |
 | Support purchase presentation | Yes | No | Not applicable |
 | Supporter entitlement | StoreKit-verified when configured | Restored or refreshed through Apple; local cache may present last verified status | Unchanged |
 
-Read, Learn, Cards, meanings, and local restoration make no network request. Configured StoreKit purchase/restore, legal destinations, subscription management, and App Store rating may require Apple or system connectivity. The app requests no contacts, photos, microphone, camera, location, notification, tracking, or account permission.
+Read, Learn, Cards, meanings, favorites, and local restoration make no network request. The local storage directory is marked as excluded from device backup. Configured StoreKit purchase/restore, legal destinations, subscription management, and App Store rating may require Apple or system connectivity. The app requests no contacts, photos, microphone, camera, location, notification, tracking, or account permission.
 
 ## Canonical content coverage
 
@@ -524,15 +546,15 @@ The identity source is `native-ios/Content/tarot-deck.v1.json`. Verified baselin
 - 22 Major Arcana IDs from `major-00-the-fool` to `major-21-the-world`;
 - 14 IDs each for Wands, Cups, Swords, and Pentacles;
 - Minor ranks Ace, Two through Ten, Page, Knight, Queen, and King;
-- English identity fields and `uprightOnly` orientation policy.
+- English identity fields, complete Spanish display overlays, and `uprightOnly` orientation policy.
 
-The reference-content key set must equal the identity-manifest key set exactly: 78 matched `cardID` values, no missing records, no extras, and no duplicates. The 36 Spanish reflection cards are never inserted, renamed, filtered, or mixed into this library.
+Both English and Spanish reference-content key sets must equal the identity-manifest key set exactly: 78 matched `cardID` values per language, no missing records, no extras, and no duplicates. The 36 legacy reflection cards are never inserted, renamed, filtered, or mixed into this library.
 
 ## Accessibility requirements
 
 - Primary destinations expose clear `Read`, `Learn`, and `Cards` labels and selected state.
 - Every actionable target is at least 44×44 points and has a non-gesture alternative.
-- A face-down reading card announces neutral position and state only, for example **Card 2 of 3, face down. Double-tap to reveal.**
+- A face-down reading card announces its role and state without identity, for example **Challenge, face down. Double-tap to reveal.** Open readings announce the neutral card number.
 - A revealed reading card announces position, identity, and available meaning action.
 - Library items announce card name and position in the current filter.
 - Card detail exposes title, Upright heading, keywords, meaning, reading note, and artwork description in a logical order.
@@ -548,7 +570,7 @@ The reference-content key set must equal the identity-manifest key set exactly: 
 
 | Condition | User-facing behavior |
 |---|---|
-| Corrupt or incompatible reading session | Restore an empty complete deck and show brief English feedback; Learn/Cards remain available. |
+| Corrupt or incompatible reading session | Restore an empty complete deck and show brief localized feedback; Learn/Cards remain available. |
 | Local save fails after an action | Keep the in-memory table usable, explain that it may not resume, and retry on the next state change. |
 | App backgrounds mid-motion | Persist the logical state once and restore a stable result without duplicating or replaying a draw. |
 | Missing identity, art, meaning, or guide content | Release-blocking content error. Internal diagnostic only; no shippable placeholder or network fallback. |
@@ -570,9 +592,9 @@ Result: the user receives deck utility and optional knowledge without an automat
 
 ### B. Three-card reading with independent reveals
 
-`New Reading` → `Three Cards` → shuffle → draw three → reveal card 2 → inspect its meaning → return → reveal card 1 → leave card 3 face down
+`New Reading` → `Three Cards` → `Situation · Challenge · Advice` → shuffle → draw three → reveal Challenge → inspect its meaning → return → reveal Situation → leave Advice face down
 
-Result: draw order stays stable, meanings do not reveal other cards, and the app does not impose position roles or combine meanings.
+Result: draw order and selected roles stay stable, meanings do not reveal other cards, and the app does not combine meanings or generate a conclusion.
 
 ### C. Learn the basic method
 
@@ -608,7 +630,7 @@ Result: nothing changes. Confirming instead deletes only that session and opens 
 
 Run manifest validation, exercise Read/Learn/Cards in airplane mode, then inspect visible and accessibility text across all destinations.
 
-Result: 78 identities map one-to-one to 78 English upright references; six guide articles exist; the three core destinations make no network request; and no Spanish production copy, reverse meaning, Zodiac content, app account, analytics, question capture, notes, favorites, or history appears. Settings connectivity is limited to separately configured Apple commerce, legal, subscription-management, and rating destinations.
+Result: 78 identities map one-to-one to complete English and Spanish upright references; six guide articles exist in both languages; the three core destinations make no network request; favorites persist only as canonical IDs; and no reverse meaning, Zodiac content, app account, analytics, question capture, notes, or history appears. Settings connectivity is limited to separately configured Apple commerce, legal, subscription-management, and rating destinations.
 
 ### I. Inspect support without losing a reading
 
@@ -655,6 +677,12 @@ Additional registered references under A-021:
 18. `S03.2 One Card / shuffled` — V-031 portrait and V-032 landscape.
 19. `S03.3 One Card / drawn face down` — V-037 portrait and V-038 landscape, superseding V-033/V-034 so the exhausted deck no longer competes with the completed layout.
 20. `S03.6 One Card / The Hermit revealed` — V-035 portrait and V-036 landscape.
+21. `S02.2 Three-card spread choice / Spanish` — V-039.
+22. `S03 Three Cards / Past · Present · Future / large landscape / Spanish` — V-040, which supersedes the previous landscape proportions for the three-card table.
+
+23. `S03 Reading Table / motion storyboard` — V-041.
+24. `S08.2 Card Detail / favorite saved` — V-042.
+25. `S07.3 Cards / Favorites empty` — V-043.
 
 Still requiring a complete reference before final implementation: the remaining `S10` supporter/restore/unavailable variants and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement the approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized.
 

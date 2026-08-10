@@ -1,0 +1,633 @@
+{
+  "schemaVersion": 1,
+  "contentVersion": "1.0.0",
+  "language": "es",
+  "orientationPolicy": "uprightOnly",
+  "cardCount": 78,
+  "cards": [
+    {
+      "cardID": "major-00-the-fool",
+      "canonicalName": "El Loco",
+      "keywords": ["comienzos", "apertura", "curiosidad", "salto de fe"],
+      "uprightMeaning": "El Loco representa un comienzo abierto, cuando la experiencia todavía no ha reducido las posibilidades. La curiosidad y la confianza permiten avanzar, mientras que la atención evita que la libertad se convierta en imprudencia.",
+      "inAReading": "Considera dónde podría ayudarte un enfoque nuevo y qué necesitas comprender antes de dar el primer paso.",
+      "artworkDescription": "Una persona joven que viaja con un pequeño hatillo sostiene una rosa blanca junto al borde de un precipicio, mientras un perro blanco salta a su lado bajo un sol brillante y montañas lejanas."
+    },
+    {
+      "cardID": "major-01-the-magician",
+      "canonicalName": "El Mago",
+      "keywords": ["iniciativa", "habilidad", "concentración", "ingenio"],
+      "uprightMeaning": "El Mago dirige la atención hacia las herramientas, capacidades y elecciones que ya están a tu alcance. Una intención enfocada resulta útil cuando se acompaña de una acción deliberada y de un uso honesto de los recursos.",
+      "inAReading": "Pregúntate qué capacidad o recurso puedes usar ahora y elige una acción concreta que dé forma a tu intención.",
+      "artworkDescription": "Una figura con túnica roja y blanca alza una vara sobre una mesa que contiene una copa, una espada, un basto y un oro, con un símbolo de infinito sobre la cabeza y flores debajo."
+    },
+    {
+      "cardID": "major-02-the-high-priestess",
+      "canonicalName": "La Sacerdotisa",
+      "keywords": ["intuición", "quietud", "misterio", "conocimiento interior"],
+      "uprightMeaning": "La Sacerdotisa valora la observación serena y el conocimiento que aún no se ha expresado con palabras. No toda incertidumbre necesita una respuesta inmediata; la atención puede revelar lo que la presión oculta.",
+      "inAReading": "Haz una pausa antes de actuar y observa qué te invitan a examinar tus instintos, los silencios o la información incompleta.",
+      "artworkDescription": "Una mujer coronada y vestida de azul está sentada entre pilares blanco y negro marcados con B y J, sosteniendo un pergamino ante una cortina de granadas y una luna creciente."
+    },
+    {
+      "cardID": "major-03-the-empress",
+      "canonicalName": "La Emperatriz",
+      "keywords": ["cuidado", "abundancia", "creatividad", "presencia corporal"],
+      "uprightMeaning": "La Emperatriz refleja un crecimiento sostenido por el cuidado, la paciencia y la conexión con los sentidos. El potencial creativo se vuelve sostenible cuando recibe tiempo, protección y alimento práctico.",
+      "inAReading": "Busca qué está preparado para crecer y considera qué cuidado constante le ayudaría a desarrollarse.",
+      "artworkDescription": "Una mujer coronada descansa en un trono acolchado junto a trigo, árboles y un arroyo, con un escudo en forma de corazón que lleva el símbolo de Venus a sus pies."
+    },
+    {
+      "cardID": "major-04-the-emperor",
+      "canonicalName": "El Emperador",
+      "keywords": ["estructura", "autoridad", "estabilidad", "límites"],
+      "uprightMeaning": "El Emperador se ocupa del orden, la responsabilidad y las estructuras que hacen posible actuar con propósito. Unos límites claros pueden crear seguridad, siempre que la autoridad siga siendo responsable y flexible.",
+      "inAReading": "Identifica dónde un plan, un límite o una decisión más firme podría aportar estabilidad sin volverse innecesariamente rígido.",
+      "artworkDescription": "Un gobernante con armadura y ropajes rojos está sentado en un trono de piedra tallado con cabezas de carnero, sosteniendo un cetro y un orbe ante un paisaje montañoso austero."
+    },
+    {
+      "cardID": "major-05-the-hierophant",
+      "canonicalName": "El Hierofante",
+      "keywords": ["tradición", "enseñanza", "valores compartidos", "práctica"],
+      "uprightMeaning": "El Hierofante señala el conocimiento establecido, las prácticas comunitarias y los valores que se transmiten entre personas. La tradición puede ofrecer una base útil cuando se comprende en lugar de seguirse sin cuestionarla.",
+      "inAReading": "Considera qué puede ofrecerte una persona de confianza, una tradición o un marco compartido, y decide qué encaja de verdad con tus valores.",
+      "artworkDescription": "Una figura religiosa con túnica y triple corona está sentada entre dos pilares, alzando una mano sobre unas llaves cruzadas mientras dos seguidores con ropajes estampados se arrodillan debajo."
+    },
+    {
+      "cardID": "major-06-the-lovers",
+      "canonicalName": "Los Enamorados",
+      "keywords": ["elección", "conexión", "coherencia", "reciprocidad"],
+      "uprightMeaning": "Los Enamorados exploran los vínculos significativos y las elecciones que revelan valores personales. La armonía crece cuando el deseo, la responsabilidad y la comunicación honesta se ponen en consonancia.",
+      "inAReading": "Pregúntate qué elección refleja mejor tus valores y si los vínculos implicados permiten apertura, respeto y reciprocidad.",
+      "artworkDescription": "Una mujer y un hombre desnudos están de pie bajo un ángel alado y un sol brillante; tras ella hay un árbol frutal con una serpiente y tras él, un árbol en llamas."
+    },
+    {
+      "cardID": "major-07-the-chariot",
+      "canonicalName": "El Carro",
+      "keywords": ["dirección", "determinación", "autodominio", "impulso"],
+      "uprightMeaning": "El Carro reúne impulsos contrapuestos en un movimiento con propósito. El progreso depende menos de la fuerza que de elegir una dirección y mantener alineados la energía, la atención y la conducta.",
+      "inAReading": "Aclara la dirección que quieres tomar y observa qué distracciones o tensiones necesitan una gestión constante.",
+      "artworkDescription": "Una figura coronada y con armadura permanece en un carro cubierto sobre una esfinge negra y otra blanca, con una ciudad amurallada y un río al fondo."
+    },
+    {
+      "cardID": "major-08-strength",
+      "canonicalName": "La Fuerza",
+      "keywords": ["valor", "paciencia", "compasión", "firmeza interior"],
+      "uprightMeaning": "La Fuerza es el valor expresado mediante paciencia, contención y un autodominio compasivo. Favorece afrontar sentimientos intensos o circunstancias difíciles sin negarlos ni dejarse gobernar por ellos.",
+      "inAReading": "Considera dónde la perseverancia tranquila y la amabilidad podrían ser más eficaces que la presión, la evasión o una demostración de fuerza.",
+      "artworkDescription": "Una mujer con vestido blanco sujeta con suavidad las mandíbulas de un león bajo un símbolo de infinito, con una guirnalda en la cintura y montañas a lo lejos."
+    },
+    {
+      "cardID": "major-09-the-hermit",
+      "canonicalName": "El Ermitaño",
+      "keywords": ["reflexión", "soledad", "discernimiento", "guía interior"],
+      "uprightMeaning": "El Ermitaño se aleja del ruido para poder examinar la experiencia con cuidado. La soledad elegida puede aclarar prioridades, aunque la comprensión acaba necesitando un camino de regreso a la vida cotidiana.",
+      "inAReading": "Haz espacio para reflexionar por tu cuenta y pregúntate qué respuesta necesitas comprender personalmente antes de compartirla.",
+      "artworkDescription": "Una persona anciana y encapuchada está sola en una cumbre nevada, sosteniendo un bastón y un farol que contiene una estrella de seis puntas bajo un cielo apagado."
+    },
+    {
+      "cardID": "major-10-wheel-of-fortune",
+      "canonicalName": "La Rueda de la Fortuna",
+      "keywords": ["cambio", "ciclos", "momento", "adaptación"],
+      "uprightMeaning": "La Rueda de la Fortuna destaca el movimiento dentro de ciclos y condiciones que nadie controla por completo. Una situación cambiante puede invitar a adaptarse, ganar perspectiva y atender a las elecciones que siguen disponibles.",
+      "inAReading": "Observa qué está cambiando a tu alrededor, distingue la influencia del control y considera cómo responder con flexibilidad.",
+      "artworkDescription": "Una rueda naranja cubierta de letras y símbolos ocupa el centro, rodeada por una esfinge, una serpiente, una figura con cabeza de chacal y cuatro lectores alados entre nubes."
+    },
+    {
+      "cardID": "major-11-justice",
+      "canonicalName": "La Justicia",
+      "keywords": ["equidad", "responsabilidad", "claridad", "consecuencias"],
+      "uprightMeaning": "La Justicia pide una mirada honesta a las acciones, las pruebas y las consecuencias. Un juicio justo requiere claridad sobre la responsabilidad y disposición para corregir el desequilibrio cuando sea posible.",
+      "inAReading": "Revisa la situación con toda la imparcialidad posible y pregúntate qué respuesta responsable y proporcionada refleja tus valores.",
+      "artworkDescription": "Una figura coronada con túnica roja está sentada entre pilares de piedra, sosteniendo una espada vertical en una mano y una balanza equilibrada en la otra."
+    },
+    {
+      "cardID": "major-12-the-hanged-man",
+      "canonicalName": "El Colgado",
+      "keywords": ["pausa", "perspectiva", "entrega", "reconsideración"],
+      "uprightMeaning": "El Colgado marca una pausa deliberada en la que se abandona un enfoque conocido. Esperar puede ser una acción cuando crea espacio para ver la situación desde un ángulo poco habitual.",
+      "inAReading": "Considera qué podría hacerse visible si dejas de forzar el avance y aflojas temporalmente una suposición.",
+      "artworkDescription": "Una persona cuelga boca abajo por un pie de una estructura de madera en forma de T, con pantalón rojo, túnica azul y un halo brillante alrededor de la cabeza."
+    },
+    {
+      "cardID": "major-13-death",
+      "canonicalName": "La Muerte",
+      "keywords": ["final", "transición", "desprendimiento", "renovación"],
+      "uprightMeaning": "La Muerte representa un final significativo y la transición que viene después, no un acontecimiento literal. Soltar una forma agotada puede dejar espacio al cambio, incluso cuando el paso resulta incierto.",
+      "inAReading": "Pregúntate qué ha alcanzado su límite natural y qué podría ser posible si dejas de intentar conservarlo sin cambios.",
+      "artworkDescription": "Un esqueleto con armadura negra monta un caballo blanco y lleva una bandera negra, avanzando junto a un gobernante caído y varias figuras hacia dos torres y un sol naciente."
+    },
+    {
+      "cardID": "major-14-temperance",
+      "canonicalName": "La Templanza",
+      "keywords": ["equilibrio", "integración", "moderación", "ajuste"],
+      "uprightMeaning": "La Templanza combina distintos elementos de forma gradual hasta que aparece un equilibrio viable. Favorece el ajuste paciente, la proporción y las soluciones que integran necesidades en lugar de elegir un extremo.",
+      "inAReading": "Busca una combinación mesurada de enfoques e identifica el pequeño ajuste que podría mejorar el conjunto.",
+      "artworkDescription": "Una figura alada mantiene un pie en tierra y otro en el agua mientras vierte líquido entre dos copas, junto a unos lirios y un sendero que conduce a colinas lejanas."
+    },
+    {
+      "cardID": "major-15-the-devil",
+      "canonicalName": "El Diablo",
+      "keywords": ["apego", "tentación", "limitación", "autoconciencia"],
+      "uprightMeaning": "El Diablo ilumina apegos, hábitos y acuerdos que reducen la libertad aunque parezcan difíciles de cambiar. Nombrar el patrón con claridad es un primer paso para reconocer dónde sigue existiendo capacidad de elección.",
+      "inAReading": "Examina qué sigue absorbiendo tu energía y pregúntate si el miedo, la costumbre o la comodidad inmediata están estrechando tus opciones.",
+      "artworkDescription": "Una figura alada y con cuernos está sentada sobre un pedestal con un pentagrama invertido, mientras un hombre y una mujer desnudos permanecen debajo, unidos por cadenas flojas y con colas animales."
+    },
+    {
+      "cardID": "major-16-the-tower",
+      "canonicalName": "La Torre",
+      "keywords": ["ruptura", "revelación", "inestabilidad", "reconstrucción"],
+      "uprightMeaning": "La Torre representa una estructura o creencia puesta en cuestión por una claridad repentina. La ruptura puede dejar al descubierto lo que ya era inestable y crear una oportunidad exigente pero honesta para reconstruir sobre una base más firme.",
+      "inAReading": "Observa qué suposición ya no se sostiene y céntrate en el elemento más verdadero y estable disponible para reconstruir.",
+      "artworkDescription": "Un rayo golpea una torre de piedra coronada mientras las llamas salen de sus ventanas y dos figuras caen por un cielo oscuro lleno de pequeñas formas ardientes."
+    },
+    {
+      "cardID": "major-17-the-star",
+      "canonicalName": "La Estrella",
+      "keywords": ["esperanza", "renovación", "apertura", "inspiración"],
+      "uprightMeaning": "La Estrella ofrece una renovación serena después de la dificultad y devuelve la sensación de que existen posibilidades. Su esperanza no es certeza, sino la voluntad de permanecer abierto, sincero y conectado con aquello que orienta.",
+      "inAReading": "Pregúntate qué restaura de verdad tu confianza y qué gesto sencillo podría ayudarte a reconectar con esa fuente.",
+      "artworkDescription": "Una mujer desnuda se arrodilla junto a un estanque y vierte agua de dos jarras sobre la tierra y dentro del estanque, bajo una gran estrella y otras siete más pequeñas."
+    },
+    {
+      "cardID": "major-18-the-moon",
+      "canonicalName": "La Luna",
+      "keywords": ["incertidumbre", "imaginación", "instinto", "ambigüedad"],
+      "uprightMeaning": "La Luna entra en un territorio modelado por la incertidumbre, la emoción y la imaginación. La percepción puede estar incompleta, por lo que la intuición resulta útil cuando se acompaña de paciencia y disposición a cuestionar las suposiciones.",
+      "inAReading": "Avanza despacio, separa lo que sabes de lo que imaginas y observa qué sentimiento pide una atención más cercana.",
+      "artworkDescription": "Una luna llena cuelga entre dos torres sobre un sendero sinuoso; un perro y un lobo miran al cielo y un cangrejo de río emerge de un estanque en primer plano."
+    },
+    {
+      "cardID": "major-19-the-sun",
+      "canonicalName": "El Sol",
+      "keywords": ["claridad", "vitalidad", "alegría", "apertura"],
+      "uprightMeaning": "El Sol aporta calidez, visibilidad y una relación directa con la vida. Expresarse con claridad y compartir el disfrute pueden hacer una situación más comprensible sin fingir que toda dificultad ha desaparecido.",
+      "inAReading": "Reconoce lo que funciona, comunícate con sencillez y deja espacio para expresar una energía o un agradecimiento auténticos.",
+      "artworkDescription": "Un niño desnudo y sonriente monta un caballo blanco mientras sostiene una bandera roja, bajo un gran sol radiante y cuatro girasoles que se elevan tras un muro."
+    },
+    {
+      "cardID": "major-20-judgement",
+      "canonicalName": "El Juicio",
+      "keywords": ["despertar", "revisión", "llamada", "responsabilidad"],
+      "uprightMeaning": "El Juicio refleja una revisión honesta que hace posible responder de otra manera. La experiencia pasada se vuelve útil cuando se reconoce con claridad, se aprende de ella y se afronta con responsabilidad en el presente.",
+      "inAReading": "Revisa qué te ha traído hasta aquí y pregúntate qué elección mostraría que has escuchado el aprendizaje.",
+      "artworkDescription": "Una figura alada toca una trompeta sobre personas desnudas que se alzan de ataúdes rectangulares, con agua azul y montañas nevadas a lo lejos."
+    },
+    {
+      "cardID": "major-21-the-world",
+      "canonicalName": "El Mundo",
+      "keywords": ["culminación", "integración", "plenitud", "transición"],
+      "uprightMeaning": "El Mundo representa una culminación que reúne muchas partes en un conjunto coherente. Reconocer lo conseguido permite cerrar un ciclo con perspectiva antes de que empiece otro.",
+      "inAReading": "Haz balance de lo que está completo, reconoce todo el recorrido y decide qué puede acompañarte a partir de ahora.",
+      "artworkDescription": "Una figura parcialmente cubierta danza dentro de una gran corona vegetal mientras sostiene dos varas cortas, con un ser humano, un águila, un toro y un león entre nubes en las esquinas."
+    },
+    {
+      "cardID": "minor-wands-ace",
+      "canonicalName": "As de Bastos",
+      "keywords": ["chispa", "iniciativa", "entusiasmo", "potencial"],
+      "uprightMeaning": "El As de Bastos es la primera chispa de energía tras un proyecto, un deseo o una dirección creativa. Ofrece un potencial que adquiere sentido mediante la atención, la elección y un comienzo práctico.",
+      "inAReading": "Observa qué te entusiasma y elige una primera acción pequeña que permita comprobar si la chispa conserva energía.",
+      "artworkDescription": "Una mano que surge de una nube sostiene un basto de madera con brotes mientras unas hojas sueltas flotan sobre un valle con río, árboles, colinas y un castillo lejano."
+    },
+    {
+      "cardID": "minor-wands-two",
+      "canonicalName": "Dos de Bastos",
+      "keywords": ["planificación", "posibilidad", "dirección", "previsión"],
+      "uprightMeaning": "El Dos de Bastos contempla las posibilidades antes de comprometerse con una dirección. La visión se amplía más allá de los límites conocidos, pero avanzar exige prioridades y un plan, no una comparación interminable.",
+      "inAReading": "Compara los caminos disponibles, decide qué importa más e identifica qué información ayudaría a elegir con claridad.",
+      "artworkDescription": "Una figura con capa roja está sobre la muralla de un castillo sosteniendo un globo y un basto; otro basto está fijado a su lado sobre una amplia vista de mar y tierra."
+    },
+    {
+      "cardID": "minor-wands-three",
+      "canonicalName": "Tres de Bastos",
+      "keywords": ["expansión", "progreso", "previsión", "conexión"],
+      "uprightMeaning": "El Tres de Bastos mira más allá del primer esfuerzo, hacia un alcance mayor y un desarrollo más largo. Los resultados dependen de la perspectiva, la coordinación y la disposición a responder cuando los planes se encuentran con el mundo.",
+      "inAReading": "Mira más allá de la tarea inmediata y considera qué colaboración, público o siguiente etapa merece preparación.",
+      "artworkDescription": "Una figura con capa vista de espaldas está en una costa elevada junto a tres bastos verticales y mira sobre el agua hacia barcos de vela y colinas lejanas."
+    },
+    {
+      "cardID": "minor-wands-four",
+      "canonicalName": "Cuatro de Bastos",
+      "keywords": ["acogida", "estabilidad", "celebración", "pertenencia"],
+      "uprightMeaning": "El Cuatro de Bastos marca un momento estable que merece compartirse y reconocerse. La comunidad, la acogida y una base fiable permiten hacer una pausa en el esfuerzo y valorar lo conseguido.",
+      "inAReading": "Observa qué base o logro compartido merece reconocimiento e incluye a las personas que ayudaron a crearlo.",
+      "artworkDescription": "Cuatro bastos verticales sostienen una guirnalda de flores y frutos mientras dos figuras alzan ramos cerca de un grupo de personas y un castillo al fondo."
+    },
+    {
+      "cardID": "minor-wands-five",
+      "canonicalName": "Cinco de Bastos",
+      "keywords": ["fricción", "competencia", "diferencia", "práctica"],
+      "uprightMeaning": "El Cinco de Bastos muestra una energía que encuentra resistencia mediante objetivos o estilos en competencia. La fricción puede convertirse en una práctica útil cuando las diferencias se expresan sin transformar todo desacuerdo en una batalla.",
+      "inAReading": "Identifica el verdadero punto de conflicto y pregúntate si unas reglas más claras o un objetivo común podrían hacer productiva la tensión.",
+      "artworkDescription": "Cinco jóvenes con túnicas de colores cruzan bastones de madera alzados en un grupo desordenado sobre terreno abierto bajo un cielo azul pálido."
+    },
+    {
+      "cardID": "minor-wands-six",
+      "canonicalName": "Seis de Bastos",
+      "keywords": ["reconocimiento", "confianza", "progreso", "liderazgo"],
+      "uprightMeaning": "El Seis de Bastos refleja un progreso visible y la confianza que nace del reconocimiento. El aprecio puede sostener el impulso cuando sigue conectado con el esfuerzo y las personas que hay detrás del resultado.",
+      "inAReading": "Reconoce lo que ha ido bien y considera cómo mantener la confianza sin depender por completo de los aplausos.",
+      "artworkDescription": "Un jinete con corona de laurel lleva un basto rematado con laurel sobre un caballo adornado, rodeado de una multitud que sostiene otros cinco bastos verticales."
+    },
+    {
+      "cardID": "minor-wands-seven",
+      "canonicalName": "Siete de Bastos",
+      "keywords": ["convicción", "defensa", "desafío", "límites"],
+      "uprightMeaning": "El Siete de Bastos mantiene una posición elegida bajo presión. El compromiso puede requerir límites y perseverancia, además de discernir qué desafíos merecen energía y cuáles no.",
+      "inAReading": "Aclara qué merece ser defendido, expresa tu límite con sencillez y evita gastar esfuerzo en cada provocación.",
+      "artworkDescription": "Una figura sobre terreno elevado sujeta un basto con ambas manos frente a las puntas de otros seis que suben desde abajo, con colinas verdes y agua a lo lejos."
+    },
+    {
+      "cardID": "minor-wands-eight",
+      "canonicalName": "Ocho de Bastos",
+      "keywords": ["impulso", "movimiento", "comunicación", "coordinación"],
+      "uprightMeaning": "El Ocho de Bastos reúne el movimiento en torno a una dirección clara. Los acontecimientos, mensajes o tareas pueden parecer estrechamente conectados, por lo que coordinar a tiempo resulta más útil que dudar o dispersar el esfuerzo.",
+      "inAReading": "Céntrate en lo que ya está en movimiento y realiza la comunicación o decisión necesaria para mantener la coherencia.",
+      "artworkDescription": "Ocho bastos de madera vuelan en diagonal por un cielo despejado sobre campos verdes ondulados, un río serpenteante y un pequeño edificio a lo lejos."
+    },
+    {
+      "cardID": "minor-wands-nine",
+      "canonicalName": "Nueve de Bastos",
+      "keywords": ["resiliencia", "preparación", "experiencia", "límites"],
+      "uprightMeaning": "El Nueve de Bastos lleva al presente la experiencia de desafíos anteriores. La preparación y la resiliencia son fortalezas, aunque estar siempre a la defensiva puede dificultar reconocer un apoyo auténtico.",
+      "inAReading": "Usa lo que te ha enseñado la experiencia y comprueba a la vez si una antigua defensa todavía encaja con la situación actual.",
+      "artworkDescription": "Una figura vendada permanece de pie sosteniendo un basto ante una hilera cercana de ocho bastos verticales, con colinas verdes visibles tras la barrera de madera."
+    },
+    {
+      "cardID": "minor-wands-ten",
+      "canonicalName": "Diez de Bastos",
+      "keywords": ["carga", "responsabilidad", "esfuerzo", "prioridades"],
+      "uprightMeaning": "El Diez de Bastos muestra cómo el compromiso se vuelve pesado por la acumulación de responsabilidades. El trabajo puede importar, pero su forma actual invita a revisar prioridades, delegar y soltar cargas innecesarias.",
+      "inAReading": "Enumera lo que estás cargando y decide qué necesita terminarse, compartirse, simplificarse o dejarse a un lado de manera consciente.",
+      "artworkDescription": "Una figura encorvada transporta un haz de diez bastos largos hacia un grupo de edificios al otro lado de una extensión llana."
+    },
+    {
+      "cardID": "minor-wands-page",
+      "canonicalName": "Sota de Bastos",
+      "keywords": ["exploración", "mensaje", "juego", "descubrimiento"],
+      "uprightMeaning": "La Sota de Bastos se acerca a las posibilidades con entusiasmo y espíritu experimental. La curiosidad abre un camino, mientras que aprender mediante pequeños intentos mantiene la emoción conectada con la experiencia.",
+      "inAReading": "Sigue la idea que despierta tu curiosidad y date permiso para explorarla antes de exigirte dominio.",
+      "artworkDescription": "Una figura joven con túnica amarilla estampada está de pie en un paisaje seco, sosteniendo un basto alto con brotes y mirando hacia su extremo."
+    },
+    {
+      "cardID": "minor-wands-knight",
+      "canonicalName": "Caballero de Bastos",
+      "keywords": ["audacia", "aventura", "impulso", "impulsividad"],
+      "uprightMeaning": "El Caballero de Bastos avanza con confianza, deseo y velocidad. Una acción audaz puede romper la inercia, pero sostener el viaje requiere suficiente atención para que el entusiasmo no se adelante al propósito.",
+      "inAReading": "Usa la energía disponible para moverte y comprueba después que el ritmo y la dirección siguen sirviendo a lo que de verdad quieres.",
+      "artworkDescription": "Un jinete con armadura y penacho rojo alza un basto mientras el caballo se encabrita hacia delante, con suelo arenoso y colinas en forma de pirámide detrás."
+    },
+    {
+      "cardID": "minor-wands-queen",
+      "canonicalName": "Reina de Bastos",
+      "keywords": ["confianza", "calidez", "independencia", "presencia creativa"],
+      "uprightMeaning": "La Reina de Bastos combina seguridad en sí misma con calidez y energía expresiva. Sugiere dar espacio a tus capacidades y animar a otras personas, en lugar de esconderte o competir por atención.",
+      "inAReading": "Aporta toda tu presencia a la situación y pregúntate cómo puede la confianza volverse generosa, clara y constructiva.",
+      "artworkDescription": "Una mujer coronada está sentada en un trono decorado con leones y girasoles, sosteniendo un basto florecido y un girasol mientras un gato negro se sienta a sus pies."
+    },
+    {
+      "cardID": "minor-wands-king",
+      "canonicalName": "Rey de Bastos",
+      "keywords": ["visión", "liderazgo", "iniciativa", "influencia"],
+      "uprightMeaning": "El Rey de Bastos convierte una visión creativa en una dirección que otras personas pueden entender. Un liderazgo eficaz une convicción con responsabilidad, delegación y respeto por quienes realizan el trabajo.",
+      "inAReading": "Expresa con claridad el propósito general y considera cómo tus elecciones pueden crear a la vez impulso y confianza.",
+      "artworkDescription": "Un gobernante coronado está sentado en un trono decorado con leones y salamandras, sosteniendo un basto florecido sobre una pequeña salamandra en el suelo."
+    },
+    {
+      "cardID": "minor-cups-ace",
+      "canonicalName": "As de Copas",
+      "keywords": ["sentimiento", "apertura", "conexión", "renovación"],
+      "uprightMeaning": "El As de Copas abre espacio al sentimiento, el cuidado y la conexión emocional. Es una invitación a recibir y expresar lo que importa, permitiendo que un nuevo vínculo o una respuesta interior se desarrollen de manera natural.",
+      "inAReading": "Observa qué sentimiento busca una expresión honesta y dónde una respuesta receptiva y compasiva podría abrir una conexión.",
+      "artworkDescription": "Una mano que surge de una nube sostiene una gran copa marcada con una W; una paloma desciende con un pequeño disco y cinco chorros caen a un estanque cubierto de nenúfares."
+    },
+    {
+      "cardID": "minor-cups-two",
+      "canonicalName": "Dos de Copas",
+      "keywords": ["colaboración", "reciprocidad", "confianza", "encuentro"],
+      "uprightMeaning": "El Dos de Copas representa un encuentro basado en el reconocimiento y el intercambio mutuos. La conexión adquiere sentido mediante el consentimiento, la sinceridad y la disposición de ambas partes a participar.",
+      "inAReading": "Considera qué aporta cada persona al vínculo y si las expectativas, el respeto y el esfuerzo son realmente recíprocos.",
+      "artworkDescription": "Una mujer y un hombre frente a frente intercambian copas alzadas bajo una cabeza de león alada y una vara rodeada por dos serpientes."
+    },
+    {
+      "cardID": "minor-cups-three",
+      "canonicalName": "Tres de Copas",
+      "keywords": ["amistad", "celebración", "apoyo", "comunidad"],
+      "uprightMeaning": "El Tres de Copas encuentra fuerza y disfrute en una compañía que presta apoyo. La experiencia compartida, el aprecio y la cooperación pueden devolver perspectiva y recordar que nadie necesita cargar con todo a solas.",
+      "inAReading": "Acércate a una compañía de confianza y pregúntate qué puede celebrarse, compartirse o sostenerse en común.",
+      "artworkDescription": "Tres mujeres con vestidos vaporosos levantan sus copas mientras bailan en círculo sobre un suelo cubierto de uvas, calabazas y otras frutas."
+    },
+    {
+      "cardID": "minor-cups-four",
+      "canonicalName": "Cuatro de Copas",
+      "keywords": ["retraimiento", "reflexión", "insatisfacción", "reevaluación"],
+      "uprightMeaning": "El Cuatro de Copas se vuelve hacia dentro cuando las opciones conocidas no satisfacen. Una pausa puede aclarar las necesidades auténticas, pero un distanciamiento prolongado puede ocultar posibilidades que merecen otra mirada.",
+      "inAReading": "Respeta la necesidad de hacer una pausa y comprueba después si la decepción o la costumbre te impiden ver una opción útil.",
+      "artworkDescription": "Una figura sentada descansa bajo un árbol con los brazos cruzados, frente a tres copas sobre la hierba mientras una mano que surge de una nube le ofrece una cuarta."
+    },
+    {
+      "cardID": "minor-cups-five",
+      "canonicalName": "Cinco de Copas",
+      "keywords": ["duelo", "decepción", "perspectiva", "lo que permanece"],
+      "uprightMeaning": "El Cinco de Copas reconoce la decepción y la atención que exige una pérdida. También deja espacio para observar lo que sigue disponible, sin pasar por alto demasiado deprisa la importancia de lo que ha cambiado.",
+      "inAReading": "Da un espacio honesto a la pérdida e identifica después, con suavidad, un apoyo, un valor o una posibilidad que aún esté presente.",
+      "artworkDescription": "Una figura con capa mira tres copas derramadas mientras otras dos permanecen en pie detrás, con un río, un puente y edificios lejanos atravesando la escena."
+    },
+    {
+      "cardID": "minor-cups-six",
+      "canonicalName": "Seis de Copas",
+      "keywords": ["recuerdo", "amabilidad", "familiaridad", "influencia pasada"],
+      "uprightMeaning": "El Seis de Copas conecta el sentimiento presente con el recuerdo, lo familiar y la generosidad sencilla. El pasado puede ofrecer consuelo o contexto cuando se recuerda con claridad en lugar de idealizarse.",
+      "inAReading": "Observa cómo una experiencia anterior influye en el presente y conserva el aprendizaje que favorezca ahora una respuesta más amable.",
+      "artworkDescription": "Dos niños están en el patio de un pueblo mientras el mayor ofrece al otro una copa llena de flores; otras cinco copas con flores los rodean."
+    },
+    {
+      "cardID": "minor-cups-seven",
+      "canonicalName": "Siete de Copas",
+      "keywords": ["opciones", "imaginación", "discernimiento", "proyección"],
+      "uprightMeaning": "El Siete de Copas presenta muchas posibilidades atractivas, no todas igual de sólidas. La imaginación amplía la elección, mientras que el discernimiento separa un deseo viable de una distracción, una proyección o una ilusión.",
+      "inAReading": "Nombra las opciones reales, compáralas con tus valores y recursos y elige aquello que pueda ponerse a prueba en la realidad.",
+      "artworkDescription": "Una figura oscura mira siete copas que flotan entre nubes, cada una con un objeto o figura diferente, entre ellos joyas, un castillo, una serpiente y una corona vegetal."
+    },
+    {
+      "cardID": "minor-cups-eight",
+      "canonicalName": "Ocho de Copas",
+      "keywords": ["partida", "búsqueda", "desencanto", "propósito profundo"],
+      "uprightMeaning": "El Ocho de Copas reconoce cuándo una inversión emocional ya no aporta sentido. Marcharse no se presenta como algo fácil ni automático, sino como una búsqueda meditada de mayor honestidad y profundidad.",
+      "inAReading": "Pregúntate qué parece completo pese al esfuerzo ya invertido y qué valor más profundo intentas respetar.",
+      "artworkDescription": "Una figura con capa se aleja de ocho copas colocadas en primer plano y cruza un terreno rocoso hacia las montañas bajo un cielo iluminado por la luna."
+    },
+    {
+      "cardID": "minor-cups-nine",
+      "canonicalName": "Nueve de Copas",
+      "keywords": ["satisfacción", "gratitud", "disfrute", "contento"],
+      "uprightMeaning": "El Nueve de Copas aprecia la satisfacción, el bienestar y los deseos que han encontrado una forma de expresarse. El disfrute se enriquece cuando la gratitud se equilibra con la conciencia de lo que la plenitud puede y no puede aportar.",
+      "inAReading": "Reconoce qué resulta verdaderamente satisfactorio y considera cómo disfrutarlo sin perder de vista el contexto general.",
+      "artworkDescription": "Una figura sentada y con los brazos cruzados sonríe ante una mesa curva cubierta de azul, con nueve copas doradas expuestas en una fila ordenada detrás."
+    },
+    {
+      "cardID": "minor-cups-ten",
+      "canonicalName": "Diez de Copas",
+      "keywords": ["pertenencia", "armonía", "alegría compartida", "apoyo emocional"],
+      "uprightMeaning": "El Diez de Copas refleja una pertenencia emocional construida mediante el cuidado, los valores compartidos y el apoyo mutuo. Su armonía es una relación viva que se beneficia de la participación, no un estado perfecto permanente.",
+      "inAReading": "Considera qué relaciones se sienten como un hogar que presta apoyo y cómo puedes contribuir a seguir cuidándolas.",
+      "artworkDescription": "Una pareja alza los brazos hacia un arcoíris de diez copas mientras dos niños juegan cerca, con un río, árboles y una casa a lo lejos."
+    },
+    {
+      "cardID": "minor-cups-page",
+      "canonicalName": "Sota de Copas",
+      "keywords": ["sensibilidad", "asombro", "mensaje", "emoción creativa"],
+      "uprightMeaning": "La Sota de Copas recibe la emoción y la imaginación con frescura. Un sentimiento, una invitación o una idea creativa inesperados pueden merecer curiosidad antes de ser juzgados o descartados con una explicación.",
+      "inAReading": "Mantente receptivo ante un sentimiento sutil o una idea sorprendente y explora qué intenta comunicar.",
+      "artworkDescription": "Una figura joven con túnica estampada sostiene una copa mientras un pez asoma la cabeza por el borde, con olas onduladas y un cielo pálido detrás."
+    },
+    {
+      "cardID": "minor-cups-knight",
+      "canonicalName": "Caballero de Copas",
+      "keywords": ["invitación", "idealismo", "expresión", "búsqueda"],
+      "uprightMeaning": "El Caballero de Copas sigue un ideal emocional o creativo y le da una forma expresiva. La sinceridad importa, al igual que comprobar si un gesto atractivo está respaldado por una comprensión realista.",
+      "inAReading": "Expresa con cuidado lo que importa y pregúntate si la invitación o el ideal pueden sostenerse con acciones constantes.",
+      "artworkDescription": "Un jinete con armadura sobre un caballo blanco lleva una copa por un paisaje árido, pasando junto a un río con acantilados y montañas a lo lejos."
+    },
+    {
+      "cardID": "minor-cups-queen",
+      "canonicalName": "Reina de Copas",
+      "keywords": ["empatía", "intuición", "receptividad", "profundidad emocional"],
+      "uprightMeaning": "La Reina de Copas ofrece una comprensión atenta e intuitiva sin perder el contacto con su propio centro. La profundidad emocional se vuelve un apoyo cuando la compasión incluye límites claros y autoconciencia.",
+      "inAReading": "Escucha lo que hay bajo la superficie y conserva perspectiva suficiente para distinguir la empatía de absorber todo lo que te rodea.",
+      "artworkDescription": "Una mujer coronada está sentada en un trono de piedra ornamentado junto al agua, sosteniendo una gran copa con tapa, asas y pequeñas figuras aladas."
+    },
+    {
+      "cardID": "minor-cups-king",
+      "canonicalName": "Rey de Copas",
+      "keywords": ["equilibrio emocional", "diplomacia", "cuidado", "madurez"],
+      "uprightMeaning": "El Rey de Copas sostiene sentimientos intensos con firmeza y una expresión meditada. Sugiere responder con compasión y serenidad sin dejar de reconocer honestamente la complejidad emocional.",
+      "inAReading": "Aborda la situación con empatía serena y elige una respuesta que respete tanto los sentimientos como la responsabilidad.",
+      "artworkDescription": "Un gobernante coronado está sentado en un trono de piedra rodeado de olas, sosteniendo una copa y un cetro mientras detrás aparecen un barco y un pez que salta."
+    },
+    {
+      "cardID": "minor-swords-ace",
+      "canonicalName": "As de Espadas",
+      "keywords": ["claridad", "verdad", "idea", "decisión"],
+      "uprightMeaning": "El As de Espadas trae una idea incisiva, una distinción o un momento de claridad. La comprensión se vuelve constructiva cuando se expresa con precisión y conduce a una acción que respeta todo el contexto.",
+      "inAReading": "Define la cuestión central con palabras sencillas e identifica el hecho o principio más claro que puede orientarte.",
+      "artworkDescription": "Una mano que surge de una nube sostiene una espada vertical rematada por una corona y una guirnalda colgante, sobre una cadena de montañas grises y escarpadas."
+    },
+    {
+      "cardID": "minor-swords-two",
+      "canonicalName": "Dos de Espadas",
+      "keywords": ["bloqueo", "elección", "límites", "información ausente"],
+      "uprightMeaning": "El Dos de Espadas mantiene la tensión entre alternativas cuando ninguna parece fácil. Un límite temporal puede proteger espacio para pensar, pero una decisión quizá necesite más información o reconocer un sentimiento.",
+      "inAReading": "Nombra qué hace difícil la elección y decide qué hecho, valor o conversación podría ayudarte a avanzar.",
+      "artworkDescription": "Una mujer con los ojos vendados y túnica blanca está sentada junto al mar sosteniendo dos espadas cruzadas, con islas rocosas y una luna creciente detrás."
+    },
+    {
+      "cardID": "minor-swords-three",
+      "canonicalName": "Tres de Espadas",
+      "keywords": ["dolor", "verdad", "separación", "reconocimiento"],
+      "uprightMeaning": "El Tres de Espadas da una imagen clara a una verdad dolorosa. Reconocer el daño o la separación puede evitar que aumente la confusión, mientras que la compasión impide que la sinceridad se convierta en crueldad innecesaria.",
+      "inAReading": "Reconoce lo que duele sin exagerarlo ni restarle importancia y pregúntate qué respuesta honesta favorecería la reparación o el desprendimiento.",
+      "artworkDescription": "Un corazón rojo flota ante un cielo gris de tormenta, atravesado por tres espadas mientras la lluvia cae en largas líneas diagonales."
+    },
+    {
+      "cardID": "minor-swords-four",
+      "canonicalName": "Cuatro de Espadas",
+      "keywords": ["descanso", "pausa", "recuperación", "contemplación"],
+      "uprightMeaning": "El Cuatro de Espadas se aparta de la actividad para recuperar atención y perspectiva. El descanso deliberado puede formar parte de un trabajo con sentido cuando crea espacio para calmarse, reflexionar y volver con claridad.",
+      "inAReading": "Considera qué puede detenerse sin riesgo y date suficiente tranquilidad para procesar antes de elegir el siguiente paso.",
+      "artworkDescription": "Un caballero de piedra yace sobre una tumba bajo una vidriera, con tres espadas montadas en la pared y otra tallada a lo largo del sepulcro."
+    },
+    {
+      "cardID": "minor-swords-five",
+      "canonicalName": "Cinco de Espadas",
+      "keywords": ["conflicto", "coste", "interés propio", "consecuencias"],
+      "uprightMeaning": "El Cinco de Espadas examina un conflicto en el que ganar puede tener un coste ignorado. Pregunta si la táctica, el orgullo o la autoprotección han desplazado el propósito original del desacuerdo.",
+      "inAReading": "Mira más allá de quién parece ganar y valora el coste, la confianza dañada y la posibilidad de retirarte.",
+      "artworkDescription": "Una figura recoge tres espadas y mira hacia dos personas que se alejan junto al agua, mientras otras dos espadas yacen en el suelo bajo nubes irregulares."
+    },
+    {
+      "cardID": "minor-swords-six",
+      "canonicalName": "Seis de Espadas",
+      "keywords": ["transición", "distancia", "travesía", "cambio gradual"],
+      "uprightMeaning": "El Seis de Espadas avanza desde una situación difícil hacia otra distinta mediante una travesía constante. La transición puede estar incompleta, pero la distancia y la perspectiva hacen posible un cambio meditado.",
+      "inAReading": "Céntrate en la siguiente parte manejable de la transición y observa qué apoyo hace menos pesado el movimiento.",
+      "artworkDescription": "Un barquero rema llevando a una persona adulta encapuchada y un niño por aguas tranquilas, con seis espadas de pie en la barca y árboles y tierra delante."
+    },
+    {
+      "cardID": "minor-swords-seven",
+      "canonicalName": "Siete de Espadas",
+      "keywords": ["estrategia", "independencia", "secreto", "responsabilidad"],
+      "uprightMeaning": "El Siete de Espadas considera la estrategia, la discreción y las acciones realizadas fuera de lo esperado. La astucia puede proteger la independencia, pero las elecciones ocultas también plantean preguntas sobre la confianza y la responsabilidad.",
+      "inAReading": "Examina por qué parece necesaria la discreción y si tu método sigue siendo coherente con el resultado y los valores que deseas.",
+      "artworkDescription": "Una figura se lleva cinco espadas de un grupo de tiendas mientras mira hacia atrás, donde quedan otras dos espadas clavadas en el suelo."
+    },
+    {
+      "cardID": "minor-swords-eight",
+      "canonicalName": "Ocho de Espadas",
+      "keywords": ["restricción", "miedo", "perspectiva", "capacidad de actuar"],
+      "uprightMeaning": "El Ocho de Espadas representa una sensación de limitación creada en parte por la percepción y la incertidumbre. Los límites reales merecen respeto, mientras que un examen cuidadoso puede revelar opciones o apoyos que el miedo había ocultado.",
+      "inAReading": "Separa las limitaciones reales de las suposiciones e identifica la elección disponible más pequeña que te devuelva algo de capacidad para actuar.",
+      "artworkDescription": "Una mujer con los ojos vendados y atada sin firmeza está entre ocho espadas verticales sobre suelo mojado, con un castillo de piedra en una colina detrás."
+    },
+    {
+      "cardID": "minor-swords-nine",
+      "canonicalName": "Nueve de Espadas",
+      "keywords": ["preocupación", "rumiación", "pensamientos nocturnos", "perspectiva"],
+      "uprightMeaning": "El Nueve de Espadas muestra cómo el pensamiento se vuelve repetitivo y pesado en soledad. Nombrar las preocupaciones y ponerlas en proporción puede crear distancia respecto a un bucle mental sin ignorar el problema que hay debajo.",
+      "inAReading": "Escribe o expresa la preocupación con claridad, contrástala con lo que sabes y elige una fuente concreta de apoyo.",
+      "artworkDescription": "Una persona está incorporada en la cama con la cara entre las manos, bajo nueve espadas horizontales en una pared oscura y una colcha decorada con pequeñas escenas."
+    },
+    {
+      "cardID": "minor-swords-ten",
+      "canonicalName": "Diez de Espadas",
+      "keywords": ["final", "agotamiento", "carácter definitivo", "nueva perspectiva"],
+      "uprightMeaning": "El Diez de Espadas muestra un final que ya no puede discutirse. Aceptar su carácter definitivo puede resultar difícil, pero evita seguir gastando energía en una forma que ya ha cumplido su ciclo.",
+      "inAReading": "Reconoce lo que ha terminado, evita añadirle otra lucha y dirige la atención hacia lo que todavía es posible.",
+      "artworkDescription": "Una figura tendida yace bajo un cielo oscuro con diez espadas a lo largo de la espalda, mientras una luz dorada nace más allá del agua tranquila y las colinas lejanas."
+    },
+    {
+      "cardID": "minor-swords-page",
+      "canonicalName": "Sota de Espadas",
+      "keywords": ["indagación", "alerta", "comunicación", "aprendizaje"],
+      "uprightMeaning": "La Sota de Espadas es curiosa, observadora y desea comprender mediante preguntas. Una atención aguda es valiosa cuando se acompaña de paciencia, contexto y cuidado al comunicarse.",
+      "inAReading": "Haz la pregunta útil, comprueba lo que escuchas y deja que la curiosidad te guíe sin precipitar una conclusión.",
+      "artworkDescription": "Una figura joven está en una colina ventosa sosteniendo una espada alzada con ambas manos, mientras nubes, aves y árboles doblados se mueven al fondo."
+    },
+    {
+      "cardID": "minor-swords-knight",
+      "canonicalName": "Caballero de Espadas",
+      "keywords": ["decisión", "velocidad", "convicción", "acción directa"],
+      "uprightMeaning": "El Caballero de Espadas avanza con rapidez tras una idea o convicción firme. La acción directa puede vencer la demora, aunque la velocidad y la certeza necesitan suficiente reflexión para evitar daños innecesarios.",
+      "inAReading": "Usa la claridad para actuar, pero comprueba el posible efecto de tus palabras y de tu ritmo antes de emplear todo tu impulso.",
+      "artworkDescription": "Un jinete con armadura carga hacia delante sobre un caballo blanco con la espada alzada, bajo nubes grises que se mueven deprisa y árboles doblados por el viento."
+    },
+    {
+      "cardID": "minor-swords-queen",
+      "canonicalName": "Reina de Espadas",
+      "keywords": ["discernimiento", "independencia", "honestidad", "límites claros"],
+      "uprightMeaning": "La Reina de Espadas valora la comprensión precisa, el juicio independiente y los límites honestos. Su claridad es más fuerte cuando se nutre de la experiencia sin cerrar la puerta a la empatía.",
+      "inAReading": "Expresa con precisión lo que comprendes y necesitas, dejando espacio para el contexto relevante y otra perspectiva.",
+      "artworkDescription": "Una mujer coronada está sentada en un trono de piedra, sosteniendo una espada vertical y extendiendo la otra mano, con un único pájaro sobre nubes lejanas y árboles."
+    },
+    {
+      "cardID": "minor-swords-king",
+      "canonicalName": "Rey de Espadas",
+      "keywords": ["razón", "autoridad", "criterios", "estrategia"],
+      "uprightMeaning": "El Rey de Espadas aplica razón, criterios y juicio estratégico a una situación compleja. La autoridad resulta creíble cuando las decisiones son coherentes, pueden explicarse y permanecen abiertas a las pruebas relevantes.",
+      "inAReading": "Define el principio que debería orientar la decisión y aplícalo con justicia, también a tu propia posición.",
+      "artworkDescription": "Un gobernante coronado está sentado de frente en un trono de piedra tallada y sostiene una espada vertical contra un cielo azul, con árboles y pequeñas aves detrás."
+    },
+    {
+      "cardID": "minor-pentacles-ace",
+      "canonicalName": "As de Oros",
+      "keywords": ["oportunidad", "base", "recursos", "comienzo práctico"],
+      "uprightMeaning": "El As de Oros ofrece la semilla de algo tangible: una habilidad, un recurso, una rutina o una oportunidad material. Su valor crece mediante un uso paciente y un primer paso realista.",
+      "inAReading": "Identifica la oportunidad concreta que tienes delante y elige una pequeña acción que le proporcione un comienzo estable.",
+      "artworkDescription": "Una mano que surge de una nube presenta un gran oro sobre un jardín lleno de flores, un arco de seto, un sendero sinuoso y una montaña lejana."
+    },
+    {
+      "cardID": "minor-pentacles-two",
+      "canonicalName": "Dos de Oros",
+      "keywords": ["adaptación", "prioridades", "ritmo", "equilibrio"],
+      "uprightMeaning": "El Dos de Oros gestiona demandas prácticas cambiantes mediante flexibilidad y ritmo. El equilibrio es activo, no permanente, y exige ajustar las prioridades cuando cambian las condiciones.",
+      "inAReading": "Revisa qué necesita atención ahora, simplifica cuando sea posible y crea un ritmo capaz de cambiar con las circunstancias.",
+      "artworkDescription": "Una figura baila mientras sostiene dos oros unidos por un lazo verde de infinito, con dos barcos navegando sobre grandes olas detrás."
+    },
+    {
+      "cardID": "minor-pentacles-three",
+      "canonicalName": "Tres de Oros",
+      "keywords": ["oficio", "colaboración", "aprendizaje", "criterios compartidos"],
+      "uprightMeaning": "El Tres de Oros desarrolla calidad mediante habilidad, comentarios útiles y esfuerzo coordinado. La aportación individual importa, igual que comprender cómo encaja en un plan o criterio compartido.",
+      "inAReading": "Busca comentarios útiles, aclara las funciones y céntrate en la parte del trabajo que se beneficia de la cooperación.",
+      "artworkDescription": "Una persona artesana está sobre un banco bajo el arco de una catedral mientras dos visitantes sostienen planos, con tres oros incrustados en la piedra tallada de arriba."
+    },
+    {
+      "cardID": "minor-pentacles-four",
+      "canonicalName": "Cuatro de Oros",
+      "keywords": ["seguridad", "retención", "control", "límites"],
+      "uprightMeaning": "El Cuatro de Oros protege los recursos y la estabilidad mediante una retención cuidadosa. La seguridad puede ser sensata, aunque un control excesivo puede impedir el intercambio, el crecimiento o la adaptación.",
+      "inAReading": "Pregúntate qué necesita protección de verdad y dónde podría aflojarse con seguridad un recurso, una regla o un miedo al que te aferras.",
+      "artworkDescription": "Una figura coronada está sentada ante una ciudad sujetando un oro contra el pecho, con otro sobre la corona y uno bajo cada pie."
+    },
+    {
+      "cardID": "minor-pentacles-five",
+      "canonicalName": "Cinco de Oros",
+      "keywords": ["dificultad", "exclusión", "apoyo", "escasez"],
+      "uprightMeaning": "El Cinco de Oros reconoce la dificultad material, el aislamiento o la sensación de quedar fuera. Los problemas pueden estrechar la atención y hacer más difícil reconocer o pedir el apoyo disponible.",
+      "inAReading": "Nombra con claridad la dificultad práctica y busca una persona, un recurso o un siguiente paso que reduzca el aislamiento.",
+      "artworkDescription": "Dos personas con ropa gastada caminan bajo la nieve que cae, junto a una vidriera iluminada que contiene cinco oros."
+    },
+    {
+      "cardID": "minor-pentacles-six",
+      "canonicalName": "Seis de Oros",
+      "keywords": ["dar", "recibir", "intercambio justo", "recursos"],
+      "uprightMeaning": "El Seis de Oros examina cómo circulan entre personas los recursos, la ayuda y la influencia. La generosidad es más constructiva cuando mantiene visibles la dignidad, el consentimiento, las expectativas y el poder.",
+      "inAReading": "Considera si dar y recibir se realizan con transparencia y respeto, y qué haría más equilibrado el intercambio.",
+      "artworkDescription": "Una figura ricamente vestida sostiene una balanza y entrega monedas a una de dos personas arrodilladas, con seis oros distribuidos por la parte superior de la escena."
+    },
+    {
+      "cardID": "minor-pentacles-seven",
+      "canonicalName": "Siete de Oros",
+      "keywords": ["paciencia", "evaluación", "cultivo", "visión a largo plazo"],
+      "uprightMeaning": "El Siete de Oros hace una pausa durante un esfuerzo prolongado para evaluar el crecimiento. La paciencia no significa esperar sin actuar; incluye revisar los resultados y decidir si continuar, ajustar o cambiar de rumbo.",
+      "inAReading": "Mide el progreso respecto al propósito original y decide qué parte merece más tiempo o un método diferente.",
+      "artworkDescription": "Un agricultor se apoya en una azada y observa una enredadera frondosa con siete oros, con campos y colinas azules a lo lejos."
+    },
+    {
+      "cardID": "minor-pentacles-eight",
+      "canonicalName": "Ocho de Oros",
+      "keywords": ["práctica", "destreza", "concentración", "mejora"],
+      "uprightMeaning": "El Ocho de Oros desarrolla capacidad mediante repetición, atención y correcciones útiles. El dominio nace de una práctica constante que mantiene suficiente curiosidad para mejorar en lugar de limitarse a repetir.",
+      "inAReading": "Elige la habilidad o tarea que merece práctica y céntrate en una mejora concreta que puedas repetir de forma constante.",
+      "artworkDescription": "Una persona artesana sentada trabaja con una herramienta sobre un oro, mientras seis oros terminados cuelgan de un poste y otro descansa en el suelo."
+    },
+    {
+      "cardID": "minor-pentacles-nine",
+      "canonicalName": "Nueve de Oros",
+      "keywords": ["autosuficiencia", "disfrute", "cultivo", "bienestar ganado"],
+      "uprightMeaning": "El Nueve de Oros aprecia la independencia, la habilidad cultivada y el bienestar creado mediante un esfuerzo sostenido. Disfrutar de lo construido puede convivir con el agradecimiento por las condiciones y el apoyo que lo hicieron posible.",
+      "inAReading": "Reconoce la capacidad que has desarrollado y permítete disfrutar de sus resultados con un agradecimiento realista.",
+      "artworkDescription": "Una mujer con túnica está en un viñedo con un halcón sobre una mano enguantada, rodeada de nueve oros, vides, árboles y una casa señorial lejana."
+    },
+    {
+      "cardID": "minor-pentacles-ten",
+      "canonicalName": "Diez de Oros",
+      "keywords": ["legado", "continuidad", "recursos compartidos", "estructura duradera"],
+      "uprightMeaning": "El Diez de Oros considera lo que perdura a lo largo del tiempo mediante recursos, costumbres y responsabilidades compartidos. La estabilidad duradera se fortalece cuando sus beneficios y obligaciones se comprenden en conjunto.",
+      "inAReading": "Observa el efecto a largo plazo de la elección y pregúntate qué estructura o valor deseas ayudar a mantener.",
+      "artworkDescription": "Una persona anciana está sentada con dos perros mientras una familia permanece bajo un arco de piedra, con diez oros distribuidos por la escena del patio."
+    },
+    {
+      "cardID": "minor-pentacles-page",
+      "canonicalName": "Sota de Oros",
+      "keywords": ["estudio", "oportunidad", "curiosidad práctica", "mente principiante"],
+      "uprightMeaning": "La Sota de Oros se acerca al mundo práctico con voluntad de aprender. Una oportunidad útil puede empezar de manera modesta y pedir atención, esfuerzo fiable y disposición para aprender de la experiencia.",
+      "inAReading": "Trata la oportunidad como algo que estudiar e identifica la primera habilidad, dato o rutina que requiere.",
+      "artworkDescription": "Una figura joven está en un campo verde sosteniendo un oro con ambas manos, con tierra arada, árboles y montañas azules detrás."
+    },
+    {
+      "cardID": "minor-pentacles-knight",
+      "canonicalName": "Caballero de Oros",
+      "keywords": ["fiabilidad", "método", "paciencia", "trabajo constante"],
+      "uprightMeaning": "El Caballero de Oros avanza mediante un método fiable en lugar de buscar dramatismo o velocidad. La constancia favorece un progreso duradero, siempre que la rutina continúe sirviendo al propósito y no se vuelva automática.",
+      "inAReading": "Elige el siguiente paso fiable, llévalo a cabo con cuidado y revisa si la rutina sigue favoreciendo el objetivo.",
+      "artworkDescription": "Un jinete con armadura está sentado sobre un caballo negro inmóvil sosteniendo un oro, con campos arados, árboles y colinas lejanas bajo un cielo amarillo."
+    },
+    {
+      "cardID": "minor-pentacles-queen",
+      "canonicalName": "Reina de Oros",
+      "keywords": ["ingenio práctico", "cuidado", "arraigo", "apoyo práctico"],
+      "uprightMeaning": "La Reina de Oros crea apoyo práctico mediante un cuidado atento y un uso capaz de los recursos. Cuidar a otras personas sigue siendo sostenible cuando también se atienden el bienestar, los límites y las necesidades propias.",
+      "inAReading": "Pregúntate qué forma práctica de cuidado ayudaría más e incluye tu propia capacidad al decidir qué ofrecer.",
+      "artworkDescription": "Una mujer coronada está sentada en un trono tallado entre flores y vegetación, sosteniendo un oro en el regazo mientras un conejo descansa cerca de sus pies."
+    },
+    {
+      "cardID": "minor-pentacles-king",
+      "canonicalName": "Rey de Oros",
+      "keywords": ["administración responsable", "estabilidad", "experiencia", "responsabilidad"],
+      "uprightMeaning": "El Rey de Oros administra los recursos con paciencia, experiencia y visión a largo plazo. La capacidad material conlleva la responsabilidad de construir resultados estables sin confundir las posesiones con el valor personal.",
+      "inAReading": "Usa los recursos con intención, favorece elecciones duraderas y considera cómo una administración responsable también puede apoyar a otras personas.",
+      "artworkDescription": "Un gobernante coronado está sentado en un trono cubierto de vides sosteniendo un oro y un cetro, con racimos de uvas, tallas de toros y un castillo detrás."
+    }
+  ]
+}

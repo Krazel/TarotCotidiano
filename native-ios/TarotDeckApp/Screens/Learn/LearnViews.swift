@@ -185,7 +185,12 @@ struct LearnArticleView: View {
     private var threeCardIllustration: some View {
         HStack(spacing: 14) {
             ForEach(1...3, id: \.self) { position in
-                CeremonialCardBack(spokenLabel: "Example card \(position) of 3, face down")
+                CeremonialCardBack(
+                    spokenLabel: AppLocalization.format(
+                        "Example card %d of 3, face down",
+                        position
+                    )
+                )
                     .frame(maxWidth: 105)
             }
         }

@@ -38,6 +38,10 @@ jobs:
         shell: pwsh
         run: ./native-ios/Content/Education/validate-education.ps1
 
+      - name: Validate Spanish localization
+        shell: pwsh
+        run: ./native-ios/Content/Localization/validate-localization.ps1
+
       - name: Validate internal app snapshot
         shell: pwsh
         run: ./native-ios/Tools/validate-app-integration.ps1

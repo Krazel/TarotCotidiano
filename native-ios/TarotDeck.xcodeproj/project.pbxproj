@@ -25,6 +25,13 @@
 		A20000000000000000000007 /* card-meanings.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000007 /* card-meanings.v1.json */; };
 		A20000000000000000000008 /* beginner-guide.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B20000000000000000000008 /* beginner-guide.v1.json */; };
 		A40000000000000000000001 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B40000000000000000000001 /* SettingsView.swift */; };
+		A50000000000000000000001 /* AppLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000001 /* AppLocalization.swift */; };
+		A60000000000000000000001 /* CeremonialMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000001 /* CeremonialMotion.swift */; };
+		A70000000000000000000001 /* FavoriteCardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70000000000000000000001 /* FavoriteCardsStore.swift */; };
+		A50000000000000000000002 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000002 /* Localizable.xcstrings */; };
+		A50000000000000000000003 /* card-copy.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000003 /* card-copy.es.v1.json */; };
+		A50000000000000000000004 /* card-meanings.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000004 /* card-meanings.es.v1.json */; };
+		A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* beginner-guide.es.v1.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,7 +40,9 @@
 		B10000000000000000000003 /* CeremonialButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeremonialButtons.swift; sourceTree = "<group>"; };
 		B10000000000000000000004 /* CeremonialCardViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeremonialCardViews.swift; sourceTree = "<group>"; };
 		B10000000000000000000005 /* CeremonialObsidianTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeremonialObsidianTheme.swift; sourceTree = "<group>"; };
+		B60000000000000000000001 /* CeremonialMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeremonialMotion.swift; sourceTree = "<group>"; };
 		B10000000000000000000006 /* ReadFlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadFlowModel.swift; sourceTree = "<group>"; };
+		B70000000000000000000001 /* FavoriteCardsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCardsStore.swift; sourceTree = "<group>"; };
 		B10000000000000000000007 /* ReadingTableShuffledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTableShuffledView.swift; sourceTree = "<group>"; };
 		B10000000000000000000008 /* ReadingTableFirstDrawnFaceDownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTableFirstDrawnFaceDownView.swift; sourceTree = "<group>"; };
 		B10000000000000000000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -49,6 +58,11 @@
 		B20000000000000000000008 /* beginner-guide.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = beginner-guide.v1.json; sourceTree = "<group>"; };
 		B30000000000000000000001 /* ReadViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadViews.swift; sourceTree = "<group>"; };
 		B40000000000000000000001 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B50000000000000000000001 /* AppLocalization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLocalization.swift; sourceTree = "<group>"; };
+		B50000000000000000000002 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		B50000000000000000000003 /* card-copy.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = card-copy.es.v1.json; sourceTree = "<group>"; };
+		B50000000000000000000004 /* card-meanings.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = card-meanings.es.v1.json; sourceTree = "<group>"; };
+		B50000000000000000000005 /* beginner-guide.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = beginner-guide.es.v1.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000005 /* CeremonialObsidianTheme.swift */,
+				B60000000000000000000001 /* CeremonialMotion.swift */,
 			);
 			path = Design;
 			sourceTree = "<group>";
@@ -118,6 +133,7 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000006 /* ReadFlowModel.swift */,
+				B70000000000000000000001 /* FavoriteCardsStore.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -164,6 +180,7 @@
 			isa = PBXGroup;
 			children = (
 				B20000000000000000000001 /* TarotContent.swift */,
+				B50000000000000000000001 /* AppLocalization.swift */,
 			);
 			path = Content;
 			sourceTree = "<group>";
@@ -214,6 +231,7 @@
 			children = (
 				B20000000000000000000006 /* tarot-deck.v1.json */,
 				D20000000000000000000004 /* Education */,
+				D50000000000000000000001 /* Localization */,
 			);
 			name = "Content Resources";
 			path = Content;
@@ -223,8 +241,19 @@
 			isa = PBXGroup;
 			children = (
 				B10000000000000000000009 /* Assets.xcassets */,
+				B50000000000000000000002 /* Localizable.xcstrings */,
 			);
 			path = Resources;
+			sourceTree = "<group>";
+		};
+		D50000000000000000000001 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				B50000000000000000000003 /* card-copy.es.v1.json */,
+				B50000000000000000000004 /* card-meanings.es.v1.json */,
+				B50000000000000000000005 /* beginner-guide.es.v1.json */,
+			);
+			path = Localization;
 			sourceTree = "<group>";
 		};
 		D1000000000000000000000A /* Products */ = {
@@ -279,6 +308,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				es,
 				Base,
 			);
 			mainGroup = D10000000000000000000001;
@@ -300,9 +330,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				A10000000000000000000009 /* Assets.xcassets in Resources */,
+				A50000000000000000000002 /* Localizable.xcstrings in Resources */,
 				A20000000000000000000006 /* tarot-deck.v1.json in Resources */,
 				A20000000000000000000007 /* card-meanings.v1.json in Resources */,
 				A20000000000000000000008 /* beginner-guide.v1.json in Resources */,
+				A50000000000000000000003 /* card-copy.es.v1.json in Resources */,
+				A50000000000000000000004 /* card-meanings.es.v1.json in Resources */,
+				A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -326,6 +360,9 @@
 				A20000000000000000000004 /* LearnViews.swift in Sources */,
 				A20000000000000000000005 /* CardsViews.swift in Sources */,
 				A40000000000000000000001 /* SettingsView.swift in Sources */,
+				A50000000000000000000001 /* AppLocalization.swift in Sources */,
+				A60000000000000000000001 /* CeremonialMotion.swift in Sources */,
+				A70000000000000000000001 /* FavoriteCardsStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

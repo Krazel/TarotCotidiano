@@ -4,9 +4,9 @@ Actualizado: 2026-08-10
 
 ## Estado ejecutivo
 
-El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas neutrales, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera lecturas, predicciones ni carta diaria.
+El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional Read / Learn / Cards / Settings integrado y compilado para iPhone/iOS 16; IPA local de QA sin firma descargado y verificado; derechos de distribución, prueba física y comparación visual final pendientes**.
+Fase actual: **MVP funcional Read / Learn / Cards / Settings ampliado localmente con inglés/castellano, presets de tres cartas, mesa landscape grande, movimiento profesional y favoritos locales; validadores locales verdes; nueva compilación iPhone/iOS 16, IPA, prueba física y comparación visual final pendientes**.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. La preparación y generación del IPA iOS 16 están cerradas. Cualquier nueva implementación deberá volver a declarar una única propietaria.
+Propietaria activa de implementación: **ninguna**. A-030 Favoritos ha quedado integrada localmente y revisada; cualquier nueva implementación deberá volver a declarar una única propietaria.
 
 Revisión de derechos de 2026-08-10: las 78 reproducciones históricas Rider-Waite-Smith siguen autorizadas solo como candidatos internos. España conserva una regla transitoria que remite al plazo de 80 años para autores fallecidos antes del 7 de diciembre de 1987; por prudencia, no se tratarán como distribuibles en España ni en un lanzamiento mundial hasta obtener revisión jurídica territorial o sustituirlas por arte propio. Settings puede avanzar porque no depende de distribuir esas imágenes.
 
@@ -65,6 +65,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - IPA iOS 16 verificado: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31394351514\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,278,156 bytes, SHA-256 `908e43d89c40ca8ca792fc9466f797279186c75a897b20a3f3f0b164d680020a`. El hash coincide con `.sha256` y manifiesto; el `Info.plist` binario confirma `iphoneos`, versión `0.0.1 (1)`, bundle provisional y mínimo `16.0`; el ZIP tiene solo `Payload`, ejecutable e `Info.plist`, sin `_CodeSignature` ni `embedded.mobileprovision`. Requiere firma local con Sideloadly o AltStore y permanece `INTERNAL ONLY`.
 - IPA local histórico iOS 17 preservado en `run-31348569722`; queda sustituido para las pruebas del propietario.
 - `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y seis artículos; su validador confirma IDs/nombres/orden 78/78, unicidad y English/ASCII.
+- `native-ios/Content/Localization/` contiene 78 nombres, 78 significados, 78 descripciones accesibles y los seis artículos en castellano, validados uno a uno contra los IDs canónicos. `MEANING_METHODOLOGY.md` documenta que el copy es original y moderno, contrastado con la tradición RWS/Waite, no una cita ni una definición canónica única.
 
 ### Implementación visual aprobada
 
@@ -77,12 +78,18 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - Integra `ceremonial-card-back` como asset independiente con el mismo SHA-256 que el master de diseño.
 - Incluye controles semánticos, targets de 44 puntos, descripciones visuales, posiciones neutrales, Dynamic Type adaptativo y estado S00 no interactivo durante restauración.
 - Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI, XCTest y empaquetado iOS 16 están verdes; previews y comparación de capturas siguen pendientes.
+- A-027/A-028 están integradas localmente: iOS selecciona inglés o castellano sin selector propio; una lectura de tres cartas ofrece `Past · Present · Future`, `Situation · Challenge · Advice`, `You · The other person · Connection` u opción abierta; el preset se restaura junto a la sesión y no altera IDs ni orden.
+- V-039 registra la selección de tirada en castellano y V-040 sustituye las proporciones anteriores de Three Cards landscape con rail compacto y cartas ocupando casi toda la altura disponible.
+- V-041 y `design/tarot-deck/MOTION_SPEC.md` registran el storyboard y contrato de movimiento. La implementación iOS 16 añade transiciones breves, shuffle, draw, giro reveal/conceal, respuesta táctil de botones y haptics solo después de un estado durable. Reduce Motion y VoiceOver usan variantes de opacidad; restaurar, rotar o volver de segundo plano no reproduce efectos.
+- La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
+- A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
+- Los validadores locales de mazo, educación inglesa, localización española, integración y workflow IPA pasan. La compilación macOS anterior sigue siendo válida solo para el commit previo: todavía no verifica estos cambios locales ni genera un IPA bilingüe actualizado.
 
 ## Qué se conserva y qué queda fuera
 
 Se conserva intacto el prototipo Expo, las 36 cartas, la exploración visual y el historial de decisiones. Sirven como referencia conceptual, estética y recuperable.
 
-Quedan fuera del MVP de Tarot: carta diaria automática, categorías reflexivas, mensajes y preguntas, recordatorios, guardados, compartir, feed, horóscopo, Zodiac, IA, interpretaciones, cuentas, red, pagos, Android y localización.
+Quedan fuera del MVP de Tarot: carta diaria automática, categorías reflexivas, mensajes y preguntas, recordatorios, historial de tiradas, notas, compartir, feed, horóscopo, Zodiac, IA, interpretaciones automáticas, cuentas, red, pagos, Android y lenguas distintas de inglés/castellano.
 
 ## Decisión material resuelta
 
@@ -96,7 +103,7 @@ El modelo y los identificadores deben permitir sustituir en el futuro cada image
 
 ## Bloqueos y puertas
 
-1. Renderizar el MVP en Xcode y comparar portrait/landscape con las referencias registradas; Windows no puede producir previews ni capturas iOS.
+1. Compilar los cambios A-027/A-028/A-029/A-030 en Xcode/iOS 16 y comparar portrait/landscape/motion/favoritos con V-039–V-043; Windows no puede producir previews, capturas ni validar fidelidad háptica en iPhone.
 2. Resolver revisión territorial y aprobación de distribución del arte antes de cualquier release. El gate release falla intencionalmente solo por `candidateOnly/finalAsset/distributionApproved/territorial`.
 3. Resolver bundle identifier e historial de distribución antes de firma de distribución.
 4. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, ficha App Store, secretos, firma de distribución, subida y publicación siguen sin autorización.
@@ -105,6 +112,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: firmar localmente e instalar el IPA iOS 16 con Sideloadly o AltStore, ejecutar una prueba física de Read / Learn / Cards / Settings en portrait y landscape y registrar defectos. No tratar los 78 candidatos históricos como arte distribuible aunque ahora sean públicamente visibles; el gate de release sigue bloqueado hasta cerrar derechos.
+Siguiente punto exacto: tras autorización de commit/push, ejecutar el CI macOS y generar un IPA iOS 16 actualizado; después firmarlo localmente con Sideloadly o AltStore y probar cambio de idioma, las cuatro tiradas, favoritos tras relanzar, último favorito, tamaño landscape, Reduce Motion y la cadencia/haptics en un iPhone. El IPA histórico descargado no contiene A-027/A-028/A-029/A-030. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
 
 No aumentar límites de gasto, añadir métodos de pago, usar TestFlight, App Store ni publicar sin autorización expresa separada.

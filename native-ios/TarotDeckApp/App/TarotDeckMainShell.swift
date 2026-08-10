@@ -8,6 +8,7 @@ enum TarotPrimaryDestination: Hashable {
 
 struct TarotDeckMainShell<ReadContent: View>: View {
     let content: TarotContent
+    @ObservedObject var favoriteStore: FavoriteCardsStore
     let startThreeCardReading: () -> Void
     let readContent: (@escaping (String) -> Void) -> ReadContent
 
@@ -16,10 +17,12 @@ struct TarotDeckMainShell<ReadContent: View>: View {
 
     init(
         content: TarotContent,
+        favoriteStore: FavoriteCardsStore,
         startThreeCardReading: @escaping () -> Void,
         @ViewBuilder readContent: @escaping (@escaping (String) -> Void) -> ReadContent
     ) {
         self.content = content
+        self.favoriteStore = favoriteStore
         self.startThreeCardReading = startThreeCardReading
         self.readContent = readContent
     }
@@ -52,7 +55,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             }
 
             NavigationStack {
-                CardsLibraryView(content: content)
+                CardsLibraryView(content: content, favoriteStore: favoriteStore)
             }
             .tag(TarotPrimaryDestination.cards)
             .tabItem {
@@ -75,6 +78,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
                     CardMeaningView(
                         card: card,
                         meaning: meaning,
+                        favoriteStore: favoriteStore,
                         context: .reading,
                         positionText: nil,
                         canMovePrevious: false,
@@ -84,6 +88,16 @@ struct TarotDeckMainShell<ReadContent: View>: View {
                     )
                 }
             }
+        }
+        .alert(
+            AppLocalization.text("Favorites Unavailable"),
+            isPresented: $favoriteStore.showsIssueAlert
+        ) {
+            Button("OK") {
+                favoriteStore.dismissIssue()
+            }
+        } message: {
+            Text(favoriteStore.issueMessage)
         }
         .preferredColorScheme(.dark)
     }

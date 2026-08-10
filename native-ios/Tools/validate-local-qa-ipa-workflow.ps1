@@ -36,6 +36,7 @@ $requiredWorkflowContracts = @(
     "persist-credentials: false",
     "./native-ios/Content/validate-content.ps1",
     "./native-ios/Content/Education/validate-education.ps1",
+    "./native-ios/Content/Localization/validate-localization.ps1",
     "./native-ios/Tools/validate-app-integration.ps1",
     "swift test --package-path native-ios --parallel",
     "-configuration Debug",

@@ -8,6 +8,7 @@ struct TarotDeckInternalApp: App {
 #if DEBUG
     private let contentResult: Result<TarotContent, Error>
     @StateObject private var readModel: ReadFlowModel
+    @StateObject private var favoriteStore: FavoriteCardsStore
 
     init() {
         let loadedContent: Result<TarotContent, Error> = Result {
@@ -24,6 +25,8 @@ struct TarotDeckInternalApp: App {
             .appendingPathComponent("active-session.v1.json", isDirectory: false)
         let continuityURL = storageDirectoryURL
             .appendingPathComponent("reading-continuity.v1.json", isDirectory: false)
+        let favoritesURL = storageDirectoryURL
+            .appendingPathComponent("favorites.v1.json", isDirectory: false)
 
         let coordinator = DeckSessionCoordinator(
             shuffler: SystemDeckShuffler(),
@@ -43,6 +46,12 @@ struct TarotDeckInternalApp: App {
                 continuityURL: continuityURL
             )
         )
+        _favoriteStore = StateObject(
+            wrappedValue: FavoriteCardsStore(
+                fileURL: favoritesURL,
+                knownCardIDs: Set(knownCardIDs.map(\.rawValue))
+            )
+        )
         contentResult = loadedContent
     }
 #endif
@@ -54,6 +63,7 @@ struct TarotDeckInternalApp: App {
             case .success(let content):
                 TarotDeckMainShell(
                     content: content,
+                    favoriteStore: favoriteStore,
                     startThreeCardReading: { readModel.requestThreeCardReadingFromLearn() }
                 ) { inspectRevealedCard in
                     ReadRootView(

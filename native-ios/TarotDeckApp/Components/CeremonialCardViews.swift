@@ -8,6 +8,13 @@ enum TarotDeckAssetName {
 struct EmptyReadingPosition: View {
     let position: Int
     let total: Int
+    let positionName: String?
+
+    init(position: Int, total: Int, positionName: String? = nil) {
+        self.position = position
+        self.total = total
+        self.positionName = positionName
+    }
 
     var body: some View {
         RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius)
@@ -38,7 +45,11 @@ struct EmptyReadingPosition: View {
             .shadow(color: .black.opacity(0.72), radius: 9, y: 6)
             .aspectRatio(CeremonialObsidianTheme.cardAspectRatio, contentMode: .fit)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel("Empty card position \(position) of \(total)")
+            .accessibilityLabel(
+                positionName.map {
+                    AppLocalization.format("%@, empty card position", $0)
+                } ?? AppLocalization.format("Empty card position %d of %d", position, total)
+            )
     }
 }
 
@@ -52,12 +63,12 @@ struct CeremonialCardBack: View {
         assetName: String = TarotDeckAssetName.ceremonialCardBack,
         presentationAspectRatio: CGFloat = CeremonialObsidianTheme.deckAspectRatio,
         contentMode: ContentMode = .fit,
-        spokenLabel: String = "Shuffled deck, ready to draw"
+        spokenLabel: String? = nil
     ) {
         self.assetName = assetName
         self.presentationAspectRatio = presentationAspectRatio
         self.contentMode = contentMode
-        self.spokenLabel = spokenLabel
+        self.spokenLabel = spokenLabel ?? AppLocalization.text("Shuffled deck, ready to draw")
     }
 
     var body: some View {
@@ -85,19 +96,38 @@ struct CeremonialCardBack: View {
 struct FaceDownReadingPosition: View {
     let position: Int
     let total: Int
+    let positionName: String?
     let onReveal: () -> Void
+
+    init(
+        position: Int,
+        total: Int,
+        positionName: String? = nil,
+        onReveal: @escaping () -> Void
+    ) {
+        self.position = position
+        self.total = total
+        self.positionName = positionName
+        self.onReveal = onReveal
+    }
 
     var body: some View {
         Button(action: onReveal) {
             CeremonialCardBack(
                 presentationAspectRatio: CeremonialObsidianTheme.cardAspectRatio,
                 contentMode: .fill,
-                spokenLabel: "Card position \(position) of \(total), face down"
+                spokenLabel: positionName.map {
+                    AppLocalization.format("%@, face down", $0)
+                } ?? AppLocalization.format("Card position %d of %d, face down", position, total)
             )
             .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Card position \(position) of \(total), face down")
+        .accessibilityLabel(
+            positionName.map {
+                AppLocalization.format("%@, face down", $0)
+            } ?? AppLocalization.format("Card position %d of %d, face down", position, total)
+        )
         .accessibilityHint("Reveals this card")
     }
 }
@@ -140,7 +170,14 @@ struct RevealedReadingPosition: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(cardName), card position \(position) of \(total), face up")
+        .accessibilityLabel(
+            AppLocalization.format(
+                "%@, card position %d of %d, face up",
+                cardName,
+                position,
+                total
+            )
+        )
         .accessibilityHint("Requests a closer look at this revealed card")
         .accessibilityAction(named: Text("Turn face down"), onConceal)
     }

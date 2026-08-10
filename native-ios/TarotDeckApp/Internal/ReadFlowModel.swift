@@ -9,8 +9,8 @@ enum ReadingLayout: String, Codable, CaseIterable, Equatable, Sendable {
 
     var title: String {
         switch self {
-        case .oneCard: return "One Card"
-        case .threeCards: return "Three Cards"
+        case .oneCard: return AppLocalization.text("One Card")
+        case .threeCards: return AppLocalization.text("Three Cards")
         }
     }
 
@@ -22,6 +22,63 @@ enum ReadingLayout: String, Codable, CaseIterable, Equatable, Sendable {
     }
 }
 
+enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
+    case pastPresentFuture
+    case situationChallengeAdvice
+    case relationship
+    case open
+
+    static var namedCases: [Self] {
+        [.pastPresentFuture, .situationChallengeAdvice, .relationship]
+    }
+
+    var title: String {
+        switch self {
+        case .pastPresentFuture:
+            return AppLocalization.text("Past · Present · Future")
+        case .situationChallengeAdvice:
+            return AppLocalization.text("Situation · Challenge · Advice")
+        case .relationship:
+            return AppLocalization.text("You · The other person · Connection")
+        case .open:
+            return AppLocalization.text("Open reading")
+        }
+    }
+
+    var summary: String {
+        switch self {
+        case .pastPresentFuture:
+            return AppLocalization.text("Origins, the present moment, and a possible direction.")
+        case .situationChallengeAdvice:
+            return AppLocalization.text("What is happening, what complicates it, and what may help.")
+        case .relationship:
+            return AppLocalization.text("Two perspectives and the connection between them.")
+        case .open:
+            return AppLocalization.text("No assigned positions.")
+        }
+    }
+
+    func positionTitle(at index: Int) -> String {
+        if self == .open {
+            return AppLocalization.format("Card %d", index + 1)
+        }
+
+        let titles: [String]
+        switch self {
+        case .pastPresentFuture:
+            titles = ["Past", "Present", "Possible future"]
+        case .situationChallengeAdvice:
+            titles = ["Situation", "Challenge", "Advice"]
+        case .relationship:
+            titles = ["You", "The other person", "Connection"]
+        case .open:
+            titles = []
+        }
+        guard titles.indices.contains(index) else { return "" }
+        return AppLocalization.text(titles[index])
+    }
+}
+
 private struct ReadingContinuityRecord: Codable, Equatable {
     enum Phase: String, Codable {
         case readyToShuffle
@@ -30,21 +87,27 @@ private struct ReadingContinuityRecord: Codable, Equatable {
 
     let phase: Phase
     let layout: ReadingLayout
+    let spread: ThreeCardSpread?
     let sessionID: UUID?
 
+    var resolvedSpread: ThreeCardSpread? {
+        layout == .threeCards ? (spread ?? .open) : nil
+    }
+
     var isStructurallyValid: Bool {
+        guard layout == .threeCards || spread == nil else { return false }
         switch phase {
         case .readyToShuffle: return sessionID == nil
         case .active: return sessionID != nil
         }
     }
 
-    static func ready(_ layout: ReadingLayout) -> Self {
-        Self(phase: .readyToShuffle, layout: layout, sessionID: nil)
+    static func ready(_ layout: ReadingLayout, spread: ThreeCardSpread?) -> Self {
+        Self(phase: .readyToShuffle, layout: layout, spread: spread, sessionID: nil)
     }
 
-    static func active(sessionID: UUID, layout: ReadingLayout) -> Self {
-        Self(phase: .active, layout: layout, sessionID: sessionID)
+    static func active(sessionID: UUID, layout: ReadingLayout, spread: ThreeCardSpread?) -> Self {
+        Self(phase: .active, layout: layout, spread: spread, sessionID: sessionID)
     }
 }
 
@@ -80,16 +143,18 @@ private enum ReadFlowInvariantError: Error {
 
 @MainActor
 final class ReadFlowModel: ObservableObject {
-    enum Surface: Equatable {
+    enum Surface: Hashable {
         case restoring
         case home
         case layoutChoice
+        case spreadChoice
         case table
     }
 
     private enum RetryAction {
         case restore
         case selectLayout(ReadingLayout)
+        case selectSpread(ThreeCardSpread)
         case shuffle
         case draw
         case reveal(position: Int)
@@ -108,6 +173,7 @@ final class ReadFlowModel: ObservableObject {
     @Published private(set) var surface: Surface = .restoring
     @Published private(set) var session: DeckSession?
     @Published private(set) var layout: ReadingLayout?
+    @Published private(set) var spread: ThreeCardSpread?
     @Published private(set) var isBusy = false
     @Published var showsReplaceReadingAlert = false
     @Published var showsEndReadingAlert = false
@@ -120,6 +186,7 @@ final class ReadFlowModel: ObservableObject {
     private var issue: Issue?
     private var hasRestored = false
     private var pendingReplacementLayout: ReadingLayout?
+    private var pendingReplacementSpread: ThreeCardSpread?
 
     init(
         coordinator: DeckSessionCoordinator<SystemDeckShuffler, JSONDeckSessionStore>,
@@ -131,8 +198,8 @@ final class ReadFlowModel: ObservableObject {
         self.continuityStore = ReadingContinuityStore(fileURL: continuityURL)
     }
 
-    var issueTitle: String { issue?.title ?? "Reading unavailable" }
-    var issueMessage: String { issue?.message ?? "Please try again." }
+    var issueTitle: String { issue?.title ?? AppLocalization.text("Reading unavailable") }
+    var issueMessage: String { issue?.message ?? AppLocalization.text("Please try again.") }
     var canRetryIssue: Bool { issue?.retry != nil }
     var showsRestorationProgress: Bool {
         surface == .restoring && (isBusy || !hasRestored)
@@ -207,6 +274,7 @@ final class ReadFlowModel: ObservableObject {
         }
         if hasActiveReading {
             pendingReplacementLayout = nil
+            pendingReplacementSpread = nil
             showsReplaceReadingAlert = true
         } else if surface != .restoring {
             surface = .layoutChoice
@@ -215,6 +283,7 @@ final class ReadFlowModel: ObservableObject {
 
     func confirmReplaceReading() {
         let requestedLayout = pendingReplacementLayout
+        let requestedSpread = pendingReplacementSpread
         perform(
             retry: .replace,
             failureMessage: "We couldn't clear the current reading. It remains unchanged."
@@ -234,9 +303,9 @@ final class ReadFlowModel: ObservableObject {
                 return
             }
 
-            if let requestedLayout {
+            if let requestedLayout, requestedLayout == .oneCard || requestedSpread != nil {
                 do {
-                    try self.continuityStore.save(.ready(requestedLayout))
+                    try self.continuityStore.save(.ready(requestedLayout, spread: requestedSpread))
                 } catch {
                     self.resetToHome()
                     self.presentIssue(
@@ -250,11 +319,16 @@ final class ReadFlowModel: ObservableObject {
 
             self.session = nil
             self.pendingReplacementLayout = nil
+            self.pendingReplacementSpread = nil
             if let requestedLayout {
                 self.layout = requestedLayout
-                self.surface = .table
+                self.spread = requestedSpread
+                self.surface = requestedLayout == .threeCards && requestedSpread == nil
+                    ? .spreadChoice
+                    : .table
             } else {
                 self.layout = nil
+                self.spread = nil
                 self.surface = .layoutChoice
             }
         }
@@ -263,6 +337,7 @@ final class ReadFlowModel: ObservableObject {
     func cancelReplaceReading() {
         showsReplaceReadingAlert = false
         pendingReplacementLayout = nil
+        pendingReplacementSpread = nil
     }
 
     func cancelLayoutChoice() {
@@ -271,10 +346,18 @@ final class ReadFlowModel: ObservableObject {
 
     func selectLayout(_ selectedLayout: ReadingLayout) {
         guard !isBusy, !hasActiveReading, surface != .restoring else { return }
+        if selectedLayout == .threeCards {
+            layout = .threeCards
+            spread = nil
+            session = nil
+            surface = .spreadChoice
+            return
+        }
         do {
             // Ready metadata is the write-ahead record for the shuffle commit.
-            try continuityStore.save(.ready(selectedLayout))
+            try continuityStore.save(.ready(selectedLayout, spread: nil))
             layout = selectedLayout
+            spread = nil
             session = nil
             surface = .table
         } catch {
@@ -282,6 +365,29 @@ final class ReadFlowModel: ObservableObject {
                 title: "Couldn't start reading",
                 message: "We couldn't save the selected layout. Nothing was changed.",
                 retry: .selectLayout(selectedLayout)
+            )
+        }
+    }
+
+    func cancelSpreadChoice() {
+        guard !isBusy, session == nil else { return }
+        layout = nil
+        spread = nil
+        surface = .layoutChoice
+    }
+
+    func selectSpread(_ selectedSpread: ThreeCardSpread) {
+        guard !isBusy, !hasActiveReading, layout == .threeCards else { return }
+        do {
+            try continuityStore.save(.ready(.threeCards, spread: selectedSpread))
+            spread = selectedSpread
+            session = nil
+            surface = .table
+        } catch {
+            presentIssue(
+                title: "Couldn't start reading",
+                message: "We couldn't save the selected spread. Nothing was changed.",
+                retry: .selectSpread(selectedSpread)
             )
         }
     }
@@ -297,9 +403,12 @@ final class ReadFlowModel: ObservableObject {
         } else if hasActiveReading {
             surface = .table
             pendingReplacementLayout = .threeCards
+            pendingReplacementSpread = nil
             showsReplaceReadingAlert = true
         } else if surface != .restoring {
-            selectLayout(.threeCards)
+            layout = .threeCards
+            spread = nil
+            surface = .spreadChoice
         }
     }
 
@@ -319,6 +428,7 @@ final class ReadFlowModel: ObservableObject {
             do {
                 try continuityStore.clear()
                 layout = nil
+                spread = nil
                 surface = .layoutChoice
             } catch {
                 presentIssue(
@@ -337,7 +447,7 @@ final class ReadFlowModel: ObservableObject {
             failureMessage: "We couldn't finish shuffling. The previous reading state remains available."
         ) {
             // Reassert the write-ahead record before touching the durable deck session.
-            try self.continuityStore.save(.ready(layout))
+            try self.continuityStore.save(.ready(layout, spread: self.spread))
 
             let started: DeckSession
             if let existing = await self.coordinator.currentSession() {
@@ -360,7 +470,9 @@ final class ReadFlowModel: ObservableObject {
 
             // A crash between startSession and this save restores as ready+canonical zero-draw
             // session; reconcile() promotes that exact pair instead of discarding it.
-            try self.continuityStore.save(.active(sessionID: started.id, layout: layout))
+            try self.continuityStore.save(
+                .active(sessionID: started.id, layout: layout, spread: self.spread)
+            )
             self.session = started
         }
     }
@@ -477,6 +589,7 @@ final class ReadFlowModel: ObservableObject {
             hasRestored = false
             Task { @MainActor in await restoreIfNeeded() }
         case .selectLayout(let layout): selectLayout(layout)
+        case .selectSpread(let spread): selectSpread(spread)
         case .shuffle: shuffleDeck()
         case .draw: drawCard()
         case .reveal(let position):
@@ -505,6 +618,7 @@ final class ReadFlowModel: ObservableObject {
         case (.noSavedSession, .some(let record))
             where record.isStructurallyValid && record.phase == .readyToShuffle:
             layout = record.layout
+            spread = record.resolvedSpread
             session = nil
             surface = .table
 
@@ -514,6 +628,7 @@ final class ReadFlowModel: ObservableObject {
                 && record.sessionID == restored.id
                 && isCanonicalSession(restored, for: record.layout):
             layout = record.layout
+            spread = record.resolvedSpread
             session = restored
             surface = .home
 
@@ -523,8 +638,15 @@ final class ReadFlowModel: ObservableObject {
                 && restored.drawnCards.isEmpty
                 && isCanonicalSession(restored, for: record.layout):
             do {
-                try continuityStore.save(.active(sessionID: restored.id, layout: record.layout))
+                try continuityStore.save(
+                    .active(
+                        sessionID: restored.id,
+                        layout: record.layout,
+                        spread: record.resolvedSpread
+                    )
+                )
                 layout = record.layout
+                spread = record.resolvedSpread
                 session = restored
                 surface = .home
                 presentRecovery("Your shuffled reading was recovered safely.")
@@ -632,8 +754,10 @@ final class ReadFlowModel: ObservableObject {
 
     private func resetToHome() {
         layout = nil
+        spread = nil
         session = nil
         pendingReplacementLayout = nil
+        pendingReplacementSpread = nil
         surface = .home
     }
 
@@ -642,7 +766,11 @@ final class ReadFlowModel: ObservableObject {
     }
 
     private func presentIssue(title: String, message: String, retry: RetryAction?) {
-        issue = Issue(title: title, message: message, retry: retry)
+        issue = Issue(
+            title: AppLocalization.text(title),
+            message: AppLocalization.text(message),
+            retry: retry
+        )
         showsIssueAlert = true
     }
 

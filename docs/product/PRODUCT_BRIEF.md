@@ -1,8 +1,8 @@
 # Tarot Deck — Product Brief
 
-Status: active expanded MVP baseline under A-020, A-021, and A-022
-First release: iPhone only, English only
-Date: 2026-08-09
+Status: active expanded MVP baseline under A-020, A-021, A-022, A-027, and A-028
+First release: iPhone only, English and Spanish
+Date: 2026-08-10
 
 ## Product in one sentence
 
@@ -14,7 +14,7 @@ Tarot Deck puts a complete tarot deck and a calm learning reference on the iPhon
 
 ### Primary user
 
-An English-speaking iPhone owner who reads tarot, is learning to read it, or occasionally reads with friends and wants both a usable deck and a concise reference when a physical deck or guidebook is not available.
+An English- or Spanish-speaking iPhone owner who reads tarot, is learning to read it, or occasionally reads with friends and wants both a usable deck and a concise reference when a physical deck or guidebook is not available.
 
 They value:
 
@@ -26,7 +26,7 @@ They value:
 
 ### Core situations
 
-1. **Do a reading:** choose a neutral one-card or three-card layout, shuffle, draw, reveal, and interpret.
+1. **Do a reading:** choose one card, a named three-card spread, or an open three-card reading; then shuffle, draw, reveal, and interpret.
 2. **Understand a revealed card:** tap it to inspect its art, canonical identity, and concise upright meaning, then return to the unchanged table.
 3. **Learn the method:** read a short guide explaining how to prepare, notice imagery, combine cards, and form an interpretation.
 4. **Study the deck:** browse all 78 cards, filter by arcana or suit, and move through them one by one.
@@ -52,7 +52,7 @@ The MVP proves that promise through:
 
 - one complete, recognizable 78-card deck;
 - a fair shuffle and draws without duplicates in a reading;
-- neutral one-card and three-card layouts;
+- a neutral one-card layout plus three named three-card spreads and an open option;
 - user-controlled draw and turn-over actions;
 - an optional upright meaning for every revealed card;
 - one concise beginner guide and a complete card library;
@@ -66,7 +66,7 @@ The MVP proves that promise through:
 3. **Reference is optional and contextual.** Meaning is available on demand, never pushed over the table or revealed automatically.
 4. **Physical actions stay legible.** Shuffle, draw, place, turn over, inspect, and clear are distinct actions.
 5. **Complete means complete.** All 78 canonical identities, artwork records, and upright meanings ship together.
-6. **Simple layouts, open meanings.** Position labels such as past, present, or future are not imposed.
+6. **Simple layouts, explicit intent.** A three-card reading can assign `Past · Present · Possible Future`, `Situation · Challenge · Advice`, or `You · The other person · Connection` before shuffling; an open option remains available.
 7. **Private and local.** The app collects no question, notes, account, analytics profile, or cloud record.
 8. **Bounded learning.** The guide teaches a usable method; it is not a course, feed, streak, or content program.
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
@@ -78,7 +78,7 @@ The MVP proves that promise through:
 ### Read
 
 1. Open `Read` and resume the active reading or start a new one.
-2. Choose `One Card` or `Three Cards`.
+2. Choose `One Card` or `Three Cards`; for three cards, choose a named spread or `Open reading`.
 3. Shuffle the complete deck.
 4. Draw cards one at a time; each arrives face down and cannot repeat.
 5. Turn cards over manually in any order.
@@ -125,7 +125,7 @@ Exact visual presentation remains governed by the registered screen images.
 
 1. **Read**
    - Deck home with `New Reading` or `Resume Reading`.
-   - Neutral `One Card` and `Three Cards` layouts.
+   - Neutral `One Card`, three named `Three Cards` spreads, and an open three-card option.
    - Explicit shuffle, one-at-a-time draw, independent reveal, and deliberate end.
    - Meaning available only after tapping a revealed card.
 
@@ -137,27 +137,27 @@ Exact visual presentation remains governed by the registered screen images.
      4. `Read Three Cards`
      5. `Notice Symbols and Patterns`
      6. `Build Your Interpretation`
-   - Articles use original English copy, plain examples, and ethical boundaries.
+   - Articles use original English copy with a complete Spanish translation, plain examples, and ethical boundaries.
 
 3. **Cards**
    - All 78 cards in canonical order.
-   - Filters for all cards, Major Arcana, and the four suits.
-   - Large card detail with identity, upright keywords, concise meaning, practical reading note, and previous/next browsing.
+   - Filters for favorites, all cards, Major Arcana, and the four suits.
+   - Large card detail with identity, upright keywords, concise meaning, practical reading note, favorite control, and previous/next browsing.
 
 4. **Deck and content integrity**
    - Standard 22 Major Arcana plus 56 Minor Arcana.
    - Upright orientation only.
-   - Canonical English names, bundled art, and original bundled reference copy.
+   - Canonical language-neutral IDs, localized English/Spanish names, bundled art, and original bundled reference copy in both languages.
    - Stable IDs allow historical launch art to be replaced later with original in-house art without changing readings or meanings.
 
 5. **Local continuity and privacy**
    - The active reading, shuffled order, drawn cards, and face states survive app closure.
    - Ending a reading deletes the session; no history is created.
    - Learn and Cards content is bundled and requires no connection.
-   - No question, interpretation, note, favorite, reading history, or learning progress is collected.
+   - Favorite card IDs are stored only on the device and excluded from device backup. No question, interpretation, note, reading history, or learning progress is collected.
 
 6. **Release foundations**
-   - iPhone/iOS only and all app-owned copy in English.
+   - iPhone/iOS only and all app-owned copy in English and Spanish, selected through the iOS app-language setting with English fallback.
    - VoiceOver, Dynamic Type, sufficient contrast, Reduce Motion compatibility, and 44-point touch targets.
    - Core use works in airplane mode and requests no permission.
 
@@ -178,11 +178,11 @@ The MVP has one central job—help the user read a physical-style deck—and two
 
 - Automatic card of the day, daily reminder, streak, calendar, or notification.
 - Zodiac signs, horoscope copy, daily magazine cards, or any Zodiac/Horoscope mode.
-- App-generated spreads, guided readings, AI chat, predictions, personalized answers, or card-combination interpretations.
+- App-generated interpretations, AI chat, predictions, personalized answers, or card-combination interpretations.
 - Reflection messages, prompts, or the 12 thematic categories from the prior prototype.
 - Reversed cards or randomized card orientation.
-- Named spreads, imposed position meanings, custom layouts, free placement, or spreads larger than three cards.
-- Search, favorites, saved cards, bookmarks, history, journaling, notes, tags, reading statistics, or learning progress.
+- Custom layouts, free placement, or spreads larger than three cards. The three approved named spreads and open three-card reading remain in scope.
+- Search, reading history, journaling, notes, tags, reading statistics, or learning progress. The only saved-card behavior is the local favorites set defined by A-030.
 - Quizzes, courses, certificates, gated lessons, glossary expansion, or an encyclopedia beyond the defined guide and 78 card entries.
 - Sharing cards or readings.
 - Multiple visual decks, alternate card backs, themes, imports, or downloadable content.
@@ -192,7 +192,7 @@ The MVP has one central job—help the user read a physical-style deck—and two
 - Network-fetched tarot or learning content, remote content management, analytics, or generative content. Future StoreKit support, restoration, legal links, and App Store rating may use Apple or system services without making core use network-dependent.
 - Promotional support prompts in the first-use experience, during a reading, while revealing or inspecting a card, or during another critical task. The MVP keeps support discoverable in Settings instead of interrupting use.
 - Onboarding carousel or mandatory tutorial.
-- Android, iPad, web, Apple Watch, widgets, other languages, or localization planning.
+- Android, iPad, web, Apple Watch, widgets, languages other than English and Spanish, or an in-app language picker.
 - Publishing, App Store submission, or external services without separate authorization.
 
 ## Deck and content model
@@ -213,17 +213,17 @@ The first version may use verified scans of original public-domain Rider–Waite
 
 - `id`: stable, language-neutral key from the canonical manifest.
 - `order`: canonical whole-deck order.
-- `name`: canonical English display name.
+- `name`: localized English or Spanish display name resolved from the stable ID.
 - `arcana`: `major` or `minor`.
 - `majorNumber`: Major Arcana number when applicable.
 - `suit`: `wands`, `cups`, `swords`, or `pentacles` for Minor Arcana.
 - `rank`: `ace`, `two` through `ten`, `page`, `knight`, `queen`, or `king` for Minor Arcana.
 - `artworkAsset`: bundled card-face asset.
-- `accessibilityLabel`: concise English identity.
+- `accessibilityLabel`: concise localized identity.
 
 ### Upright reference fields
 
-Every canonical card ID resolves to exactly one English reference record:
+Every canonical card ID resolves to exactly one English and one Spanish reference record:
 
 - `cardID`: exact foreign key to the identity manifest.
 - `keywords`: three to five concise upright concepts.
@@ -237,7 +237,7 @@ Reference copy describes possibilities, not certainties. It must not diagnose, p
 
 - `id`: stable English-independent key.
 - `order`: fixed guide order.
-- `title`: English article title.
+- `title`: localized English or Spanish article title.
 - `summary`: one-sentence index description.
 - `sections`: ordered headings and original body paragraphs.
 - `relatedCardFilter`: optional link to one existing library filter; no remote link or generated recommendation.
@@ -245,6 +245,7 @@ Reference copy describes possibilities, not certainties. It must not diagnose, p
 ### Reading session fields
 
 - `layout`: `oneCard` or `threeCards`.
+- `spread`: absent for one card; otherwise `pastPresentFuture`, `situationChallengeAdvice`, `relationship`, or `open`.
 - `shuffledOrder`: a permutation of all 78 stable card IDs.
 - `drawnCardIDs`: the first one or three IDs consumed from that order.
 - `faceUpCardIDs`: the subset currently turned over.
@@ -285,7 +286,7 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - A learner can find and finish any of the six guide articles without creating progress state.
 - The library displays exactly 78 cards; filters resolve to 22 Major and four groups of 14.
 - Previous and next move only within the active library filter and stop or wrap consistently as defined in the screen map.
-- Every card detail uses the same canonical English name and reference content as reading context.
+- Every card detail uses the same localized name and reference content as reading context.
 - Core use works in airplane mode and requests no permission.
 - Settings is reachable from Read without creating a fourth tab, and dismissing it preserves the exact reading state.
 - Every planned support level communicates the same access and recognition; no purchase state changes core functionality.
@@ -298,12 +299,12 @@ The expanded MVP is release-candidate ready when:
 
 1. `Read`, `Learn`, and `Cards` are implemented from complete registered iPhone references in Ceremonial Obsidian.
 2. One-card and three-card readings work, restore locally, never duplicate a card, and preserve identity secrecy while face down.
-3. The six guide articles are complete, original, English, bundled, readable offline, and reviewed for non-prescriptive language.
+3. The six guide articles are complete, original, available in English and Spanish, bundled, readable offline, and reviewed for non-prescriptive language.
 4. The content manifest has exactly 78 identities and exactly 78 matching upright-reference records, with no missing or extra `cardID`.
 5. All 78 rights-cleared faces and the shared back are bundled; provenance is documented and no provisional asset is treated as production-ready.
 6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.
 7. Functional, content-integrity, persistence, accessibility, orientation, and recovery tests pass on iPhone using macOS/Xcode.
-8. Every visible string is English, all core flows work offline, and no account, analytics, notification, or personal-data collection exists.
+8. Every visible string and all 78 card references are complete in English and Spanish, core flows work offline, and no account, analytics, notification, or personal-data collection exists.
 9. Settings is accessible from Read and contains the separate support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
 10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
 11. Final implementation captures have been compared with the registered references at matching sizes.
@@ -317,4 +318,4 @@ StoreKit product creation, pricing, contracts, tax/banking configuration, live p
 - The Expo prototype and its 36 Spanish reflective cards remain intact as historical and conceptual reference.
 - Existing Daily Tarot images remain aesthetic exploration, not functional approval for this product.
 - The SwiftUI restart, pure deck engine, local persistence, tests, and the already approved S03.2–S03.5 reading states remain valid foundations.
-- The old exclusion of meanings and a card browser is superseded by A-020. A-022 adds optional monthly support planning, but the exclusions of automated interpretation, Zodiac, accounts, remote tarot content, and saved user content remain in force.
+- The old exclusion of meanings and a card browser is superseded by A-020. A-030 adds local favorite card IDs. A-022 adds optional monthly support planning, but the exclusions of automated interpretation, Zodiac, accounts, remote tarot content, notes, history, and cloud user content remain in force.

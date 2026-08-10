@@ -15,14 +15,40 @@ struct TarotCardRecord: Decodable, Identifiable, Hashable {
 
     var arcanaDescription: String {
         if let majorNumber {
-            return "Major Arcana · \(Self.romanNumeral(majorNumber))"
+            return AppLocalization.format("Major Arcana · %@", Self.romanNumeral(majorNumber))
         }
 
         if let suit {
-            return "Minor Arcana · \(suit.capitalized)"
+            return AppLocalization.format("Minor Arcana · %@", Self.localizedSuit(suit))
         }
 
-        return "Minor Arcana"
+        return AppLocalization.text("Minor Arcana")
+    }
+
+    func localized(name: String, accessibilityLabel: String) -> Self {
+        Self(
+            id: id,
+            order: order,
+            name: name,
+            arcana: arcana,
+            suit: suit,
+            rank: rank,
+            majorNumber: majorNumber,
+            artworkAsset: artworkAsset,
+            artworkStatus: artworkStatus,
+            accessibilityLabel: accessibilityLabel,
+            provenanceID: provenanceID
+        )
+    }
+
+    private static func localizedSuit(_ suit: String) -> String {
+        switch suit {
+        case "wands": return AppLocalization.text("Wands")
+        case "cups": return AppLocalization.text("Cups")
+        case "swords": return AppLocalization.text("Swords")
+        case "pentacles": return AppLocalization.text("Pentacles")
+        default: return suit.capitalized
+        }
     }
 
     private static func romanNumeral(_ value: Int) -> String {
@@ -56,7 +82,10 @@ extension TarotCardMeaning {
     func artworkAccessibilityDescription(for card: TarotCardRecord) -> String {
         let description = artworkDescription.trimmingCharacters(in: .whitespacesAndNewlines)
         if description.isEmpty {
-            return "Artwork description is not yet available for \(card.name)."
+            return AppLocalization.format(
+                "Artwork description is not yet available for %@.",
+                card.name
+            )
         }
         return description
     }
@@ -98,21 +127,24 @@ enum TarotContentLoadError: LocalizedError {
     case missingArtworkDescriptions
     case invalidGuideCount(Int)
     case mismatchedCardIDs
+    case invalidLocalizedContent
 
     var errorDescription: String? {
         switch self {
         case .missingResource(let name):
-            return "Missing bundled content resource: \(name)."
+            return AppLocalization.format("Missing bundled content resource: %@.", name)
         case .invalidDeckCount(let count):
-            return "Expected 78 cards, found \(count)."
+            return AppLocalization.format("Expected 78 cards, found %d.", count)
         case .invalidMeaningCount(let count):
-            return "Expected 78 card meanings, found \(count)."
+            return AppLocalization.format("Expected 78 card meanings, found %d.", count)
         case .missingArtworkDescriptions:
-            return "Every card meaning requires an artwork description."
+            return AppLocalization.text("Every card meaning requires an artwork description.")
         case .invalidGuideCount(let count):
-            return "Expected 6 guide articles, found \(count)."
+            return AppLocalization.format("Expected 6 guide articles, found %d.", count)
         case .mismatchedCardIDs:
-            return "The deck and meaning card identifiers do not match."
+            return AppLocalization.text("The deck and meaning card identifiers do not match.")
+        case .invalidLocalizedContent:
+            return AppLocalization.text("The selected language content is incomplete or inconsistent.")
         }
     }
 }
@@ -130,6 +162,17 @@ enum TarotContentLoader {
         let title: String
         let introduction: String
         let articles: [TarotGuideArticle]
+    }
+
+    private struct CardCopyDocument: Decodable {
+        struct Card: Decodable {
+            let cardID: String
+            let name: String
+            let accessibilityLabel: String
+        }
+
+        let language: String
+        let cards: [Card]
     }
 
     static func load(bundle: Bundle = .main) throws -> TarotContent {
@@ -158,20 +201,77 @@ enum TarotContentLoader {
             throw TarotContentLoadError.mismatchedCardIDs
         }
 
-        let orderedCards = deck.cards.sorted { $0.order < $1.order }
+        let englishCards = deck.cards.sorted { $0.order < $1.order }
         let orderedArticles = guide.articles.sorted { $0.order < $1.order }
         let meaningMap = Dictionary(uniqueKeysWithValues: meanings.cards.map { ($0.cardID, $0) })
-        guard Set(orderedCards.map(\.id)) == Set(meaningMap.keys) else {
+        guard Set(englishCards.map(\.id)) == Set(meaningMap.keys) else {
             throw TarotContentLoadError.mismatchedCardIDs
         }
 
-        return TarotContent(
-            cards: orderedCards,
+        let english = TarotContent(
+            cards: englishCards,
             meaningsByCardID: meaningMap,
             guideTitle: guide.title,
             guideIntroduction: guide.introduction,
             guideArticles: orderedArticles
         )
+
+        guard AppLocalization.isSpanish(bundle: bundle) else { return english }
+
+        // Spanish editorial content is loaded as one atomic set. If any file is absent or
+        // inconsistent, loading fails instead of presenting a mixed-language product.
+        do {
+            let copy: CardCopyDocument = try decode(
+                "card-copy.es.v1",
+                bundle: bundle,
+                decoder: decoder
+            )
+            let spanishMeanings: MeaningsDocument = try decode(
+                "card-meanings.es.v1",
+                bundle: bundle,
+                decoder: decoder
+            )
+            let spanishGuide: GuideDocument = try decode(
+                "beginner-guide.es.v1",
+                bundle: bundle,
+                decoder: decoder
+            )
+
+            guard copy.language == "es",
+                  copy.cards.count == 78,
+                  spanishMeanings.cards.count == 78,
+                  spanishGuide.articles.count == 6 else {
+                throw TarotContentLoadError.invalidLocalizedContent
+            }
+
+            let cardIDs = englishCards.map(\.id)
+            guard copy.cards.map(\.cardID) == cardIDs,
+                  spanishMeanings.cards.map(\.cardID) == cardIDs,
+                  zip(spanishMeanings.cards, copy.cards).allSatisfy({ meaning, cardCopy in
+                      meaning.cardID == cardCopy.cardID
+                        && meaning.canonicalName == cardCopy.name
+                  }),
+                  spanishMeanings.cards.allSatisfy({
+                      !$0.artworkDescription.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                  }) else {
+                throw TarotContentLoadError.invalidLocalizedContent
+            }
+
+            let localizedCards = zip(englishCards, copy.cards).map { card, copy in
+                card.localized(name: copy.name, accessibilityLabel: copy.accessibilityLabel)
+            }
+            return TarotContent(
+                cards: localizedCards,
+                meaningsByCardID: Dictionary(
+                    uniqueKeysWithValues: spanishMeanings.cards.map { ($0.cardID, $0) }
+                ),
+                guideTitle: spanishGuide.title,
+                guideIntroduction: spanishGuide.introduction,
+                guideArticles: spanishGuide.articles.sorted { $0.order < $1.order }
+            )
+        } catch {
+            throw error
+        }
     }
 
     private static func decode<T: Decodable>(

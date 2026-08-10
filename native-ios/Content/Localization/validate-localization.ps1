@@ -1,0 +1,245 @@
+[CmdletBinding()]
+param()
+
+$ErrorActionPreference = 'Stop'
+
+$localizationRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$contentRoot = Split-Path -Parent $localizationRoot
+$deckPath = Join-Path $contentRoot 'tarot-deck.v1.json'
+$copyPath = Join-Path $localizationRoot 'card-copy.es.v1.json'
+$meaningsPath = Join-Path $localizationRoot 'card-meanings.es.v1.json'
+$guidePath = Join-Path $localizationRoot 'beginner-guide.es.v1.json'
+
+function Assert-True {
+    param(
+        [bool]$Condition,
+        [string]$Message
+    )
+
+    if (-not $Condition) {
+        throw $Message
+    }
+}
+
+function Read-StrictUtf8Json {
+    param([string]$Path)
+
+    Assert-True (Test-Path -LiteralPath $Path -PathType Leaf) "Missing required file: $Path"
+    $bytes = [System.IO.File]::ReadAllBytes($Path)
+    $strictUtf8 = New-Object System.Text.UTF8Encoding($false, $true)
+
+    try {
+        $text = $strictUtf8.GetString($bytes)
+    }
+    catch {
+        throw "File is not valid UTF-8: $Path"
+    }
+
+    if ($text.Length -gt 0 -and $text[0] -eq [char]0xFEFF) {
+        $text = $text.Substring(1)
+    }
+
+    try {
+        return $text | ConvertFrom-Json
+    }
+    catch {
+        throw "File is not valid JSON: $Path`n$($_.Exception.Message)"
+    }
+}
+
+function Assert-Text {
+    param(
+        [object]$Value,
+        [string]$Field
+    )
+
+    Assert-True ($null -ne $Value) "$Field is missing."
+    Assert-True (-not [string]::IsNullOrWhiteSpace([string]$Value)) "$Field is empty."
+}
+
+function Assert-Unique {
+    param(
+        [object[]]$Values,
+        [string]$Field
+    )
+
+    $duplicates = @($Values | Group-Object | Where-Object { $_.Count -gt 1 })
+    Assert-True ($duplicates.Count -eq 0) "$Field contains duplicates: $($duplicates.Name -join ', ')"
+}
+
+$deck = Read-StrictUtf8Json $deckPath
+$copy = Read-StrictUtf8Json $copyPath
+$meanings = Read-StrictUtf8Json $meaningsPath
+$guide = Read-StrictUtf8Json $guidePath
+
+$expectedCards = @($deck.cards | Sort-Object order)
+Assert-True ($expectedCards.Count -eq 78) 'The canonical deck must contain exactly 78 cards.'
+
+$majorNames = @{
+    'major-00-the-fool' = 'El Loco'
+    'major-01-the-magician' = 'El Mago'
+    'major-02-the-high-priestess' = 'La Sacerdotisa'
+    'major-03-the-empress' = 'La Emperatriz'
+    'major-04-the-emperor' = 'El Emperador'
+    'major-05-the-hierophant' = 'El Hierofante'
+    'major-06-the-lovers' = 'Los Enamorados'
+    'major-07-the-chariot' = 'El Carro'
+    'major-08-strength' = 'La Fuerza'
+    'major-09-the-hermit' = "El Ermita$([char]0x00F1)o"
+    'major-10-wheel-of-fortune' = 'La Rueda de la Fortuna'
+    'major-11-justice' = 'La Justicia'
+    'major-12-the-hanged-man' = 'El Colgado'
+    'major-13-death' = 'La Muerte'
+    'major-14-temperance' = 'La Templanza'
+    'major-15-the-devil' = 'El Diablo'
+    'major-16-the-tower' = 'La Torre'
+    'major-17-the-star' = 'La Estrella'
+    'major-18-the-moon' = 'La Luna'
+    'major-19-the-sun' = 'El Sol'
+    'major-20-judgement' = 'El Juicio'
+    'major-21-the-world' = 'El Mundo'
+}
+
+$rankNames = @{
+    'ace' = 'As'
+    'two' = 'Dos'
+    'three' = 'Tres'
+    'four' = 'Cuatro'
+    'five' = 'Cinco'
+    'six' = 'Seis'
+    'seven' = 'Siete'
+    'eight' = 'Ocho'
+    'nine' = 'Nueve'
+    'ten' = 'Diez'
+    'page' = 'Sota'
+    'knight' = 'Caballero'
+    'queen' = 'Reina'
+    'king' = 'Rey'
+}
+
+$suitNames = @{
+    'wands' = 'Bastos'
+    'cups' = 'Copas'
+    'swords' = 'Espadas'
+    'pentacles' = 'Oros'
+}
+
+Assert-True ([int]$copy.schemaVersion -eq 1) 'card-copy schemaVersion must be 1.'
+Assert-True ([string]$copy.language -eq 'es') 'card-copy language must be es.'
+Assert-True ([int]$copy.cardCount -eq 78) 'card-copy cardCount must be 78.'
+Assert-True (@($copy.cards).Count -eq 78) 'card-copy must contain exactly 78 cards.'
+
+Assert-True ([int]$meanings.schemaVersion -eq 1) 'card-meanings schemaVersion must be 1.'
+Assert-True ([string]$meanings.language -eq 'es') 'card-meanings language must be es.'
+Assert-True ([string]$meanings.orientationPolicy -eq 'uprightOnly') 'Spanish meanings must remain uprightOnly.'
+Assert-True ([int]$meanings.cardCount -eq 78) 'card-meanings cardCount must be 78.'
+Assert-True (@($meanings.cards).Count -eq 78) 'card-meanings must contain exactly 78 cards.'
+
+$userFacingText = New-Object System.Collections.Generic.List[string]
+$artworkDescriptions = New-Object System.Collections.Generic.List[string]
+
+for ($index = 0; $index -lt 78; $index++) {
+    $deckCard = $expectedCards[$index]
+    $copyCard = @($copy.cards)[$index]
+    $meaningCard = @($meanings.cards)[$index]
+
+    $expectedName = if ([string]$deckCard.arcana -eq 'major') {
+        [string]$majorNames[[string]$deckCard.id]
+    }
+    else {
+        '{0} de {1}' -f $rankNames[[string]$deckCard.rank], $suitNames[[string]$deckCard.suit]
+    }
+
+    Assert-Text $expectedName "Expected Spanish name at index $index"
+    Assert-True ([string]$copyCard.cardID -ceq [string]$deckCard.id) "card-copy ID/order mismatch at index $index."
+    Assert-True ([string]$meaningCard.cardID -ceq [string]$deckCard.id) "card-meanings ID/order mismatch at index $index."
+    Assert-True ([string]$copyCard.name -ceq $expectedName) "Unexpected Spanish name for $($deckCard.id): $($copyCard.name)"
+    Assert-True ([string]$meaningCard.canonicalName -ceq $expectedName) "Meaning name mismatch for $($deckCard.id)."
+
+    $arcanaLabel = if ([string]$deckCard.arcana -eq 'major') { 'Arcano Mayor' } else { 'Arcano Menor' }
+    $expectedLabel = "$arcanaLabel, $expectedName."
+    Assert-True ([string]$copyCard.accessibilityLabel -ceq $expectedLabel) "Accessibility label mismatch for $($deckCard.id)."
+
+    $keywords = @($meaningCard.keywords)
+    Assert-True ($keywords.Count -eq 4) "$($deckCard.id) must have exactly four keywords."
+    foreach ($keyword in $keywords) {
+        Assert-Text $keyword "$($deckCard.id).keywords"
+        $userFacingText.Add([string]$keyword)
+    }
+    Assert-Unique $keywords "$($deckCard.id).keywords"
+
+    foreach ($field in @('uprightMeaning', 'inAReading', 'artworkDescription')) {
+        $value = [string]$meaningCard.$field
+        Assert-Text $value "$($deckCard.id).$field"
+        $userFacingText.Add($value)
+    }
+
+    $userFacingText.Add([string]$copyCard.name)
+    $userFacingText.Add([string]$copyCard.accessibilityLabel)
+    $artworkDescriptions.Add([string]$meaningCard.artworkDescription)
+}
+
+Assert-Unique @($copy.cards | ForEach-Object { [string]$_.cardID }) 'card-copy cardID'
+Assert-Unique @($copy.cards | ForEach-Object { [string]$_.name }) 'card-copy name'
+Assert-Unique @($copy.cards | ForEach-Object { [string]$_.accessibilityLabel }) 'card-copy accessibilityLabel'
+Assert-Unique @($meanings.cards | ForEach-Object { [string]$_.cardID }) 'card-meanings cardID'
+Assert-Unique $artworkDescriptions.ToArray() 'card-meanings artworkDescription'
+
+Assert-True ([int]$guide.schemaVersion -eq 1) 'beginner-guide schemaVersion must be 1.'
+Assert-True ([string]$guide.language -eq 'es') 'beginner-guide language must be es.'
+$expectedArticleIDs = @(
+    'start-with-a-question',
+    'shuffle-and-draw',
+    'read-one-card',
+    'read-three-cards',
+    'notice-symbols-and-patterns',
+    'build-your-interpretation'
+)
+$articles = @($guide.articles)
+Assert-True ($articles.Count -eq 6) 'beginner-guide must contain exactly six articles.'
+Assert-Text $guide.title 'beginner-guide.title'
+Assert-Text $guide.introduction 'beginner-guide.introduction'
+$userFacingText.Add([string]$guide.title)
+$userFacingText.Add([string]$guide.introduction)
+
+for ($index = 0; $index -lt 6; $index++) {
+    $article = $articles[$index]
+    Assert-True ([string]$article.id -ceq $expectedArticleIDs[$index]) "Article ID/order mismatch at index $index."
+    Assert-True ([int]$article.order -eq ($index + 1)) "Article order mismatch for $($article.id)."
+    Assert-Text $article.title "$($article.id).title"
+    Assert-Text $article.summary "$($article.id).summary"
+    Assert-True (@($article.sections).Count -gt 0) "$($article.id) must have sections."
+    $userFacingText.Add([string]$article.title)
+    $userFacingText.Add([string]$article.summary)
+
+    foreach ($section in @($article.sections)) {
+        Assert-Text $section.heading "$($article.id).section.heading"
+        Assert-Text $section.body "$($article.id).section.body"
+        $userFacingText.Add([string]$section.heading)
+        $userFacingText.Add([string]$section.body)
+    }
+}
+
+$threeCardArticle = $articles | Where-Object { $_.id -eq 'read-three-cards' }
+$threeCardText = @($threeCardArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+foreach ($requiredPreset in @(
+    "Pasado / Presente / Posible direcci$([char]0x00F3)n",
+    "Situaci$([char]0x00F3)n / Reto / Consejo",
+    "T$([char]0x00FA) / La otra persona / V$([char]0x00ED)nculo"
+)) {
+    Assert-True ($threeCardText.Contains($requiredPreset)) "Three-card guide is missing preset: $requiredPreset"
+}
+Assert-True ($threeCardText -match '(?i)posibilidad') 'Three-card guide must frame results as possibilities.'
+
+$englishPattern = '(?i)\b(the|and|with|card|reading|question|future|present|past|situation|challenge|guidance|relationship|other person|you)\b'
+$predictivePattern = '(?i)\b(ocurrir\u00E1|suceder\u00E1|pasar\u00E1|garantiza|predice|inevitable|inevitablemente)\b|sin duda|certeza absoluta|tienes que'
+
+foreach ($value in $userFacingText) {
+    Assert-True ($value -notmatch $englishPattern) "Obvious English copy found in Spanish user-facing text: $value"
+    Assert-True ($value -notmatch $predictivePattern) "Strong predictive language found in Spanish user-facing text: $value"
+}
+
+Write-Output 'Localization validation passed.'
+Write-Output 'Card copy: 78/78 IDs, names and accessibility labels.'
+Write-Output 'Card meanings: 78/78 records, upright-only, four keywords each.'
+Write-Output 'Beginner guide: 6/6 articles and all three approved spread presets.'

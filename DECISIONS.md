@@ -1,6 +1,6 @@
 # Registro de decisiones de Tarot Cotidiano
 
-Actualizado: 2026-08-09
+Actualizado: 2026-08-10
 
 ## Clases de decisión
 
@@ -15,7 +15,7 @@ Actualizado: 2026-08-09
 |---|---|---|---|
 | A-001 | Reiniciar desde producto y diseño, preservando el prototipo. | La UI y arquitectura Expo no son definitivas. | Ficha de Brain. |
 | A-002 | Primera versión solo para iPhone/iOS. | No Android, iPad ni web en el MVP. | Propietario, 2026-08-08. |
-| A-003 | Primera versión y copy solo en inglés. | El español es referencia conceptual; no hay localización. | Propietario, 2026-08-08. |
+| A-003 | Primera versión y copy solo en inglés. | **Sustituida por A-027.** | Propietario, 2026-08-08. |
 | A-004 | Aplicar `visual-first-app-development`. | Ninguna pantalla antes de aprobar su imagen concreta. | Reglas de Brain. |
 | A-005 | Preservar todo el trabajo anterior. | No borrar ni sobrescribir prototipo, datos, docs o conceptos. | Reglas de Brain. |
 | A-006 | Solo una tarea puede ser propietaria de implementación. | Lectura, diseño y pruebas pueden paralelizarse sin solapar archivos. | Propietario. |
@@ -39,6 +39,10 @@ Actualizado: 2026-08-09
 | A-024 | Preparar un IPA local de QA para instalar mediante sideload. | Autoriza adaptar el target y preparar la generación del artefacto para pruebas personales; no autoriza TestFlight, App Store, firma de distribución, secretos, publicación ni push implícito. | Petición explícita del propietario, 2026-08-10. |
 | A-025 | La primera versión debe funcionar en iOS 16 cuando no exista una dependencia imprescindible de iOS 17. | El deployment target del target y del paquete Swift baja de iOS 17 a iOS 16 sin eliminar funciones; debe verificarse con una compilación macOS antes de sustituir el IPA anterior. | Instrucción explícita del propietario, 2026-08-10. |
 | A-026 | Hacer público `Krazel/TarotCotidiano` para usar los runners estándar gratuitos de GitHub Actions y generar el IPA iOS 16. | Sustituye A-007: el código, historial, documentos y 78 imágenes provisionales pasan a ser públicamente visibles y clonables. No autoriza TestFlight, App Store, firma de distribución ni tratar el arte como aprobado para distribución. | Orden explícita del propietario `pues ponlo pulico y haz`, 2026-08-10, después de recibir advertencia sobre exposición y forks. |
+| A-027 | Añadir castellano completo además de inglés a la primera versión. | Sustituye A-003: interfaz, accesibilidad, 78 nombres, 78 significados y seis artículos deben existir en ambos idiomas; inglés es fallback y los IDs persistidos no cambian. | Instrucción explícita del propietario `quiero que hagas version en castellano tmb`, 2026-08-10. |
+| A-028 | Three Cards deja de ser únicamente neutral: añade tiradas reales con función explícita para cada posición, conserva tirada libre y agranda las cartas en horizontal hasta ocupar casi toda la altura útil. | Se añaden presets no deterministas antes de barajar y labels semánticos persistentes; la nueva referencia landscape sustituye las proporciones anteriores sin cambiar el arte ni la mecánica de sacar/revelar. | Instrucción explícita del propietario, 2026-08-10, tras pedir investigación de tiradas y corregir el tamaño físico observado. |
+| A-029 | Añadir animaciones profesionales a la aplicación. | Autoriza movimiento principal sobrio para shuffle, draw, reveal/conceal y transiciones, con haptics tras éxito y alternativa Reduce Motion; no añade pantallas, efectos mágicos ni retrasos que cambien la utilidad. | Instrucción explícita del propietario `añade animaciones bien hechas, profesionales`, 2026-08-10. |
+| A-030 | Permitir guardar cartas favoritas. | Añade un corazón en el detalle de carta y un filtro `Favorites`/`Favoritas` en Cards; la selección se conserva solo en el dispositivo y no crea cuenta, historial de lecturas ni sincronización. | Instrucción explícita del propietario `quiero que te puedas guardar cartas favoritas`, 2026-08-10. |
 
 ## Decisiones autónomas reversibles
 
@@ -63,6 +67,7 @@ Actualizado: 2026-08-09
 | R-017 | Las 78 reproducciones Rider-Waite-Smith se mantienen como candidatos internos y no se aprueban para distribución en España ni para un lanzamiento mundial. | La excepción transitoria española remite al plazo histórico de 80 años para autores fallecidos antes del 7 de diciembre de 1987; la autoría y el tratamiento territorial requieren revisión especializada. El camino recomendado es arte propio antes del lanzamiento. | Adoptada bajo A-011 como medida conservadora de derechos, 2026-08-10; fuentes: [TRLPI, disposición transitoria cuarta](https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930#dtcuarta) y [Ley de 1879, artículo 6](https://www.boe.es/buscar/doc.php?id=BOE-A-1879-40001). No sustituye asesoramiento jurídico. |
 | R-018 | Settings S09.1 muestra sus cinco destinos, pero hasta que existan configuraciones autorizadas responde con estados nativos explícitamente no disponibles. | Evita botones muertos y también evita fingir restauraciones, precios, compras, URLs legales o una ficha App Store inexistentes; Read y la sesión permanecen intactos. | Adoptada bajo A-011/A-023 tras revisión independiente, 2026-08-10. |
 | R-019 | El IPA de prueba será un build Debug `iphoneos` sin firma, empaquetado para que Sideloadly o AltStore lo vuelvan a firmar en el equipo del propietario. | Evita certificados, perfiles y secretos en CI; el workflow es solo manual, produce un artefacto de tres días con hash/manifiesto y no usa TestFlight ni App Store. La privacidad del artefacto quedó sustituida por A-026. | Adoptada bajo A-011/A-024 tras revisión independiente, 2026-08-10; visibilidad actualizada por A-026. |
+| R-020 | Favoritos usa un conjunto de `cardID` canónicos persistido en JSON atómico local; `Favorites` es el primer filtro de Cards y tiene estado vacío, sin cuarta pestaña. | Es la solución mínima, privada y recuperable; evita cuentas, nube, duplicar contenido o mezclar favoritos con la sesión de lectura. | Adoptada bajo A-011 para ejecutar A-030, 2026-08-10. |
 
 ## Hechos preservados
 
@@ -125,6 +130,11 @@ Actualizado: 2026-08-09
 | V-036 | `S03.6 One Card / The Hermit revealed`, landscape | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\reading-table-one-card-revealed-the-hermit-landscape-a-ceremonial-obsidian.png`; SHA-256 `25CC24CC3B2A3D5288B328B4C5369252C9E1C1E84088A9ECBA5536A4AF5899E9`; 1844×853. | **Aprobada automáticamente por A-021.** |
 | V-037 | `S03.3 One Card / drawn face down / layout complete`, portrait | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\reading-table-one-card-drawn-face-down-a-ceremonial-obsidian-v2.png`; SHA-256 `93BA1A8C93C8CF7C81ACA7B2352CDB1275D993C9F0AD1EF57773782050ABB4DD`; 862×1825. | **Aprobada automáticamente por A-021; sustituye V-033.** El mazo restante desaparece porque la única posición ya está ocupada. |
 | V-038 | `S03.3 One Card / drawn face down / layout complete`, landscape | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\reading-table-one-card-drawn-face-down-landscape-a-ceremonial-obsidian-v2.png`; SHA-256 `BF2B9D8EE0E5298C676F0F956868376FBCBBF4E65AB5A9B8038499B8692071C0`; 1844×853. | **Aprobada automáticamente por A-021; sustituye V-034.** El mazo restante desaparece porque la única posición ya está ocupada. |
+| V-039 | `S02.2 Three Cards / spread choice`, portrait castellano | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\three-card-spread-choice-spanish-a-ceremonial-obsidian-v2.png`; SHA-256 `B6496DF1318B31B268A477D7129C933D6BAC1CD0281DFB8F1C221FF0F90590AD`; 862×1824. | **Aprobada automáticamente por A-021/A-027/A-028.** Tres presets y tirada libre; el copy inglés usa la misma composición. |
+| V-040 | `S03 Three Cards / all revealed / large landscape`, castellano | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\reading-table-three-cards-large-landscape-spanish-a-ceremonial-obsidian.png`; SHA-256 `13B682D552E58B6D662B140F77A999FB8555A4C79EE386C981E9810AD45F941B`; 1844×853. | **Aprobada automáticamente por A-021/A-027/A-028; sustituye la proporción landscape de V-006/V-008/V-010/V-012 para Three Cards.** Rail izquierdo compacto, labels externos y cartas dominantes. |
+| V-041 | `Reading Table / motion storyboard / rest-shuffle-draw-reveal` | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\reading-table-motion-storyboard-a-ceremonial-obsidian.png`; SHA-256 `30D49233D041893FAC2783D72F90A9C737BA49F74A25EE547EC022D31CBC3E64`; 1774×887. | **Aprobada automáticamente por A-021/A-029.** Define jerarquía, dirección y carácter del movimiento; `MOTION_SPEC.md` fija tiempos, easing, haptics, privacidad y Reduce Motion. |
+| V-042 | `S08.2 Card Detail / favorite saved` | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\card-detail-library-favorite-saved-a-ceremonial-obsidian.png`; SHA-256 `5794D4C345BAF1BB52F783DE9C3D49D7D64DAA31BDA4083770AF3E2B8A957389`; 862×1824. | **Aprobada automáticamente por A-021/A-030.** Corazón de 44 puntos en cabecera, sin alterar significado ni navegación. |
+| V-043 | `S07.3 Cards / Favorites empty` | `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative\design\tarot-deck\cards-library-favorites-empty-a-ceremonial-obsidian.png`; SHA-256 `62AED89CC28393E7FD2BC9B06F99240D576EA61FC90F39C8511DBDBA11FFCA87`; 854×1840. | **Aprobada automáticamente por A-021/A-030.** Filtro Favorites primero y estado vacío sin CTA ni pestaña nueva. |
 
 ## Puerta de implementación
 
