@@ -6,7 +6,7 @@ Actualizado: 2026-08-10
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas neutrales, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera lecturas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional Read / Learn / Cards / Settings integrado y aprobado por revisión estática; 78/78 assets candidatos íntegros; verificación Xcode/macOS y derechos de distribución pendientes**.
+Fase actual: **MVP funcional Read / Learn / Cards / Settings integrado, validado y compilado con Xcode/macOS; IPA local de QA sin firma verificado; derechos de distribución y comparación visual final pendientes**.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -23,12 +23,12 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ## Hechos verificados
 
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
-- Rama: `main`; commit recuperable y remoto verificado: `46127ce` en `origin/main`.
+- Rama: `main`; commit del IPA recuperable y remoto verificado: `2ed6db8` en `origin/main`.
 - Remoto privado: `https://github.com/Krazel/TarotCotidiano.git`.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
 - `App.js` y `data/tarot.js` no se han modificado durante la redefinición.
 - La fuente existente contiene 12 categorías y 36 cartas reflexivas en español. No representa un tarot estándar de Arcanos Mayores y Menores.
-- SwiftUI para iPhone sigue aprobado. El núcleo y el flujo MVP completo existen en fuente; falta compilarlos y capturarlos con Xcode/macOS.
+- SwiftUI para iPhone sigue aprobado. El núcleo y el flujo MVP completo compilan con Xcode 26.6 para `iphoneos` arm64; faltan capturas y comparación visual en macOS.
 - Zodiac Daily ya tiene ficha propia de Brain y una ruta de proyecto separada propuesta; no pertenece a este repositorio.
 
 ## Entregables actuales
@@ -58,10 +58,11 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `native-ios/Tests/TarotDeckCoreTests/`: 24 pruebas declaradas para reglas, persistencia, concurrencia, rollback y recuperación.
 - `native-ios/Content/`: 78 cartas canónicas, 78 registros de procedencia y 78/78 JPEG candidatos locales verificados por URL, SHA-1, SHA-256, bytes, JPEG y dimensiones. No hay parciales ni faltantes. Todos siguen fuera de producción: `candidateOnly=true`, `finalAsset=false`, `distributionApproved=false` y revisión territorial pendiente.
 - `.github/workflows/tarot-core.yml`: CI macOS de solo lectura, sin firma, secretos, publicación ni despliegue.
-- `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual, privado y sin secretos para compilar Debug `iphoneos`, validar el binario arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app` como IPA de QA. Genera SHA-256 y manifiesto externos y conserva el artefacto tres días. Está preparado pero no ejecutado.
+- `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual, privado y sin secretos para compilar Debug `iphoneos`, validar el binario arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app` como IPA de QA. Ejecución `31348569722` completada con éxito el 2026-08-10 sobre `2ed6db8`; artefacto privado `9048186554`, disponible en GitHub hasta el 2026-08-13 02:01 UTC.
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
-- Bloqueo técnico verificable: Windows no dispone de Swift/Xcode; build y XCTest deben ejecutarse en macOS CI antes de considerar verde el núcleo.
+- Verificación macOS superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, ausencia de firma y paquete IPA `Payload` exacto. Los primeros intentos detectaron y permitieron corregir la lectura JPEG dependiente de Windows, una preparación de test, la plataforma mínima del paquete y dos errores SwiftUI.
+- IPA local verificado: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31348569722\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,268,341 bytes, SHA-256 `cb5e82bac17c09581a61392c70f0d55d98a9571a8a4a7ce134eb30ff77012a69`. Requiere firma del usuario con Sideloadly o AltStore y permanece `INTERNAL ONLY`.
 - `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y seis artículos; su validador confirma IDs/nombres/orden 78/78, unicidad y English/ASCII.
 
 ### Implementación visual aprobada
@@ -74,7 +75,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `native-ios/TarotDeck.xcodeproj` contiene el target interno `TarotDeckInternal`: iPhone/iOS 17+, portrait y landscape, paquete local `TarotDeckCore`, sin firma, icono final, archive de producción ni dependencias externas.
 - Integra `ceremonial-card-back` como asset independiente con el mismo SHA-256 que el master de diseño.
 - Incluye controles semánticos, targets de 44 puntos, descripciones visuales, posiciones neutrales, Dynamic Type adaptativo y estado S00 no interactivo durante restauración.
-- Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI, XCTest, previews y comparación de capturas siguen pendientes de Xcode/macOS.
+- Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI y XCTest están verdes en macOS; previews y comparación de capturas siguen pendientes.
 
 ## Qué se conserva y qué queda fuera
 
@@ -94,17 +95,15 @@ El modelo y los identificadores deben permitir sustituir en el futuro cada image
 
 ## Bloqueos y puertas
 
-1. Ejecutar el workflow macOS para compilar el paquete, XCTest y `xcodebuild` del simulador sin firma; todavía no se ha ejecutado porque no hubo commit/push autorizado.
-2. Renderizar el MVP en Xcode y comparar portrait/landscape con las referencias registradas; Windows no puede producir previews ni capturas iOS.
-3. Resolver revisión territorial y aprobación de distribución del arte antes de cualquier release. El gate release falla intencionalmente solo por `candidateOnly/finalAsset/distributionApproved/territorial`.
-4. Resolver bundle identifier e historial de distribución antes de firma.
-5. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, ficha App Store, secretos, firma, subida y publicación siguen sin autorización.
-6. El IPA local QA aún no existe: el workflow necesita un commit/push autorizado al repositorio privado y un dispatch manual. `gh auth status` informa que el token de GitHub CLI es inválido; la credencial Git y Actions deben comprobarse por separado al operar.
+1. Renderizar el MVP en Xcode y comparar portrait/landscape con las referencias registradas; Windows no puede producir previews ni capturas iOS.
+2. Resolver revisión territorial y aprobación de distribución del arte antes de cualquier release. El gate release falla intencionalmente solo por `candidateOnly/finalAsset/distributionApproved/territorial`.
+3. Resolver bundle identifier e historial de distribución antes de firma de distribución.
+4. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, ficha App Store, secretos, firma de distribución, subida y publicación siguen sin autorización.
 
 La procedencia del arte debe quedar documentada antes de tratar cualquier cara como asset de producción. El historial de distribución y el bundle identifier se resuelven antes de firma o release; no bloquean el diseño conceptual.
 
 ## Siguiente acción automática
 
-Siguiente punto seguro: ejecutar la compilación y pruebas macOS cuando exista un runner autorizado, sin firma ni subida; después realizar comparación visual en Xcode. No tratar los 78 candidatos históricos como arte distribuible hasta cerrar derechos.
+Siguiente punto seguro: instalar y probar el IPA interno mediante firma local del usuario y realizar comparación visual en Xcode cuando haya acceso a macOS. No tratar los 78 candidatos históricos como arte distribuible hasta cerrar derechos.
 
 No hacer commit, push, TestFlight, App Store ni publicación sin autorización expresa separada.
