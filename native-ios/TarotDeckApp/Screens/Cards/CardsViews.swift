@@ -131,7 +131,7 @@ struct CardsLibraryView: View {
             card: card,
             artworkDescription: meaning?.artworkDescription
         )
-        VStack(spacing: 8) {
+        return VStack(spacing: 8) {
             artwork
 
             Text(card.name)

@@ -215,7 +215,8 @@ private struct SettingsRow: View {
                 Image(systemName: systemImage)
                     .font(.system(.title2, weight: .light))
                     .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                    .frame(width: 40, minHeight: 44)
+                    .frame(width: 40)
+                    .frame(minHeight: 44)
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 3) {
