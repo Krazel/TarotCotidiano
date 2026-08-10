@@ -6,7 +6,7 @@ Actualizado: 2026-08-10
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional; A-031 está integrada y validada localmente para selector interno de idioma, Home compacto, mazo táctil, geometría portrait estable, tab bar opaca, significado `Al derecho` no accionable y motion V2**. El IPA iOS 16 verificado sigue siendo la baseline anterior a A-031.
+Fase actual: **MVP funcional; A-031 está integrada, compilada y verificada en una nueva IPA de QA iOS 16** con selector interno de idioma, Home compacto, mazo táctil, geometría portrait estable, tab bar opaca, significado `Al derecho` no accionable y motion V2.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -25,7 +25,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ## Hechos verificados
 
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
-- Rama: `main`; build iOS 16 e IPA bilingüe verificados sobre `63c459e18e97c375c578e8ef653f1d3805f8ad5e` en `origin/main`.
+- Rama: `main`; build iOS 16 e IPA bilingüe A-031 verificados sobre `4a983ae91e849e3dd8613cfc685a16a61d5a303f` en `origin/main`.
 - Remoto público por A-026: `https://github.com/Krazel/TarotCotidiano.git`.
 - Acceso GitHub central verificado el 2026-08-10 mediante el comprobador común: `status=OK`, login global `Krazel` desde el llavero de Windows, repo público, `origin` correcto y ambos workflows activos. Actions se opera solo con `gh`; no se usa Chrome ni autenticación por proyecto.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
@@ -61,12 +61,12 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `native-ios/Tests/TarotDeckCoreTests/`: 24 pruebas declaradas para reglas, persistencia, concurrencia, rollback y recuperación.
 - `native-ios/Content/`: 78 cartas canónicas, 78 registros de procedencia y 78/78 JPEG candidatos locales verificados por URL, SHA-1, SHA-256, bytes, JPEG y dimensiones. No hay parciales ni faltantes. Todos siguen fuera de producción: `candidateOnly=true`, `finalAsset=false`, `distributionApproved=false` y revisión territorial pendiente.
 - `.github/workflows/tarot-core.yml`: CI macOS de solo lectura, sin firma, secretos, publicación ni despliegue.
-- `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual público y sin secretos para compilar Debug `iphoneos`, exigir `MinimumOSVersion=16.0`, validar el binario arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app` como IPA de QA. La ejecución `31414355150` completó correctamente el 2026-08-10 sobre `63c459e`; artefacto `9072856781`, disponible en GitHub hasta el 2026-08-13 17:31 UTC.
+- `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual público y sin secretos para compilar Debug `iphoneos`, exigir `MinimumOSVersion=16.0`, validar el binario arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app` como IPA de QA. La ejecución `31427009585` completó correctamente el 2026-08-10 sobre `4a983ae`; artefacto `9077623751`, disponible en GitHub hasta el 2026-08-13 20:03 UTC. La ejecución anterior `31426558041` detectó correctamente el modificador SwiftUI inexistente `accessibilityLanguage`; el fix iOS 16 conserva el `Locale` explícito y quedó compilado en la ejecución verde.
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
 - Verificación macOS iOS 16 superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, `MinimumOSVersion=16.0`, ausencia de firma y paquete IPA `Payload` exacto.
-- IPA bilingüe iOS 16 verificado: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31414355150\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,506,981 bytes, SHA-256 `4ba500683447eb16616aa01963a0d6069b688c27eeee0bd38b3dbbda0bbfdca8`. El hash coincide con `.sha256` y manifiesto; este confirma `iphoneos`, Debug, bundle provisional, mínimo `16.0`, commit exacto y ausencia de firma. El ZIP contiene exclusivamente `Payload/TarotDeckInternal.app`, con ejecutable e `Info.plist`, sin `_CodeSignature` ni `embedded.mobileprovision`. Requiere firma local con Sideloadly o AltStore y permanece `INTERNAL ONLY`.
-- Los IPA locales anteriores de `run-31394351514` y `run-31348569722` quedan preservados como históricos y sustituidos para las pruebas del propietario.
+- IPA bilingüe A-031 iOS 16 verificada: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31427009585\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,662,097 bytes, SHA-256 `8fe68def507c263051e5be4caf223f481808cea856d362b253e6b2c58f3024f9`. El hash coincide con `.sha256` y manifiesto; este confirma `iphoneos`, Debug, bundle provisional `com.krazel.tarotdeck.internal.provisional`, mínimo `16.0`, commit exacto y ausencia de firma. El ZIP contiene exclusivamente `Payload/TarotDeckInternal.app`, con ejecutable e `Info.plist`, sin `_CodeSignature` ni `embedded.mobileprovision`. Requiere firma local con Sideloadly o AltStore y permanece `INTERNAL ONLY`.
+- Los IPA locales anteriores, incluido `run-31414355150`, quedan preservados como históricos y sustituidos para las pruebas del propietario.
 - `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y seis artículos; su validador confirma IDs/nombres/orden 78/78, unicidad y English/ASCII.
 - `native-ios/Content/Localization/` contiene 78 nombres, 78 significados, 78 descripciones accesibles y los seis artículos en castellano, validados uno a uno contra los IDs canónicos. `MEANING_METHODOLOGY.md` documenta que el copy es original y moderno, contrastado con la tradición RWS/Waite, no una cita ni una definición canónica única.
 
@@ -87,7 +87,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
 - A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
 - A-031 está integrada localmente: selector `English / Español` atómico sobre 215 claves de interfaz, Home V-044 sin scroll normal y con adaptación AX, Settings V-045, mesa V-046/V-047 con centro horizontal y anclaje vertical estable, mazo como único control contextual, tab bar opaca, encabezado `Upright meaning / Significado al derecho` y motion V-048 con reparto curvo, flip de dos caras, cancelación y haptics posteriores al aterrizaje. La revisión independiente final cerró sin P0–P2.
-- Los validadores locales de mazo, educación inglesa, localización española, integración y workflow IPA pasan. GitHub Actions verificó además las pruebas Swift, la compilación completa para iPhone/iOS 16 y el IPA bilingüe exacto del commit `63c459e`.
+- Los validadores locales de mazo, educación inglesa, localización española, integración y workflow IPA pasan. GitHub Actions verificó además las pruebas Swift, la compilación completa para iPhone/iOS 16 y el IPA bilingüe A-031 exacto del commit `4a983ae`.
 
 ## Qué se conserva y qué queda fuera
 
@@ -107,7 +107,7 @@ El modelo y los identificadores deben permitir sustituir en el futuro cada image
 
 ## Bloqueos y puertas
 
-1. Compilar A-031 en macOS/Xcode y generar una nueva IPA solo tras autorización de commit/push; `run-31414355150` queda como baseline anterior y no contiene selector interno, Home/mesa corregidos ni motion V2.
+1. **Cerrado:** A-031 compilada en macOS/Xcode y empaquetada en `run-31427009585`; la IPA local verificada contiene selector interno, Home/mesa corregidos y motion V2.
 2. Resolver revisión territorial y aprobación de distribución del arte antes de cualquier release. El gate release falla intencionalmente solo por `candidateOnly/finalAsset/distributionApproved/territorial`.
 3. Resolver bundle identifier e historial de distribución antes de firma de distribución.
 4. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, ficha App Store, secretos, firma de distribución, subida y publicación siguen sin autorización.
@@ -116,6 +116,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: obtener autorización explícita de commit/push para que macOS/Xcode compile A-031 y genere otro IPA de QA. `run-31414355150` permanece como baseline recuperable anterior. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
+Siguiente punto exacto: instalar y probar en el iPhone la IPA `run-31427009585` mediante re-firma local con Sideloadly o AltStore, registrando cualquier defecto reproducible. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
 
 No aumentar límites de gasto, añadir métodos de pago, usar TestFlight, App Store ni publicar sin autorización expresa separada.
