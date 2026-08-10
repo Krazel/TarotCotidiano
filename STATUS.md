@@ -6,7 +6,7 @@ Actualizado: 2026-08-10
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional Read / Learn / Cards / Settings en inglés/castellano, con presets de tres cartas, mesa landscape grande, movimiento profesional y favoritos locales; validadores, pruebas Swift, compilación iPhone/iOS 16 y nuevo IPA verificados; prueba física y comparación visual final pendientes**.
+Fase actual: **MVP funcional; A-031 está integrada y validada localmente para selector interno de idioma, Home compacto, mazo táctil, geometría portrait estable, tab bar opaca, significado `Al derecho` no accionable y motion V2**. El IPA iOS 16 verificado sigue siendo la baseline anterior a A-031.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,9 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. A-030 Favoritos ha quedado integrada localmente y revisada; cualquier nueva implementación deberá volver a declarar una única propietaria.
+Propietaria activa de implementación: **ninguna**. La propiedad única de A-031 terminó tras integrar, validar y cerrar la revisión independiente sin hallazgos pendientes.
+
+A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
 Revisión de derechos de 2026-08-10: las 78 reproducciones históricas Rider-Waite-Smith siguen autorizadas solo como candidatos internos. España conserva una regla transitoria que remite al plazo de 80 años para autores fallecidos antes del 7 de diciembre de 1987; por prudencia, no se tratarán como distribuibles en España ni en un lanzamiento mundial hasta obtener revisión jurídica territorial o sustituirlas por arte propio. Settings puede avanzar porque no depende de distribuir esas imágenes.
 
@@ -78,11 +80,12 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - Integra `ceremonial-card-back` como asset independiente con el mismo SHA-256 que el master de diseño.
 - Incluye controles semánticos, targets de 44 puntos, descripciones visuales, posiciones neutrales, Dynamic Type adaptativo y estado S00 no interactivo durante restauración.
 - Tres pasadas de revisión estática cerraron los P1/P2 de restauración, persistencia, botones muertos, CTA y accesibilidad con resultado final **PASS**. Compilación SwiftUI, XCTest y empaquetado iOS 16 están verdes; previews y comparación de capturas siguen pendientes.
-- A-027/A-028 están integradas localmente: iOS selecciona inglés o castellano sin selector propio; una lectura de tres cartas ofrece `Past · Present · Future`, `Situation · Challenge · Advice`, `You · The other person · Connection` u opción abierta; el preset se restaura junto a la sesión y no altera IDs ni orden.
+- A-027/A-028 están integradas localmente: en primera instalación iOS elige inglés o castellano y A-031 añade un selector interno persistente `English / Español`; una lectura de tres cartas ofrece `Past · Present · Future`, `Situation · Challenge · Advice`, `You · The other person · Connection` u opción abierta; idioma y preset no alteran IDs ni orden.
 - V-039 registra la selección de tirada en castellano y V-040 sustituye las proporciones anteriores de Three Cards landscape con rail compacto y cartas ocupando casi toda la altura disponible.
 - V-041 y `design/tarot-deck/MOTION_SPEC.md` registran el storyboard y contrato de movimiento. La implementación iOS 16 añade transiciones breves, shuffle, draw, giro reveal/conceal, respuesta táctil de botones y haptics solo después de un estado durable. Reduce Motion y VoiceOver usan variantes de opacidad; restaurar, rotar o volver de segundo plano no reproduce efectos.
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
 - A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
+- A-031 está integrada localmente: selector `English / Español` atómico sobre 215 claves de interfaz, Home V-044 sin scroll normal y con adaptación AX, Settings V-045, mesa V-046/V-047 con centro horizontal y anclaje vertical estable, mazo como único control contextual, tab bar opaca, encabezado `Upright meaning / Significado al derecho` y motion V-048 con reparto curvo, flip de dos caras, cancelación y haptics posteriores al aterrizaje. La revisión independiente final cerró sin P0–P2.
 - Los validadores locales de mazo, educación inglesa, localización española, integración y workflow IPA pasan. GitHub Actions verificó además las pruebas Swift, la compilación completa para iPhone/iOS 16 y el IPA bilingüe exacto del commit `63c459e`.
 
 ## Qué se conserva y qué queda fuera
@@ -103,7 +106,7 @@ El modelo y los identificadores deben permitir sustituir en el futuro cada image
 
 ## Bloqueos y puertas
 
-1. Firmar localmente el IPA verificado y comparar en un iPhone real portrait/landscape/motion/favoritos con V-039–V-043; Windows no puede producir previews, capturas ni validar fidelidad háptica sin el dispositivo.
+1. Compilar A-031 en macOS/Xcode y generar una nueva IPA solo tras autorización de commit/push; `run-31414355150` queda como baseline anterior y no contiene selector interno, Home/mesa corregidos ni motion V2.
 2. Resolver revisión territorial y aprobación de distribución del arte antes de cualquier release. El gate release falla intencionalmente solo por `candidateOnly/finalAsset/distributionApproved/territorial`.
 3. Resolver bundle identifier e historial de distribución antes de firma de distribución.
 4. Settings S09.1 está integrado; StoreKit, productos, precios reales, páginas legales publicadas, ficha App Store, secretos, firma de distribución, subida y publicación siguen sin autorización.
@@ -112,6 +115,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: firmar localmente el IPA de `run-31414355150` con Sideloadly o AltStore y probar cambio de idioma, las cuatro tiradas, favoritos tras relanzar, último favorito, tamaño landscape, Reduce Motion y la cadencia/haptics en un iPhone. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
+Siguiente punto exacto: obtener autorización explícita de commit/push para que macOS/Xcode compile A-031 y genere otro IPA de QA. `run-31414355150` permanece como baseline recuperable anterior. No tratar los 78 candidatos históricos como arte distribuible; el gate de release sigue bloqueado hasta cerrar derechos.
 
 No aumentar límites de gasto, añadir métodos de pago, usar TestFlight, App Store ni publicar sin autorización expresa separada.

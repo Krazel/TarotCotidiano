@@ -176,6 +176,12 @@ enum TarotContentLoader {
     }
 
     static func load(bundle: Bundle = .main) throws -> TarotContent {
+        let language = AppLanguage(rawValue: AppLocalization.contentLanguageCode(bundle: bundle))
+            ?? .english
+        return try load(language: language, bundle: bundle)
+    }
+
+    static func load(language: AppLanguage, bundle: Bundle = .main) throws -> TarotContent {
         let decoder = JSONDecoder()
         let deck: DeckDocument = try decode("tarot-deck.v1", bundle: bundle, decoder: decoder)
         let meanings: MeaningsDocument = try decode("card-meanings.v1", bundle: bundle, decoder: decoder)
@@ -216,7 +222,7 @@ enum TarotContentLoader {
             guideArticles: orderedArticles
         )
 
-        guard AppLocalization.isSpanish(bundle: bundle) else { return english }
+        guard language == .spanish else { return english }
 
         // Spanish editorial content is loaded as one atomic set. If any file is absent or
         // inconsistent, loading fails instead of presenting a mixed-language product.

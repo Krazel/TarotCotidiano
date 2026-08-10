@@ -201,7 +201,21 @@
     "Starts a free three-card reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Inicia una tirada libre de tres cartas" } } } },
     "Starts this reading layout" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Inicia este tipo de lectura" } } } },
     "The selected language content is incomplete or inconsistent." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "El contenido del idioma seleccionado está incompleto o no es coherente." } } } },
-    "Your cards are still available. Add a favorite to start a new list." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Tus cartas siguen disponibles. Añade una favorita para crear una lista nueva." } } } }
+    "Your cards are still available. Add a favorite to start a new list." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Tus cartas siguen disponibles. Añade una favorita para crear una lista nueva." } } } },
+    "App Language" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Idioma de la app" } } } },
+    "Changes the app language immediately." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Cambia el idioma de la aplicación al instante." } } } },
+    "Language" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Idioma" } } } },
+    "Language changed to %@." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Idioma cambiado a %@." } } } },
+    "Language Couldn't Be Changed" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "No se ha podido cambiar el idioma" } } } },
+    "Tap the deck to begin" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Toca el mazo para empezar" } } } },
+    "The complete language content couldn't be loaded. Nothing was changed." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "No se ha podido cargar todo el contenido del idioma. No se ha cambiado nada." } } } },
+    "Upright meaning" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Significado al derecho" } } } },
+    "Starts a new reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Inicia una lectura nueva" } } } },
+    "Tap the deck to shuffle." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Toca el mazo para barajar." } } } },
+    "Tap the deck to draw." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Toca el mazo para sacar una carta." } } } },
+    "Shuffles the deck" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Baraja el mazo" } } } },
+    "Draws the next card" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Saca la siguiente carta" } } } },
+    "Start a Reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Empezar lectura" } } } }
   },
   "version" : "1.0"
 }

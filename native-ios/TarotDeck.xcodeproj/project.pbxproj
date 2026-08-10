@@ -32,6 +32,7 @@
 		A50000000000000000000003 /* card-copy.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000003 /* card-copy.es.v1.json */; };
 		A50000000000000000000004 /* card-meanings.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000004 /* card-meanings.es.v1.json */; };
 		A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* beginner-guide.es.v1.json */; };
+		A50000000000000000000006 /* required-interface-keys.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000006 /* required-interface-keys.v1.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,6 +64,7 @@
 		B50000000000000000000003 /* card-copy.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = card-copy.es.v1.json; sourceTree = "<group>"; };
 		B50000000000000000000004 /* card-meanings.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = card-meanings.es.v1.json; sourceTree = "<group>"; };
 		B50000000000000000000005 /* beginner-guide.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = beginner-guide.es.v1.json; sourceTree = "<group>"; };
+		B50000000000000000000006 /* required-interface-keys.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = required-interface-keys.v1.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -242,6 +244,7 @@
 			children = (
 				B10000000000000000000009 /* Assets.xcassets */,
 				B50000000000000000000002 /* Localizable.xcstrings */,
+				B50000000000000000000006 /* required-interface-keys.v1.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				A50000000000000000000003 /* card-copy.es.v1.json in Resources */,
 				A50000000000000000000004 /* card-meanings.es.v1.json in Resources */,
 				A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */,
+				A50000000000000000000006 /* required-interface-keys.v1.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

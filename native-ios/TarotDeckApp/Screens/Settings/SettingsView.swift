@@ -2,6 +2,8 @@ import Foundation
 import SwiftUI
 
 struct SettingsView: View {
+    @ObservedObject var languageStore: AppLanguageStore
+
     private enum Feedback: Hashable, Identifiable {
         case supportUnavailable
         case restoreUnavailable
@@ -78,6 +80,45 @@ struct SettingsView: View {
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibilityAddTraits(.isHeader)
+
+                    settingsSection(title: "Language") {
+                        VStack(alignment: .leading, spacing: 14) {
+                            HStack(spacing: 16) {
+                                Image(systemName: "globe")
+                                    .font(.system(.title2, weight: .light))
+                                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                                    .frame(width: 40)
+                                    .frame(minHeight: 44)
+                                    .accessibilityHidden(true)
+
+                                Text("App Language")
+                                    .font(.system(.title3, design: .serif, weight: .medium))
+                                    .foregroundStyle(CeremonialObsidianTheme.parchment)
+                            }
+
+                            Picker(
+                                AppLocalization.text("App Language"),
+                                selection: Binding(
+                                    get: { languageStore.language },
+                                    set: { languageStore.select($0) }
+                                )
+                            ) {
+                                ForEach(AppLanguage.allCases) { language in
+                                    Text(language.autonym)
+                                        .tag(language)
+                                        .accessibilityLanguage(language.accessibilityCode)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                            .tint(CeremonialObsidianTheme.brightGold)
+                            .frame(minHeight: 44)
+                            .accessibilityLabel("App Language")
+                            .accessibilityValue(languageStore.language.autonym)
+                            .accessibilityHint("Changes the app language immediately.")
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.vertical, 14)
+                    }
 
                     settingsSection(title: "Support") {
                         SettingsRow(
@@ -161,6 +202,16 @@ struct SettingsView: View {
                     action: { feedback = nil }
                 )
             )
+        }
+        .alert(
+            AppLocalization.text("Language Couldn't Be Changed"),
+            isPresented: $languageStore.showsIssueAlert
+        ) {
+            Button("OK") {
+                languageStore.dismissIssue()
+            }
+        } message: {
+            Text(languageStore.issueMessage)
         }
     }
 

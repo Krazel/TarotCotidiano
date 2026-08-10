@@ -4,16 +4,15 @@ import TarotDeckCore
 
 /// Unsigned internal composition root for the approved iPhone MVP surfaces.
 @main
+@MainActor
 struct TarotDeckInternalApp: App {
 #if DEBUG
-    private let contentResult: Result<TarotContent, Error>
+    @StateObject private var languageStore: AppLanguageStore
     @StateObject private var readModel: ReadFlowModel
     @StateObject private var favoriteStore: FavoriteCardsStore
 
     init() {
-        let loadedContent: Result<TarotContent, Error> = Result {
-            try TarotContentLoader.load()
-        }
+        let languageStore = AppLanguageStore()
         let applicationSupportURL = FileManager.default.urls(
             for: .applicationSupportDirectory,
             in: .userDomainMask
@@ -33,7 +32,7 @@ struct TarotDeckInternalApp: App {
             store: JSONDeckSessionStore(fileURL: sessionURL)
         )
         let knownCardIDs: Set<TarotCardID>
-        switch loadedContent {
+        switch languageStore.contentResult {
         case .success(let content):
             knownCardIDs = Set(content.cards.map { TarotCardID(rawValue: $0.id) })
         case .failure:
@@ -52,30 +51,36 @@ struct TarotDeckInternalApp: App {
                 knownCardIDs: Set(knownCardIDs.map(\.rawValue))
             )
         )
-        contentResult = loadedContent
+        _languageStore = StateObject(wrappedValue: languageStore)
     }
 #endif
 
     var body: some Scene {
         WindowGroup {
 #if DEBUG
-            switch contentResult {
-            case .success(let content):
-                TarotDeckMainShell(
-                    content: content,
-                    favoriteStore: favoriteStore,
-                    startThreeCardReading: { readModel.requestThreeCardReadingFromLearn() }
-                ) { inspectRevealedCard in
-                    ReadRootView(
-                        model: readModel,
+            Group {
+                switch languageStore.contentResult {
+                case .success(let content):
+                    TarotDeckMainShell(
                         content: content,
-                        inspectRevealedCard: inspectRevealedCard
-                    )
-                }
+                        languageStore: languageStore,
+                        favoriteStore: favoriteStore,
+                        startThreeCardReading: { readModel.requestThreeCardReadingFromLearn() }
+                    ) { inspectRevealedCard in
+                        ReadRootView(
+                            model: readModel,
+                            content: content,
+                            languageStore: languageStore,
+                            inspectRevealedCard: inspectRevealedCard
+                        )
+                    }
 
-            case .failure(let error):
-                TarotContentFailureView(message: error.localizedDescription)
+                case .failure(let error):
+                    TarotContentFailureView(message: error.localizedDescription)
+                }
             }
+            .environment(\.locale, languageStore.language.locale)
+            .accessibilityLanguage(languageStore.language.accessibilityCode)
 #else
             // This unsigned internal scheme is intentionally Debug-only. A distributable release
             // target, signing identity and final bundle identity remain separately unauthorized.

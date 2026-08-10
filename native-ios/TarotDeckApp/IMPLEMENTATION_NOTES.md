@@ -1,12 +1,12 @@
 # Tarot Deck internal SwiftUI implementation inventory
 
-Status: unsigned internal iPhone implementation of the approved English Read, Learn, Cards and Settings MVP surfaces. It is not a distributable target.
+Status: unsigned internal iPhone implementation of the approved English/Spanish Read, Learn, Cards and Settings MVP surfaces. It is not a distributable target.
 
 ## Approved visual boundary
 
-The live Read flow follows the approved Ceremonial Obsidian references V-014, V-024, V-028–V-032, V-035–V-038, V-011/V-012 and V-017/V-018. V-037/V-038 are the current One Card face-down references and supersede V-033/V-034: once the single card is drawn, the remaining deck disappears. Learn, Cards and upright meaning follow V-019–V-023.
+The live Read flow follows the approved Ceremonial Obsidian references V-014, V-028–V-040 and V-044–V-048. V-044 supersedes the earlier empty Home; V-046/V-047 govern the portrait Three Cards table; V-040 governs its large landscape composition; and V-048 governs motion. V-037/V-038 remain the current One Card face-down references: once the single card is drawn, the remaining deck becomes visually absent without collapsing its reserved frame. Learn, Cards and upright meaning follow V-019–V-023 plus the A-031 editorial `Upright meaning / Significado al derecho` heading.
 
-Settings follows V-025; V-024's discreet gear opens it from both empty and active Read Home states. StoreKit products, prices, App Store rating and published legal URLs remain unavailable and unauthorized. Each row therefore gives explicit native internal-build feedback instead of invoking a dead callback, fabricated destination or simulated purchase.
+Settings follows V-045; V-044's overlaid gear opens it from both empty and active Read Home states. Its app-owned selector atomically validates and swaps the complete English or Spanish UI/content snapshot. StoreKit products, prices, App Store rating and published legal URLs remain unavailable and unauthorized. Each row therefore gives explicit native internal-build feedback instead of invoking a dead callback, fabricated destination or simulated purchase.
 
 ## Live source inventory
 
@@ -16,13 +16,15 @@ Favorites follows V-042/V-043 without adding a tab or account.
 - `App/TarotDeckMainShell.swift`: persistent `Read / Learn / Cards` shell and revealed-card meaning sheet.
 - `Internal/ReadFlowModel.swift`: one durable reading coordinator plus layout continuity metadata.
 - `Internal/FavoriteCardsStore.swift`: one app-owned set of canonical favorite IDs with versioned atomic JSON persistence.
-- `Screens/Read/ReadViews.swift`: responsive Read Home, Layout Choice and generic One/Three Card table.
+- `Screens/Read/ReadViews.swift`: responsive Read Home, Layout Choice and generic One/Three Card table. Empty Home keeps its normal-size non-scrolling V-044 composition, uses a compact fitting variant on small iPhones, and permits scrolling only for accessibility Dynamic Type while the Settings gear remains overlaid.
 - `Screens/Learn/LearnViews.swift`: six-article beginner guide.
 - `Screens/Cards/CardsViews.swift`: 78-card library, Favorites plus six deck filters, empty Favorites state, upright meaning, non-wrapping previous/next and Dynamic Type-aware one/two-column presentation.
 - `Screens/Settings/SettingsView.swift`: approved Settings index with safe internal-build availability feedback and bundle-derived version display.
-- `Content/TarotContent.swift`: strict 78/78/6 loading and required artwork descriptions.
+- `Content/AppLocalization.swift`: one persistent iOS 16 language store, language-specific String Catalog lookup and atomic content swapping. English is the String Catalog source language read from the main bundle and does not require a physical `en.lproj`; Spanish requires `es.lproj`. Before commit it resolves every key listed in the versioned runtime interface manifest, so an incomplete language cannot produce a mixed snapshot.
+- `Content/TarotContent.swift`: strict language-explicit 78/78/6 loading and required artwork descriptions.
+- `Resources/required-interface-keys.v1.json`: target-bundled manifest that must exactly match every String Catalog key and is validated for the candidate language before selection commits.
 - `Components/TarotArtworkView.swift`: local hash-verified historical candidates and an explicit `ART PENDING` ceremonial fallback.
-- `Design/CeremonialMotion.swift`: approved iOS 16 motion tokens, shuffle presentation, card-turn transition and post-commit haptics.
+- `Design/CeremonialMotion.swift`: approved iOS 16 press/cut/interleave/settle/deal/flip tokens and post-landing haptics.
 
 The earlier S03.2–S03.4 fixture files remain in the repository as visual implementation history but are not compiled by the app target. The deleted provisional harness is no longer referenced by the Xcode project.
 
@@ -46,9 +48,9 @@ Favorites is independent from `DeckSession`. The single `FavoriteCardsStore` is 
 
 ## Motion boundary
 
-V-041 and `design/tarot-deck/MOTION_SPEC.md` define the live motion language. Read surfaces cross-fade with a restrained scale, a committed shuffle performs a short two-cut settle, newly drawn cards arrive from the deck direction, and a committed reveal uses a vertical-axis card turn. Primary controls have a short tactile press response.
+V-048 and `design/tarot-deck/MOTION_SPEC.md` define the live motion language. Read surfaces cross-fade with a restrained scale, a committed shuffle performs press/cut/interleave/fixed-duration settle, a committed draw follows an animatable curved geometry effect from the still-visible deck anchor to the reserved slot, and committed reveal/conceal use independent animatable two-surface vertical-axis turns whose destination face remains hidden until the midpoint. The deck itself is the one contextual shuffle/draw control and remains visually reserved through final-card landing before becoming transparent without reflow.
 
-Motion observes only the already-published `DeckSession` signature, so a failed save cannot trigger a success haptic or reveal animation. Restoration establishes a baseline without replay. Backgrounding or leaving the table cancels transient shuffle layers. Reduce Motion and VoiceOver replace displacement, scale and 3D turns with short opacity changes; decorative deck copies remain hidden from accessibility. The implementation uses only SwiftUI/UIKit APIs available on iOS 16 and contains no looping ambience, particles or iOS 17 motion APIs.
+Motion observes only the already-published `DeckSession` signature, so a failed save cannot trigger a success haptic or animation. Presentation keeps its own cancellable token and stable visual baseline; the success haptic fires only after settle, landing or flip completion while the scene remains active. Restoration, rotation, backgrounding or leaving the table cancels overlays and establishes the latest committed state without replay. Reduce Motion and VoiceOver replace displacement, scale and 3D turns with short opacity changes; decorative packets and dealt overlays remain hidden from accessibility while the committed position supplies semantics. The implementation uses only SwiftUI/UIKit APIs available on iOS 16 and contains no looping ambience, particles or iOS 17 motion APIs.
 
 ## Artwork boundary
 

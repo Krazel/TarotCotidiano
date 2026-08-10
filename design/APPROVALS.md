@@ -1,6 +1,6 @@
 # Visual Approval Register
 
-Updated: 2026-08-09
+Updated: 2026-08-10
 
 > Historical scope notice: the owner replaced Daily Tarot with the Tarot Deck product on 2026-08-09. The approvals below remain valid records of the former product and visual language, but they do not authorize implementation of any Tarot Deck screen. New approvals are tracked from `S03.2` onward in `design/TAROT_DECK_VISUAL_BRIEF.md` and `DECISIONS.md`.
 
@@ -151,5 +151,10 @@ On 2026-08-09 the owner approved V-011/V-012 and explicitly authorized subsequen
 | V-041 | Reading Table motion storyboard | `design/tarot-deck/reading-table-motion-storyboard-a-ceremonial-obsidian.png` | Approved by A-021/A-029; 1774×887; SHA-256 `30D49233D041893FAC2783D72F90A9C737BA49F74A25EE547EC022D31CBC3E64`. Defines rest, shuffle, draw and reveal keyframes; implementation follows `design/tarot-deck/MOTION_SPEC.md`. |
 | V-042 | Card Detail, favorite saved | `design/tarot-deck/card-detail-library-favorite-saved-a-ceremonial-obsidian.png` | Approved by A-021/A-030; 862×1824; SHA-256 `5794D4C345BAF1BB52F783DE9C3D49D7D64DAA31BDA4083770AF3E2B8A957389`. |
 | V-043 | Cards, Favorites empty | `design/tarot-deck/cards-library-favorites-empty-a-ceremonial-obsidian.png` | Approved by A-021/A-030; 854×1840; SHA-256 `62AED89CC28393E7FD2BC9B06F99240D576EA61FC90F39C8511DBDBA11FFCA87`. |
+| V-044 | Read Home, compact deck CTA, Spanish | `design/tarot-deck/read-home-compact-deck-cta-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-031; 864×1821; SHA-256 `392546D9B7B676E8348B42000206070ACDA5753867AED635DBC8C60C80619E5E`. Supersedes V-024 for empty Home; English uses the same composition. |
+| V-045 | Settings with language selector, Spanish | `design/tarot-deck/settings-language-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-031; 853×1844; SHA-256 `559D2E73882A723A24C55EBFF038CEEA9452B1CB62BD4A1C9E4ABF8E20518615`. Supersedes V-025. |
+| V-046 | Three Cards ready, deck tap, Spanish | `design/tarot-deck/reading-table-three-cards-deck-tap-ready-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-031; corrected 2026-08-10 to show `Pasado / Presente / Futuro` and the shared fixed slot anchor; 861×1827; SHA-256 `C05A106C77884EEA07C28B5E2BA677875F678E4FAD5F97AAAAF553D636082BBD`. Supersedes V-015 portrait interaction. |
+| V-047 | Three Cards, all face down and centered, Spanish | `design/tarot-deck/reading-table-three-cards-face-down-centered-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-031; corrected 2026-08-10 so the three labelled cards retain V-046's exact horizontal group and vertical slot anchor after the deck disappears; 862×1825; SHA-256 `E2218EC5FFB80986B6A72D72DD0E710F8DFBCEB8D39060637F0A49CA0C26F77E`. |
+| V-048 | Professional reading motion V2 | `design/tarot-deck/reading-table-professional-motion-storyboard-v2-a-ceremonial-obsidian.png` | Approved by A-021/A-031; 1672×941; SHA-256 `937F89E3DF7D2161E6AD2C835A4201135161E6ADED083A4BE52B8773A58190F0`. Supersedes V-041. |
 
 Accessibility adaptations remain allowed: safe areas, Dynamic Type, VoiceOver, contrast, 44-point targets, Reduced Motion and native scrolling, while preserving hierarchy, copy and Ceremonial Obsidian character.

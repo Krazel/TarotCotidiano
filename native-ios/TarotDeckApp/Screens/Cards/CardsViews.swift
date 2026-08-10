@@ -313,15 +313,11 @@ struct CardMeaningView: View {
                             )
                         )
 
-                    meaningSection(title: AppLocalization.text("Meaning"), body: meaning.uprightMeaning)
+                    meaningSection(
+                        title: AppLocalization.text("Upright meaning"),
+                        body: meaning.uprightMeaning
+                    )
                     meaningSection(title: AppLocalization.text("In a reading"), body: meaning.inAReading)
-
-                    Label("Upright", systemImage: "sparkles")
-                        .font(.system(.body, design: .serif, weight: .medium))
-                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                        .padding(.horizontal, 18)
-                        .frame(minHeight: 44)
-                        .background(Capsule().stroke(CeremonialObsidianTheme.gold.opacity(0.55)))
 
                     controls
                 }

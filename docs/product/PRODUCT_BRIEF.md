@@ -1,6 +1,6 @@
 # Tarot Deck — Product Brief
 
-Status: active expanded MVP baseline under A-020, A-021, A-022, A-027, and A-028
+Status: active expanded MVP baseline under A-020, A-021, A-022, A-027, A-028, A-030, and A-031
 First release: iPhone only, English and Spanish
 Date: 2026-08-10
 
@@ -72,12 +72,14 @@ The MVP proves that promise through:
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
 10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
 11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
+12. **The deck is the control.** On Home the deck starts a reading; on the table the same visible deck shuffles or draws according to the current state. A duplicate primary button must not compete with it.
+13. **The viewport does not jump.** Persistent controls, the deck frame, reading positions, and visible tab bar keep stable geometry while labels and logical states change; motion happens inside those bounds.
 
 ## Three product loops
 
 ### Read
 
-1. Open `Read` and resume the active reading or start a new one.
+1. Open `Read`; when no reading exists, tap the prominent deck to start one, otherwise resume the active reading or deliberately replace it.
 2. Choose `One Card` or `Three Cards`; for three cards, choose a named spread or `Open reading`.
 3. Shuffle the complete deck.
 4. Draw cards one at a time; each arrives face down and cannot repeat.
@@ -113,9 +115,9 @@ The MVP has three primary iPhone destinations:
 - **Learn:** beginner guide index and articles.
 - **Cards:** complete library and card detail.
 
-A standard three-destination iOS navigation shell keeps them directly reachable. An active reading remains intact when the user visits Learn or Cards. Detail views return to their source context; a meaning opened from a reading returns to the same reading, while a card opened from the library returns to the same filter and position.
+A standard three-destination iOS navigation shell keeps them directly reachable. Its visible tab bar uses a stable opaque or strongly translucent Ceremonial Obsidian surface so labels and selected state remain legible and content never causes the bar to change height, opacity, or position. An active reading remains intact when the user visits Learn or Cards. Detail views return to their source context; a meaning opened from a reading returns to the same reading, while a card opened from the library returns to the same filter and position.
 
-A discreet settings gear in `Read` opens secondary controls. Settings is not a fourth primary destination and never replaces or interrupts the deck flow.
+A discreet settings gear overlays the `Read` safe area without reserving layout height. Settings is not a fourth primary destination and never replaces or interrupts the deck flow. The empty Home is a compact, non-scrolling first viewport: concise identity, one centered hero deck, its start cue, and the stable tab bar; it has no long introductory block or separate primary button.
 
 Exact visual presentation remains governed by the registered screen images.
 
@@ -124,9 +126,10 @@ Exact visual presentation remains governed by the registered screen images.
 ### Included
 
 1. **Read**
-   - Deck home with `New Reading` or `Resume Reading`.
+   - Compact empty Deck Home with the centered deck itself as `Start a Reading` / `Empezar lectura`; active Home retains `Resume Reading` and deliberate replacement.
    - Neutral `One Card`, three named `Three Cards` spreads, and an open three-card option.
-   - Explicit shuffle, one-at-a-time draw, independent reveal, and deliberate end.
+   - Tap the table deck to shuffle when unshuffled and to draw the next card when shuffled; no duplicate primary shuffle/draw button.
+   - One-at-a-time draw, independent reveal, deliberate end, stable viewport, centered completed layouts, and professional motion governed by V-048.
    - Meaning available only after tapping a revealed card.
 
 2. **Learn**
@@ -142,7 +145,7 @@ Exact visual presentation remains governed by the registered screen images.
 3. **Cards**
    - All 78 cards in canonical order.
    - Filters for favorites, all cards, Major Arcana, and the four suits.
-   - Large card detail with identity, upright keywords, concise meaning, practical reading note, favorite control, and previous/next browsing.
+   - Large card detail with identity, `Upright meaning` / `Significado al derecho` as an editorial heading, upright keywords, concise meaning, practical reading note, favorite control, and previous/next browsing.
 
 4. **Deck and content integrity**
    - Standard 22 Major Arcana plus 56 Minor Arcana.
@@ -157,12 +160,14 @@ Exact visual presentation remains governed by the registered screen images.
    - Favorite card IDs are stored only on the device and excluded from device backup. No question, interpretation, note, reading history, or learning progress is collected.
 
 6. **Release foundations**
-   - iPhone/iOS only and all app-owned copy in English and Spanish, selected through the iOS app-language setting with English fallback.
+   - iPhone/iOS only and all app-owned copy in English and Spanish.
+   - An internal `English / Español` selector in Settings changes the whole app immediately and persists the explicit choice. First installation follows Spanish iOS when applicable and otherwise uses English; English remains the complete fallback.
    - VoiceOver, Dynamic Type, sufficient contrast, Reduce Motion compatibility, and 44-point touch targets.
    - Core use works in airplane mode and requests no permission.
 
 7. **Settings and planned voluntary support**
    - A discreet settings gear in `Read`; no fourth tab.
+   - The first Settings control is the persistent internal `English / Español` selector; switching language never resets or mutates a reading.
    - Separate rows for `Support the App`, `Restore Purchases`, `Privacy`, `Terms`, and `Rate the App`.
    - Three provisional monthly levels—`Monthly Supporter`, `Kind Supporter`, and `Generous Supporter`—with equivalent product access and benefits. Exact product identifiers and prices are not defined here.
    - A clear supporter state and thank-you after a verified entitlement.
@@ -192,7 +197,7 @@ The MVP has one central job—help the user read a physical-style deck—and two
 - Network-fetched tarot or learning content, remote content management, analytics, or generative content. Future StoreKit support, restoration, legal links, and App Store rating may use Apple or system services without making core use network-dependent.
 - Promotional support prompts in the first-use experience, during a reading, while revealing or inspecting a card, or during another critical task. The MVP keeps support discoverable in Settings instead of interrupting use.
 - Onboarding carousel or mandatory tutorial.
-- Android, iPad, web, Apple Watch, widgets, languages other than English and Spanish, or an in-app language picker.
+- Android, iPad, web, Apple Watch, widgets, or languages other than English and Spanish.
 - Publishing, App Store submission, or external services without separate authorization.
 
 ## Deck and content model
@@ -251,7 +256,7 @@ Reference copy describes possibilities, not certainties. It must not diagnose, p
 - `faceUpCardIDs`: the subset currently turned over.
 - `phase`: setup, ready to shuffle, ready to draw, in progress, or complete.
 
-Only the reading session is durable app-authored product state. A supporter entitlement is owned and verified through the App Store and may be cached locally for presentation; it is not an account, reading record, or access gate. Focused presentation, selected tab, Learn article, Cards filter, library position, and scroll offsets may reset without data loss.
+The reading session, favorite card IDs, and explicit app-language choice are the only durable app-authored product state. `preferredLanguage` is either `en` or `es`, uses stable content IDs, and changes presentation without migrating or rewriting a session. A supporter entitlement is owned and verified through the App Store and may be cached locally for presentation; it is not an account, reading record, or access gate. Focused presentation, selected tab, Learn article, Cards filter, library position, and scroll offsets may reset without data loss.
 
 ### Voluntary support model
 
@@ -279,8 +284,11 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 ## MVP success signals
 
 - A first-time user can start a one-card or three-card reading without mandatory onboarding.
+- On an empty Home, the deck is the unmistakable start control above the fold; the gear does not displace it and the initial surface does not scroll.
 - The user understands the deck's unshuffled, shuffled, drawn, revealed, and complete states.
 - Every draw is deliberate and no card repeats within a reading.
+- Tapping the table deck performs exactly one phase-appropriate action—shuffle before readiness, draw afterward—and no duplicate primary control appears.
+- Reading positions, the deck frame, and persistent chrome do not jump during press, cut, interleave, deal, reveal, restoration, or orientation changes; the three-card composition remains mathematically centered horizontally and retains one fixed vertical slot anchor throughout the reading.
 - An interrupted reading resumes with the same order, cards, and face states.
 - Tapping a revealed card opens the correct meaning and returning leaves the table unchanged.
 - A learner can find and finish any of the six guide articles without creating progress state.
@@ -289,6 +297,7 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - Every card detail uses the same localized name and reference content as reading context.
 - Core use works in airplane mode and requests no permission.
 - Settings is reachable from Read without creating a fourth tab, and dismissing it preserves the exact reading state.
+- Switching `English / Español` in Settings updates all visible app-owned copy immediately, persists after relaunch, preserves stable IDs and reading state, and never leaves a mixed-language surface.
 - Every planned support level communicates the same access and recognition; no purchase state changes core functionality.
 - Support clearly discloses monthly auto-renewal and Apple-managed cancellation before purchase, while Restore Purchases, Privacy, Terms, and a separate Rate the App action remain findable.
 - VoiceOver identifies tabs, reading positions and face states, library position, card identity, artwork description, headings, and actions.
@@ -304,10 +313,12 @@ The expanded MVP is release-candidate ready when:
 5. All 78 rights-cleared faces and the shared back are bundled; provenance is documented and no provisional asset is treated as production-ready.
 6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.
 7. Functional, content-integrity, persistence, accessibility, orientation, and recovery tests pass on iPhone using macOS/Xcode.
-8. Every visible string and all 78 card references are complete in English and Spanish, core flows work offline, and no account, analytics, notification, or personal-data collection exists.
-9. Settings is accessible from Read and contains the separate support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
+8. Every visible string and all 78 card references are complete in English and Spanish; the internal selector changes the complete validated language bundle immediately, persists its explicit choice, and preserves all language-neutral IDs and reading state. Core flows work offline, and no account, analytics, notification, or personal-data collection exists.
+9. Settings is accessible from the overlaid Read gear and contains language, support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
 10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
-11. Final implementation captures have been compared with the registered references at matching sizes.
+11. Home and Reading Table use the deck as the single phase-appropriate CTA, keep their required viewport geometry stable, center the completed three-card layout, and implement the professional V-048 press/cut/interleave/deal/flip sequence with an equivalent Reduce Motion path.
+12. `Upright meaning` / `Significado al derecho` renders as a semantic heading, never as a button, capsule, toggle, or promise of reversed meanings.
+13. Final implementation captures have been compared with the registered references at matching sizes.
 
 Commit, push, TestFlight, App Store submission, and publication remain separate actions requiring explicit authorization.
 

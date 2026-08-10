@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 enum TarotPrimaryDestination: Hashable {
     case read
@@ -8,6 +9,7 @@ enum TarotPrimaryDestination: Hashable {
 
 struct TarotDeckMainShell<ReadContent: View>: View {
     let content: TarotContent
+    @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var favoriteStore: FavoriteCardsStore
     let startThreeCardReading: () -> Void
     let readContent: (@escaping (String) -> Void) -> ReadContent
@@ -17,14 +19,17 @@ struct TarotDeckMainShell<ReadContent: View>: View {
 
     init(
         content: TarotContent,
+        languageStore: AppLanguageStore,
         favoriteStore: FavoriteCardsStore,
         startThreeCardReading: @escaping () -> Void,
         @ViewBuilder readContent: @escaping (@escaping (String) -> Void) -> ReadContent
     ) {
         self.content = content
+        self.languageStore = languageStore
         self.favoriteStore = favoriteStore
         self.startThreeCardReading = startThreeCardReading
         self.readContent = readContent
+        Self.configureTabBarAppearance()
     }
 
     var body: some View {
@@ -49,6 +54,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
                     }
                 )
             }
+            .id("learn-\(languageStore.language.rawValue)")
             .tag(TarotPrimaryDestination.learn)
             .tabItem {
                 Label("Learn", systemImage: "sparkles")
@@ -57,6 +63,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             NavigationStack {
                 CardsLibraryView(content: content, favoriteStore: favoriteStore)
             }
+            .id("cards-\(languageStore.language.rawValue)")
             .tag(TarotPrimaryDestination.cards)
             .tabItem {
                 Label("Cards", systemImage: "rectangle.on.rectangle")
@@ -100,6 +107,17 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             Text(favoriteStore.issueMessage)
         }
         .preferredColorScheme(.dark)
+        .environment(\.locale, languageStore.language.locale)
+        .accessibilityLanguage(languageStore.language.accessibilityCode)
+    }
+
+    private static func configureTabBarAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor(CeremonialObsidianTheme.background)
+        appearance.shadowColor = UIColor(CeremonialObsidianTheme.gold.opacity(0.28))
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }
 

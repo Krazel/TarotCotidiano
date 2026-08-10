@@ -5,6 +5,7 @@ import TarotDeckCore
 struct ReadRootView: View {
     @ObservedObject var model: ReadFlowModel
     let content: TarotContent
+    @ObservedObject var languageStore: AppLanguageStore
     let inspectRevealedCard: (String) -> Void
     @State private var showsSettings = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -89,7 +90,7 @@ struct ReadRootView: View {
         }
         .sheet(isPresented: $showsSettings) {
             NavigationStack {
-                SettingsView()
+                SettingsView(languageStore: languageStore)
             }
             .presentationDragIndicator(.visible)
         }
@@ -132,80 +133,157 @@ private struct ReadRestoringView: View {
 private struct ReadHomeView: View {
     @ObservedObject var model: ReadFlowModel
     let openSettings: () -> Void
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    private let homeControlClearance: CGFloat = 64
 
     var body: some View {
         ZStack {
             CeremonialBackdrop()
 
-            ScrollView {
-                VStack(spacing: 18) {
-                    HStack {
-                        Spacer()
-                        Button(action: openSettings) {
-                            Image(systemName: "gearshape")
-                                .font(.system(.title2, weight: .medium))
-                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                                .frame(width: 44, height: 44)
-                                .contentShape(Rectangle())
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Settings")
-                        .accessibilityHint("Opens app settings without changing your reading")
-                    }
-
-                    VStack(spacing: 7) {
-                        Text("Tarot Deck")
-                            .font(.system(.largeTitle, design: .serif, weight: .semibold))
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityAddTraits(.isHeader)
-
-                        Text("Your deck, always with you.")
-                            .font(.system(.title3, design: .serif))
-                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                    }
-
-                    CeremonialCardBack(spokenLabel: "Complete 78-card tarot deck")
-                        .frame(maxWidth: model.hasActiveReading ? 260 : 320)
-                        .padding(.vertical, 4)
-
-                    if let session = model.session, let layout = model.layout {
-                        activeReading(layout: layout, session: session)
-                    } else {
-                        emptyReading
-                    }
-                }
-                .frame(maxWidth: 680)
-                .padding(.horizontal, 26)
-                .padding(.top, 26)
-                .padding(.bottom, 30)
-                .frame(maxWidth: .infinity)
+            if let session = model.session, let layout = model.layout {
+                activeHome(layout: layout, session: session)
+            } else {
+                emptyHome
             }
-            .scrollIndicators(.hidden)
+        }
+        .overlay(alignment: .topTrailing) {
+            Button(action: openSettings) {
+                Image(systemName: "gearshape")
+                    .font(.system(.title2, weight: .medium))
+                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .padding(.top, 12)
+            .padding(.trailing, 18)
+            .accessibilityLabel("Settings")
+            .accessibilityHint("Opens app settings without changing your reading")
         }
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .toolbar(.hidden, for: .navigationBar)
     }
 
-    private var emptyReading: some View {
-        VStack(spacing: 18) {
-            Text("78 cards")
-                .font(.system(.body, design: .serif, weight: .medium))
-                .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                .padding(.horizontal, 18)
-                .frame(minHeight: 44)
-                .background(Capsule().stroke(CeremonialObsidianTheme.gold.opacity(0.55)))
+    private var emptyHome: some View {
+        GeometryReader { proxy in
+            let usableHeight = max(proxy.size.height - homeControlClearance, 1)
+            let regularDeckWidth = min(
+                max(proxy.size.width - 64, 220),
+                320,
+                max(usableHeight - 180, 260) * CeremonialObsidianTheme.deckAspectRatio
+            )
+            let compactDeckWidth = min(
+                max(proxy.size.width - 80, 180),
+                238,
+                max(usableHeight - 150, 220) * CeremonialObsidianTheme.deckAspectRatio
+            )
 
-            Text("Shuffle, draw, and read in your own way.")
-                .font(.system(.title3, design: .serif))
-                .multilineTextAlignment(.center)
+            VStack(spacing: 0) {
+                HStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    Color.clear
+                        .frame(
+                            width: homeControlClearance,
+                            height: homeControlClearance
+                        )
+                        .accessibilityHidden(true)
+                }
 
-            Button("New Reading") {
-                model.requestNewReading()
+                Group {
+                    if dynamicTypeSize.isAccessibilitySize {
+                        ScrollView {
+                            emptyHomeComposition(
+                                deckWidth: min(compactDeckWidth, 210),
+                                compact: true
+                            )
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 28)
+                        }
+                        .scrollIndicators(.hidden)
+                    } else {
+                        ViewThatFits(in: .vertical) {
+                            emptyHomeComposition(deckWidth: regularDeckWidth, compact: false)
+                            emptyHomeComposition(deckWidth: compactDeckWidth, compact: true)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
             }
-            .buttonStyle(CeremonialPrimaryButtonStyle())
-            .disabled(model.isBusy)
+            .padding(.horizontal, 28)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+    }
+
+    private func emptyHomeComposition(deckWidth: CGFloat, compact: Bool) -> some View {
+        VStack(spacing: compact ? 10 : 16) {
+            Text("Tarot Deck")
+                .font(.system(compact ? .title : .largeTitle, design: .serif, weight: .semibold))
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+
+            Button {
+                model.requestNewReading()
+            } label: {
+                ZStack {
+                    CeremonialCardBack(spokenLabel: "")
+                        .offset(y: 12)
+                        .opacity(0.34)
+                        .accessibilityHidden(true)
+                    CeremonialCardBack(spokenLabel: "")
+                        .offset(y: 6)
+                        .opacity(0.62)
+                        .accessibilityHidden(true)
+                    CeremonialCardBack(spokenLabel: "")
+                }
+                .frame(width: deckWidth, height: deckWidth / CeremonialObsidianTheme.deckAspectRatio)
+                .shadow(color: CeremonialObsidianTheme.brightGold.opacity(0.23), radius: 18)
+            }
+            .buttonStyle(.plain)
+            .disabled(model.isBusy)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("Start a Reading")
+            .accessibilityHint("Complete 78-card tarot deck")
+
+            Text("Tap the deck to begin")
+                .font(.system(compact ? .body : .title3, design: .serif, weight: .medium))
+                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.top, compact ? 24 : 38)
+        .padding(.bottom, compact ? 18 : 22)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func activeHome(layout: ReadingLayout, session: DeckSession) -> some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                VStack(spacing: 7) {
+                    Text("Tarot Deck")
+                        .font(.system(.largeTitle, design: .serif, weight: .semibold))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibilityAddTraits(.isHeader)
+
+                    Text("Your deck, always with you.")
+                        .font(.system(.title3, design: .serif))
+                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                }
+
+                CeremonialCardBack(spokenLabel: "Complete 78-card tarot deck")
+                    .frame(maxWidth: 260)
+                    .padding(.vertical, 4)
+
+                activeReading(layout: layout, session: session)
+            }
+            .frame(maxWidth: 680)
+            .padding(.horizontal, 26)
+            .padding(.top, 70)
+            .padding(.bottom, 30)
+            .frame(maxWidth: .infinity)
+        }
+        .scrollIndicators(.hidden)
     }
 
     private func activeReading(layout: ReadingLayout, session: DeckSession) -> some View {
@@ -504,10 +582,16 @@ private struct ReadingTableView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var shufflePhase = 0
-    @State private var previousVisualState: ReadingVisualState?
-    @State private var shuffleTask: Task<Void, Never>?
+    @State private var visualBaseline: ReadingVisualState?
+    @State private var presentationTask: Task<Void, Never>?
+    @State private var presentationToken: UUID?
+    @State private var presentationLocked = false
+    @State private var dealingPosition: Int?
+    @State private var dealProgress: CGFloat = 0
+    @State private var flippingPosition: Int?
+    @State private var flipProgress: CGFloat = 0
+    @State private var flipRevealing = true
     @AccessibilityFocusState private var focusedReadingPosition: Int?
 
     var body: some View {
@@ -520,89 +604,110 @@ private struct ReadingTableView: View {
                 if isLandscape {
                     landscapeContent(size: proxy.size)
                 } else {
-                    portraitContent
+                    portraitContent(size: proxy.size)
                 }
+            }
+            .overlayPreferenceValue(ReadingMotionAnchorPreferenceKey.self) { anchors in
+                GeometryReader { coordinateProxy in
+                    dealOverlay(anchors: anchors, proxy: coordinateProxy)
+                }
+            }
+            .onChange(of: isLandscape) { _ in
+                cancelTransientMotion(establishing: visualState)
             }
         }
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             // Restoration and rotation establish a baseline without replaying motion or haptics.
-            previousVisualState = visualState
+            visualBaseline = visualState
         }
         .onChange(of: visualState) { newState in
             respondToDurableStateChange(newState)
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase != .active {
-                cancelTransientMotion()
+                cancelTransientMotion(establishing: visualState)
             }
         }
+        .onChange(of: reduceMotion) { _ in
+            cancelTransientMotion(establishing: visualState)
+        }
+        .onChange(of: voiceOverEnabled) { _ in
+            cancelTransientMotion(establishing: visualState)
+        }
         .onDisappear {
-            cancelTransientMotion()
+            cancelTransientMotion(establishing: visualState)
         }
     }
 
-    private var portraitContent: some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                header
-                positions(showLabels: model.layout == .threeCards)
-                    .frame(maxWidth: model.layout == .oneCard ? 360 : 620)
-                    .padding(.horizontal, model.layout == .oneCard ? 52 : 18)
-
-                if shouldShowDeck {
-                    deck
-                        .frame(maxWidth: 220)
-                }
-
-                actionArea
-                    .frame(maxWidth: 420)
-                    .padding(.horizontal, 26)
+    @ViewBuilder
+    private func portraitContent(size: CGSize) -> some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            ScrollView {
+                portraitLayout
+                    .frame(height: max(size.height, 820))
             }
-            .padding(.top, 8)
-            .padding(.bottom, 24)
-            .frame(maxWidth: .infinity)
+            .scrollIndicators(.hidden)
+        } else {
+            portraitLayout
         }
-        .scrollIndicators(.hidden)
+    }
+
+    private var portraitLayout: some View {
+        VStack(spacing: 0) {
+            header
+                .frame(height: 72)
+
+            readingStage(isLandscape: false)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            actionArea
+                .frame(height: 96)
+                .padding(.horizontal, 26)
+        }
+        .padding(.top, 4)
+        .padding(.bottom, 10)
     }
 
     private func landscapeContent(size: CGSize) -> some View {
-        let railWidth = min(max(size.width * 0.21, 148), 190)
+        let railWidth = min(max(size.width * 0.22, 154), 200)
 
         return HStack(spacing: 16) {
-            ScrollView {
-                VStack(spacing: 10) {
-                    HStack {
-                        backButton
-                        Spacer(minLength: 0)
-                    }
-
-                    VStack(spacing: 3) {
-                        Text(model.layout?.title ?? AppLocalization.text("Reading"))
-                            .font(.system(.title2, design: .serif, weight: .semibold))
-                            .multilineTextAlignment(.center)
-                            .accessibilityAddTraits(.isHeader)
-                        Text(statusText)
-                            .font(.subheadline)
-                            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                            .multilineTextAlignment(.center)
-                    }
-
-                    if shouldShowDeck {
-                        deck
-                            .frame(maxHeight: model.layout == .oneCard ? 132 : 112)
-                    }
-
-                    actionArea
+            VStack(spacing: 8) {
+                HStack {
+                    backButton
+                    Spacer(minLength: 0)
                 }
-                .frame(maxWidth: .infinity)
+
+                VStack(spacing: 3) {
+                    Text(model.layout?.title ?? AppLocalization.text("Reading"))
+                        .font(.system(.title2, design: .serif, weight: .semibold))
+                        .multilineTextAlignment(.center)
+                        .accessibilityAddTraits(.isHeader)
+                    Text(statusText)
+                        .font(.subheadline)
+                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                        .multilineTextAlignment(.center)
+                }
+
+                Spacer(minLength: 0)
+
+                deckControl
+                    .frame(maxWidth: 132, maxHeight: 152)
+                    .anchorPreference(
+                        key: ReadingMotionAnchorPreferenceKey.self,
+                        value: .bounds,
+                        transform: { [.deck: $0] }
+                    )
+                    .opacity(shouldShowDeck ? 1 : 0)
+                    .allowsHitTesting(shouldShowDeck)
+
+                actionArea
             }
-            .scrollIndicators(.hidden)
             .frame(width: railWidth)
 
-            positions(showLabels: model.layout == .threeCards)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            readingStage(isLandscape: true)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
@@ -646,34 +751,81 @@ private struct ReadingTableView: View {
     }
 
     @ViewBuilder
-    private func positions(showLabels: Bool) -> some View {
+    private func readingStage(isLandscape: Bool) -> some View {
         if let layout = model.layout {
-            HStack(spacing: layout == .oneCard ? 0 : 11) {
-                ForEach(0..<layout.cardLimit, id: \.self) { index in
-                    VStack(spacing: showLabels ? 4 : 0) {
-                        if showLabels {
-                            Text(positionTitle(at: index))
-                                .font(.system(.caption, design: .serif, weight: .semibold))
-                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.72)
-                                .frame(minHeight: 20)
-                                .accessibilityHidden(true)
+            GeometryReader { proxy in
+                let gap: CGFloat = isLandscape ? 16 : 11
+                let count = CGFloat(layout.cardLimit)
+                let availableWidth = max(proxy.size.width - (isLandscape ? 24 : 36), 1)
+                let widthFromRow = (availableWidth - gap * max(count - 1, 0)) / count
+                let heightLimit = isLandscape
+                    ? max(proxy.size.height - 34, 1)
+                    : max(proxy.size.height * (layout == .threeCards ? 0.45 : 0.52), 1)
+                let widthFromHeight = heightLimit * CeremonialObsidianTheme.cardAspectRatio
+                let cardWidth = min(
+                    widthFromRow,
+                    widthFromHeight,
+                    layout == .oneCard ? (isLandscape ? 300 : 250) : (isLandscape ? 230 : 118)
+                )
+                let cardHeight = cardWidth / CeremonialObsidianTheme.cardAspectRatio
+                let groupWidth = cardWidth * count + gap * max(count - 1, 0)
+                let slotCenterY = isLandscape
+                    ? proxy.size.height / 2
+                    : max(cardHeight / 2 + 28, proxy.size.height * 0.34)
+
+                HStack(spacing: gap) {
+                    ForEach(0..<layout.cardLimit, id: \.self) { index in
+                        VStack(spacing: layout == .threeCards ? 4 : 0) {
+                            if layout == .threeCards {
+                                Text(positionTitle(at: index))
+                                    .font(.system(.caption, design: .serif, weight: .semibold))
+                                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                                    .lineLimit(1)
+                                    .minimumScaleFactor(0.72)
+                                    .frame(height: 20)
+                                    .accessibilityHidden(true)
+                            }
+
+                            position(at: index, total: layout.cardLimit)
+                                .frame(width: cardWidth, height: cardHeight)
+                                .anchorPreference(
+                                    key: ReadingMotionAnchorPreferenceKey.self,
+                                    value: .bounds,
+                                    transform: { [.slot(index): $0] }
+                                )
                         }
-                        position(at: index, total: layout.cardLimit)
+                        .frame(width: cardWidth, height: cardHeight + (layout == .threeCards ? 24 : 0))
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                }
+                .frame(width: groupWidth, height: cardHeight + (layout == .threeCards ? 24 : 0))
+                .position(x: proxy.size.width / 2, y: slotCenterY)
+                .accessibilityElement(children: .contain)
+
+                if !isLandscape {
+                    let slotBottom = slotCenterY + cardHeight / 2
+                    let availableDeckHeight = max(proxy.size.height - slotBottom - 28, 1)
+                    let deckWidth = min(
+                        max(proxy.size.width * 0.46, 120),
+                        220,
+                        availableDeckHeight * CeremonialObsidianTheme.deckAspectRatio
+                    )
+                    let deckHeight = deckWidth / CeremonialObsidianTheme.deckAspectRatio
+                    deckControl
+                        .frame(width: deckWidth, height: deckHeight)
+                        .anchorPreference(
+                            key: ReadingMotionAnchorPreferenceKey.self,
+                            value: .bounds,
+                            transform: { [.deck: $0] }
+                        )
+                        .opacity(shouldShowDeck ? 1 : 0)
+                        .allowsHitTesting(shouldShowDeck)
+                        .position(
+                            x: proxy.size.width / 2,
+                            y: min(proxy.size.height - deckHeight / 2 - 8,
+                                   slotBottom + 20 + deckHeight / 2)
+                        )
                 }
             }
-            .accessibilityElement(children: .contain)
-            .animation(
-                usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.draw,
-                value: model.session?.drawnCards.count ?? 0
-            )
-            .animation(
-                usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.reveal,
-                value: model.session?.drawnCards.map(\.isRevealed) ?? []
-            )
         }
     }
 
@@ -684,37 +836,42 @@ private struct ReadingTableView: View {
 
     @ViewBuilder
     private func position(at index: Int, total: Int) -> some View {
-        if let drawnCard = model.session?.drawnCards[safe: index] {
-            if drawnCard.isRevealed,
+        if let drawnCard = model.session?.drawnCards[safe: index],
+           baselineContainsCard(at: index) {
+            let baselineRevealed = visualBaseline?.revealed[safe: index] ?? drawnCard.isRevealed
+
+            if flippingPosition == index,
                let card = content.card(withID: drawnCard.id.rawValue),
                let meaning = content.meaning(for: card) {
-                let artwork = TarotArtworkView(
+                flippingCard(
                     card: card,
-                    artworkDescription: meaning.artworkDescription
+                    meaning: meaning,
+                    revealing: flipRevealing,
+                    progress: flipProgress
                 )
-                Button {
-                    inspectRevealedCard(drawnCard.id)
-                } label: {
-                    artwork
-                }
-                .buttonStyle(.plain)
-                .disabled(model.isBusy)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(
-                    AppLocalization.format(
-                        "%@, %@, face up",
-                        positionTitle(at: index),
-                        card.name
-                    )
+                    flipRevealing
+                        ? AppLocalization.format(
+                            "%@, %@, face up",
+                            positionTitle(at: index),
+                            card.name
+                        )
+                        : AppLocalization.format("%@, face down", positionTitle(at: index))
                 )
-                .accessibilityValue(artwork.accessibilitySummary)
-                .accessibilityHint("Opens the upright meaning")
-                .accessibilityAction(named: Text("Turn face down")) {
-                    model.conceal(drawnCard.id)
-                }
-                .transition(usesReducedMotion ? .opacity : .ceremonialCardReveal)
-                .id("revealed-\(drawnCard.id.rawValue)")
+                .accessibilityValue(
+                    flipRevealing ? meaning.artworkAccessibilityDescription(for: card) : ""
+                )
                 .accessibilityFocused($focusedReadingPosition, equals: index)
+            } else if baselineRevealed,
+                      let card = content.card(withID: drawnCard.id.rawValue),
+                      let meaning = content.meaning(for: card) {
+                revealedPosition(
+                    drawnCard: drawnCard,
+                    card: card,
+                    meaning: meaning,
+                    index: index
+                )
             } else {
                 FaceDownReadingPosition(
                     position: index + 1,
@@ -722,8 +879,7 @@ private struct ReadingTableView: View {
                     positionName: positionTitle(at: index),
                     onReveal: { model.reveal(drawnCard.id) }
                 )
-                .disabled(model.isBusy)
-                .transition(drawTransition)
+                .disabled(interactionLocked)
                 .id("face-down-\(drawnCard.id.rawValue)")
                 .accessibilityFocused($focusedReadingPosition, equals: index)
             }
@@ -740,37 +896,53 @@ private struct ReadingTableView: View {
 
     private var shouldShowDeck: Bool {
         if model.isReadyToShuffle { return true }
+        guard let layout = model.layout else { return false }
+        if dealingPosition != nil { return true }
+        let presentedCount = visualBaseline?.drawnCardIDs.count
+            ?? model.session?.drawnCards.count
+            ?? layout.cardLimit
+        return presentedCount < layout.cardLimit
+    }
+
+    private var canUseDeck: Bool {
+        if model.isReadyToShuffle { return true }
         guard let session = model.session, let layout = model.layout else { return false }
         return session.drawnCards.count < layout.cardLimit
     }
 
-    private var deck: some View {
+    private var deckControl: some View {
         let remaining = model.session?.remainingCardCount ?? 78
-        return CeremonialShufflingDeck(
-            phase: shufflePhase,
-            reduceMotion: usesReducedMotion,
-            spokenLabel: model.isReadyToShuffle
-                ? AppLocalization.text("Complete deck, not yet shuffled")
-                : AppLocalization.format("Deck with %d cards remaining", remaining)
-        )
-    }
-
-    private var drawTransition: AnyTransition {
-        if usesReducedMotion { return .opacity }
-        let comesFromSide = verticalSizeClass == .compact
-        return .asymmetric(
-            insertion: .offset(
-                x: comesFromSide ? -80 : 0,
-                y: comesFromSide ? 0 : 70
+        return Button {
+            if model.isReadyToShuffle {
+                model.shuffleDeck()
+            } else {
+                model.drawCard()
+            }
+        } label: {
+            CeremonialShufflingDeck(
+                phase: shufflePhase,
+                reduceMotion: usesReducedMotion,
+                spokenLabel: model.isReadyToShuffle
+                    ? AppLocalization.text("Complete deck, not yet shuffled")
+                    : AppLocalization.format("Deck with %d cards remaining", remaining)
             )
-            .combined(with: .scale(scale: 0.92))
-            .combined(with: .opacity),
-            removal: .opacity
+            .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
+        }
+        .buttonStyle(CeremonialDeckButtonStyle(usesReducedMotion: usesReducedMotion))
+        .disabled(interactionLocked || !canUseDeck)
+        .accessibilityHint(
+            AppLocalization.text(
+                model.isReadyToShuffle ? "Shuffles the deck" : "Draws the next card"
+            )
         )
     }
 
     private var usesReducedMotion: Bool {
         reduceMotion || voiceOverEnabled
+    }
+
+    private var interactionLocked: Bool {
+        model.isBusy || presentationLocked
     }
 
     private var visualState: ReadingVisualState {
@@ -783,42 +955,43 @@ private struct ReadingTableView: View {
 
     @MainActor
     private func respondToDurableStateChange(_ newState: ReadingVisualState) {
-        guard let previousVisualState else {
-            self.previousVisualState = newState
+        guard let baseline = visualBaseline else {
+            visualBaseline = newState
             return
         }
-        self.previousVisualState = newState
 
         // A commit may finish after the app becomes inactive. Record its state without replaying
         // presentation or haptics when the user returns.
-        guard scenePhase == .active else { return }
+        guard scenePhase == .active else {
+            visualBaseline = newState
+            return
+        }
 
-        if previousVisualState.sessionID == nil,
+        if baseline.sessionID == nil,
            newState.sessionID != nil,
            newState.drawnCardIDs.isEmpty {
-            CeremonialHaptics.shuffled()
-            runShuffleSettle()
+            visualBaseline = newState
+            runShuffleChoreography()
             return
         }
 
-        if newState.drawnCardIDs.count > previousVisualState.drawnCardIDs.count {
-            CeremonialHaptics.drawn()
-            moveVoiceOverFocus(to: newState.drawnCardIDs.count - 1)
+        if newState.drawnCardIDs.count > baseline.drawnCardIDs.count {
+            runDeal(to: newState.drawnCardIDs.count - 1, target: newState)
             return
         }
 
-        for index in newState.revealed.indices where previousVisualState.revealed.indices.contains(index) {
-            if !previousVisualState.revealed[index], newState.revealed[index] {
-                CeremonialHaptics.revealed()
-                moveVoiceOverFocus(to: index)
+        for index in newState.revealed.indices where baseline.revealed.indices.contains(index) {
+            if !baseline.revealed[index], newState.revealed[index] {
+                runFlip(at: index, revealing: true, target: newState)
                 return
             }
-            if previousVisualState.revealed[index], !newState.revealed[index] {
-                CeremonialHaptics.concealed()
-                moveVoiceOverFocus(to: index)
+            if baseline.revealed[index], !newState.revealed[index] {
+                runFlip(at: index, revealing: false, target: newState)
                 return
             }
         }
+
+        visualBaseline = newState
     }
 
     @MainActor
@@ -831,34 +1004,136 @@ private struct ReadingTableView: View {
     }
 
     @MainActor
-    private func runShuffleSettle() {
-        shuffleTask?.cancel()
-        shuffleTask = Task { @MainActor in
-            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.shuffle) {
+    private func runShuffleChoreography() {
+        startPresentation { token in
+            if usesReducedMotion {
+                withAnimation(.easeOut(duration: 0.075)) {
+                    shufflePhase = 1
+                }
+                try? await Task.sleep(nanoseconds: 75_000_000)
+                guard presentationIsCurrent(token) else { return }
+                withAnimation(.easeOut(duration: 0.075)) {
+                    shufflePhase = 0
+                }
+                try? await Task.sleep(nanoseconds: 75_000_000)
+                guard presentationIsCurrent(token) else { return }
+                finishPresentation(token)
+                CeremonialHaptics.shuffled()
+                return
+            }
+
+            withAnimation(CeremonialMotion.cut) {
                 shufflePhase = 1
             }
-            try? await Task.sleep(nanoseconds: usesReducedMotion ? 120_000_000 : 160_000_000)
-            guard !Task.isCancelled else { return }
+            try? await Task.sleep(nanoseconds: 180_000_000)
+            guard presentationIsCurrent(token) else { return }
 
-            if !usesReducedMotion {
-                withAnimation(CeremonialMotion.shuffle) {
-                    shufflePhase = 2
-                }
-                try? await Task.sleep(nanoseconds: 160_000_000)
-                guard !Task.isCancelled else { return }
+            withAnimation(CeremonialMotion.interleave) {
+                shufflePhase = 2
             }
+            try? await Task.sleep(nanoseconds: 240_000_000)
+            guard presentationIsCurrent(token) else { return }
 
-            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.shuffle) {
-                shufflePhase = 0
+            withAnimation(CeremonialMotion.shuffleSettle) {
+                shufflePhase = 3
             }
+            try? await Task.sleep(nanoseconds: 200_000_000)
+            guard presentationIsCurrent(token) else { return }
+            shufflePhase = 0
+            finishPresentation(token)
+            CeremonialHaptics.shuffled()
         }
     }
 
     @MainActor
-    private func cancelTransientMotion() {
-        shuffleTask?.cancel()
-        shuffleTask = nil
+    private func runDeal(to position: Int, target: ReadingVisualState) {
+        startPresentation { token in
+            dealingPosition = position
+            dealProgress = 0
+            await Task.yield()
+            guard presentationIsCurrent(token) else { return }
+
+            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.deal) {
+                dealProgress = 1
+            }
+            try? await Task.sleep(nanoseconds: usesReducedMotion ? 150_000_000 : 380_000_000)
+            guard presentationIsCurrent(token) else { return }
+
+            visualBaseline = target
+            dealingPosition = nil
+            dealProgress = 0
+            finishPresentation(token)
+            CeremonialHaptics.drawn()
+            moveVoiceOverFocus(to: position)
+        }
+    }
+
+    @MainActor
+    private func runFlip(at position: Int, revealing: Bool, target: ReadingVisualState) {
+        startPresentation { token in
+            flippingPosition = position
+            flipRevealing = revealing
+            flipProgress = 0
+            await Task.yield()
+            guard presentationIsCurrent(token) else { return }
+
+            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : (revealing ? CeremonialMotion.reveal : CeremonialMotion.conceal)) {
+                flipProgress = 1
+            }
+            try? await Task.sleep(nanoseconds: usesReducedMotion ? 150_000_000 : 320_000_000)
+            guard presentationIsCurrent(token) else { return }
+
+            visualBaseline = target
+            flippingPosition = nil
+            flipProgress = 0
+            finishPresentation(token)
+            if revealing {
+                CeremonialHaptics.revealed()
+            } else {
+                CeremonialHaptics.concealed()
+            }
+            moveVoiceOverFocus(to: position)
+        }
+    }
+
+    @MainActor
+    private func startPresentation(
+        _ operation: @escaping @MainActor (UUID) async -> Void
+    ) {
+        presentationTask?.cancel()
+        let token = UUID()
+        presentationToken = token
+        presentationLocked = true
+        presentationTask = Task { @MainActor in
+            await operation(token)
+        }
+    }
+
+    @MainActor
+    private func presentationIsCurrent(_ token: UUID) -> Bool {
+        !Task.isCancelled && presentationToken == token && scenePhase == .active
+    }
+
+    @MainActor
+    private func finishPresentation(_ token: UUID) {
+        guard presentationToken == token else { return }
+        presentationToken = nil
+        presentationTask = nil
+        presentationLocked = false
+    }
+
+    @MainActor
+    private func cancelTransientMotion(establishing baseline: ReadingVisualState) {
+        presentationTask?.cancel()
+        presentationTask = nil
+        presentationToken = nil
+        presentationLocked = false
         shufflePhase = 0
+        dealingPosition = nil
+        dealProgress = 0
+        flippingPosition = nil
+        flipProgress = 0
+        visualBaseline = baseline
     }
 
     private var actionArea: some View {
@@ -868,18 +1143,6 @@ private struct ReadingTableView: View {
                 .foregroundStyle(CeremonialObsidianTheme.secondaryText)
                 .multilineTextAlignment(.center)
 
-            if let primaryTitle {
-                Button(primaryTitle) {
-                    if model.isReadyToShuffle {
-                        model.shuffleDeck()
-                    } else {
-                        model.drawCard()
-                    }
-                }
-                .buttonStyle(CeremonialPrimaryButtonStyle())
-                .disabled(model.isBusy)
-            }
-
             Button("End Reading") {
                 model.requestEndReading()
             }
@@ -887,18 +1150,8 @@ private struct ReadingTableView: View {
             .foregroundStyle(CeremonialObsidianTheme.brightGold)
             .frame(minWidth: 44, minHeight: 44)
             .buttonStyle(.plain)
-            .disabled(model.isBusy)
+            .disabled(interactionLocked)
         }
-    }
-
-    private var primaryTitle: String? {
-        if model.isReadyToShuffle { return AppLocalization.text("Shuffle Deck") }
-        guard let session = model.session, let layout = model.layout,
-              session.drawnCards.count < layout.cardLimit else { return nil }
-        if session.drawnCards.isEmpty { return AppLocalization.text("Draw Card") }
-        return session.drawnCards.count + 1 == layout.cardLimit
-            ? AppLocalization.text("Draw Final Card")
-            : AppLocalization.text("Draw Next Card")
     }
 
     private var statusText: String {
@@ -922,9 +1175,9 @@ private struct ReadingTableView: View {
     }
 
     private var instructionText: String {
-        if model.isReadyToShuffle { return AppLocalization.text("Shuffle before drawing.") }
+        if model.isReadyToShuffle { return AppLocalization.text("Tap the deck to shuffle.") }
         guard let session = model.session, let layout = model.layout else { return "" }
-        if session.drawnCards.isEmpty { return AppLocalization.text("Draw when you're ready.") }
+        if session.drawnCards.isEmpty { return AppLocalization.text("Tap the deck to draw.") }
         if session.drawnCards.count == layout.cardLimit,
            session.drawnCards.allSatisfy(\.isRevealed) {
             return layout == .oneCard
@@ -935,6 +1188,138 @@ private struct ReadingTableView: View {
             return AppLocalization.text("Tap the card to reveal it.")
         }
         return AppLocalization.text("Tap a face-down card to turn it over.")
+    }
+
+    private func baselineContainsCard(at index: Int) -> Bool {
+        visualBaseline?.drawnCardIDs.indices.contains(index) == true
+    }
+
+    private func revealedPosition(
+        drawnCard: DrawnCard,
+        card: TarotCardRecord,
+        meaning: TarotCardMeaning,
+        index: Int
+    ) -> some View {
+        let artwork = TarotArtworkView(
+            card: card,
+            artworkDescription: meaning.artworkDescription
+        )
+        return Button {
+            inspectRevealedCard(drawnCard.id)
+        } label: {
+            artwork
+        }
+        .buttonStyle(.plain)
+        .disabled(interactionLocked)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            AppLocalization.format(
+                "%@, %@, face up",
+                positionTitle(at: index),
+                card.name
+            )
+        )
+        .accessibilityValue(artwork.accessibilitySummary)
+        .accessibilityHint("Opens the upright meaning")
+        .accessibilityAction(named: Text("Turn face down")) {
+            model.conceal(drawnCard.id)
+        }
+        .id("revealed-\(drawnCard.id.rawValue)")
+        .accessibilityFocused($focusedReadingPosition, equals: index)
+    }
+
+    private func flippingCard(
+        card: TarotCardRecord,
+        meaning: TarotCardMeaning,
+        revealing: Bool,
+        progress: CGFloat
+    ) -> some View {
+        let artwork = TarotArtworkView(
+            card: card,
+            artworkDescription: meaning.artworkDescription
+        )
+        return ZStack {
+            CeremonialCardBack(
+                presentationAspectRatio: CeremonialObsidianTheme.cardAspectRatio,
+                contentMode: .fill,
+                spokenLabel: ""
+            )
+            .modifier(
+                CeremonialFlipFaceModifier(
+                    progress: progress,
+                    face: .back,
+                    revealing: revealing,
+                    reduceMotion: usesReducedMotion
+                )
+            )
+
+            artwork
+                .modifier(
+                    CeremonialFlipFaceModifier(
+                        progress: progress,
+                        face: .front,
+                        revealing: revealing,
+                        reduceMotion: usesReducedMotion
+                    )
+                )
+        }
+        .clipped()
+    }
+
+    @ViewBuilder
+    private func dealOverlay(
+        anchors: [ReadingMotionAnchor: Anchor<CGRect>],
+        proxy: GeometryProxy
+    ) -> some View {
+        if let position = dealingPosition,
+           let sourceAnchor = anchors[.deck],
+           let destinationAnchor = anchors[.slot(position)] {
+            let source = proxy[sourceAnchor]
+            let destination = proxy[destinationAnchor]
+            let start = CGPoint(x: source.midX, y: source.midY)
+            let end = CGPoint(x: destination.midX, y: destination.midY)
+            let dx = end.x - start.x
+            let dy = end.y - start.y
+            let distance = max(sqrt(dx * dx + dy * dy), 1)
+            let motionStart = usesReducedMotion ? end : start
+
+            CeremonialCardBack(
+                presentationAspectRatio: CeremonialObsidianTheme.cardAspectRatio,
+                contentMode: .fill,
+                spokenLabel: ""
+            )
+            .frame(width: destination.width, height: destination.height)
+            .scaleEffect(usesReducedMotion ? 1 : 0.94 + 0.06 * dealProgress)
+            .rotationEffect(.degrees(usesReducedMotion ? 0 : 2 * (1 - dealProgress)))
+            .opacity(usesReducedMotion ? dealProgress : 1)
+            .position(motionStart)
+            .modifier(
+                CeremonialDealGeometryEffect(
+                    progress: dealProgress,
+                    start: motionStart,
+                    end: end,
+                    arcHeight: usesReducedMotion ? 0 : min(42, distance * 0.12)
+                )
+            )
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+        }
+    }
+}
+
+private enum ReadingMotionAnchor: Hashable {
+    case deck
+    case slot(Int)
+}
+
+private struct ReadingMotionAnchorPreferenceKey: PreferenceKey {
+    static var defaultValue: [ReadingMotionAnchor: Anchor<CGRect>] = [:]
+
+    static func reduce(
+        value: inout [ReadingMotionAnchor: Anchor<CGRect>],
+        nextValue: () -> [ReadingMotionAnchor: Anchor<CGRect>]
+    ) {
+        value.merge(nextValue(), uniquingKeysWith: { _, next in next })
     }
 }
 
