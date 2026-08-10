@@ -4,6 +4,10 @@ import PackageDescription
 
 let package = Package(
     name: "TarotDeckCore",
+    platforms: [
+        .iOS(.v17),
+        .macOS(.v13)
+    ],
     products: [
         .library(
             name: "TarotDeckCore",
