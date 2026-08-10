@@ -596,7 +596,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.0.1"'
+    'fallbackVersion = "0.1"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {

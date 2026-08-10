@@ -100,6 +100,7 @@ jobs:
           VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")"
           BUILD_NUMBER="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")"
           BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")"
+          SHORT_COMMIT="${GITHUB_SHA:0:12}"
 
           if [[ -z "$EXECUTABLE_NAME" || ! -f "$EXECUTABLE_PATH" ]]; then
             echo "::error::CFBundleExecutable does not resolve to a built executable."
@@ -111,6 +112,14 @@ jobs:
           fi
           if [[ "$MINIMUM_OS_VERSION" != "16.0" ]]; then
             echo "::error::Refusing to package an app whose MinimumOSVersion is not 16.0: $MINIMUM_OS_VERSION"
+            exit 1
+          fi
+          if [[ "$VERSION" != "0.1" ]]; then
+            echo "::error::Refusing to package an unexpected marketing version: $VERSION"
+            exit 1
+          fi
+          if [[ "$BUILD_NUMBER" != "1" ]]; then
+            echo "::error::The first formal Tarot 0.1 IPA must use build 1, not $BUILD_NUMBER."
             exit 1
           fi
 
@@ -127,7 +136,7 @@ jobs:
           mkdir -p "$OUTPUT_DIR" "$STAGING_DIR/Payload"
           /usr/bin/ditto "$APP_PATH" "$STAGING_DIR/Payload/TarotDeckInternal.app"
 
-          BASE_NAME="TarotDeck-${VERSION}-${BUILD_NUMBER}-local-qa-unsigned"
+          BASE_NAME="TarotDeck-${VERSION}-${BUILD_NUMBER}-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-Local-QA-unsigned"
           IPA_PATH="$OUTPUT_DIR/${BASE_NAME}.ipa"
           MANIFEST_PATH="$OUTPUT_DIR/${BASE_NAME}.manifest.json"
           SHA_PATH="$OUTPUT_DIR/${BASE_NAME}.sha256"
@@ -168,6 +177,11 @@ jobs:
             --arg minimumOSVersion "$MINIMUM_OS_VERSION" \
             --arg sha256 "$IPA_SHA256" \
             --arg commit "$GITHUB_SHA" \
+            --arg purpose "Local-QA" \
+            --arg artifact "$BASE_NAME" \
+            --arg ciRunNumber "$GITHUB_RUN_NUMBER" \
+            --arg ciRunAttempt "$GITHUB_RUN_ATTEMPT" \
+            --arg ciRunID "$GITHUB_RUN_ID" \
             --arg generatedAtUTC "$GENERATED_AT" \
             --arg notice "INTERNAL ONLY - provisional RWS artwork - not for redistribution" \
             '{
@@ -184,12 +198,17 @@ jobs:
               installation: "Requires user-side re-signing with Sideloadly or AltStore.",
               sha256: $sha256,
               commit: $commit,
+              purpose: $purpose,
+              artifact: $artifact,
+              ciRunNumber: $ciRunNumber,
+              ciRunAttempt: $ciRunAttempt,
+              ciRunID: $ciRunID,
               generatedAtUTC: $generatedAtUTC,
               notice: $notice
             }' > "$MANIFEST_PATH"
 
           test "$(find "$OUTPUT_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "3"
-          echo "artifact_name=tarot-deck-${VERSION}-${BUILD_NUMBER}-local-qa-unsigned" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=$BASE_NAME" >> "$GITHUB_OUTPUT"
           echo "INTERNAL ONLY - provisional RWS artwork - not for redistribution"
 
       - name: Upload local QA artifact

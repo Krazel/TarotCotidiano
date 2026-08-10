@@ -6,7 +6,7 @@ Actualizado: 2026-08-10
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **MVP funcional; A-031 está integrada, compilada y verificada en una nueva IPA de QA iOS 16** con selector interno de idioma, Home compacto, mazo táctil, geometría portrait estable, tab bar opaca, significado `Al derecho` no accionable y motion V2.
+Fase actual: **MVP funcional; A-031 está integrada y A-032 fija la primera línea formal en `0.1 (1)`**. La IPA anterior `0.0.1 (1)` queda sustituida y no debe entregarse como build vigente. El CI run se conserva como evidencia, no como build del producto.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -65,7 +65,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
 - Verificación macOS iOS 16 superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, `MinimumOSVersion=16.0`, ausencia de firma y paquete IPA `Payload` exacto.
-- IPA bilingüe A-031 iOS 16 verificada: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31427009585\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, 72,662,097 bytes, SHA-256 `8fe68def507c263051e5be4caf223f481808cea856d362b253e6b2c58f3024f9`. El hash coincide con `.sha256` y manifiesto; este confirma `iphoneos`, Debug, bundle provisional `com.krazel.tarotdeck.internal.provisional`, mínimo `16.0`, commit exacto y ausencia de firma. El ZIP contiene exclusivamente `Payload/TarotDeckInternal.app`, con ejecutable e `Info.plist`, sin `_CodeSignature` ni `embedded.mobileprovision`. Requiere firma local con Sideloadly o AltStore y permanece `INTERNAL ONLY`.
+- IPA bilingüe A-031 iOS 16 histórica y **sustituida por A-032**: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative-LocalQA\run-31427009585\contents\TarotDeck-0.0.1-1-local-qa-unsigned.ipa`, SHA-256 `8fe68def507c263051e5be4caf223f481808cea856d362b253e6b2c58f3024f9`. Se preserva como evidencia, pero no cumple la primera línea formal `0.1 (1)` ni el nombre/manifiesto con CI run y no debe entregarse como vigente.
 - Los IPA locales anteriores, incluido `run-31414355150`, quedan preservados como históricos y sustituidos para las pruebas del propietario.
 - `native-ios/Content/Education/` contiene 78 significados upright-only, 78 descripciones visuales originales y seis artículos; su validador confirma IDs/nombres/orden 78/78, unicidad y English/ASCII.
 - `native-ios/Content/Localization/` contiene 78 nombres, 78 significados, 78 descripciones accesibles y los seis artículos en castellano, validados uno a uno contra los IDs canónicos. `MEANING_METHODOLOGY.md` documenta que el copy es original y moderno, contrastado con la tradición RWS/Waite, no una cita ni una definición canónica única.
@@ -73,7 +73,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ### Implementación visual aprobada
 
 - `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home vacío/activo, Layout Choice, One Card y Three Cards completos, significados de cartas reveladas, seis artículos, biblioteca 78, filtros y anterior/siguiente sin wrap.
-- Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.0.1`.
+- Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.1`.
 - `ReadFlowModel` representa la `DeckSession` real, exige exactamente los 78 IDs canónicos y usa dos JSON atómicos —sesión y continuidad— con write-ahead/reconciliación. Restore, errores, replace y end solo publican estados persistidos; no quedan callbacks activos vacíos ni exposición de identidad face-down.
 - CTA Learn abre Three Cards realmente: reanuda Three activa, abre Three nueva sin sesión y protege una One activa mediante confirmación de reemplazo.
 - El catálogo runtime contiene exactamente 79 image sets: 78 caras canónicas y `ceremonial-card-back`. No quedan placeholders ni el duplicado histórico `rws-the-moon`.

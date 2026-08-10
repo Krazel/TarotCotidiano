@@ -208,6 +208,7 @@ Después de cada cambio material de estado:
 - Un commit o push no equivale a autorización para publicar la app.
 - El remoto público registrado es `https://github.com/Krazel/TarotCotidiano.git`.
 - Para inspección del repositorio, dispatch y monitorización de Actions, releases y API de GitHub, usar exclusivamente la sesión global de `gh` almacenada en el llavero de Windows. Antes de informar de un problema de acceso, ejecutar `C:\Users\dmkra\Documents\ChatGPT\Brain\.agents\skills\ios-app-launch\scripts\verify-github-access.ps1` para `Krazel/TarotCotidiano`, con aprobación de red si el sandbox la requiere. No usar Chrome como alternativa ni pedir autenticación por proyecto. `CENTRAL_RECHECK_REQUIRED` se eleva a Brain general y no autoriza pedir login al propietario.
+- Antes de cada IPA o build para testers, aplicar `ios-app-launch/references/versioning.md`. `MARKETING_VERSION` y `CURRENT_PROJECT_VERSION` son números independientes: la primera línea formal es `0.1`; una corrección incrementa Patch (`0.1.1`, `0.1.2`) y una funcionalidad significativa incrementa Minor (`0.2`). Al cambiar código, assets, comportamiento o contenido se cambia la versión visible y el build vuelve a `1`; build `2`, `3`, etc. se usan solo al recompilar deliberadamente la misma versión sin cambios de app. El `run_number` de CI es evidencia, no `CFBundleVersion`. Nombre y manifiesto deben incluir app, versión, build, commit, CI run y propósito `Local-QA` o `TestFlight`.
 
 ## Puertas actuales antes de implementar
 

@@ -52,6 +52,8 @@ $requiredWorkflowContracts = @(
     '[[ "$MINIMUM_OS_VERSION" != "16.0" ]]',
     '--arg minimumOSVersion "$MINIMUM_OS_VERSION"',
     'minimumOSVersion: $minimumOSVersion',
+    '[[ "$VERSION" != "0.1" ]]',
+    '[[ "$BUILD_NUMBER" != "1" ]]',
     "EXECUTABLE_DESCRIPTION",
     "codesign -dv",
     "Payload/TarotDeckInternal.app",
@@ -61,7 +63,17 @@ $requiredWorkflowContracts = @(
     ".manifest.json",
     "INTERNAL ONLY - provisional RWS artwork - not for redistribution",
     "uses: actions/upload-artifact@v4",
-    "local-qa-unsigned",
+    'BASE_NAME="TarotDeck-${VERSION}-${BUILD_NUMBER}-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-Local-QA-unsigned"',
+    '--arg purpose "Local-QA"',
+    'purpose: $purpose',
+    '--arg artifact "$BASE_NAME"',
+    'artifact: $artifact',
+    '--arg ciRunNumber "$GITHUB_RUN_NUMBER"',
+    'ciRunNumber: $ciRunNumber',
+    '--arg ciRunAttempt "$GITHUB_RUN_ATTEMPT"',
+    'ciRunAttempt: $ciRunAttempt',
+    '--arg ciRunID "$GITHUB_RUN_ID"',
+    'ciRunID: $ciRunID',
     "retention-days: 3"
 )
 $normalizedWorkflow = $workflow -replace "`r`n", "`n"
@@ -114,7 +126,7 @@ if ($bodyIndex -lt 0 -or $debugIndex -lt $bodyIndex -or
 
 $requiredProjectContracts = @(
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
-    'MARKETING_VERSION = 0.0.1;',
+    'MARKETING_VERSION = 0.1;',
     'CURRENT_PROJECT_VERSION = 1;',
     'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
     'TARGETED_DEVICE_FAMILY = 1;',
@@ -124,6 +136,30 @@ foreach ($contract in $requiredProjectContracts) {
     if ($project -cnotmatch [regex]::Escape($contract)) {
         throw "Project contract required by local QA IPA is missing: $contract"
     }
+}
+
+if ($project -cmatch 'MARKETING_VERSION = 0\.0\.1;' -or
+    $project -cmatch 'MARKETING_VERSION = 0\.1\.0;' -or
+    $workflow -cmatch 'local-qa-unsigned' -or
+    $workflow -cmatch 'TarotDeck-\$\{VERSION\}-\$\{BUILD_NUMBER\}-local-qa') {
+    throw "Legacy 0.0.1 or pre-versioning Local-QA artifact naming is still present."
+}
+
+if ($workflow -cmatch 'BUILD_NUMBER="\$GITHUB_RUN_NUMBER"' -or
+    $workflow -cmatch 'CURRENT_PROJECT_VERSION="\$GITHUB_RUN_NUMBER"') {
+    throw "GitHub run_number is CI evidence only and must not become CFBundleVersion."
+}
+
+$marketingVersions = @([regex]::Matches($project, 'MARKETING_VERSION = (?<value>\d+\.\d+(?:\.\d+)?);') |
+    ForEach-Object { $_.Groups['value'].Value } | Select-Object -Unique)
+if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '0.1') {
+    throw "The Xcode project must have exactly one formal marketing version: 0.1."
+}
+
+$projectBuildNumbers = @([regex]::Matches($project, 'CURRENT_PROJECT_VERSION = (?<value>\d+);') |
+    ForEach-Object { $_.Groups['value'].Value } | Select-Object -Unique)
+if ($projectBuildNumbers.Count -ne 1) {
+    throw "CURRENT_PROJECT_VERSION must remain a separate numeric source build value."
 }
 
 if ($package -cnotmatch [regex]::Escape('.iOS(.v16)')) {
@@ -142,4 +178,4 @@ foreach ($contract in $requiredSchemeContracts) {
     }
 }
 
-Write-Host "Validated manual local QA IPA workflow: Debug iphoneos, unsigned exact Payload, short-lived Actions artifact, and no release/upload/signing boundary."
+Write-Host "Validated manual Local-QA IPA workflow: formal 0.1 (1), CI run and commit evidence, unsigned exact Payload, and no release/upload/signing boundary."
