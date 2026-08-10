@@ -84,6 +84,10 @@ final class DeckSessionStoreTests: XCTestCase {
         )
         object["schemaVersion"] = 999
         let unsupportedData = try JSONSerialization.data(withJSONObject: object)
+        try FileManager.default.createDirectory(
+            at: directoryURL,
+            withIntermediateDirectories: true
+        )
         try unsupportedData.write(to: fileURL, options: .atomic)
 
         let store = JSONDeckSessionStore(fileURL: fileURL)
