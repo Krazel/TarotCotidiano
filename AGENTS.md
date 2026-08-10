@@ -221,3 +221,16 @@ No abrir una tarea de implementación **visual final** hasta que:
 Consultar `STATUS.md` y `DECISIONS.md` para el detalle vigente. La mera existencia de propuestas o recomendaciones no abre estas puertas.
 
 En Tarot Deck, el modelo de 78 cartas quedó aprobado como A-015, S03.2 como A-017, S03.3 como A-018, S03.4 como A-019 y S03.5 bajo la autorización permanente A-021. Toda pantalla restante del MVP ampliado debe tener imagen completa registrada antes de implementarse, pero no requiere una nueva pausa de aprobación individual mientras respete A-021.
+
+## Reglas duraderas heredadas del Brain
+
+- Este proyecto debe actuar con un cerebro permanente que coordina, decide, integra resultados, mantiene estado y delega trabajo pesado o separable en tareas auxiliares. El cerebro no debe convertirse por defecto en el unico ejecutor.
+- Las tareas auxiliares deben tener limites, rutas, entregables y verificacion claros. Informan al cerebro del proyecto, no al propietario.
+- Una imagen aprobada por el propietario es especificacion visual, no inspiracion. La implementacion final debe reproducir fondo, assets, layout, composicion, jerarquia, color, tipografia, espaciado, materiales, decoracion, estados y atmosfera.
+- Antes de llamar final a una pantalla, se deben inventariar y crear/preparar todos los assets necesarios. No sustituir fondos, ilustraciones, iconos, cartas, texturas o marcos por versiones genericas o simplificadas por comodidad.
+- Toda pantalla implementada desde una referencia aprobada debe compararse visualmente contra la imagen al mismo tamano/dispositivo. Las diferencias visibles se corrigen o se elevan al propietario si cambian la promesa visual.
+- Una version simplificada solo puede llamarse prototipo funcional o implementacion parcial. No puede presentarse como pantalla final ni candidata visual.
+- Visual-first bloquea la implementacion visual final, pero no bloquea trabajo estructural: motor, reglas, datos, contenido, arquitectura, navegacion interna, persistencia, pruebas, build/CI, privacidad, tienda, documentacion y prototipos internos no definitivos pueden avanzar.
+- Publicar, subir a TestFlight/App Store, enviar a revision, crear productos de pago, usar secretos nuevos, aceptar acuerdos, crear cuentas, asumir costes o eliminar trabajo requiere autorizacion expresa del propietario en ese momento.
+- Para lanzamiento iOS, TestFlight, App Store Connect, AdMob, StoreKit/IAP, supporter subscriptions, privacidad, soporte, firma, workflows, capturas, icono o checklist de publicacion, leer y aplicar `C:\Users\dmkra\Documents\ChatGPT\Brain\.agents\skills\ios-app-launch\SKILL.md` y sus referencias relevantes.
+- Para nuevas pantallas, redisenos, iconos, capturas y arte final, leer y aplicar `C:\Users\dmkra\Documents\ChatGPT\Brain\.agents\skills\visual-first-app-development\SKILL.md`.
