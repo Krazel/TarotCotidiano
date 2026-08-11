@@ -1,12 +1,12 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-08-11
+Actualizado: 2026-08-12
 
 ## Estado ejecutivo
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.4.1 (1)` continúa disponible mediante TestFlight Internal Only; `0.5 (1)` está en integración final autorizada para una nueva subida interna**. Incluye A-051 y añade barajado repetible, `Deal / Repartir`, mesa completa sin mazo, selector neutral compacto y tutorial contextual desde la tirada.
+Fase actual: **`0.5 (1)` está procesada, `En pruebas` y asignada al grupo interno `Testers` en TestFlight**. Incluye A-051 y añade barajado repetible, `Deal / Repartir`, mesa completa sin mazo, selector neutral compacto y tutorial contextual desde la tirada.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -37,7 +37,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ## Hechos verificados
 
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
-- Rama: `main`; `a7b8c68f6be38b99ab283c9b261367e9a554ff3f` es la fuente exacta de TestFlight `0.4.1 (1)`. `8e4f908cad8e032719e5c85e7758a39941552554` permanece como fuente de `0.4 (1)`, `c4273f71729f3507ac8745cfea5cf4d81dc10bda` de `0.3 (1)`, `e065562720acbde92075f6f94fae5b357067b974` de `0.2.2 (1)`, `aaaa83fe8ea6d4c32f5da23d7ea75da50361ced4` de `0.2.1 (1)` y `602b9d1c235082c1533bd83036acc7b35cea7f88` de la IPA Local-QA `0.2 (1)`.
+- Rama: `main`; `5c3abb138212bebf07eefdc63d8c364309b03b0d` es la fuente exacta de TestFlight `0.5 (1)`. `a7b8c68f6be38b99ab283c9b261367e9a554ff3f` permanece como fuente de `0.4.1 (1)`, `8e4f908cad8e032719e5c85e7758a39941552554` de `0.4 (1)`, `c4273f71729f3507ac8745cfea5cf4d81dc10bda` de `0.3 (1)` y las builds anteriores permanecen en el historial.
 - Remoto público por A-026: `https://github.com/Krazel/TarotCotidiano.git`.
 - Acceso GitHub central verificado mediante el comprobador común: `status=OK`, login global `Krazel` desde el llavero de Windows, repo público, `origin` correcto y los workflows activos. Actions se opera solo con `gh`; no se usa Chrome para lanzar workflows ni autenticación por proyecto.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
@@ -82,6 +82,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - La misma puerta protegida produjo `0.3 (1)` en el run `31519770814`, CI `5`, sobre `c4273f71729f3507ac8745cfea5cf4d81dc10bda`. Terminó verde el 2026-08-11: Apple marcó la carga `Finalizado`, la build `En pruebas` y la asignó a `Testers`. Evidencia privada no binaria: artifact `9112608791`, `TarotDeck-0.3-1-ci5-c4273f71729f-TestFlight-Internal`; SHA-256 de la IPA efímera `0340fed5d8eb0fbba3ffcc100fb5d7868a729fd53fe247b7b0933c1245bfd84d`.
 - A-049 produjo `0.4 (1)` en el run `31528257186`, CI `6`, sobre `8e4f908cad8e032719e5c85e7758a39941552554`. Terminó verde en 4m26s el 2026-08-11: Apple marcó la carga `Finalizado`, la build `En pruebas` y la asignó a `Testers`. Evidencia no binaria: artifact `9115899358`, `TarotDeck-0.4-1-ci6-8e4f908cad8e-TestFlight-Internal`; SHA-256 de la IPA efímera `529988aea307af4bdc98cd7bfc1b45169fd6bcf588290c1cb0d998b0268148ac`.
 - A-050 produjo `0.4.1 (1)` en el run `31531477904`, CI `7`, sobre `a7b8c68f6be38b99ab283c9b261367e9a554ff3f`. Terminó verde en 4m03s el 2026-08-11: Apple procesó la build, la muestra `En pruebas` y la asignó al grupo interno `Testers`. Evidencia no binaria: artifact `9117103671`, `TarotDeck-0.4.1-1-ci7-a7b8c68f6be3-TestFlight-Internal`; SHA-256 de la IPA efímera `65f91532d1d71bf3fb5d7f40ccfcdd5b89f1ff4fced84286ee46698e87bad57e`.
+- A-052 produjo `0.5 (1)` en el run `31543987465`, CI `8`, sobre `5c3abb138212bebf07eefdc63d8c364309b03b0d`. Terminó verde en 3m27s el 2026-08-12: pruebas Swift, archive Release, firma, identidad, export y subida pasaron; App Store Connect muestra la build `En pruebas` en el grupo interno `Testers`. Evidencia no binaria: artifact `9121812378`, `TarotDeck-0.5-1-ci8-5c3abb138212-TestFlight-Internal`; SHA-256 de la IPA efímera `b7d9a2a764e1d6ad76505416ded6921d079db501547a764dd64b31fbede19585`.
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
 - Verificación macOS iOS 16 superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, `MinimumOSVersion=16.0`, ausencia de firma y paquete IPA `Payload` exacto.
@@ -108,7 +109,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
 - A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
 - A-031 está integrada localmente: selector `English / Español` atómico, Home sin scroll normal y con adaptación AX, Settings, mesa con centro horizontal y anclaje vertical estable, tab bar translúcida, encabezado `Meaning / Significado` y una nota `In a reading / En una tirada` que aplica el significado a la posición; motion conserva reparto, flip de dos caras, cancelación y haptics posteriores al aterrizaje.
-- Para `0.4.1 (1)` pasan los validadores de mazo, educación inglesa, localización española, integración, gate interno de TestFlight y workflows, además de `git diff --check`. La revisión independiente cerró sin hallazgos P0–P2; macOS/Xcode completó las 24 pruebas, el archive Release firmado y la subida interna en el run `31531477904`.
+- Para `0.5 (1)` pasan los validadores de mazo, educación inglesa, localización española, integración, gate interno de TestFlight y workflows, además de `git diff --check`. macOS/Xcode completó las pruebas Swift, el archive Release firmado y la subida interna en el run `31543987465`.
 
 ## Qué se conserva y qué queda fuera
 
@@ -139,6 +140,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: terminar la validación local de `0.5 (1)`, compilar y probar en macOS mediante el workflow interno autorizado y verificar que la build procesada queda disponible en TestFlight. No habilitar testers externos ni App Review.
+Siguiente punto exacto: probar `0.5 (1)` en el iPhone desde TestFlight y recoger únicamente incidencias reproducibles. No habilitar testers externos, App Review ni publicación sin una nueva autorización expresa.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.
