@@ -6,7 +6,7 @@ Tarot began as a card game; divinatory reading developed later. There is no sing
 2. **Widespread modern practice:** One Card and flexible three-position spreads; card meaning is combined with position, question, imagery, and the other cards.
 3. **Editorial adaptation:** upright-only reference, conditional language, privacy boundaries, and no automatic interpretation or verdict.
 
-The eight tutorials use the following source base without copying source text:
+The seven tutorials use the following source base without copying source text:
 
 - Arthur Edward Waite, *The Pictorial Key to the Tarot*, Part III, for documented historical procedures and the variety of methods.
 - Joan Bunning, lessons on spreads, writing a question, and combining sources of meaning, for recognizable modern teaching practice.
@@ -21,18 +21,20 @@ The app keeps exactly five presets:
 2. `Past · Present · Possible Future`
 3. `Situation · Challenge · Advice`
 4. `You · The other person · Connection`
-5. `Open reading` (`Card 1 · Card 2 · Card 3`)
+5. `Yes or No` (`For · Against · Outcome`)
 
-Tutorial wording may use `Possible Direction` and `Guidance` to teach conditional, non-commanding interpretation. It maps back to the existing language-neutral preset IDs; it does not add a sixth visual preset.
+Tutorial wording may use `Possible Direction`, `Guidance`, and `Likely Outcome` to teach conditional, non-commanding interpretation. The Yes or No preset retains the language-neutral persisted ID `open` so existing local preferences and sessions migrate without loss; it does not add a sixth visual preset.
 
-## Contextual yes or no
+## For, against, and outcome
 
-The yes-or-no tutorial is an editorial method practised with `Open Three Cards`:
+The Yes or No preset follows a documented three-card structure found in printed deck instructions and contemporary teaching:
 
-1. `What supports a yes`
-2. `What supports a no or a pause`
-3. `What to consider before deciding`
+1. `For` — what supports a yes.
+2. `Against` — what supports a no or creates resistance.
+3. `Outcome` — the final answer inside the spread and the likely direction if current conditions continue.
 
-No card has a universal yes/no classification. The app does not calculate a result. The reader may summarize the context as `leans yes if…`, `leans no or not yet because…`, or `unclear — more information is needed`, then stops rather than redrawing for a preferred answer.
+The reader asks one concise closed question, keeps it in mind while shuffling, draws left to right, and reads the third card in light of the first two. No card has a universal yes/no classification and the app does not calculate a result. The reader stops rather than redrawing for a preferred answer. `Outcome` is not presented as immutable fate or certainty outside the reading.
+
+Source basis: Emanuela Signorini's [booklet for *Romantic Tarot*](https://magicspot.eu/wp-content/uploads/doc/Romantic-Tarot-guidebook.pdf) documents `things in favour / things against / result`; Lou Siday documents [`Support / Opposition / Outcome`](https://tarottechnique.com/tarot-spreads/yes-or-no-tarot-spread-guide/) specifically for a yes-or-no question. [Lo Scarabeo's official record](https://www.loscarabeo.com/en/products/romantic-tarot) corroborates the printed deck and booklet. These establish the method without claiming a single official tarot canon.
 
 The selected preset persists by a language-neutral ID. Labels localize to English or Spanish, while deck order, card IDs, draws, and reveal states remain unchanged.

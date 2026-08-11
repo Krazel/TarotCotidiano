@@ -141,7 +141,7 @@ enum TarotContentLoadError: LocalizedError {
         case .missingArtworkDescriptions:
             return AppLocalization.text("Every card meaning requires an artwork description.")
         case .invalidGuideCount(let count):
-            return AppLocalization.format("Expected 8 guide articles, found %d.", count)
+            return AppLocalization.format("Expected 7 guide articles, found %d.", count)
         case .mismatchedCardIDs:
             return AppLocalization.text("The deck and meaning card identifiers do not match.")
         case .invalidLocalizedContent:
@@ -158,7 +158,6 @@ enum TarotContentLoader {
         "situation-challenge-guidance",
         "you-other-person-connection",
         "yes-or-no-with-context",
-        "open-three-cards",
         "read-symbols-whole-spread"
     ]
     private static let allowedReadingPresetIDs: Set<String> = [
@@ -328,7 +327,7 @@ enum TarotContentLoader {
         }
 
         return ordered.allSatisfy { article in
-            article.sections.count == 4
+            article.sections.count == 3
                 && article.sections.allSatisfy {
                     !$0.heading.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                         && !$0.body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

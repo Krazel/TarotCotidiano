@@ -172,7 +172,7 @@ if ($null -ne $guide) {
     if ($guide.schemaVersion -ne 1) { Add-ValidationError 'Guide schemaVersion must be 1.' }
     if ($guide.language -ne 'en') { Add-ValidationError 'Guide language must be en.' }
     Test-TextLength -Value $guide.title -Minimum 5 -Maximum 60 -Label 'Guide title'
-    Test-TextLength -Value $guide.introduction -Minimum 100 -Maximum 400 -Label 'Guide introduction'
+    Test-TextLength -Value $guide.introduction -Minimum 60 -Maximum 180 -Label 'Guide introduction'
 
     $expectedArticles = @(
         @{ id = 'prepare-a-reading'; title = 'Prepare a Reading'; preset = $null },
@@ -180,8 +180,7 @@ if ($null -ne $guide) {
         @{ id = 'past-present-possible-direction'; title = 'Past, Present, Possible Direction'; preset = 'pastPresentFuture' },
         @{ id = 'situation-challenge-guidance'; title = 'Situation, Challenge, Guidance'; preset = 'situationChallengeAdvice' },
         @{ id = 'you-other-person-connection'; title = 'You, Other Person, Connection'; preset = 'relationship' },
-        @{ id = 'yes-or-no-with-context'; title = 'A Yes-or-No Question, With Context'; preset = 'open' },
-        @{ id = 'open-three-cards'; title = 'Open Three Cards'; preset = 'open' },
+        @{ id = 'yes-or-no-with-context'; title = 'For, Against, and Outcome'; preset = 'open' },
         @{ id = 'read-symbols-whole-spread'; title = 'Read Symbols and the Whole Spread'; preset = $null }
     )
 
@@ -221,8 +220,8 @@ if ($null -ne $guide) {
         Test-EnglishEditorialText -Value $article.title -Label "$label title"
         Test-EnglishEditorialText -Value $article.summary -Label "$label summary"
 
-        if (@($article.sections).Count -ne 4) {
-            Add-ValidationError "$label must contain exactly four ordered sections covering purpose/positions, steps, synthesis, and limits."
+        if (@($article.sections).Count -ne 3) {
+            Add-ValidationError "$label must contain exactly three concise sections covering purpose or positions, steps, and interpretation."
         }
 
         for ($sectionIndex = 0; $sectionIndex -lt @($article.sections).Count; $sectionIndex++) {
@@ -233,7 +232,7 @@ if ($null -ne $guide) {
                 Add-ValidationError "$sectionLabel must contain only heading and body."
             }
             Test-TextLength -Value $section.heading -Minimum 4 -Maximum 80 -Label "$sectionLabel heading"
-            Test-TextLength -Value $section.body -Minimum 100 -Maximum 600 -Label "$sectionLabel body"
+            Test-TextLength -Value $section.body -Minimum 65 -Maximum 260 -Label "$sectionLabel body"
             Test-EnglishEditorialText -Value $section.heading -Label "$sectionLabel heading"
             Test-EnglishEditorialText -Value $section.body -Label "$sectionLabel body"
         }
@@ -242,23 +241,30 @@ if ($null -ne $guide) {
     Test-EnglishEditorialText -Value $guide.title -Label 'Guide title'
     Test-EnglishEditorialText -Value $guide.introduction -Label 'Guide introduction'
 
+    $tutorialText = @(
+        [string]$guide.introduction
+        @($guide.articles | ForEach-Object {
+            [string]$_.summary
+            @($_.sections | ForEach-Object { [string]$_.heading; [string]$_.body })
+        })
+    ) -join ' '
+    if ($tutorialText -match '(?i)\b(official|certainty|science|evidence|privacy|consent|professional|qualified|high-stakes|health|legal|financial|safety|predict|immutable fate)\b') {
+        Add-ValidationError 'Tutorial copy contains an editorial disclaimer or tangent instead of only the practical method.'
+    }
+
     $yesNoArticle = @($guide.articles | Where-Object id -CEQ 'yes-or-no-with-context')[0]
     $yesNoText = @($yesNoArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
     foreach ($requiredYesNoCopy in @(
-        'What supports a yes',
-        'What supports a no or a pause',
-        'What to consider before deciding',
-        'Open Three Cards',
-        'leans yes if',
-        'leans no or not yet because',
-        'unclear - more information is needed',
-        'does not classify the cards or calculate a verdict'
+        'card 1 is For and supports yes',
+        'card 2 is Against and supports no',
+        'card 3 is the Outcome',
+        'form the final answer to the spread'
     )) {
         if (-not $yesNoText.Contains($requiredYesNoCopy)) {
             Add-ValidationError "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
         }
     }
-    if ($yesNoText -match '(?i)universal yes or no values?[^.]*assign|automatic verdict|draw again until') {
+    if ($yesNoText -match '(?i)automatic verdict|draw again until|guarantees? immutable fate') {
         Add-ValidationError 'Yes-or-no tutorial introduces card classification, an automatic verdict, or answer-seeking redraws.'
     }
 }
@@ -270,5 +276,5 @@ if ($errors.Count -gt 0) {
 
 Write-Output 'Education content validation passed.'
 Write-Output 'Canonical card IDs and names: 78/78 exact and ordered.'
-Write-Output 'Upright meanings and unique artwork descriptions: 78/78; practical tutorials: 8/8; language: en.'
+Write-Output 'Upright meanings and unique artwork descriptions: 78/78; practical tutorials: 7/7; language: en.'
 exit 0

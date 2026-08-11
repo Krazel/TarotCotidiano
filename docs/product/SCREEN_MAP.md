@@ -102,9 +102,9 @@ Selector options:
 - **Past · Present · Future** / **Pasado · Presente · Futuro**;
 - **Situation · Challenge · Advice** / **Situación · Reto · Consejo**;
 - **You · The other person · Connection** / **Tú · La otra persona · Conexión**;
-- **Open reading** / **Tirada libre**.
+- **Yes or No** / **Sí o no** — `For / Against / Outcome` (`A favor / En contra / Resultado`).
 
-The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where two illustrated choices select `One Card` or `Three Cards`. Choosing `Three Cards` opens `S01.3`, where four illustrated tiles select timeline, situation/challenge/advice, relationship, or open. Selecting a tile changes and locally persists the prospective Home preset, then closes the chooser; tapping the hero deck creates that reading and opens `S03.1` directly. The saved preset returns after relaunch when no active session exists. There is no dropdown, vertical text menu, permanent carousel, layout-choice screen, or standalone spread-choice screen.
+The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where two illustrated choices select `One Card` or `Three Cards`. Choosing `Three Cards` opens `S01.3`, where four illustrated tiles select timeline, situation/challenge/advice, relationship, or yes/no. Selecting a tile changes and locally persists the prospective Home preset, then closes the chooser; tapping the hero deck creates that reading and opens `S03.1` directly. The saved preset returns after relaunch when no active session exists. There is no dropdown, vertical text menu, permanent carousel, layout-choice screen, or standalone spread-choice screen.
 
 Composition invariants from V-058/V-061: the first viewport does not scroll; title, small selector, dominant hero deck, cue, and tab bar fit without a long explanatory block; the gear is a true overlay and reserves no height; and no separate primary button duplicates the deck action. Opening or closing the chooser overlays Home and does not move the underlying deck.
 
@@ -116,7 +116,7 @@ An image-led panel presents exactly two direct choices: `One Card` and `Three Ca
 
 ### S01.3 — Three-card style selector
 
-An image-led panel presents exactly four direct tiles: timeline, situation/challenge/advice, relationship, and open. The current preset receives the gold selected treatment. Choosing one commits that prospective preset and closes the panel; Back returns to `S01.2`; Close preserves the prior preset and returns Home. V-060 portrait and V-063 landscape govern the state. The panel may scroll only for accessibility text sizes, never as a plain vertical list.
+An image-led panel presents exactly four direct tiles: timeline, situation/challenge/advice, relationship, and yes/no. The current preset receives the gold selected treatment. Choosing one commits that prospective preset and closes the panel; Back returns to `S01.2`; Close preserves the prior preset and returns Home. V-065 portrait and V-066 landscape govern the state. The panel may scroll only for accessibility text sizes, never as a plain vertical list.
 
 ### Retired setup and replacement states
 
@@ -131,7 +131,7 @@ Represent `shuffle → draw → turn over → inspect → read → repeat or lea
 ### Shared elements
 
 - Layout identity: `One Card` or `Three Cards`.
-- One neutral position, or three stable positions labelled from the selected spread. The open spread uses neutral `Card 1`, `Card 2`, and `Card 3` labels.
+- One neutral position, or three stable positions labelled from the selected spread. The Yes or No spread uses `For`, `Against`, and `Outcome`; the third is the final answer within this spread and a likely direction, not an immutable guarantee.
 - Face-down deck while cards remain, or a clear exhausted state. While present, the deck itself is the one phase-appropriate primary control.
 - Localized state copy explains the available deck action without duplicating it as a button.
 - A small reset action with a 44-point accessible hit target, visually secondary to the deck.
@@ -258,19 +258,20 @@ Give a beginner a short, non-linear path to understanding how to read cards.
 
 ### S05.1 — Guide available
 
-Title: **Learn to Read Tarot**
-Intro: **Eight practical tutorials for reading the cards in your own way.**
+Title: **Learn** / **Aprender**
+Intro: **Tutorials for reading your cards** / **Tutoriales para leer tus cartas**
+
+All seven articles appear together under one `TUTORIALS / TUTORIALES` heading. Every row uses the same component and visual weight; there is no featured first lesson, `Begin Here` badge, category split, progress treatment, or recommendation hierarchy.
 
 Articles appear in this fixed order:
 
-1. **Prepare a Reading** / **Preparar una lectura** — define the question, choose positions, shuffle, draw, and close.
+1. **Prepare a Reading** / **Preparar una lectura** — choose the question and spread, then shuffle and draw.
 2. **One Card Focus** / **Enfoque de una carta** — use the exact position `What deserves attention now?` and map `Try This Reading` to `One Card`.
 3. **Past, Present, Possible Direction** / **Pasado, presente, posible dirección** — teach past influence, present situation, and a conditional direction; map to the existing timeline preset.
 4. **Situation, Challenge, Guidance** / **Situación, reto, orientación** — teach situation, challenge or influence, and guidance as perspective; map to the existing Situation/Challenge/Advice preset.
-5. **You, Other Person, Connection** / **Tú, otra persona, vínculo** — teach observable roles, privacy, agency, and connection; map to the existing relationship preset.
-6. **A Yes-or-No Question, With Context** / **Una pregunta de sí o no, con contexto** — use `What supports a yes / What supports a no or a pause / What to consider before deciding`; map to `Open Three Cards` without classifying cards or calculating a verdict.
-7. **Open Three Cards** / **Tres cartas abiertas** — read neutral Card 1/2/3 as a flexible sequence; map to `Open Three Cards`.
-8. **Read Symbols and the Whole Spread** / **Leer símbolos y el conjunto** — combine visible details, reference meaning, position, question, pattern, and limits.
+5. **You, Other Person, Connection** / **Tú, otra persona, vínculo** — teach the two roles and the shared connection; map to the existing relationship preset.
+6. **For, Against, and Outcome** / **A favor, en contra y resultado** — ask one concise closed question, draw left to right and read the third card in light of the first two; map to `Yes or No`.
+7. **Read Symbols and the Whole Spread** / **Leer símbolos y el conjunto** — combine visible details, reference meaning, position, question, and pattern.
 
 Each row has title, one-sentence summary, and a clear disclosure indicator. Tapping opens `S06.1`.
 
@@ -278,7 +279,7 @@ Not present: progress bars, completed marks, bookmarks, lesson locks, quizzes, c
 
 ### S05.2 — Content integrity failure
 
-Missing, reordered, mismatched, or malformed bundled tutorial content is a development/release failure, not a normal user-facing empty state. Internal builds may show a clearly labelled diagnostic; production must ship with all eight tutorials and identical preset mappings in English and Spanish.
+Missing, reordered, mismatched, or malformed bundled tutorial content is a development/release failure, not a normal user-facing empty state. Internal builds may show a clearly labelled diagnostic; production must ship with all seven tutorials and identical preset mappings in English and Spanish.
 
 ## S06 — Learn Article
 
@@ -290,7 +291,7 @@ Teach one practical concept in a short, readable format.
 
 - Back action to `Learn`.
 - Article title and summary.
-- Four ordered sections covering purpose/context and exact positions where applicable, steps, whole-reading synthesis, and closing limits.
+- Exactly three ordered sections covering purpose or exact positions, how to draw or place the cards, and how to read the result.
 - Clear heading structure for VoiceOver navigation.
 - An optional `Try This Reading` CTA only when the tutorial maps cleanly to one of the five existing Read presets.
 
@@ -298,8 +299,8 @@ Article behavior:
 
 - reading position and completion are not stored;
 - no interactive quiz, question field, notes, sharing, external link, comments, or next-lesson gate;
-- the copy teaches a method and possibilities, never a guaranteed divination claim or high-stakes instruction;
-- the yes-or-no tutorial opens `Open Three Cards`, never assigns universal yes/no values, never uses opposite orientations, and never calculates a verdict;
+- user-facing copy stays on the practical method; source classification and editorial caveats remain in internal content documentation rather than appearing as repeated lesson disclaimers;
+- the yes-or-no tutorial opens `Yes or No` and teaches `For / Against / Outcome` without adding another preset;
 - an existing reading is never silently replaced; the Read model preserves its current safe behavior when a tutorial CTA is used;
 - Dynamic Type may reflow the article vertically without truncation.
 
@@ -542,7 +543,7 @@ Both English and Spanish reference-content key sets must equal the identity-mani
 
 - Primary destinations expose clear `Read`, `Learn`, and `Cards` labels and selected state.
 - Every actionable target is at least 44×44 points and has a non-gesture alternative.
-- A face-down reading card announces its role and state without identity, for example **Challenge, face down. Double-tap to reveal.** Open readings announce the neutral card number.
+- A face-down reading card announces its role and state without identity, for example **Challenge, face down. Double-tap to reveal.** Yes or No announces `For`, `Against`, or `Outcome` without exposing card identity.
 - A revealed reading card announces position, identity, and available meaning action.
 - Library items announce card name and position in the current filter.
 - Card detail exposes title, the semantic `Upright meaning` / `Significado al derecho` heading, keywords, meaning, reading note, and artwork description in a logical order; the heading has no button trait.
@@ -588,9 +589,9 @@ Result: draw order and selected roles stay stable, meanings do not reveal other 
 
 ### C. Learn the basic method
 
-`Learn` → `A Yes-or-No Question, With Context` → confirm the three positions and limits → `Try This Reading` → `Open Three Cards`
+`Learn` → `For, Against, and Outcome` → learn the three positions and result → `Try This Reading` → `Yes or No`
 
-Result: the existing Open preset is selected without adding a sixth mode; no verdict is generated, and no progress, account, quiz, personal question, or interpretation is stored.
+Result: the documented Yes or No preset is selected without adding a sixth mode; no verdict is generated, and no progress, account, quiz, personal question, or interpretation is stored.
 
 ### D. Browse the deck one by one
 
@@ -620,7 +621,7 @@ Result: Back durably clears only the active session and returns Home without con
 
 Run manifest validation, exercise Read/Learn/Cards in airplane mode, then inspect visible and accessibility text across all destinations.
 
-Result: 78 identities map one-to-one to complete English and Spanish upright references; eight tutorials exist in both languages with identical preset mappings; the three core destinations make no network request; favorites persist only as canonical IDs; and no opposite-orientation meaning, Zodiac content, app account, analytics, question capture, notes, or history appears. Settings connectivity is limited to separately configured Apple commerce, legal, subscription-management, and rating destinations.
+Result: 78 identities map one-to-one to complete English and Spanish upright references; seven tutorials exist in both languages with identical preset mappings; the three core destinations make no network request; favorites persist only as canonical IDs; and no opposite-orientation meaning, Zodiac content, app account, analytics, question capture, notes, or history appears. Settings connectivity is limited to separately configured Apple commerce, legal, subscription-management, and rating destinations.
 
 ### I. Inspect support without losing a reading
 
@@ -667,10 +668,10 @@ Additional registered references under A-021:
 6. `S03.1 Three Cards / ready to shuffle` — V-015/V-016.
 7. `S01.1 Read / Deck Home / compact selector closed` — V-058 portrait and V-061 landscape, which supersede V-054/V-055; English uses the same composition.
 8. `S01.2 Read / Deck Home / one-or-three selector open` — V-059 portrait and V-062 landscape.
-9. `S01.3 Read / Deck Home / three-card style selector open` — V-060 portrait and V-063 landscape.
+9. `S01.3 Read / Deck Home / three-card style selector open` — V-065 portrait and V-066 landscape, replacing V-060/V-063.
 10. `S04 Card Meaning from Reading` — V-019.
-11. `S05 Learn Index` — V-020.
-12. `S06 Learn Article` — V-021.
+11. `S05 Learn Index` — V-070; replaces V-020.
+12. `S06 Learn Article` — V-071; replaces V-021.
 13. `S07 Cards Library / All with filters` — V-022.
 14. `S08 Card Detail from Library / previous-next` — V-023.
 15. `S09 Settings` — V-045, which supersedes V-025 with the internal `English / Español` selector.
@@ -699,7 +700,7 @@ A shared card-reference component may serve S04 and S08 only after both navigati
 
 ## MVP completion gate
 
-The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/meaning interaction conforms to V-046–V-048/V-052–V-057, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the eight Learn tutorials are bundled with exact bilingual parity and five-preset mappings, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
+The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/meaning interaction conforms to V-046–V-048/V-052–V-057/V-065–V-068, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the seven Learn tutorials are bundled with exact bilingual parity and five-preset mappings, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
 
 Settings and support are complete at product-design level when S09/S10 references and states are registered, free access is invariant across every purchase state, equivalent levels and supporter acknowledgement are represented, Restore Purchases and renewal/cancellation disclosures are present, and Privacy, Terms, and Rate the App remain distinct destinations. Live StoreKit products, prices, contracts, tax/banking setup, builds, and purchase review require separate authority and do not block core completion.
 

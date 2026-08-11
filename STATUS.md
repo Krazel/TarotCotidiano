@@ -6,7 +6,7 @@ Actualizado: 2026-08-11
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.2.2 (1)` disponible e instalada mediante TestFlight Internal Only en iOS 16**. Apple terminó de procesarla el 2026-08-11, la muestra `En pruebas`, asignada al grupo interno `Testers` con un tester, y App Store Connect confirma la instalación en un iPhone X con iOS 16.7.16. Esta versión sustituye el carrusel por el selector progresivo V-058–V-063, recuerda el preset elegido entre aperturas y conserva ocho tutoriales bilingües y AppIcon D.
+Fase actual: **`0.2.2 (1)` disponible e instalada mediante TestFlight Internal Only en iOS 16**, con la candidata funcional local **`0.3 (1)` en integración y todavía no compilada ni subida**. Apple muestra la anterior `En pruebas`, asignada al grupo interno `Testers` con un tester, y App Store Connect confirma la instalación en un iPhone X con iOS 16.7.16. La candidata `0.3` incluye la corrección de barra V-064 y sustituye la tirada abierta por `Sí o no` bajo A-045/V-065–V-068.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. A-043 está integrada y verificada: el preset explícito de Home persiste bajo `tarot.readingPreset.v1`, una sesión activa conserva prioridad sin sobrescribirlo y Learn no lo cambia. El commit, push, compilación, firma y subida restringida de `0.2.2 (1)` a TestFlight Internal Only terminaron correctamente.
+Propietaria activa de implementación: **ninguna**. A-044 está integrada localmente: la barra `Leer / Aprender / Cartas` usa blur oscuro fino, tinte grafito translúcido y un hairline superior tenue, con una única apariencia estable para standard y scroll-edge. A-045 está integrada: sustituye la tirada abierta por la tirada documentada `A favor / En contra / Resultado`; V-065–V-069 se crearon y registraron antes de la UI. A-046 queda cerrada bajo V-070/V-071: Learn agrupa siete tutoriales equivalentes y cada artículo conserva solo tres secciones prácticas, sin `Begin Here` ni disclaimers repetitivos. Los seis validadores locales pasan para `0.3 (1)`. No se ha hecho commit, push, compilación ni subida de la candidata local.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
@@ -22,9 +22,11 @@ A-033 fue ordenada y corregida explícitamente por el propietario el 2026-08-11.
 
 A-042 sustituye el carrusel de A-033 después de la prueba física del propietario. V-058–V-063 son las maestras vigentes portrait/landscape: mazo grande como hero, gear realmente superpuesto sin reserva de 64 puntos, botón selector pequeño, elección visual una/tres cartas y segundo nivel visual para los cuatro estilos de tres cartas. V-054/V-055 quedan preservadas como referencias reemplazadas.
 
+A-044 corrige el material de navegación principal después de la prueba física. V-064 es la referencia completa vigente para el material global de la barra inferior: grafito oscuro translúcido, contraste estable y separación superior sutil. No altera el layout gobernado por V-058–V-063 ni añade navegación.
+
 Auditoría de derechos cerrada el 2026-08-11: la obra histórica Rider-Waite-Smith está fuera de copyright en EE. UU. y Reino Unido y ha agotado el plazo ordinario europeo. Sin embargo, los 78 JPEG TaionWC/Pam-A no tienen una cadena de derechos suficientemente completa para certificar distribución mundial: Public Domain Mark no es licencia ni garantía, hay una inconsistencia Smith/Waite para países de plazo largo y no existe CC0/licencia expresa del digitalizador. R-026 sustituye la cautela española incompleta de R-017. Los archivos permanecen como candidatos internos y `docs/technical/CONTENT_RIGHTS_AUDIT.md` conserva la evidencia.
 
-A-034 fue ordenada e integrada el 2026-08-11. La investigación confirmó que no existe una única lectura “oficial”: Waite y otros manuales históricos describen varios métodos. Learn contiene ocho tutoriales prácticos y bilingües. El tutorial de sí/no usa tres posiciones transparentes —qué favorece el sí, qué favorece el no o la pausa y qué considerar— dentro de `Open Three Cards`; no añade un sexto preset ni un veredicto automático. Las exploraciones visuales de carrusel de seis fichas se conservan como no seleccionadas y no autorizan implementación.
+A-034 fue ordenada e integrada el 2026-08-11 y queda actualizada por A-045. La investigación confirma que no existe una única lectura “oficial”, pero sí está documentada la estructura de tres cartas `A favor / En contra / Resultado` en instrucciones impresas y como `Support / Opposition / Outcome` para sí/no. Learn queda en siete tutoriales prácticos y bilingües; la tirada sí/no es el quinto preset, conserva internamente el ID persistido `open` y no calcula un veredicto automático.
 
 A-039 fija minimización estricta de datos e información pública. La auditoría cerró con R-027: la app no tiene red, cuentas, tracking, anuncios, analítica, StoreKit, permisos ni SDK de terceros; solo guarda idioma, sesión, continuidad y favoritos en el dispositivo. `PrivacyInfo.xcprivacy` declara `UserDefaults/CA92.1`, el directorio local se excluye de backup antes de cualquier store y los cinco validadores pasan. App Store Privacy `Data Not Collected` sigue siendo exacto. Marketing URL y Promotional Text permanecen vacíos; el contacto privado de App Review y el copyright obligatorio no se reproducen en el repositorio. La revisión bilingüe de Privacy/Support está lista localmente, no publicada. App Store Connect muestra condición trader; P-006 exige confirmarla verazmente antes de habilitar la UE.
 
@@ -65,6 +67,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - Asset derivado del reverso aprobado: `design/assets/ceremonial-card-back-v1.png`, 1024×1536, SHA-256 `8F3329F2949B6052B4684B50DB21745FFA3956C4868BB7777F7C3B9735DCC00C`.
 - `design/tarot-deck/app-icon-concepts/` conserva A — The Card y D/E/F con exactamente tres cartas. C — The Deck queda descartado porque mostraba cuatro siluetas. D — Three-Card Fan fue aprobado e instalado como AppIcon por A-035.
 - A-035 integra D — Three-Card Fan como AppIcon: master y catálogo 1024×1024 RGB opaco sRGB, SHA-256 `FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E`; A y las demás variantes permanecen preservadas.
+- V-064 registra `design/tarot-deck/read-shell-translucent-tabbar-spanish-a-ceremonial-obsidian.png`, 853×1844, SHA-256 `C76D9D579AD0341E95C717DD0B834A8D29A609BB70DDCFEFCA2C9AF853E1AB9D`; gobierna solo el material de la barra inferior.
 
 ### Técnica
 
@@ -88,7 +91,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ### Implementación visual aprobada
 
 - `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home con mazo hero y selector visual progresivo de cinco presets, One Card y Three Cards completos, significados de cartas reveladas, ocho tutoriales con `Try This Reading`, biblioteca 78, filtros y anterior/siguiente sin wrap.
-- Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.2.2`.
+- Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.3`.
 - `ReadFlowModel` representa la `DeckSession` real, exige exactamente los 78 IDs canónicos y usa dos JSON atómicos —sesión y continuidad— con write-ahead/reconciliación. Restore, errores, replace y end solo publican estados persistidos; no quedan callbacks activos vacíos ni exposición de identidad face-down.
 - CTA Learn abre Three Cards realmente: reanuda Three activa, abre Three nueva sin sesión y protege una One activa mediante confirmación de reemplazo.
 - El catálogo runtime contiene exactamente 79 image sets: 78 caras canónicas y `ceremonial-card-back`. No quedan placeholders ni el duplicado histórico `rws-the-moon`.
@@ -101,7 +104,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - V-041 y `design/tarot-deck/MOTION_SPEC.md` registran el storyboard y contrato de movimiento. La implementación iOS 16 añade transiciones breves, shuffle, draw, giro reveal/conceal, respuesta táctil de botones y haptics solo después de un estado durable. Reduce Motion y VoiceOver usan variantes de opacidad; restaurar, rotar o volver de segundo plano no reproduce efectos.
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
 - A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
-- A-031 está integrada localmente: selector `English / Español` atómico sobre 215 claves de interfaz, Home V-044 sin scroll normal y con adaptación AX, Settings V-045, mesa V-046/V-047 con centro horizontal y anclaje vertical estable, mazo como único control contextual, tab bar opaca, encabezado `Upright meaning / Significado al derecho` y motion V-048 con reparto curvo, flip de dos caras, cancelación y haptics posteriores al aterrizaje. La revisión independiente final cerró sin P0–P2.
+- A-031 está integrada localmente: selector `English / Español` atómico sobre 215 claves de interfaz, Home V-044 sin scroll normal y con adaptación AX, Settings V-045, mesa V-046/V-047 con centro horizontal y anclaje vertical estable, mazo como único control contextual, tab bar estable y ahora translúcida por A-044/V-064, encabezado `Upright meaning / Significado al derecho` y motion V-048 con reparto curvo, flip de dos caras, cancelación y haptics posteriores al aterrizaje.
 - Los validadores locales de mazo, educación inglesa, localización española, integración y workflow IPA pasan. GitHub Actions verificó además las pruebas Swift, la compilación completa para iPhone/iOS 16 y el IPA formal `0.1 (1)` exacto del commit `ae0838c`.
 
 ## Qué se conserva y qué queda fuera
@@ -133,6 +136,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: probar `0.2.2 (1)` ya instalada desde TestFlight: confirmar el selector visual compacto, cerrar y reabrir la app para verificar que recuerda el preset, y recorrer idiomas, shuffle/draw/reveal, significados, favoritos, Learn/Cards, rotación, restauración y accesibilidad. La próxima corrección pasa a `0.2.3 (1)`; una función significativa futura pasa a `0.3 (1)`. En paralelo, continuar la sustitución de las 78 imágenes antes de distribución externa o pública.
+Siguiente punto exacto: compilar `0.3 (1)` en macOS y comparar selector/mesa sí-no contra V-065–V-069 y la barra inferior contra V-064. Una nueva subida a TestFlight necesita autorización expresa en ese turno. En paralelo, continuar la sustitución de las 78 imágenes antes de distribución externa o pública.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.

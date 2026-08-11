@@ -194,7 +194,6 @@ $expectedArticleIDs = @(
     'situation-challenge-guidance',
     'you-other-person-connection',
     'yes-or-no-with-context',
-    'open-three-cards',
     'read-symbols-whole-spread'
 )
 $expectedPresetIDs = @(
@@ -204,17 +203,16 @@ $expectedPresetIDs = @(
     'situationChallengeAdvice',
     'relationship',
     'open',
-    'open',
     $null
 )
 $articles = @($guide.articles)
-Assert-True ($articles.Count -eq 8) 'beginner-guide must contain exactly eight articles.'
+Assert-True ($articles.Count -eq 7) 'beginner-guide must contain exactly seven articles.'
 Assert-Text $guide.title 'beginner-guide.title'
 Assert-Text $guide.introduction 'beginner-guide.introduction'
 $userFacingText.Add([string]$guide.title)
 $userFacingText.Add([string]$guide.introduction)
 
-for ($index = 0; $index -lt 8; $index++) {
+for ($index = 0; $index -lt 7; $index++) {
     $article = $articles[$index]
     Assert-True ([string]$article.id -ceq $expectedArticleIDs[$index]) "Article ID/order mismatch at index $index."
     Assert-True ([int]$article.order -eq ($index + 1)) "Article order mismatch for $($article.id)."
@@ -226,7 +224,7 @@ for ($index = 0; $index -lt 8; $index++) {
     }
     Assert-Text $article.title "$($article.id).title"
     Assert-Text $article.summary "$($article.id).summary"
-    Assert-True (@($article.sections).Count -eq 4) "$($article.id) must have exactly four sections."
+    Assert-True (@($article.sections).Count -eq 3) "$($article.id) must have exactly three concise sections."
     $userFacingText.Add([string]$article.title)
     $userFacingText.Add([string]$article.summary)
 
@@ -241,18 +239,23 @@ for ($index = 0; $index -lt 8; $index++) {
 $yesNoArticle = $articles | Where-Object { $_.id -eq 'yes-or-no-with-context' }
 $yesNoText = @($yesNoArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
 foreach ($requiredYesNoCopy in @(
-    [regex]::Unescape('Qu\u00E9 favorece el s\u00ED'),
-    [regex]::Unescape('Qu\u00E9 favorece el no o la pausa'),
-    [regex]::Unescape('Qu\u00E9 considerar antes de decidir'),
-    'Tres cartas abiertas',
-    [regex]::Unescape('se inclina al s\u00ED si'),
-    [regex]::Unescape('se inclina al no o todav\u00EDa no porque'),
-    [regex]::Unescape('no est\u00E1 claro; falta informaci\u00F3n'),
-    'no clasifica las cartas ni calcula un veredicto'
+    [regex]::Unescape('la carta 1 es A favor y apoya el s\u00ED'),
+    [regex]::Unescape('la 2 es En contra y apoya el no'),
+    'la 3 es el Resultado',
+    'formar la respuesta final de la tirada'
 )) {
     Assert-True ($yesNoText.Contains($requiredYesNoCopy)) "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
 }
-Assert-True ($yesNoText -match '(?i)solo significados al derecho') 'Yes-or-no tutorial must remain upright-only.'
+
+$tutorialText = @(
+    [string]$guide.introduction
+    @($articles | ForEach-Object {
+        [string]$_.summary
+        @($_.sections | ForEach-Object { [string]$_.heading; [string]$_.body })
+    })
+) -join ' '
+$disclaimerPattern = '(?i)\b(oficial|certeza|ciencia|prueba|privacidad|consentimiento|profesional|cualificada|salud|legal|jur[ií]dic[oa]|finanzas|seguridad|predice|inmutable)\b'
+Assert-True ($tutorialText -notmatch $disclaimerPattern) 'Tutorial copy contains an editorial disclaimer or tangent instead of only the practical method.'
 
 $englishPattern = '(?i)\b(the|and|with|card|reading|question|future|present|past|situation|challenge|guidance|relationship|other person|you)\b'
 $predictivePattern = '(?i)\b(ocurrir\u00E1|suceder\u00E1|pasar\u00E1|garantiza|predice|inevitable|inevitablemente)\b|sin duda|certeza absoluta|tienes que'
@@ -265,4 +268,4 @@ foreach ($value in $userFacingText) {
 Write-Output 'Localization validation passed.'
 Write-Output 'Card copy: 78/78 IDs, names and accessibility labels.'
 Write-Output 'Card meanings: 78/78 records, upright-only, four keywords each.'
-Write-Output 'Practical tutorials: 8/8, five Read presets mapped, contextual yes-or-no method included.'
+Write-Output 'Practical tutorials: 7/7, five Read presets mapped, documented yes-or-no method included.'

@@ -70,7 +70,6 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             }
         }
         .tint(CeremonialObsidianTheme.brightGold)
-        .toolbarBackground(CeremonialObsidianTheme.background, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
         .sheet(
             isPresented: Binding(
@@ -112,9 +111,11 @@ struct TarotDeckMainShell<ReadContent: View>: View {
 
     private static func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(CeremonialObsidianTheme.background)
-        appearance.shadowColor = UIColor(CeremonialObsidianTheme.gold.opacity(0.28))
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterialDark)
+        appearance.backgroundColor = UIColor(CeremonialObsidianTheme.tabBarTint)
+        appearance.shadowColor = UIColor(CeremonialObsidianTheme.brightGold.opacity(0.14))
+        UITabBar.appearance().isTranslucent = true
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }

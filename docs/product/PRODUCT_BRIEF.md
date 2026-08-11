@@ -26,7 +26,7 @@ They value:
 
 ### Core situations
 
-1. **Do a reading:** choose one card, a named three-card spread, or an open three-card reading; then shuffle, draw, reveal, and interpret.
+1. **Do a reading:** choose one card or one of four named three-card spreads, including Yes or No; then shuffle, draw, reveal, and interpret.
 2. **Understand a revealed card:** tap it to inspect its art, canonical identity, and concise upright meaning, then return to the unchanged table.
 3. **Learn the method:** read a short guide explaining how to prepare, notice imagery, combine cards, and form an interpretation.
 4. **Study the deck:** browse all 78 cards, filter by arcana or suit, and move through them one by one.
@@ -52,7 +52,7 @@ The MVP proves that promise through:
 
 - one complete, recognizable 78-card deck;
 - a fair shuffle and draws without duplicates in a reading;
-- a neutral one-card layout plus three named three-card spreads and an open option;
+- a one-card layout plus four named three-card spreads, including a documented yes-or-no option;
 - user-controlled draw and turn-over actions;
 - an optional upright meaning for every revealed card;
 - one concise beginner guide and a complete card library;
@@ -66,7 +66,7 @@ The MVP proves that promise through:
 3. **Reference is optional and contextual.** Meaning is available on demand, never pushed over the table or revealed automatically.
 4. **Physical actions stay legible.** Shuffle, draw, place, turn over, inspect, and clear are distinct actions.
 5. **Complete means complete.** All 78 canonical identities, artwork records, and upright meanings ship together.
-6. **Simple layouts, explicit intent.** A three-card reading can assign `Past · Present · Possible Future`, `Situation · Challenge · Advice`, or `You · The other person · Connection` before shuffling; an open option remains available.
+6. **Simple layouts, explicit intent.** A three-card reading assigns `Past · Present · Possible Future`, `Situation · Challenge · Advice`, `You · The other person · Connection`, or `For · Against · Outcome` before shuffling.
 7. **Private and local.** The app collects no question, notes, account, analytics profile, or cloud record.
 8. **Bounded learning.** The guide teaches a usable method; it is not a course, feed, streak, or content program.
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
@@ -126,24 +126,23 @@ Exact visual presentation remains governed by the registered screen images.
 ### Included
 
 1. **Read**
-   - Compact Deck Home with one small selector. Its first visual level chooses `One Card` or `Three Cards`; the second level appears only for `Three Cards` and offers the three named spreads plus the open option. The dominant deck starts the selected preset directly.
+   - Compact Deck Home with one small selector. Its first visual level chooses `One Card` or `Three Cards`; the second level appears only for `Three Cards` and offers four named spreads, including Yes or No. The dominant deck starts the selected preset directly.
    - No `Layout Choice`, `Spread Choice`, active-reading replacement prompt, or visible `End Reading` action.
    - Tap the table deck to shuffle when unshuffled and to draw the next card when shuffled; after every drawn card is revealed, it offers another reading with the same preset.
    - One-at-a-time draw, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional motion governed by V-048.
    - Meaning available only after tapping a revealed card.
 
 2. **Learn**
-   - One static index with eight practical tutorials:
+   - One static index with seven practical tutorials:
      1. `Prepare a Reading`
      2. `One Card Focus`
      3. `Past, Present, Possible Direction`
      4. `Situation, Challenge, Guidance`
      5. `You, Other Person, Connection`
-     6. `A Yes-or-No Question, With Context`
-     7. `Open Three Cards`
-     8. `Read Symbols and the Whole Spread`
-   - Every tutorial contains purpose, exact positions when applicable, steps, synthesis, and closing limits. Copy is original in English with a complete Spanish translation and briefly distinguishes documented tradition, widespread modern practice, and responsible editorial adaptation.
-   - `Try This Reading` maps only to an existing Read preset. The contextual yes-or-no method uses `Open Three Cards`; it adds no sixth preset, universal card classification, automatic verdict, or repeated draw for a preferred answer.
+     6. `For, Against, and Outcome`
+     7. `Read Symbols and the Whole Spread`
+   - The seven tutorials appear together in one `Tutorials` section with equal visual weight. Every article contains exactly three concise parts: purpose or positions, how to draw or place the cards, and how to read the result. Methodological sourcing stays in internal documentation instead of interrupting the lesson.
+   - `Try This Reading` maps only to an existing Read preset. `Yes or No` replaces the former open preset and uses `For / Against / Outcome`; the persisted ID remains `open` for migration. It adds no sixth preset, universal card classification, automatic verdict, or repeated draw for a preferred answer.
 
 3. **Cards**
    - All 78 cards in canonical order.
@@ -180,7 +179,7 @@ Exact visual presentation remains governed by the registered screen images.
 
 ### Why this remains small
 
-The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains eight fixed tutorials, Cards reuses one meaning model across 78 identities, and Settings keeps optional support and legal links outside the core flow. No account, user-generated content, progression, social behavior, or purchase is required.
+The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains seven fixed tutorials, Cards reuses one meaning model across 78 identities, and Settings keeps optional support and legal links outside the core flow. No account, user-generated content, progression, social behavior, or purchase is required.
 
 ## Explicit exclusions
 
@@ -189,7 +188,7 @@ The MVP has one central job—help the user read a physical-style deck—and two
 - App-generated interpretations, AI chat, predictions, personalized answers, or card-combination interpretations.
 - Reflection messages, prompts, or the 12 thematic categories from the prior prototype.
 - Reversed cards or randomized card orientation.
-- Custom layouts, free placement, or spreads larger than three cards. The three approved named spreads and open three-card reading remain in scope.
+- Custom layouts, free placement, or spreads larger than three cards. The four approved named three-card spreads remain in scope.
 - Search, reading history, journaling, notes, tags, reading statistics, or learning progress. The only saved-card behavior is the local favorites set defined by A-030.
 - Quizzes, courses, certificates, gated lessons, glossary expansion, or an encyclopedia beyond the defined guide and 78 card entries.
 - Sharing cards or readings.
@@ -295,7 +294,7 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - Reading positions, the deck frame, and persistent chrome do not jump during press, cut, interleave, deal, reveal, restoration, or orientation changes; the three-card composition remains mathematically centered horizontally and retains one fixed vertical slot anchor throughout the reading.
 - An interrupted reading resumes with the same order, cards, and face states.
 - Tapping a revealed card opens the correct meaning and returning leaves the table unchanged.
-- A learner can find and finish any of the eight tutorials without creating progress state, and can open a matching existing Read preset without creating a new mode.
+- A learner can find and finish any of the seven tutorials without creating progress state, and can open a matching existing Read preset without creating a new mode.
 - The library displays exactly 78 cards; filters resolve to 22 Major and four groups of 14.
 - Previous and next move only within the active library filter and stop or wrap consistently as defined in the screen map.
 - Every card detail uses the same localized name and reference content as reading context.
@@ -312,7 +311,7 @@ The expanded MVP is release-candidate ready when:
 
 1. `Read`, `Learn`, and `Cards` are implemented from complete registered iPhone references in Ceremonial Obsidian.
 2. One-card and three-card readings work, restore locally, never duplicate a card, and preserve identity secrecy while face down.
-3. The eight practical tutorials are complete, original, available in English and Spanish, bundled, readable offline, mapped only to the five existing presets, and reviewed for non-prescriptive language and ethical limits.
+3. The seven practical tutorials are complete, concise, original, available in English and Spanish, bundled, readable offline, and mapped only to the five existing presets.
 4. The content manifest has exactly 78 identities and exactly 78 matching upright-reference records, with no missing or extra `cardID`.
 5. All 78 rights-cleared faces and the shared back are bundled; provenance is documented and no provisional asset is treated as production-ready.
 6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.

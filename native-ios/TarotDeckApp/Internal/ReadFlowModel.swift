@@ -40,7 +40,7 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
         case .relationship:
             return AppLocalization.text("You · The other person · Connection")
         case .open:
-            return AppLocalization.text("Open reading")
+            return AppLocalization.text("Yes or No")
         }
     }
 
@@ -53,15 +53,11 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
         case .relationship:
             return AppLocalization.text("Two perspectives and the connection between them.")
         case .open:
-            return AppLocalization.text("No assigned positions.")
+            return AppLocalization.text("For, against, and the likely outcome.")
         }
     }
 
     func positionTitle(at index: Int) -> String {
-        if self == .open {
-            return AppLocalization.format("Card %d", index + 1)
-        }
-
         let titles: [String]
         switch self {
         case .pastPresentFuture:
@@ -71,7 +67,7 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
         case .relationship:
             titles = ["You", "The other person", "Connection"]
         case .open:
-            titles = []
+            titles = ["For", "Against", "Outcome"]
         }
         guard titles.indices.contains(index) else { return "" }
         return AppLocalization.text(titles[index])

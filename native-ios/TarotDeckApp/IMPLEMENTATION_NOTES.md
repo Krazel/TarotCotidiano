@@ -4,7 +4,7 @@ Status: unsigned internal iPhone implementation of the approved English/Spanish 
 
 ## Approved visual boundary
 
-The live Read flow follows the approved Ceremonial Obsidian references V-014, V-028–V-040 and V-044–V-048. V-044 supersedes the earlier empty Home; V-046/V-047 govern the portrait Three Cards table; V-040 governs its large landscape composition; and V-048 governs motion. V-037/V-038 remain the current One Card face-down references: once the single card is drawn, the remaining deck becomes visually absent without collapsing its reserved frame. Learn, Cards and upright meaning follow V-019–V-023 plus the A-031 editorial `Upright meaning / Significado al derecho` heading.
+The live Read flow follows the approved Ceremonial Obsidian references V-014, V-028–V-040, V-044–V-048 and V-052–V-069. V-058/V-059/V-061/V-062 plus V-065/V-066 govern the progressive Home selector, V-067–V-069 govern the Yes or No table states, V-046/V-047 and V-052/V-053 govern the other Three Cards states, V-048 governs motion, and V-064 governs only the stable dark translucent primary tab bar material. V-037/V-038 remain the current One Card face-down references. Learn follows V-070/V-071; Cards and upright meaning follow V-019/V-022/V-023 plus the A-031 editorial `Upright meaning / Significado al derecho` heading.
 
 Settings follows V-045; V-044's overlaid gear opens it from both empty and active Read Home states. Its app-owned selector atomically validates and swaps the complete English or Spanish UI/content snapshot. StoreKit products, prices, App Store rating and published legal URLs remain unavailable and unauthorized. Each row therefore gives explicit native internal-build feedback instead of invoking a dead callback, fabricated destination or simulated purchase.
 
@@ -17,11 +17,11 @@ Favorites follows V-042/V-043 without adding a tab or account.
 - `Internal/ReadFlowModel.swift`: one durable reading coordinator plus layout continuity metadata.
 - `Internal/FavoriteCardsStore.swift`: one app-owned set of canonical favorite IDs with versioned atomic JSON persistence.
 - `Screens/Read/ReadViews.swift`: responsive Read Home, Layout Choice and generic One/Three Card table. Empty Home keeps its normal-size non-scrolling V-044 composition, uses a compact fitting variant on small iPhones, and permits scrolling only for accessibility Dynamic Type while the Settings gear remains overlaid.
-- `Screens/Learn/LearnViews.swift`: eight bilingual practical tutorials using the approved S05/S06 composition, with optional `Try This Reading` mapping to an existing Read preset.
+- `Screens/Learn/LearnViews.swift`: seven equal bilingual tutorial rows in one section and concise three-part articles, with optional `Try This Reading` mapping to an existing Read preset.
 - `Screens/Cards/CardsViews.swift`: 78-card library, Favorites plus six deck filters, empty Favorites state, upright meaning, non-wrapping previous/next and Dynamic Type-aware one/two-column presentation.
 - `Screens/Settings/SettingsView.swift`: approved Settings index with safe internal-build availability feedback and bundle-derived version display.
 - `Content/AppLocalization.swift`: one persistent iOS 16 language store, language-specific String Catalog lookup and atomic content swapping. English is the String Catalog source language read from the main bundle and does not require a physical `en.lproj`; Spanish requires `es.lproj`. Before commit it resolves every key listed in the versioned runtime interface manifest, so an incomplete language cannot produce a mixed snapshot.
-- `Content/TarotContent.swift`: strict language-explicit 78/78/8 loading, exact tutorial order/preset parity, and required artwork descriptions.
+- `Content/TarotContent.swift`: strict language-explicit 78/78/7 loading, exact tutorial order/preset parity, and required artwork descriptions.
 - `Resources/required-interface-keys.v1.json`: target-bundled manifest that must exactly match every String Catalog key and is validated for the candidate language before selection commits.
 - `Components/TarotArtworkView.swift`: local hash-verified historical candidates and an explicit `ART PENDING` ceremonial fallback.
 - `Design/CeremonialMotion.swift`: approved iOS 16 press/cut/interleave/settle/deal/flip tokens and post-landing haptics.
