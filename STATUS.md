@@ -6,7 +6,7 @@ Actualizado: 2026-08-11
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.2.1 (1)` disponible en TestFlight Internal Only para iOS 16** y corrección local **`0.2.2 (1)` preparada, todavía no compilada ni subida**. Apple muestra la anterior `En pruebas`, asignada al grupo interno `Testers` con un tester. La candidata local sustituye el carrusel por el selector progresivo V-058–V-063; conserva ocho tutoriales bilingües y AppIcon D.
+Fase actual: **`0.2.2 (1)` disponible e instalada mediante TestFlight Internal Only en iOS 16**. Apple terminó de procesarla el 2026-08-11, la muestra `En pruebas`, asignada al grupo interno `Testers` con un tester, y App Store Connect confirma la instalación en un iPhone X con iOS 16.7.16. Esta versión sustituye el carrusel por el selector progresivo V-058–V-063, recuerda el preset elegido entre aperturas y conserva ocho tutoriales bilingües y AppIcon D.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. A-043 está integrada: el preset explícito de Home persiste bajo `tarot.readingPreset.v1`, una sesión activa conserva prioridad sin sobrescribirlo y Learn no lo cambia. El propietario autorizó en el turno actual commit, push, compilación y nueva subida restringida de `0.2.2 (1)` a TestFlight Internal Only.
+Propietaria activa de implementación: **ninguna**. A-043 está integrada y verificada: el preset explícito de Home persiste bajo `tarot.readingPreset.v1`, una sesión activa conserva prioridad sin sobrescribirlo y Learn no lo cambia. El commit, push, compilación, firma y subida restringida de `0.2.2 (1)` a TestFlight Internal Only terminaron correctamente.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
@@ -35,7 +35,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ## Hechos verificados
 
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
-- Rama: `main`; `aaaa83fe8ea6d4c32f5da23d7ea75da50361ced4` es la fuente exacta de TestFlight `0.2.1 (1)`. `602b9d1c235082c1533bd83036acc7b35cea7f88` permanece como fuente histórica de la IPA Local-QA `0.2 (1)`.
+- Rama: `main`; `e065562720acbde92075f6f94fae5b357067b974` es la fuente exacta de TestFlight `0.2.2 (1)`. `aaaa83fe8ea6d4c32f5da23d7ea75da50361ced4` permanece como fuente histórica de TestFlight `0.2.1 (1)` y `602b9d1c235082c1533bd83036acc7b35cea7f88` como fuente de la IPA Local-QA `0.2 (1)`.
 - Remoto público por A-026: `https://github.com/Krazel/TarotCotidiano.git`.
 - Acceso GitHub central verificado el 2026-08-10 mediante el comprobador común: `status=OK`, login global `Krazel` desde el llavero de Windows, repo público, `origin` correcto y ambos workflows activos. Actions se opera solo con `gh`; no se usa Chrome ni autenticación por proyecto.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
@@ -75,7 +75,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - `native-ios/Content/`: 78 cartas canónicas, 78 registros de procedencia y 78/78 JPEG candidatos locales verificados por URL, SHA-1, SHA-256, bytes, JPEG y dimensiones. No hay parciales ni faltantes. Todos siguen fuera de producción: `candidateOnly=true`, `finalAsset=false`, `distributionApproved=false` y revisión territorial pendiente.
 - `.github/workflows/tarot-core.yml`: CI macOS de solo lectura, sin firma, secretos, publicación ni despliegue.
 - `.github/workflows/tarot-local-qa-ipa.yml`: workflow manual público y sin secretos para compilar Debug `iphoneos`, exigir `MinimumOSVersion=16.0`, validar arm64 sin firma y empaquetar exactamente `Payload/TarotDeckInternal.app`. La ejecución CI `12` / run `31443312685` completó correctamente el 2026-08-11 sobre `602b9d1`; artefacto `9083642098`, disponible hasta el 2026-08-13 23:42 UTC. `run_number` es solo evidencia y el binario conserva `0.2 (1)`.
-- `.github/workflows/tarot-testflight-internal.yml`: workflow manual, limitado a `main` y al entorno `app-store-production`. Run `31487778972`, CI `3`, terminó verde en 4m12s: 24 pruebas, archive Release, firma, perfil, privacidad, iOS 16, export interno y upload verificados. La IPA no se conserva como artifact público; solo manifiesto y hash hasta 2026-08-18.
+- `.github/workflows/tarot-testflight-internal.yml`: workflow manual, limitado a `main` y al entorno `app-store-production`. Run `31493483657`, CI `4`, terminó verde en 4m01s sobre `e065562720acbde92075f6f94fae5b357067b974`: 24 pruebas, archive Release, firma, perfil, privacidad, iOS 16, export interno y upload verificados. Apple procesó `0.2.2 (1)`, la asignó a `Testers` y confirmó su instalación. La IPA no se conserva como artifact público; solo manifiesto y hash.
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
 - Verificación macOS iOS 16 superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, `MinimumOSVersion=16.0`, ausencia de firma y paquete IPA `Payload` exacto.
@@ -88,7 +88,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ### Implementación visual aprobada
 
 - `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home con mazo hero y selector visual progresivo de cinco presets, One Card y Three Cards completos, significados de cartas reveladas, ocho tutoriales con `Try This Reading`, biblioteca 78, filtros y anterior/siguiente sin wrap.
-- Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.2.1`.
+- Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.2.2`.
 - `ReadFlowModel` representa la `DeckSession` real, exige exactamente los 78 IDs canónicos y usa dos JSON atómicos —sesión y continuidad— con write-ahead/reconciliación. Restore, errores, replace y end solo publican estados persistidos; no quedan callbacks activos vacíos ni exposición de identidad face-down.
 - CTA Learn abre Three Cards realmente: reanuda Three activa, abre Three nueva sin sesión y protege una One activa mediante confirmación de reemplazo.
 - El catálogo runtime contiene exactamente 79 image sets: 78 caras canónicas y `ceremonial-card-back`. No quedan placeholders ni el duplicado histórico `rws-the-moon`.
@@ -123,7 +123,7 @@ El modelo y los identificadores deben permitir sustituir en el futuro cada image
 ## Bloqueos y puertas
 
 1. **Cerrado:** `0.2 (1)` fue compilado en macOS/Xcode y verificado como IPA Local-QA; los cinco validadores y 24 pruebas pasan.
-2. **Cerrado:** `0.2.1 (1)` ejecuta la UI real en Release, usa el bundle definitivo, iOS 16 y privacidad; quedó firmada, subida y procesada como TestFlight Internal Only. App Store Connect la muestra `En pruebas` en el grupo interno `Testers`.
+2. **Cerrado:** `0.2.2 (1)` ejecuta la UI real en Release, usa el bundle definitivo, iOS 16 y privacidad; quedó firmada, subida, procesada y asignada como TestFlight Internal Only. App Store Connect la muestra `En pruebas` en `Testers` e instalada en el dispositivo del propietario.
 3. **Bloqueo de distribución pública:** sustituir los 78 JPEG por arte propio o un conjunto con licencia/CC0 y cobertura territorial expresa antes de TestFlight externo o App Store. El gate release falla intencionalmente por `candidateOnly/finalAsset/distributionApproved/territorial`; no debe relajarse con el conjunto actual.
 4. **Cerrado:** Apple Developer contiene el App ID explícito `com.krazel.tarotdeck` y App Store Connect contiene la ficha iOS Apple ID `6800144105`, SKU permanente `tarot-deck-ios`, English (U.S.) principal, Español (España) adicional, nombres/subtítulos/descripciones/keywords bilingües, categorías Lifestyle/Reference y acceso ilimitado. `Tarot Deck` no estaba disponible; el nombre provisional reservado es `Tarot Deck: Read & Learn` / `Tarot Deck: Lee y aprende`. La ficha está en preparación, no requiere login y usa publicación manual; Apple creó el tren público inicial `1.0` y no hay build seleccionada.
 5. **Cerrado para la build actual:** Support y Privacy URLs responden públicamente; Marketing URL quedó vacío por ser opcional. App Privacy está publicada como `Data Not Collected`; la clasificación calculada por Apple es `13+`; el borrador de accesibilidad iPhone declara únicamente `Dark Interface`; el precio es gratuito con España como región base; Mac, Vision Pro y descuento educativo están desactivados. Los territorios permanecen sin configurar y Content Rights sin atestiguar por la revisión territorial pendiente del arte. La revisión local de Privacy/Support aún no se ha desplegado.
@@ -133,6 +133,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: instalar `0.2.1 (1)` desde TestFlight y ejecutar las instrucciones de prueba guardadas: idiomas, cinco presets, shuffle/draw/reveal, significados, favoritos, Learn/Cards, rotación, restauración y accesibilidad. Las correcciones de app pasan a `0.2.2 (1)`; una función significativa futura pasa a `0.3 (1)`. En paralelo, continuar la sustitución de las 78 imágenes antes de distribución externa o pública.
+Siguiente punto exacto: probar `0.2.2 (1)` ya instalada desde TestFlight: confirmar el selector visual compacto, cerrar y reabrir la app para verificar que recuerda el preset, y recorrer idiomas, shuffle/draw/reveal, significados, favoritos, Learn/Cards, rotación, restauración y accesibilidad. La próxima corrección pasa a `0.2.3 (1)`; una función significativa futura pasa a `0.3 (1)`. En paralelo, continuar la sustitución de las 78 imágenes antes de distribución externa o pública.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.
