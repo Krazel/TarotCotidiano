@@ -174,6 +174,8 @@ On 2026-08-09 the owner approved V-011/V-012 and explicitly authorized subsequen
 | V-071 | Learn article, concise Yes or No, Spanish | `design/tarot-deck/learn-article-yes-no-concise-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-046; 862×1824; SHA-256 `27E00A160EC05D0B04FA704CFB3E0F712AD6A6355E29AA8967A40EC4D43F0988`; supersedes V-021. |
 
 A-050 preserves the compositions of V-067/V-068/V-069 and V-071 but supersedes their visible `Outcome / Resultado` wording with runtime copy `Destiny / Destino`. No layout, asset, motion or hierarchy changes; localized production copy is authoritative for this correction.
+
+A-051 preserves the compositions of the existing Read selector and concise Learn article but supersedes the short Situation/Challenge/Guidance summary with purpose-led runtime copy. No layout, asset, motion or hierarchy changes; localized production copy is authoritative for this correction.
 | V-072 | Learn index, foundations with Tutorials portal, Spanish | `design/tarot-deck/learn-index-foundations-with-tutorials-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-048; 862×1825; SHA-256 `4A189CAF9A748D7ADF91C1E5B86A79B6CD7525CF79B34A8A105BD9064A4F80C6`; supersedes V-070 for Learn Index. |
 | V-073 | Reading Tutorials index, Spanish | `design/tarot-deck/learn-reading-tutorials-index-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-048; 862×1824; SHA-256 `75A1B78C069CD8FB5FB5DDB7931F949BE9BDCD5AFA6D5D374F3331370B73FF28`. |
 | V-074 | Read Home one/three card selector with information, portrait | `design/tarot-deck/read-home-reading-count-selector-info-spanish-a-ceremonial-obsidian.png` | Approved by A-021/A-048; 853×1844; SHA-256 `8AD118426B2D1B7BDA0F00F4012EF59DF85A2152791510F4E8BC41BDFAECA576`; supersedes V-059. |

@@ -52,7 +52,7 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
         case .pastPresentFuture:
             return AppLocalization.text("Origins, the present moment, and a possible direction.")
         case .situationChallengeAdvice:
-            return AppLocalization.text("What is happening, what complicates it, and what may help.")
+            return AppLocalization.text("What is happening, the challenge to face, and what the cards advise next.")
         case .relationship:
             return AppLocalization.text("Two perspectives and the connection between them.")
         case .open:

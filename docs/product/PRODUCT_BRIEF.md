@@ -136,6 +136,7 @@ Exact visual presentation remains governed by the registered screen images.
 2. **Learn**
    - A foundations index that restores the prior hierarchy: one featured `How to Read Tarot` entry, concise `Shuffle and Draw`, `Symbols and Patterns`, and `Build Your Interpretation` lessons, plus one prominent `Reading Tutorials` portal.
    - `Reading Tutorials` contains exactly six concrete methods: One Card, Past/Present/Possible Direction, Situation/Challenge/Guidance, You/Other Person/Connection, For/Against/Destiny, and Freeform.
+   - The Situation/Challenge/Guidance summary states its purpose rather than merely repeating the labels: understand what is happening, identify the challenge to face, and consider what the cards advise next.
    - The Yes or No tutorial dedicates one concise section to each position: Card 1 explains what supports yes, Card 2 explains what supports no, and Card 3 explains what Destiny holds for the question.
    - Every article contains exactly three concise practical parts. Methodological sourcing stays in internal documentation instead of interrupting the lesson.
    - `Try This Reading` maps only to its existing Read preset. The persisted raw value `open` remains Yes or No for migration; Freeform adds the distinct raw value `freeform` and neutral card-order labels.

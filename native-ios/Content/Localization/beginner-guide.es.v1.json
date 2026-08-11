@@ -81,10 +81,10 @@
       "id": "situation-challenge-guidance",
       "order": 7,
       "title": "Situación, reto, consejo",
-      "summary": "Mira el asunto, su reto y el consejo que ofrece la tirada.",
+      "summary": "Usa esta tirada para entender qué está pasando, qué reto debes afrontar y qué te aconsejan las cartas hacer a continuación.",
       "readingPresetID": "situationChallengeAdvice",
       "sections": [
-        { "heading": "Las tres posiciones", "body": "La carta 1 es la Situación, la 2 es el Reto y la 3 es el Consejo." },
+        { "heading": "Las tres posiciones", "body": "La carta 1 muestra qué está pasando ahora, la 2 muestra el reto que debes afrontar y la 3 muestra la respuesta que aconsejan las cartas." },
         { "heading": "Coloca las cartas", "body": "Mantén el asunto presente, baraja y saca tres cartas de izquierda a derecha." },
         { "heading": "Relaciona la tirada", "body": "Lee cómo afecta el Reto a la Situación y cómo responde el Consejo a las dos cartas." }
       ]

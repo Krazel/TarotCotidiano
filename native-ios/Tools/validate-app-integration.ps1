@@ -505,7 +505,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.4.1;',
+    'MARKETING_VERSION = 0.4.2;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -518,7 +518,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.4.1;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.4.2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -1113,7 +1113,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.4.1"'
+    'fallbackVersion = "0.4.2"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1278,4 +1278,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.4.1 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-072-V-079 Learn/tutorial/info/Freeform implementation, V-064 stable translucent tab bar, documented For/Against/Destiny yes-or-no spread with preserved raw value open, distinct freeform raw value, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards, 4 foundations and 6 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.4.2 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-072-V-079 Learn/tutorial/info/Freeform implementation, V-064 stable translucent tab bar, documented For/Against/Destiny yes-or-no spread with preserved raw value open, distinct freeform raw value, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards, 4 foundations and 6 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

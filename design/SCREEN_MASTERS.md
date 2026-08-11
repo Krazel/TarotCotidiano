@@ -18,6 +18,7 @@ All paths below are repository-relative. Every listed SHA-256 and canvas size wa
 - One PNG may govern two states only where the approved component deliberately keeps one fixed composition. The current progressive Home selector has separate masters for closed, count-choice, and style-choice states.
 - A localized master governs the named language exactly. Where the decision register says that the other language uses the same composition, it governs layout only; runtime copy must still come from the verified localization bundle.
 - A-050 is a copy-only correction inside existing compositions: wherever V-067/V-068/V-069 or V-071 visibly says `Outcome / Resultado`, runtime `0.4.1` must say `Destiny / Destino`. Those PNGs continue to govern layout, materials and hierarchy; their superseded word does not govern localized copy.
+- A-051 is a copy-only correction inside the existing selector and Learn article compositions: runtime `0.4.2` must explain the purpose of Situation/Challenge/Guidance instead of merely restating its three labels. Existing PNGs continue to govern layout, materials and hierarchy.
 - Accessibility adaptations allowed by `design/APPROVALS.md` remain valid, but they may not silently replace the composition.
 
 ## Current masters

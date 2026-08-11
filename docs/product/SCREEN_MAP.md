@@ -107,6 +107,8 @@ Selector options:
 - **Yes or No** / **Sí o no** — `For / Against / Destiny` (`A favor / En contra / Destino`).
 - **Freeform** / **Libre** — neutral `Card 1 / Card 2 / Card 3` (`Carta 1 / Carta 2 / Carta 3`) without assigned roles.
 
+The Situation/Challenge/Advice tile and tutorial explain the question answered: what is happening now, what challenge must be faced, and what response the cards advise next. Spanish: `Qué está pasando, qué reto debes afrontar y qué te aconsejan las cartas después.`
+
 The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where two illustrated choices select `One Card` or `Three Cards`. Choosing `Three Cards` opens `S01.3`, where five illustrated tiles select timeline, situation/challenge/advice, relationship, yes/no, or Freeform. Selecting a tile changes and locally persists the prospective Home preset, then closes the chooser; tapping the hero deck creates that reading and opens `S03.1` directly. A separate information button opens the matching tutorial without selecting, persisting, or starting that preset. The saved preset returns after relaunch when no active session exists.
 
 Composition invariants from V-058/V-061: the first viewport does not scroll; title, small selector, dominant hero deck, cue, and tab bar fit without a long explanatory block; the gear is a true overlay and reserves no height; and no separate primary button duplicates the deck action. Opening or closing the chooser overlays Home and does not move the underlying deck.

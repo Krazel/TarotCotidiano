@@ -6,7 +6,7 @@ Actualizado: 2026-08-11
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.4.1 (1)` procesada y disponible mediante TestFlight Internal Only en iOS 16 bajo A-050**. La corrección renombra la tercera posición de Sí/No como `Destiny / Destino` y convierte su tutorial en tres bloques, uno por carta.
+Fase actual: **`0.4.1 (1)` procesada y disponible mediante TestFlight Internal Only en iOS 16; `0.4.2 (1)` está integrada y validada localmente bajo A-051**. La nueva corrección aclara para qué sirve `Situación · Reto · Consejo` sin cambiar su diseño.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. A-050 quedó integrada y auditada sin hallazgos P0–P2; el cerebro local conserva propiedad exclusiva de la coordinación y de `STATUS.md`, `DECISIONS.md`, `docs/product/**` y `design/**`. V-072–V-079 permanecen vigentes; A-050 no altera composición, assets ni jerarquía visual.
+Propietaria activa de implementación: **ninguna**. A-051 es una corrección editorial dentro de componentes existentes; el cerebro local conserva propiedad exclusiva de la coordinación y de `STATUS.md`, `DECISIONS.md`, `docs/product/**` y `design/**`. V-072–V-079 permanecen vigentes; A-051 no altera composición, assets ni jerarquía visual.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
@@ -139,6 +139,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: probar físicamente `0.4.1 (1)` desde TestFlight en iPhone iOS 16, con atención al tutorial Sí/No, las tres etiquetas `A favor / En contra / Destino`, VoiceOver y la continuidad del preset. La migración `open` → Sí/No permanece intacta y `freeform` sigue siendo un valor separado.
+Siguiente punto exacto: compilar y probar `0.4.2 (1)` en macOS/iPhone cuando el propietario autorice una nueva IPA o subida a TestFlight. Hasta entonces, `0.4.1 (1)` sigue siendo la build disponible.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.

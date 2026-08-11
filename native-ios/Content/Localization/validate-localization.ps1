@@ -264,6 +264,19 @@ foreach ($requiredYesNoCopy in @(
 }
 Assert-True ($yesNoText -notmatch '(?i)\b(resultado|probable|certeza)\b') 'El tutorial Sí/No debe usar Destino sin copy anterior ni disclaimers de certeza.'
 
+$situationArticle = $articles | Where-Object { $_.id -eq 'situation-challenge-guidance' }
+$situationText = @(
+    [string]$situationArticle.summary
+    @($situationArticle.sections | ForEach-Object { [string]$_.heading; [string]$_.body })
+) -join ' '
+foreach ($requiredSituationCopy in @(
+    [regex]::Unescape('entender qu\u00E9 est\u00E1 pasando'),
+    [regex]::Unescape('reto que debes afrontar'),
+    [regex]::Unescape('aconsejan las cartas')
+)) {
+    Assert-True ($situationText.Contains($requiredSituationCopy)) "Situation-Challenge-Guidance tutorial is missing its purpose: $requiredSituationCopy"
+}
+
 $freeformArticle = $articles | Where-Object { $_.id -eq 'freeform-reading' }
 $freeformText = @($freeformArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
 foreach ($requiredFreeformCopy in @(

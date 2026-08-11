@@ -102,7 +102,7 @@
     "Two perspectives and the connection between them." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Dos perspectivas y la relación entre ellas." } } } },
     "Upright" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Al derecho" } } } },
     "Wands" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Bastos" } } } },
-    "What is happening, what complicates it, and what may help." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Qué ocurre, qué lo dificulta y qué puede ayudarte." } } } },
+    "What is happening, the challenge to face, and what the cards advise next." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Qué está pasando, qué reto debes afrontar y qué te aconsejan las cartas después." } } } },
     "You" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Tú" } } } },
     "You · The other person · Connection" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Tú · La otra persona · Vínculo" } } } },
     "Your current reading will be cleared." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Se borrará tu lectura actual." } } } },

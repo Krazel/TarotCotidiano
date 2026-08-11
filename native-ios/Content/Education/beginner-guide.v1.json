@@ -81,10 +81,10 @@
       "id": "situation-challenge-guidance",
       "order": 7,
       "title": "Situation, Challenge, Guidance",
-      "summary": "See the issue, its challenge, and the guidance offered.",
+      "summary": "Use this reading to understand what is happening, the challenge you need to face, and what the cards advise you to do next.",
       "readingPresetID": "situationChallengeAdvice",
       "sections": [
-        { "heading": "The Three Positions", "body": "Card 1 is the Situation, card 2 is the Challenge, and card 3 is the Guidance." },
+        { "heading": "The Three Positions", "body": "Card 1 shows what is happening now, card 2 shows the challenge you need to face, and card 3 shows the response the cards advise." },
         { "heading": "Lay Out the Cards", "body": "Hold the issue in mind, then shuffle and draw three cards from left to right." },
         { "heading": "Connect the Reading", "body": "Read how the Challenge affects the Situation and how the Guidance responds to both cards." }
       ]

@@ -284,6 +284,21 @@ if ($null -ne $guide) {
         Add-ValidationError 'Yes-or-no tutorial must use Destiny without legacy outcome or certainty disclaimers.'
     }
 
+    $situationArticle = @($guide.articles | Where-Object id -CEQ 'situation-challenge-guidance')[0]
+    $situationText = @(
+        [string]$situationArticle.summary
+        @($situationArticle.sections | ForEach-Object { [string]$_.heading; [string]$_.body })
+    ) -join ' '
+    foreach ($requiredSituationCopy in @(
+        'understand what is happening',
+        'challenge you need to face',
+        'what the cards advise'
+    )) {
+        if (-not $situationText.Contains($requiredSituationCopy)) {
+            Add-ValidationError "Situation-Challenge-Guidance tutorial is missing its purpose: $requiredSituationCopy"
+        }
+    }
+
     $freeformArticle = @($guide.articles | Where-Object id -CEQ 'freeform-reading')[0]
     $freeformText = @($freeformArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
     foreach ($requiredFreeformCopy in @('without giving them fixed roles', 'Card 1, Card 2, and Card 3')) {
