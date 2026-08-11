@@ -33,6 +33,7 @@
 		A50000000000000000000004 /* card-meanings.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000004 /* card-meanings.es.v1.json */; };
 		A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* beginner-guide.es.v1.json */; };
 		A50000000000000000000006 /* required-interface-keys.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000006 /* required-interface-keys.v1.json */; };
+		A50000000000000000000007 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000007 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -65,6 +66,7 @@
 		B50000000000000000000004 /* card-meanings.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = card-meanings.es.v1.json; sourceTree = "<group>"; };
 		B50000000000000000000005 /* beginner-guide.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = beginner-guide.es.v1.json; sourceTree = "<group>"; };
 		B50000000000000000000006 /* required-interface-keys.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = required-interface-keys.v1.json; sourceTree = "<group>"; };
+		B50000000000000000000007 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,6 +247,7 @@
 				B10000000000000000000009 /* Assets.xcassets */,
 				B50000000000000000000002 /* Localizable.xcstrings */,
 				B50000000000000000000006 /* required-interface-keys.v1.json */,
+				B50000000000000000000007 /* PrivacyInfo.xcprivacy */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -341,6 +344,7 @@
 				A50000000000000000000004 /* card-meanings.es.v1.json in Resources */,
 				A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */,
 				A50000000000000000000006 /* required-interface-keys.v1.json in Resources */,
+				A50000000000000000000007 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,17 +425,19 @@
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CODE_SIGNING_ALLOWED = NO;
 				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_LANGUAGE = en;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck Internal";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 0.2;
+				MARKETING_VERSION = 0.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -448,20 +454,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_LANGUAGE = en;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck Internal";
+				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 0.2;
-				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;
+				MARKETING_VERSION = 0.2.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";

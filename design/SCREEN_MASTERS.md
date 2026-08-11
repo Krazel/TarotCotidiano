@@ -1,0 +1,116 @@
+# Canonical Screen Masters
+
+Updated: 2026-08-11
+Authority: A-038 in `DECISIONS.md`
+Repository root: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`
+
+## Purpose
+
+This is the canonical manifest of complete approved images that currently govern Tarot Deck's real screen compositions. `design/APPROVALS.md` and `DECISIONS.md` preserve approval history; this file answers which single master is current for each covered screen, state, orientation, and language.
+
+All paths below are repository-relative. Every listed SHA-256 and canvas size was recomputed from the PNG on 2026-08-11. A current master is a visual specification, not a screenshot from the running app. Embedded Rider-Waite-Smith card faces remain release-blocking candidate art under the content-rights audit; their presence does not approve those card-face assets for distribution.
+
+## Status rules
+
+- `CURRENT` is the only status that governs final implementation and visual comparison.
+- `APPROVED, NOT ACTIVE` records an approved future surface that is not part of the current build.
+- `REPLACED` and `NOT SELECTED` never govern implementation, even when their files remain in the repository.
+- One PNG may govern two states only where the approved component deliberately keeps one fixed composition, as with the Home preset carousel.
+- A localized master governs the named language exactly. Where the decision register says that the other language uses the same composition, it governs layout only; runtime copy must still come from the verified localization bundle.
+- Accessibility adaptations allowed by `design/APPROVALS.md` remain valid, but they may not silently replace the composition.
+
+## Current masters
+
+| Master | Screen / state | Source approval | Path | Canvas | Orientation | Language | Approval date | SHA-256 |
+|---|---|---|---|---:|---|---|---|---|
+| M-S01-HOME-P | `S01.1/S01.2 Read Home` — visual preset carousel, any selected preset | V-054, A-021/A-033 | `design/tarot-deck/read-home-visual-preset-carousel-spanish-a-ceremonial-obsidian.png` | 862×1825 | Portrait | Spanish; layout also governs English | 2026-08-11 | `8D02A2AF9BFB395B8DE9998FC55203C9B571A9CBE7E2C7A36C93A3B16E1B1682` |
+| M-S01-HOME-L | `S01.1/S01.2 Read Home` — visual preset carousel, any selected preset | V-055, A-021/A-033 | `design/tarot-deck/read-home-visual-preset-carousel-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-11 | `F454660DDB68388A1FCC408806A86762F15283C71CAC30548B151D63F2F4040A` |
+| M-S03-THREE-READY-P | `S03.1 Three Cards` — ready; deck is the shuffle control | V-046, A-021/A-031 | `design/tarot-deck/reading-table-three-cards-deck-tap-ready-spanish-a-ceremonial-obsidian.png` | 861×1827 | Portrait | Spanish; layout also governs English | 2026-08-10 | `C05A106C77884EEA07C28B5E2BA677875F678E4FAD5F97AAAAF553D636082BBD` |
+| M-S03-THREE-COMPLETE-DOWN-P | `S03.5 Three Cards` — layout complete, all face down and centered | V-047, A-021/A-031 | `design/tarot-deck/reading-table-three-cards-face-down-centered-spanish-a-ceremonial-obsidian.png` | 862×1825 | Portrait | Spanish; layout also governs English | 2026-08-10 | `E2218EC5FFB80986B6A72D72DD0E710F8DFBCEB8D39060637F0A49CA0C26F77E` |
+| M-S03-THREE-REVEALED-P | `S03.6 Three Cards` — all revealed, quick restart | V-052, A-021/A-033 | `design/tarot-deck/reading-table-three-cards-quick-restart-all-revealed-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-11 | `D30E951A91CE53049D5871E964DB05D4E9215B59BCECED12C159CA63E4E777E9` |
+| M-S03-THREE-REVEALED-L | `S03.6 Three Cards` — all revealed, quick restart | V-053, A-021/A-033 | `design/tarot-deck/reading-table-three-cards-quick-restart-landscape-spanish-a-ceremonial-obsidian.png` | 1846×852 | Landscape | Spanish; layout also governs English | 2026-08-11 | `1A7749728BA62E51D1E2F75463B077329E9397AA04E30C856998E04FE242FE10` |
+| M-S03-ONE-REVEALED-P | `S03.6 One Card` — revealed, quick restart | V-056, A-021/A-033 | `design/tarot-deck/reading-table-one-card-quick-restart-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-11 | `EDFCDC1C87D5F9D32194A58B7AD2F82862DAE9080467E4B44612DC2041628BF4` |
+| M-S03-ONE-REVEALED-L | `S03.6 One Card` — revealed, quick restart | V-057, A-021/A-033 | `design/tarot-deck/reading-table-one-card-quick-restart-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-11 | `B6591843EB4670CACEBE297D8D8836411C8FF9CAD52321120B6795CA1DC9A7FB` |
+| M-S07-FAVORITES-EMPTY-P | `S07.3 Cards Library` — Favorites empty | V-043, A-021/A-030 | `design/tarot-deck/cards-library-favorites-empty-a-ceremonial-obsidian.png` | 854×1840 | Portrait | English | 2026-08-10 | `62AED89CC28393E7FD2BC9B06F99240D576EA61FC90F39C8511DBDBA11FFCA87` |
+| M-S09-SETTINGS-P | `S09.1 Settings` — language selector | V-045, A-021/A-031 | `design/tarot-deck/settings-language-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-10 | `559D2E73882A723A24C55EBFF038CEEA9452B1CB62BD4A1C9E4ABF8E20518615` |
+
+## Approved but not active in the current build
+
+| Reference | Planned screen / state | Status | Path | Canvas | Orientation | Language | Approval date | SHA-256 |
+|---|---|---|---|---:|---|---|---|---|
+| V-027 | `S10.1 Support the App` — not active | `APPROVED, NOT ACTIVE`; StoreKit products, live prices, contracts and purchase flow remain unauthorized | `design/tarot-deck/support-the-app-a-ceremonial-obsidian-v2.png` | 853×1844 | Portrait | English | 2026-08-09 | `12411E9486B44B619F438669CEA04143EDDBCC0967F85758C0D5277E5ACD6C7A` |
+
+## Approved supporting specification, not a screen master
+
+| Reference | Purpose | Status | Path | Canvas | Date | SHA-256 |
+|---|---|---|---|---:|---|---|
+| V-048 | Reading Table principal-motion storyboard and keyframes | `CURRENT SUPPORTING SPEC`; governs motion with `design/tarot-deck/MOTION_SPEC.md`, but is not a complete app screen or store capture | `design/tarot-deck/reading-table-professional-motion-storyboard-v2-a-ceremonial-obsidian.png` | 1672×941 | 2026-08-10 | `937F89E3DF7D2161E6AD2C835A4201135161E6ADED083A4BE52B8773A58190F0` |
+
+## Replacement ledger
+
+The files below remain preserved, but none is current. A replacement can govern only the same state it actually depicts; when no exact replacement exists, the state is listed under coverage gaps instead of promoting a different image.
+
+| Replaced / retired reference | Historical surface | Replacement or disposition |
+|---|---|---|
+| V-001, V-004 | Daily Tarot screens | Historical product only after A-014; no Tarot Deck master. |
+| V-013 | Read Home, empty | Replaced by V-024, then V-044, then current V-054. |
+| V-014 | Separate Layout Choice | Retired by A-033; current Home carousel V-054/V-055 owns preset selection. |
+| V-005–V-012, V-015/V-016 | Earlier Three Cards table states | V-046/V-047/V-052/V-053 replace only the exact states they depict. A-031/A-033 also retired the separate primary buttons and `End Reading`; the remaining old states have no exact current master. V-040 separately replaced the old landscape proportions before V-053 replaced its complete all-revealed state. |
+| V-017, V-018 | Three Cards, all revealed | Replaced by current V-052/V-053 with quick restart. |
+| V-019, V-023, V-042 | Card meaning/detail states | A-031 makes `Upright / Al derecho` a plain editorial heading, not the pill shown in these images. No exact replacement master is registered. |
+| V-020, V-021 | Learn index/article | A-034 replaced the five-item learning model with eight bilingual tutorials and revised article content; no exact replacement master is registered. |
+| V-022 | Cards Library / All | A-030 added Favorites as a first-class filter; only the V-043 Favorites-empty state has a current exact master. |
+| V-024 | Read Home with Settings access | Replaced by V-044, then current V-054. |
+| V-025 | Settings | Replaced by current V-045 with the internal language selector. |
+| V-026 | Support the App | Replaced by V-027; V-027 remains approved but inactive. |
+| V-028 | Active-reading Home | Retired by A-033; restoration returns directly to the table and Home uses V-054/V-055. |
+| V-029–V-038 | Earlier One Card ready, shuffled, face-down and revealed states | V-056/V-057 replace only the exact revealed state. A-031/A-033 retired the separate primary buttons and `End Reading`; ready, shuffled and face-down states have no exact current master. |
+| V-039 | Separate Three Cards spread choice | Retired by A-033; preset selection moved to current V-054/V-055. |
+| V-040 | Three Cards large landscape, all revealed | Replaced for the complete all-revealed state by current V-053. |
+| V-041 | Reading Table motion storyboard | Replaced by current supporting specification V-048. |
+| V-044 | Read Home compact deck CTA | Replaced by current V-054. |
+| V-049, V-050 | Home dropdown, portrait closed/open | Rejected as a vertical text selector and replaced by current V-054. |
+| V-051 | Home dropdown, landscape | Replaced by current V-055. |
+
+## Proposals and unselected files
+
+These PNGs are deliberately outside the current-master table. They have no active V identifier or were explicitly not selected.
+
+| Status | Path | Canvas | Language | SHA-256 | Reason |
+|---|---|---:|---|---|---|
+| `NOT SELECTED` | `design/tarot-deck/cards-library-all-a-ceremonial-obsidian.png` | 863×1823 | English | `93DB75D03B27D4849A882B17F762DBFF70708F0BE3B3D839927F8AF0855F73FA` | Initial library/search variant; V-022 points to the v2 image instead. |
+| `NOT SELECTED` | `design/tarot-deck/three-card-spread-choice-spanish-a-ceremonial-obsidian.png` | 862×1825 | Spanish | `3E5735C2912284C69655194E1522970E574FA32E9D62910DBECA420666D63894` | Initial spread-choice variant; V-039 pointed to v2 before that screen was retired. |
+| `NOT SELECTED` | `design/tarot-deck/reading-table-three-cards-quick-restart-spanish-a-ceremonial-obsidian.png` | 862×1825 | Spanish | `D4650207183752445A82755B3406CDFF13C7C3B0752CCA1BC2830419ACBD843A` | Earlier quick-restart exploration; current portrait master is V-052. |
+| `NOT SELECTED` | `design/tarot-deck/read-home-visual-preset-carousel-six-spanish-a-ceremonial-obsidian.png` | 862×1824 | Spanish | `78A16F15D9333460EAB9DA98BF1CD08CD73500067836E2D57164517104C01A60` | Six-preset exploration rejected by A-034; the product remains the five-preset carousel V-054. |
+| `NOT SELECTED` | `design/tarot-deck/read-home-visual-preset-carousel-six-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Spanish | `3BB4FAD8F849388258B5189537DA428E5167D22B9E76300C0EDB8C04C2848BD1` | Landscape companion to the rejected six-preset exploration; current Home master is V-055. |
+
+## Known canonical coverage gaps
+
+No substitute is invented for a state whose older image was replaced. As of 2026-08-11, this manifest has no current complete master for:
+
+- `S00` restore/recovery states;
+- exact current Three Cards masters for `S03.1` landscape, `S03.2`, `S03.3`, `S03.4`, and `S03.5` mixed; and the all-face-down `S03.5` landscape state;
+- exact current One Card masters for `S03.1`, `S03.2`, and `S03.3` in both orientations;
+- `S04` card meaning after the plain-heading change in A-031;
+- `S05` and `S06` after the eight-tutorial content change in A-034;
+- `S07.1/S07.2` library states after the Favorites filter change in A-030;
+- `S08` card detail after the plain-heading change in A-031;
+- landscape composition for current V-043 and V-045, where only portrait masters are registered;
+- separate English raster masters for Spanish-led V-045/V-046/V-047/V-052–V-057, or separate Spanish raster masters for English-led references;
+- `S10.2` through `S10.5`, and a current-build master for `S10.1` while commerce remains inactive;
+- custom error or confirmation compositions that depart from standard native iOS presentation.
+
+These gaps do not make a replaced image current. A new complete in-scope image must be generated, registered under A-021/A-038, hashed, and added here before it can become the final visual reference for that exact surface.
+
+## App Store capture linkage
+
+Concept masters provide art direction only. Every final App Store screenshot must start from an actual app-build capture, not from a concept PNG or a reconstructed mockup. The capture record must include:
+
+- the source app version and build;
+- commit SHA and, when applicable, CI run;
+- real capture path, device/simulator and pixel canvas;
+- orientation and language;
+- capture date and SHA-256;
+- the `M-*` master ID used for visual direction and the comparison result.
+
+No final App Store base capture is registered as of 2026-08-11. Store artwork must not be marked ready until the build capture and its master linkage are added to this manifest.

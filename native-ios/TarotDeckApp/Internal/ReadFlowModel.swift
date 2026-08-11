@@ -1,4 +1,3 @@
-#if DEBUG
 import Combine
 import Foundation
 import TarotDeckCore
@@ -844,4 +843,3 @@ final class ReadFlowModel: ObservableObject {
         }
     }
 }
-#endif

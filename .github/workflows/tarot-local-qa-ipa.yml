@@ -114,12 +114,12 @@ jobs:
             echo "::error::Refusing to package an app whose MinimumOSVersion is not 16.0: $MINIMUM_OS_VERSION"
             exit 1
           fi
-          if [[ "$VERSION" != "0.2" ]]; then
+          if [[ "$VERSION" != "0.2.1" ]]; then
             echo "::error::Refusing to package an unexpected marketing version: $VERSION"
             exit 1
           fi
           if [[ "$BUILD_NUMBER" != "1" ]]; then
-            echo "::error::Tarot 0.2 local QA must use build 1, not $BUILD_NUMBER."
+            echo "::error::Tarot 0.2.1 local QA must use build 1, not $BUILD_NUMBER."
             exit 1
           fi
 

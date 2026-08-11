@@ -20,7 +20,7 @@ Current build facts:
 - the CI run number is evidence only; it does not replace `CURRENT_PROJECT_VERSION`;
 - signing in CI: disabled.
 
-Debug is intentional. `TarotDeckInternalApp.swift` places the real `TarotDeckMainShell` and `ReadRootView` behind `#if DEBUG`; the `EmptyView` branch is outside Debug and must not be used for this QA IPA.
+Debug remains intentional for this unsigned Local-QA path. The real `TarotDeckMainShell` and `ReadRootView` now compile in both Debug and Release; Local-QA still uses only the provisional Debug bundle identity and never gains signing or upload capability.
 
 ## Manual workflow
 
@@ -32,7 +32,7 @@ It runs only through `workflow_dispatch`. After an authorized commit places it o
 2. Open **Actions** → **Tarot local QA unsigned IPA**.
 3. Choose **Run workflow**. There are no inputs, secrets, signing options, or upload switches.
 4. Wait for the `INTERNAL ONLY - unsigned device IPA` job to finish.
-5. Download the Actions artifact named like `TarotDeck-0.1-1-ci11-abcdef123456-Local-QA-unsigned` before its short retention window ends.
+5. Download the Actions artifact named like `TarotDeck-0.2.1-1-ci<run>-<short-commit>-Local-QA-unsigned` before its short retention window ends.
 
 The job validates the 78-card content, English education content and integrated app, runs the Swift tests, and builds the shared scheme for generic `iphoneos` with code signing disabled. It rejects a Simulator executable, a missing executable or `Info.plist`, an unexpected signature, and any IPA entry outside the exact app payload.
 
@@ -50,11 +50,11 @@ The IPA itself contains only `Payload/TarotDeckInternal.app`. The checksum and m
 2. In PowerShell, run:
 
    ```powershell
-   Get-FileHash .\TarotDeck-0.1-1-ci<run>-<short-commit>-Local-QA-unsigned.ipa -Algorithm SHA256
+   Get-FileHash .\TarotDeck-0.2.1-1-ci<run>-<short-commit>-Local-QA-unsigned.ipa -Algorithm SHA256
    ```
 
 3. Compare the reported hash with the first value in the adjacent `.sha256` file.
-4. Open the `.manifest.json` and confirm `version` is `0.1`, `build` is `1`, `ciRunNumber` matches the workflow run, `purpose` is `Local-QA`, `configuration` is `Debug`, `platform` is `iphoneos`, `signed` is `false`, and the commit matches the workflow run.
+4. Open the `.manifest.json` and confirm `version` is `0.2.1`, `build` is `1`, `ciRunNumber` matches the workflow run, `purpose` is `Local-QA`, `configuration` is `Debug`, `platform` is `iphoneos`, `signed` is `false`, and the commit matches the workflow run.
 5. Do not install or share the IPA if the hash differs or the internal-only notice is absent.
 
 ## Install with Sideloadly on Windows

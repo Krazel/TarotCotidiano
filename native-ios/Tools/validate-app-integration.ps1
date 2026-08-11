@@ -1,9 +1,13 @@
 param(
     [string]$NativeRoot = (Join-Path $PSScriptRoot ".."),
-    [switch]$ReleaseGate
+    [switch]$ReleaseGate,
+    [switch]$InternalTestFlightGate
 )
 
 $ErrorActionPreference = "Stop"
+if ($ReleaseGate -and $InternalTestFlightGate) {
+    throw "ReleaseGate and InternalTestFlightGate are mutually exclusive."
+}
 $native = Resolve-Path -LiteralPath $NativeRoot
 $projectFile = Join-Path $native.Path "TarotDeck.xcodeproj/project.pbxproj"
 $appRoot = Join-Path $native.Path "TarotDeckApp"
@@ -52,6 +56,26 @@ function Get-PngMetadata {
         ColorType = [int]$bytes[25]
         Chunks = @($chunks)
     }
+}
+
+function Get-PlistDictionaryValueNode {
+    param(
+        [Parameter(Mandatory = $true)][Xml.XmlElement]$Dictionary,
+        [Parameter(Mandatory = $true)][string]$Key
+    )
+
+    $elements = @($Dictionary.ChildNodes | Where-Object {
+        $_.NodeType -eq [Xml.XmlNodeType]::Element
+    })
+    for ($index = 0; $index -lt $elements.Count; $index++) {
+        if ($elements[$index].LocalName -ceq "key" -and $elements[$index].InnerText -ceq $Key) {
+            if ($index + 1 -ge $elements.Count) {
+                throw "Privacy manifest key has no value: $Key"
+            }
+            return $elements[$index + 1]
+        }
+    }
+    throw "Privacy manifest key is missing: $Key"
 }
 
 $deck = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "tarot-deck.v1.json") | ConvertFrom-Json
@@ -109,6 +133,72 @@ if (@(Compare-Object $deckIDs $spanishCopyIDs).Count -gt 0 -or
 }
 
 $project = Get-Content -Raw -LiteralPath $projectFile
+$privacyManifestPath = Join-Path $appRoot "Resources/PrivacyInfo.xcprivacy"
+if (-not (Test-Path -LiteralPath $privacyManifestPath -PathType Leaf)) {
+    throw "The app privacy manifest is missing."
+}
+
+[xml]$privacyManifest = Get-Content -Raw -LiteralPath $privacyManifestPath
+$plistRoot = $privacyManifest.DocumentElement
+$rootElements = @($plistRoot.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+if ($plistRoot.LocalName -cne "plist" -or $rootElements.Count -ne 1 -or
+    $rootElements[0].LocalName -cne "dict") {
+    throw "PrivacyInfo.xcprivacy must contain one root plist dictionary."
+}
+$privacyRoot = [Xml.XmlElement]$rootElements[0]
+$privacyRootElements = @($privacyRoot.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+$rootKeys = @($privacyRoot.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element -and $_.LocalName -ceq "key"
+} | ForEach-Object { $_.InnerText })
+$expectedPrivacyRootKeys = @(
+    "NSPrivacyTracking",
+    "NSPrivacyCollectedDataTypes",
+    "NSPrivacyAccessedAPITypes"
+)
+if ($privacyRootElements.Count -ne 6 -or $rootKeys.Count -ne $expectedPrivacyRootKeys.Count -or
+    @(Compare-Object $expectedPrivacyRootKeys $rootKeys).Count -gt 0) {
+    throw "PrivacyInfo.xcprivacy must contain only tracking, collected-data, and accessed-API declarations."
+}
+
+$trackingNode = Get-PlistDictionaryValueNode -Dictionary $privacyRoot -Key "NSPrivacyTracking"
+if ($trackingNode.LocalName -cne "false") {
+    throw "The app privacy manifest must declare NSPrivacyTracking=false."
+}
+$collectedDataNode = Get-PlistDictionaryValueNode -Dictionary $privacyRoot -Key "NSPrivacyCollectedDataTypes"
+$collectedDataElements = @($collectedDataNode.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+if ($collectedDataNode.LocalName -cne "array" -or $collectedDataElements.Count -ne 0) {
+    throw "The current app privacy manifest must declare an empty collected-data array."
+}
+$accessedAPIsNode = Get-PlistDictionaryValueNode -Dictionary $privacyRoot -Key "NSPrivacyAccessedAPITypes"
+$accessedAPIDictionaries = @($accessedAPIsNode.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+if ($accessedAPIsNode.LocalName -cne "array" -or $accessedAPIDictionaries.Count -ne 1 -or
+    $accessedAPIDictionaries[0].LocalName -cne "dict") {
+    throw "The privacy manifest must declare exactly one required-reason API category."
+}
+$accessedAPIDictionary = [Xml.XmlElement]$accessedAPIDictionaries[0]
+$accessedAPIElements = @($accessedAPIDictionary.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+$accessedAPIType = Get-PlistDictionaryValueNode -Dictionary $accessedAPIDictionary -Key "NSPrivacyAccessedAPIType"
+$accessedAPIReasons = Get-PlistDictionaryValueNode -Dictionary $accessedAPIDictionary -Key "NSPrivacyAccessedAPITypeReasons"
+$reasonElements = @($accessedAPIReasons.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+if ($accessedAPIElements.Count -ne 4 -or $accessedAPIType.LocalName -cne "string" -or
+    $accessedAPIType.InnerText -cne "NSPrivacyAccessedAPICategoryUserDefaults" -or
+    $accessedAPIReasons.LocalName -cne "array" -or $reasonElements.Count -ne 1 -or
+    $reasonElements[0].LocalName -cne "string" -or $reasonElements[0].InnerText -cne "CA92.1") {
+    throw "UserDefaults must be the only required-reason API and must use Apple reason CA92.1."
+}
+
 $requiredSources = @(
     "TarotDeckInternalApp.swift",
     "TarotContent.swift",
@@ -133,6 +223,7 @@ $requiredResources = @(
     "card-meanings.es.v1.json in Resources",
     "beginner-guide.es.v1.json in Resources"
     "required-interface-keys.v1.json in Resources"
+    "PrivacyInfo.xcprivacy in Resources"
 )
 
 foreach ($source in $requiredSources) {
@@ -144,6 +235,10 @@ foreach ($resource in $requiredResources) {
     if ($project -notmatch [regex]::Escape($resource)) {
         throw "$resource is missing from the app target Resources phase."
     }
+}
+if ([regex]::Matches($project, [regex]::Escape("PrivacyInfo.xcprivacy in Resources")).Count -ne 2 -or
+    [regex]::Matches($project, 'PBXFileReference; lastKnownFileType = text\.xml; path = PrivacyInfo\.xcprivacy;').Count -ne 1) {
+    throw "PrivacyInfo.xcprivacy must have one file reference and one target Resources membership."
 }
 if ([regex]::Matches($project, '(?m)^\s*ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;\s*$').Count -ne 2) {
     throw "Debug and Release must both select the AppIcon asset catalog set."
@@ -266,11 +361,33 @@ if ($contentSource -cnotmatch [regex]::Escape("static func load(language: AppLan
 
 $sourceText = Get-ChildItem -LiteralPath $appRoot -Recurse -File -Filter *.swift |
     Get-Content -Raw
+$allAppSource = $sourceText -join "`n"
 $forbidden = @("StoreKit", "Zodiac", "Android")
 foreach ($term in $forbidden) {
-    if ($sourceText -match [regex]::Escape($term)) {
+    if ($allAppSource -match [regex]::Escape($term)) {
         throw "Out-of-scope app source term found: $term"
     }
+}
+if ($allAppSource -match '(?m)^\s*import\s+(Network|WebKit|StoreKit|AdSupport|AppTrackingTransparency|UserNotifications|CoreLocation|AVFoundation|Photos|Contacts|EventKit|HealthKit|CoreBluetooth)\b' -or
+    $allAppSource -match '\b(URLSession|URLRequest|NWConnection|NWPathMonitor|WKWebView|openURL|UIApplication\.shared\.open)\b' -or
+    $allAppSource -match 'https?://' -or
+    $allAppSource -match '\b(requestAuthorization|requestAccess|ATTrackingManager|UNUserNotificationCenter|CLLocationManager|AVCaptureDevice|PHPhotoLibrary|CNContactStore|EKEventStore|HKHealthStore|CBCentralManager)\b' -or
+    $allAppSource -match '\b(Firebase|GoogleMobileAds|GADMobileAds|Sentry|Crashlytics|Mixpanel|Amplitude)\b') {
+    throw "App source contains unauthorized network, permission, or third-party SDK integration."
+}
+$packageSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Package.swift")
+if ($packageSource -match '\.package\s*\(' -or $project -match 'XCRemoteSwiftPackageReference|repositoryURL' -or
+    $project -match 'INFOPLIST_KEY_NS[A-Za-z]+UsageDescription|CODE_SIGN_ENTITLEMENTS') {
+    throw "The app target contains an external package, permission usage description, or entitlement file."
+}
+$entitlementFiles = @(Get-ChildItem -LiteralPath $native.Path -Recurse -File -Filter *.entitlements)
+if ($entitlementFiles.Count -gt 0) {
+    throw "The current app must not bundle entitlement files."
+}
+$frameworkNames = @([regex]::Matches($project, '(?m)^\s*[A-F0-9]+ /\* (.+?) in Frameworks \*/') |
+    ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+if ($frameworkNames.Count -ne 1 -or $frameworkNames[0] -cne "TarotDeckCore") {
+    throw "The app target must link only the local TarotDeckCore product."
 }
 if ($sourceText -match '\brwsTheMoon\b' -or $sourceText -match [regex]::Escape('rws-the-moon')) {
     throw "Obsolete duplicate The Moon runtime asset name remains in Swift source."
@@ -380,6 +497,33 @@ if ($resetStart -lt 0 -or $resetIntent -lt 0 -or $resetSessionClear -lt 0 -or
 }
 $shellSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckMainShell.swift")
 $appSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckInternalApp.swift")
+if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
+    $readModelSource -match '#if\s+DEBUG' -or
+    $activeReadSource -match '#if\s+DEBUG') {
+    throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
+}
+$projectReleaseContracts = @(
+    'MARKETING_VERSION = 0.2.1;',
+    'CURRENT_PROJECT_VERSION = 1;',
+    'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
+    'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
+    'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;',
+    'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
+    'CODE_SIGN_STYLE = Automatic;'
+)
+foreach ($contract in $projectReleaseContracts) {
+    if ($project -cnotmatch [regex]::Escape($contract)) {
+        throw "TestFlight project contract is missing: $contract"
+    }
+}
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.2.1;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
+    [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;')).Count -ne 1 -or
+    $project -match '(?m)^\s*DEVELOPMENT_TEAM\s*=') {
+    throw "Debug and Release identity/version/signing contracts are not separated exactly as required."
+}
 if ($shellSource -cnotmatch [regex]::Escape("startReading(presetID)") -or
     $appSource -cnotmatch [regex]::Escape("readModel.requestReadingFromLearn(preset)")) {
     throw "Learn preset CTAs are not connected to ReadFlowModel."
@@ -394,6 +538,28 @@ if ($readModelSource -match '\bUserDefaults\b' -or
     $appSource -cnotmatch [regex]::Escape('active-session.v1.json') -or
     $appSource -cnotmatch [regex]::Escape('reading-continuity.v1.json')) {
     throw "Reading continuity must use a distinct atomic JSON sidecar next to the active session."
+}
+$storagePreparationCall = $appSource.IndexOf("storageDirectoryURL = try Self.prepareStorageDirectory()")
+$firstPersistencePath = $appSource.IndexOf('appendingPathComponent("active-session.v1.json"')
+$storageContracts = @(
+    "private static func prepareStorageDirectory(",
+    'appendingPathComponent("TarotDeckInternal", isDirectory: true)',
+    "try fileManager.createDirectory(",
+    "resourceValues.isExcludedFromBackup = true",
+    "try storageDirectoryURL.setResourceValues(resourceValues)",
+    "forKeys: [.isExcludedFromBackupKey]",
+    "guard verifiedValues.isExcludedFromBackup == true",
+    'preconditionFailure("Private app storage could not be prepared:'
+)
+foreach ($contract in $storageContracts) {
+    if ($appSource -cnotmatch [regex]::Escape($contract)) {
+        throw "Private storage preparation contract is missing: $contract"
+    }
+}
+if ($storagePreparationCall -lt 0 -or $firstPersistencePath -lt 0 -or
+    $storagePreparationCall -gt $firstPersistencePath -or
+    [regex]::Matches($allAppSource, [regex]::Escape("isExcludedFromBackup = true")).Count -ne 1) {
+    throw "The shared persistence directory must be excluded from backup exactly once before stores receive file URLs."
 }
 if ($readModelSource -match 'case\s+(layoutChoice|spreadChoice)\b|pendingReplacement|showsReplace|showsEndReading|requestEndReading|confirmEndReading' -or
     $activeReadSource -match 'LayoutChoiceView|ThreeCardSpreadChoiceView|activeHome|End Reading|Start a new reading\?') {
@@ -692,7 +858,6 @@ $favoriteContracts = @(
     "schemaVersion: 1",
     "decodedIDs.isSubset(of: knownCardIDs)",
     "options: .atomic",
-    "isExcludedFromBackup = true",
     'appendingPathComponent("favorites.v1.json"',
     'case favorites = "Favorites"',
     "No favorites yet",
@@ -705,6 +870,9 @@ foreach ($contract in $favoriteContracts) {
     if ($favoriteContractSource -cnotmatch [regex]::Escape($contract)) {
         throw "Favorites contract is missing: $contract"
     }
+}
+if ($favoritesSource -match 'isExcludedFromBackup|createDirectory\s*\(') {
+    throw "FavoriteCardsStore must rely on the single app-composition storage preparation point."
 }
 $favoriteWrite = $favoritesSource.IndexOf("try save(candidate)")
 $favoritePublish = $favoritesSource.IndexOf("cardIDs = candidate")
@@ -756,7 +924,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.2"'
+    'fallbackVersion = "0.2.1"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -855,5 +1023,38 @@ if ($ReleaseGate) {
     exit 0
 }
 
+if ($InternalTestFlightGate) {
+    if ($verifiedRecords.Count -ne 78 -or [int]$evidence.failureCount -ne 0) {
+        throw "Internal TestFlight artwork gate blocked: requires 78/78 intact verified candidates and zero failures; found $($verifiedRecords.Count)/78 with $($evidence.failureCount) failures."
+    }
+    $expectedRuntimeImageSets = @(
+        "ceremonial-card-back"
+        $deck.cards | ForEach-Object { [string]$_.artworkAsset }
+    ) | Sort-Object -Unique
+    $actualRuntimeImageSets = @(
+        Get-ChildItem -LiteralPath (Join-Path $appRoot "Resources/Assets.xcassets") -Directory -Filter "*.imageset" |
+            ForEach-Object { [IO.Path]::GetFileNameWithoutExtension($_.Name) }
+    ) | Sort-Object -Unique
+    $runtimeAssetDifference = @(Compare-Object $expectedRuntimeImageSets $actualRuntimeImageSets)
+    if ($expectedRuntimeImageSets.Count -ne 79 -or $runtimeAssetDifference.Count -gt 0) {
+        $details = $runtimeAssetDifference | ForEach-Object { "$($_.SideIndicator) $($_.InputObject)" }
+        throw "Internal TestFlight artwork gate blocked: runtime image-set allowlist differs from 78 canonical faces plus ceremonial-card-back. $($details -join '; ')"
+    }
+    if ($evidence.candidateOnly -ne $true -or
+        $evidence.finalAsset -ne $false -or
+        $evidence.distributionApproved -ne $false -or
+        [string]$evidence.territorialRightsReviewStatus -cne "pending" -or
+        @($verifiedRecords | Where-Object {
+            $_.finalAsset -ne $false -or
+            $_.distributionApproved -ne $false -or
+            [string]$_.territorialRightsReviewStatus -cne "pending"
+        }).Count -gt 0) {
+        throw "Internal TestFlight artwork gate blocked: candidates must remain explicitly non-final, non-distribution-approved, and territorially pending."
+    }
+
+    Write-Host "Validated INTERNAL-ONLY TestFlight artwork gate: 78/78 candidates are intact and the public ReleaseGate remains intentionally unsatisfied."
+    exit 0
+}
+
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.2 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-054/V-055 direct visual preset carousel, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards and 8 practical tutorials per language, approved A-031/A-033 visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.2.1 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-054/V-055 direct visual preset carousel, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards and 8 practical tutorials per language, approved A-031/A-033 visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

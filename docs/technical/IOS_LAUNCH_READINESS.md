@@ -1,4 +1,6 @@
-# Tarot Deck — iOS Launch Readiness Inventory
+# Tarot Deck — iOS Launch Readiness Inventory (historical)
+
+> **Superseded for operational use on 2026-08-11.** This file preserves the earlier readiness snapshot and contains intentionally stale counts, versioning and privacy gaps. Use `docs/technical/APP_STORE_RECORD.md`, `docs/technical/PRIVACY_DATA_INVENTORY.md`, `docs/technical/CONTENT_RIGHTS_AUDIT.md`, `STATUS.md` and `DECISIONS.md` for the current launch state. Do not use the checklist below to complete App Store Connect.
 
 Status: honest pre-release inventory; no distribution action authorized
 Snapshot date: 2026-08-09

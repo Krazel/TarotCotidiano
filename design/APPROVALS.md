@@ -4,6 +4,8 @@ Updated: 2026-08-10
 
 > Historical scope notice: the owner replaced Daily Tarot with the Tarot Deck product on 2026-08-09. The approvals below remain valid records of the former product and visual language, but they do not authorize implementation of any Tarot Deck screen. New approvals are tracked from `S03.2` onward in `design/TAROT_DECK_VISUAL_BRIEF.md` and `DECISIONS.md`.
 
+> Current implementation masters are consolidated in [`design/SCREEN_MASTERS.md`](SCREEN_MASTERS.md); this file remains the approval-history register.
+
 ## Daily Card — revealed
 
 - Direction: A — Ceremonial Obsidian.

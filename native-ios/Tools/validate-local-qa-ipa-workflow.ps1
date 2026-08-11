@@ -52,7 +52,7 @@ $requiredWorkflowContracts = @(
     '[[ "$MINIMUM_OS_VERSION" != "16.0" ]]',
     '--arg minimumOSVersion "$MINIMUM_OS_VERSION"',
     'minimumOSVersion: $minimumOSVersion',
-    '[[ "$VERSION" != "0.2" ]]',
+    '[[ "$VERSION" != "0.2.1" ]]',
     '[[ "$BUILD_NUMBER" != "1" ]]',
     "EXECUTABLE_DESCRIPTION",
     "codesign -dv",
@@ -113,20 +113,16 @@ if ($unexpectedActions.Count -gt 0) {
 }
 
 $bodyIndex = $appSource.IndexOf("var body: some Scene")
-$debugIndex = $appSource.IndexOf("#if DEBUG", $bodyIndex)
-$shellIndex = $appSource.IndexOf("TarotDeckMainShell(", $debugIndex)
-$readIndex = $appSource.IndexOf("ReadRootView(", $debugIndex)
-$elseIndex = $appSource.IndexOf("#else", $debugIndex)
-$emptyIndex = $appSource.IndexOf("EmptyView()", $elseIndex)
-if ($bodyIndex -lt 0 -or $debugIndex -lt $bodyIndex -or
-    $shellIndex -lt $debugIndex -or $readIndex -lt $debugIndex -or
-    $elseIndex -lt $shellIndex -or $emptyIndex -lt $elseIndex) {
-    throw "Debug target does not demonstrably compile the real Tarot UI before the release-only EmptyView branch."
+$shellIndex = $appSource.IndexOf("TarotDeckMainShell(", $bodyIndex)
+$readIndex = $appSource.IndexOf("ReadRootView(", $bodyIndex)
+if ($bodyIndex -lt 0 -or $shellIndex -lt $bodyIndex -or $readIndex -lt $shellIndex -or
+    $appSource -match '#if\s+DEBUG|EmptyView\(\)') {
+    throw "The composition root must compile the real Tarot UI in both Debug and Release."
 }
 
 $requiredProjectContracts = @(
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
-    'MARKETING_VERSION = 0.2;',
+    'MARKETING_VERSION = 0.2.1;',
     'CURRENT_PROJECT_VERSION = 1;',
     'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
     'TARGETED_DEVICE_FAMILY = 1;',
@@ -152,8 +148,8 @@ if ($workflow -cmatch 'BUILD_NUMBER="\$GITHUB_RUN_NUMBER"' -or
 
 $marketingVersions = @([regex]::Matches($project, 'MARKETING_VERSION = (?<value>\d+\.\d+(?:\.\d+)?);') |
     ForEach-Object { $_.Groups['value'].Value } | Select-Object -Unique)
-if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '0.2') {
-    throw "The Xcode project must have exactly one formal marketing version: 0.2."
+if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '0.2.1') {
+    throw "The Xcode project must have exactly one formal marketing version: 0.2.1."
 }
 
 $projectBuildNumbers = @([regex]::Matches($project, 'CURRENT_PROJECT_VERSION = (?<value>\d+);') |
@@ -170,7 +166,10 @@ $requiredSchemeContracts = @(
     'BuildableName = "TarotDeckInternal.app"',
     'BlueprintName = "TarotDeckInternal"',
     'buildForRunning = "YES"',
-    'buildConfiguration = "Debug"'
+    'buildConfiguration = "Debug"',
+    'buildForArchiving = "YES"',
+    '<ArchiveAction',
+    'buildConfiguration = "Release"'
 )
 foreach ($contract in $requiredSchemeContracts) {
     if ($scheme -cnotmatch [regex]::Escape($contract)) {
@@ -178,4 +177,4 @@ foreach ($contract in $requiredSchemeContracts) {
     }
 }
 
-Write-Host "Validated manual Local-QA IPA workflow: formal 0.2 (1), CI run and commit evidence, unsigned exact Payload, and no release/upload/signing boundary."
+Write-Host "Validated manual Local-QA IPA workflow: formal 0.2.1 (1), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."

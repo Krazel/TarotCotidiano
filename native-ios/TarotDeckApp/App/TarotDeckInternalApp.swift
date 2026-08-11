@@ -2,24 +2,27 @@ import Foundation
 import SwiftUI
 import TarotDeckCore
 
-/// Unsigned internal composition root for the approved iPhone MVP surfaces.
+/// Composition root for the approved iPhone MVP surfaces.
 @main
 @MainActor
 struct TarotDeckInternalApp: App {
-#if DEBUG
+    private enum StoragePreparationError: Error {
+        case applicationSupportUnavailable
+        case backupExclusionNotApplied
+    }
+
     @StateObject private var languageStore: AppLanguageStore
     @StateObject private var readModel: ReadFlowModel
     @StateObject private var favoriteStore: FavoriteCardsStore
 
     init() {
         let languageStore = AppLanguageStore()
-        let applicationSupportURL = FileManager.default.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask
-        ).first!
-
-        let storageDirectoryURL = applicationSupportURL
-            .appendingPathComponent("TarotDeckInternal", isDirectory: true)
+        let storageDirectoryURL: URL
+        do {
+            storageDirectoryURL = try Self.prepareStorageDirectory()
+        } catch {
+            preconditionFailure("Private app storage could not be prepared: \(error)")
+        }
         let sessionURL = storageDirectoryURL
             .appendingPathComponent("active-session.v1.json", isDirectory: false)
         let continuityURL = storageDirectoryURL
@@ -53,11 +56,41 @@ struct TarotDeckInternalApp: App {
         )
         _languageStore = StateObject(wrappedValue: languageStore)
     }
-#endif
 
+    /// Creates and verifies the one app-owned persistence directory before any store is built.
+    /// Failing closed prevents session, continuity, or favorite data from being read or written
+    /// from a directory that iOS may include in device backups.
+    private static func prepareStorageDirectory(
+        fileManager: FileManager = .default
+    ) throws -> URL {
+        guard let applicationSupportURL = fileManager.urls(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask
+        ).first else {
+            throw StoragePreparationError.applicationSupportUnavailable
+        }
+
+        var storageDirectoryURL = applicationSupportURL
+            .appendingPathComponent("TarotDeckInternal", isDirectory: true)
+        try fileManager.createDirectory(
+            at: storageDirectoryURL,
+            withIntermediateDirectories: true
+        )
+
+        var resourceValues = URLResourceValues()
+        resourceValues.isExcludedFromBackup = true
+        try storageDirectoryURL.setResourceValues(resourceValues)
+
+        let verifiedValues = try storageDirectoryURL.resourceValues(
+            forKeys: [.isExcludedFromBackupKey]
+        )
+        guard verifiedValues.isExcludedFromBackup == true else {
+            throw StoragePreparationError.backupExclusionNotApplied
+        }
+        return storageDirectoryURL
+    }
     var body: some Scene {
         WindowGroup {
-#if DEBUG
             Group {
                 switch languageStore.contentResult {
                 case .success(let content):
@@ -83,11 +116,6 @@ struct TarotDeckInternalApp: App {
                 }
             }
             .environment(\.locale, languageStore.language.locale)
-#else
-            // This unsigned internal scheme is intentionally Debug-only. A distributable release
-            // target, signing identity and final bundle identity remain separately unauthorized.
-            EmptyView()
-#endif
         }
     }
 }

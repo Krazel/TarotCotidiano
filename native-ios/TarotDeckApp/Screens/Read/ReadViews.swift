@@ -1,4 +1,3 @@
-#if DEBUG
 import SwiftUI
 import TarotDeckCore
 
@@ -1204,4 +1203,3 @@ private extension Collection {
         indices.contains(index) ? self[index] : nil
     }
 }
-#endif

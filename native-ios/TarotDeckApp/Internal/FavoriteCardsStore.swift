@@ -82,7 +82,6 @@ final class FavoriteCardsStore: ObservableObject {
         guard FileManager.default.fileExists(atPath: fileURL.path) else { return }
 
         do {
-            try prepareStorageDirectory()
             let data = try Data(contentsOf: fileURL)
             let snapshot = try JSONDecoder().decode(FavoriteCardsSnapshot.self, from: data)
             let decodedIDs = Set(snapshot.cardIDs)
@@ -100,7 +99,6 @@ final class FavoriteCardsStore: ObservableObject {
     }
 
     private func save(_ candidate: Set<String>) throws {
-        try prepareStorageDirectory()
         let snapshot = FavoriteCardsSnapshot(
             schemaVersion: 1,
             cardIDs: candidate.sorted()
@@ -108,17 +106,6 @@ final class FavoriteCardsStore: ObservableObject {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         try encoder.encode(snapshot).write(to: fileURL, options: .atomic)
-    }
-
-    private func prepareStorageDirectory() throws {
-        var directoryURL = fileURL.deletingLastPathComponent()
-        try FileManager.default.createDirectory(
-            at: directoryURL,
-            withIntermediateDirectories: true
-        )
-        var resourceValues = URLResourceValues()
-        resourceValues.isExcludedFromBackup = true
-        try directoryURL.setResourceValues(resourceValues)
     }
 }
 

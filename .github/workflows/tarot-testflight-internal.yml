@@ -1,0 +1,269 @@
+name: Tarot TestFlight internal only
+
+on:
+  workflow_dispatch:
+    inputs:
+      internal_only_confirmation:
+        description: "Permanent gate: this build is restricted to TestFlight internal testers"
+        required: true
+        default: "TESTFLIGHT_INTERNAL_ONLY"
+        type: choice
+        options:
+          - "TESTFLIGHT_INTERNAL_ONLY"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tarot-testflight-internal
+  cancel-in-progress: false
+
+jobs:
+  archive-export-upload:
+    name: TestFlight INTERNAL ONLY - 0.2.1 (1)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY' }}
+    runs-on: macos-latest
+    timeout-minutes: 45
+    environment: app-store-production
+
+    steps:
+      - name: Check out repository without retained credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Validate TestFlight workflow boundaries
+        shell: pwsh
+        run: ./native-ios/Tools/validate-testflight-workflow.ps1
+
+      - name: Validate canonical content
+        shell: pwsh
+        run: |
+          ./native-ios/Content/validate-content.ps1
+          ./native-ios/Content/Education/validate-education.ps1
+          ./native-ios/Content/Localization/validate-localization.ps1
+
+      - name: Validate app and internal-only candidate artwork gate
+        shell: pwsh
+        run: |
+          ./native-ios/Tools/validate-app-integration.ps1
+          ./native-ios/Tools/validate-app-integration.ps1 -InternalTestFlightGate
+
+      - name: Run structural Swift tests
+        shell: bash
+        run: swift test --package-path native-ios --parallel
+
+      - name: Prepare App Store Connect cloud-signing key
+        shell: bash
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        run: |
+          set -euo pipefail
+          set +x
+          : "${APPLE_TEAM_ID:?APPLE_TEAM_ID is required in app-store-production}"
+          : "${APP_STORE_CONNECT_API_KEY_ID:?APP_STORE_CONNECT_API_KEY_ID is required in app-store-production}"
+          : "${APP_STORE_CONNECT_ISSUER_ID:?APP_STORE_CONNECT_ISSUER_ID is required in app-store-production}"
+          : "${APP_STORE_CONNECT_API_KEY_BASE64:?APP_STORE_CONNECT_API_KEY_BASE64 is required in app-store-production}"
+
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > "$API_KEY_PATH"
+          chmod 600 "$API_KEY_PATH"
+          test -s "$API_KEY_PATH"
+
+      - name: Archive signed Release app with cloud signing
+        shell: bash
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          set +x
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+
+          xcodebuild archive \
+            -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$ARCHIVE_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CODE_SIGN_STYLE=Automatic \
+            CURRENT_PROJECT_VERSION=1 \
+            MARKETING_VERSION=0.2.1 \
+            COMPILER_INDEX_STORE_ENABLE=NO
+
+      - name: Verify signed archive and internal release identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          APP_PATH="$ARCHIVE_PATH/Products/Applications/TarotDeckInternal.app"
+          INFO_PLIST="$APP_PATH/Info.plist"
+          EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
+          EXECUTABLE_PATH="$APP_PATH/$EXECUTABLE_NAME"
+          ENTITLEMENTS_PATH="$RUNNER_TEMP/archive-entitlements.plist"
+          PROFILE_PATH="$RUNNER_TEMP/archive-profile.plist"
+
+          test -d "$APP_PATH"
+          test -f "$EXECUTABLE_PATH"
+          test -f "$APP_PATH/PrivacyInfo.xcprivacy"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "0.2.1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
+          [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
+
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :get-task-allow' "$ENTITLEMENTS_PATH")" == "false" ]]
+          security cms -D -i "$APP_PATH/embedded.mobileprovision" > "$PROFILE_PATH"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:get-task-allow' "$PROFILE_PATH")" == "false" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$PROFILE_PATH")" == *.com.krazel.tarotdeck ]]
+
+      - name: Export signed INTERNAL-ONLY IPA
+        shell: bash
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          set +x
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          EXPORT_PATH="$RUNNER_TEMP/tarot-testflight-export"
+          EXPORT_OPTIONS="$RUNNER_TEMP/TestFlightInternalExport.plist"
+
+          /usr/bin/plutil -create xml1 "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :method string app-store-connect' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :destination string export' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :signingStyle string automatic' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c "Add :teamID string $APPLE_TEAM_ID" "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :manageAppVersionAndBuildNumber bool false' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :testFlightInternalTestingOnly bool true' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :stripSwiftSymbols bool true' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :uploadSymbols bool true' "$EXPORT_OPTIONS"
+
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist "$EXPORT_OPTIONS" \
+            -exportPath "$EXPORT_PATH" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
+
+      - name: Verify exported IPA and create evidence manifest
+        id: evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          EXPORT_PATH="$RUNNER_TEMP/tarot-testflight-export"
+          SOURCE_IPA="$(find "$EXPORT_PATH" -maxdepth 1 -type f -name '*.ipa' -print -quit)"
+          VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-testflight-verify.XXXXXX")"
+          OUTPUT_PATH="$RUNNER_TEMP/tarot-testflight-evidence"
+          SHORT_COMMIT="${GITHUB_SHA:0:12}"
+          BASE_NAME="TarotDeck-0.2.1-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
+          IPA_PATH="$SOURCE_IPA"
+          MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
+          SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
+
+          test -n "$SOURCE_IPA"
+          mkdir -p "$OUTPUT_PATH"
+          /usr/bin/ditto -x -k "$IPA_PATH" "$VERIFY_PATH"
+          APP_PATH="$(find "$VERIFY_PATH/Payload" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          INFO_PLIST="$APP_PATH/Info.plist"
+          EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
+          EXECUTABLE_PATH="$APP_PATH/$EXECUTABLE_NAME"
+          ENTITLEMENTS_PATH="$RUNNER_TEMP/export-entitlements.plist"
+
+          test -d "$APP_PATH"
+          test -f "$APP_PATH/PrivacyInfo.xcprivacy"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "0.2.1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
+          [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
+          codesign --verify --deep --strict --verbose=2 "$APP_PATH"
+          codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :get-task-allow' "$ENTITLEMENTS_PATH")" == "false" ]]
+
+          IPA_SHA256="$(shasum -a 256 "$IPA_PATH" | awk '{print $1}')"
+          printf '%s  %s.ipa\n' "$IPA_SHA256" "$BASE_NAME" > "$SHA_PATH"
+          jq -n \
+            --arg app "Tarot Deck" \
+            --arg version "0.2.1" \
+            --arg build "1" \
+            --arg bundleID "com.krazel.tarotdeck" \
+            --arg commit "$GITHUB_SHA" \
+            --arg ciRunNumber "$GITHUB_RUN_NUMBER" \
+            --arg ciRunAttempt "$GITHUB_RUN_ATTEMPT" \
+            --arg ciRunID "$GITHUB_RUN_ID" \
+            --arg purpose "TestFlight-Internal" \
+            --arg artifact "$BASE_NAME" \
+            --arg sha256 "$IPA_SHA256" \
+            '{schemaVersion: 1, app: $app, version: $version, build: $build, bundleID: $bundleID, commit: $commit, ciRunNumber: $ciRunNumber, ciRunAttempt: $ciRunAttempt, ciRunID: $ciRunID, purpose: $purpose, internalTestingOnly: true, externalTestingCapable: false, appStoreReleaseCapable: false, artifact: $artifact, sha256: $sha256}' > "$MANIFEST_PATH"
+          echo "artifact_name=$BASE_NAME" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve non-binary TestFlight evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.evidence.outputs.artifact_name }}
+          path: ${{ runner.temp }}/tarot-testflight-evidence/
+          if-no-files-found: error
+          retention-days: 7
+          compression-level: 0
+          include-hidden-files: false
+
+      - name: Upload archive to TestFlight as INTERNAL ONLY
+        shell: bash
+        env:
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          set +x
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          UPLOAD_OPTIONS="$RUNNER_TEMP/TestFlightInternalUpload.plist"
+
+          /usr/bin/plutil -create xml1 "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :method string app-store-connect' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :destination string upload' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :signingStyle string automatic' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c "Add :teamID string $APPLE_TEAM_ID" "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :manageAppVersionAndBuildNumber bool false' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :testFlightInternalTestingOnly bool true' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :stripSwiftSymbols bool true' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :uploadSymbols bool true' "$UPLOAD_OPTIONS"
+
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE_PATH" \
+            -exportOptionsPlist "$UPLOAD_OPTIONS" \
+            -exportPath "$RUNNER_TEMP/tarot-testflight-upload" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$API_KEY_PATH" \
+            -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
+            -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
+
+      - name: Remove temporary App Store Connect key
+        if: ${{ always() }}
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+        run: |
+          set +x
+          rm -f "$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"

@@ -100,6 +100,15 @@ El propietario aprobó expresamente V-011/V-012 y autorizó de antemano las dem�
 - Esa skill no autoriza acciones rojas: crear productos, usar secretos, subir builds, enviar IAP/review, aceptar contratos o publicar siempre requiere autorización expresa en ese momento.
 - Crear productos, configurar contratos/precios, subir builds o enviar IAP a revisión son acciones rojas y requieren autorización expresa separada.
 
+## Minimización de datos e información pública
+
+- La app solo puede recopilar, transmitir o persistir datos estrictamente necesarios para una función aprobada; solicitar únicamente permisos del sistema imprescindibles para esa función.
+- Auditar la build y sus SDK reales antes de redactar privacidad o completar App Store Connect. No incluir cláusulas hipotéticas sobre servicios que no existen ni omitir prácticas presentes.
+- Dejar vacíos los campos públicos opcionales cuando no sean necesarios. No publicar nombre completo, domicilio, teléfono, repositorio, cuentas personales u otros datos del propietario salvo obligación concreta de Apple o de la ley.
+- Usar un alias de soporte cuando sea posible y mantener separado el contacto público del contacto privado de App Review.
+- No eludir requisitos territoriales. Si DSA u otra norma exige declarar condición de comerciante o datos verificables, elevarlo como decisión material y contestar con información real.
+- Reauditar privacidad, soporte, permisos y metadata cuando cambien SDKs, red, analítica, publicidad, StoreKit, cuentas o recogida de datos.
+
 ## Flujo visual obligatorio
 
 Toda creación, ampliación, reinicio o rediseño de interfaz debe aplicar íntegramente:
@@ -197,6 +206,14 @@ Después de cada cambio material de estado:
 5. No borrar decisiones anteriores: marcarlas como sustituidas con fecha y referencia a la decisión nueva.
 
 `STATUS.md` es una fotografía mutable. `DECISIONS.md` es el registro histórico de autoridad. Los documentos especializados conservan el detalle de producto, diseño y técnica.
+
+### Maestras visuales canónicas
+
+- Mantener dentro del repositorio un manifiesto canónico equivalente a `design/APPROVALS.md` con una única imagen completa vigente por pantalla o estado que gobierne la app real.
+- Cada entrada vigente debe registrar: identificador de pantalla/estado, ruta, dispositivo o tamaño de lienzo, orientación, idioma, fecha de aprobación y SHA-256.
+- Separar claramente propuestas, maestras vigentes y referencias históricas. Una propuesta no gobierna implementación ni capturas.
+- Cuando una imagen sustituya a otra, marcar la nueva como vigente y la anterior como reemplazada, con enlace entre ambas; no borrar el historial.
+- Las imágenes de App Store usan las maestras como dirección de arte, pero la captura base final debe salir de la build real y enlazarse en el manifiesto con su maestra correspondiente.
 
 ## Git y preservación
 
