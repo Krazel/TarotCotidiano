@@ -6,7 +6,7 @@ Actualizado: 2026-08-11
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.2.1 (1)` disponible en TestFlight Internal Only para iOS 16**. Apple la muestra `En pruebas`, asignada al grupo interno `Testers` con un tester. Corrige la composición Release, conserva el carrusel de cinco presets, ocho tutoriales bilingües y AppIcon D.
+Fase actual: **`0.2.1 (1)` disponible en TestFlight Internal Only para iOS 16** y corrección local **`0.2.2 (1)` preparada, todavía no compilada ni subida**. Apple muestra la anterior `En pruebas`, asignada al grupo interno `Testers` con un tester. La candidata local sustituye el carrusel por el selector progresivo V-058–V-063; conserva ocho tutoriales bilingües y AppIcon D.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,11 +14,13 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. La build TestFlight interna quedó firmada, subida, procesada y asignada; la siguiente fase es QA física del propietario y correcciones sobre `0.2.1` según el versionado durable.
+Propietaria activa de implementación: **ninguna**. A-043 está integrada: el preset explícito de Home persiste bajo `tarot.readingPreset.v1`, una sesión activa conserva prioridad sin sobrescribirlo y Learn no lo cambia. El propietario autorizó en el turno actual commit, push, compilación y nueva subida restringida de `0.2.2 (1)` a TestFlight Internal Only.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
 A-033 fue ordenada y corregida explícitamente por el propietario el 2026-08-11. V-054/V-055 sustituyen V-049–V-051: Home usa un carrusel visual de cinco fichas ilustradas, nunca un desplegable o lista vertical. V-052/V-053 y V-056/V-057 cubren el estado completo de Three Cards y One Card con reset/otra lectura. V-014, V-028, V-039, V-040 y V-044 quedan como referencias históricas allí donde A-033 las sustituye.
+
+A-042 sustituye el carrusel de A-033 después de la prueba física del propietario. V-058–V-063 son las maestras vigentes portrait/landscape: mazo grande como hero, gear realmente superpuesto sin reserva de 64 puntos, botón selector pequeño, elección visual una/tres cartas y segundo nivel visual para los cuatro estilos de tres cartas. V-054/V-055 quedan preservadas como referencias reemplazadas.
 
 Auditoría de derechos cerrada el 2026-08-11: la obra histórica Rider-Waite-Smith está fuera de copyright en EE. UU. y Reino Unido y ha agotado el plazo ordinario europeo. Sin embargo, los 78 JPEG TaionWC/Pam-A no tienen una cadena de derechos suficientemente completa para certificar distribución mundial: Public Domain Mark no es licencia ni garantía, hay una inconsistencia Smith/Waite para países de plazo largo y no existe CC0/licencia expresa del digitalizador. R-026 sustituye la cautela española incompleta de R-017. Los archivos permanecen como candidatos internos y `docs/technical/CONTENT_RIGHTS_AUDIT.md` conserva la evidencia.
 
@@ -85,7 +87,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 
 ### Implementación visual aprobada
 
-- `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home con carrusel directo de cinco presets, One Card y Three Cards completos, significados de cartas reveladas, ocho tutoriales con `Try This Reading`, biblioteca 78, filtros y anterior/siguiente sin wrap.
+- `native-ios/TarotDeckApp/` contiene la shell `Read / Learn / Cards`, Home con mazo hero y selector visual progresivo de cinco presets, One Card y Three Cards completos, significados de cartas reveladas, ocho tutoriales con `Try This Reading`, biblioteca 78, filtros y anterior/siguiente sin wrap.
 - Settings S09.1 está integrado desde el engranaje de Read en Home vacío o activo, conserva exactamente la lectura y contiene cinco filas con feedback interno honesto. No importa StoreKit, no inventa precios, productos, URLs ni resultados de restauración, y toma la versión del bundle con fallback `0.2.1`.
 - `ReadFlowModel` representa la `DeckSession` real, exige exactamente los 78 IDs canónicos y usa dos JSON atómicos —sesión y continuidad— con write-ahead/reconciliación. Restore, errores, replace y end solo publican estados persistidos; no quedan callbacks activos vacíos ni exposición de identidad face-down.
 - CTA Learn abre Three Cards realmente: reanuda Three activa, abre Three nueva sin sesión y protege una One activa mediante confirmación de reemplazo.

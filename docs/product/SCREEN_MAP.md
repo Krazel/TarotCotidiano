@@ -104,15 +104,19 @@ Selector options:
 - **You · The other person · Connection** / **Tú · La otra persona · Conexión**;
 - **Open reading** / **Tirada libre**.
 
-The presets appear as a horizontal carousel of illustrated tiles: the selected tile is centered and highlighted, neighboring tiles remain partially visible, and a five-position indicator communicates the full set. Tapping a tile or swiping to it changes only the prospective preset. Tapping the hero deck creates that reading and opens `S03.1` directly. There is no dropdown, vertical text menu, layout-choice screen, or spread-choice screen.
+The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where two illustrated choices select `One Card` or `Three Cards`. Choosing `Three Cards` opens `S01.3`, where four illustrated tiles select timeline, situation/challenge/advice, relationship, or open. Selecting a tile changes and locally persists the prospective Home preset, then closes the chooser; tapping the hero deck creates that reading and opens `S03.1` directly. The saved preset returns after relaunch when no active session exists. There is no dropdown, vertical text menu, permanent carousel, layout-choice screen, or standalone spread-choice screen.
 
-Composition invariants from V-054/V-055: the first viewport does not scroll; title, carousel, hero deck, cue, and tab bar fit without a long explanatory block; the deck remains centered in the usable content area; the gear must not push the title or deck downward; and no separate primary button duplicates the deck action. Swiping or selecting a tile changes only the tile selection inside a fixed carousel frame and does not relayout Home.
+Composition invariants from V-058/V-061: the first viewport does not scroll; title, small selector, dominant hero deck, cue, and tab bar fit without a long explanatory block; the gear is a true overlay and reserves no height; and no separate primary button duplicates the deck action. Opening or closing the chooser overlays Home and does not move the underlying deck.
 
 Not present: card of the day, date, zodiac sign, generated interpretation, lesson promotion, account prompt, support promotion, notification prompt, or feed.
 
-### S01.2 — Another preset selected
+### S01.2 — Reading count selector
 
-The chosen visual tile moves to the central selected position and receives the gold selected treatment. The carousel remains in the same frame. VoiceOver exposes each tile as a direct button with its selected state and offers an adjustable previous/next action; no horizontal gesture is the only path. V-054 portrait and V-055 landscape govern every selected preset through the same component.
+An image-led panel presents exactly two direct choices: `One Card` and `Three Cards`. The current family receives the gold selected treatment. Choosing `One Card` commits that prospective preset and closes the panel. Choosing `Three Cards` opens `S01.3`. Close or outside dismissal preserves the prior preset. VoiceOver exposes both as direct buttons with selected state; no gesture is the only path. V-059 portrait and V-062 landscape govern the state.
+
+### S01.3 — Three-card style selector
+
+An image-led panel presents exactly four direct tiles: timeline, situation/challenge/advice, relationship, and open. The current preset receives the gold selected treatment. Choosing one commits that prospective preset and closes the panel; Back returns to `S01.2`; Close preserves the prior preset and returns Home. V-060 portrait and V-063 landscape govern the state. The panel may scroll only for accessibility text sizes, never as a plain vertical list.
 
 ### Retired setup and replacement states
 
@@ -661,22 +665,23 @@ Additional registered references under A-021:
 
 5. `S03.6 Three Cards / complete, all face up` — V-017/V-018.
 6. `S03.1 Three Cards / ready to shuffle` — V-015/V-016.
-7. `S01.1 Read / Deck Home / visual preset carousel` — V-054 portrait and V-055 landscape, which supersede V-044/V-049–V-051 for Home; English uses the same composition.
-8. `S01.2 Read / Deck Home / another carousel preset selected` — the same V-054/V-055 component with a different tile centered and selected.
-9. `S04 Card Meaning from Reading` — V-019.
-10. `S05 Learn Index` — V-020.
-11. `S06 Learn Article` — V-021.
-12. `S07 Cards Library / All with filters` — V-022.
-13. `S08 Card Detail from Library / previous-next` — V-023.
-14. `S09 Settings` — V-045, which supersedes V-025 with the internal `English / Español` selector.
-15. `S10 Support the App / not active` — V-027, which supersedes V-026 with `ios-app-launch` copy; its displayed prices are illustrative and not live product configuration.
-16. `S01.2 Read / Deck Home / active Three Cards reading` — V-028, historical and superseded by direct table restoration under A-033.
-17. `S03.1 One Card / ready to shuffle` — V-029 portrait and V-030 landscape.
-18. `S03.2 One Card / shuffled` — V-031 portrait and V-032 landscape.
-19. `S03.3 One Card / drawn face down` — V-037 portrait and V-038 landscape, superseding V-033/V-034 so the exhausted deck no longer competes with the completed layout.
-20. `S03.6 One Card / The Hermit revealed` — V-035 portrait and V-036 landscape.
-21. `S02.2 Three-card spread choice / Spanish` — V-039, historical and superseded by V-049–V-051 under A-033.
-22. `S03 Three Cards / Past · Present · Future / large landscape / Spanish` — V-040, which supersedes the previous landscape proportions for the three-card table.
+7. `S01.1 Read / Deck Home / compact selector closed` — V-058 portrait and V-061 landscape, which supersede V-054/V-055; English uses the same composition.
+8. `S01.2 Read / Deck Home / one-or-three selector open` — V-059 portrait and V-062 landscape.
+9. `S01.3 Read / Deck Home / three-card style selector open` — V-060 portrait and V-063 landscape.
+10. `S04 Card Meaning from Reading` — V-019.
+11. `S05 Learn Index` — V-020.
+12. `S06 Learn Article` — V-021.
+13. `S07 Cards Library / All with filters` — V-022.
+14. `S08 Card Detail from Library / previous-next` — V-023.
+15. `S09 Settings` — V-045, which supersedes V-025 with the internal `English / Español` selector.
+16. `S10 Support the App / not active` — V-027, which supersedes V-026 with `ios-app-launch` copy; its displayed prices are illustrative and not live product configuration.
+17. `S01.2 Read / Deck Home / active Three Cards reading` — V-028, historical and superseded by direct table restoration under A-033.
+18. `S03.1 One Card / ready to shuffle` — V-029 portrait and V-030 landscape.
+19. `S03.2 One Card / shuffled` — V-031 portrait and V-032 landscape.
+20. `S03.3 One Card / drawn face down` — V-037 portrait and V-038 landscape, superseding V-033/V-034 so the exhausted deck no longer competes with the completed layout.
+21. `S03.6 One Card / The Hermit revealed` — V-035 portrait and V-036 landscape.
+22. `S02.2 Three-card spread choice / Spanish` — V-039, historical and superseded by V-049–V-051 under A-033.
+23. `S03 Three Cards / Past · Present · Future / large landscape / Spanish` — V-040, which supersedes the previous landscape proportions for the three-card table.
 
 23. `S03 Reading Table / professional motion storyboard V2` — V-048, which supersedes V-041 with press, cut, interleave, deal, and flip inside a stable viewport.
 24. `S08.2 Card Detail / favorite saved` — V-042.

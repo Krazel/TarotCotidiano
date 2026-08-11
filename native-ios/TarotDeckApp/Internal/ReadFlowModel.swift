@@ -202,6 +202,9 @@ private enum ReadFlowInvariantError: Error {
 
 @MainActor
 final class ReadFlowModel: ObservableObject {
+    private static let presetPreferenceKey = "tarot.readingPreset.v1"
+    private static let fallbackPreset: ReadingPreset = .pastPresentFuture
+
     enum Surface: Hashable {
         case restoring
         case home
@@ -236,19 +239,26 @@ final class ReadFlowModel: ObservableObject {
 
     private let coordinator: DeckSessionCoordinator<SystemDeckShuffler, JSONDeckSessionStore>
     private let continuityStore: ReadingContinuityStore
+    private let preferences: UserDefaults
     private let knownCardIDs: Set<TarotCardID>
     private let canonicalCardIDs = Set(StandardTarotDeck.cardIDs)
+    private var homePresetPreference: ReadingPreset
     private var issue: Issue?
     private var hasRestored = false
 
     init(
         coordinator: DeckSessionCoordinator<SystemDeckShuffler, JSONDeckSessionStore>,
         knownCardIDs: Set<TarotCardID> = Set(StandardTarotDeck.cardIDs),
-        continuityURL: URL
+        continuityURL: URL,
+        preferences: UserDefaults = .standard
     ) {
+        let homePresetPreference = Self.loadHomePresetPreference(from: preferences)
         self.coordinator = coordinator
         self.knownCardIDs = knownCardIDs
         self.continuityStore = ReadingContinuityStore(fileURL: continuityURL)
+        self.preferences = preferences
+        self.homePresetPreference = homePresetPreference
+        self.selectedPreset = homePresetPreference
     }
 
     var issueTitle: String { issue?.title ?? AppLocalization.text("Reading unavailable") }
@@ -333,6 +343,8 @@ final class ReadFlowModel: ObservableObject {
 
     func selectPreset(_ preset: ReadingPreset) {
         guard !isBusy, surface == .home, layout == nil, session == nil else { return }
+        preferences.set(preset.rawValue, forKey: Self.presetPreferenceKey)
+        homePresetPreference = preset
         selectedPreset = preset
     }
 
@@ -796,13 +808,23 @@ final class ReadFlowModel: ObservableObject {
     }
 
     private func resetToHome() {
-        if let layout {
-            selectedPreset = ReadingPreset.resolved(layout: layout, spread: spread)
-        }
+        selectedPreset = homePresetPreference
         layout = nil
         spread = nil
         session = nil
         surface = .home
+    }
+
+    private static func loadHomePresetPreference(from preferences: UserDefaults) -> ReadingPreset {
+        guard let storedValue = preferences.object(forKey: presetPreferenceKey) else {
+            return fallbackPreset
+        }
+        guard let rawValue = storedValue as? String,
+              let preset = ReadingPreset(rawValue: rawValue) else {
+            preferences.removeObject(forKey: presetPreferenceKey)
+            return fallbackPreset
+        }
+        return preset
     }
 
     private func presentRecovery(_ message: String) {

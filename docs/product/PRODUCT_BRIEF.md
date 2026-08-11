@@ -72,14 +72,14 @@ The MVP proves that promise through:
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
 10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
 11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
-12. **The deck is the control.** Home exposes one compact visual carousel of illustrated preset tiles before the deck is touched; it is never a dropdown or vertical text list. The deck then starts that preset directly; on the table it shuffles, draws, or offers another reading according to the current state. A duplicate large primary button must not compete with it.
+12. **The deck is the control.** Home keeps the deck large and exposes only one small selector button before it is touched. That button opens a progressive visual chooser: one or three cards first, then the four illustrated three-card styles only when needed. It is never a dropdown, permanent carousel, or vertical text list. The deck then starts that preset directly; on the table it shuffles, draws, or offers another reading according to the current state. A duplicate large primary button must not compete with it.
 13. **The viewport does not jump.** Persistent controls, the deck frame, reading positions, and visible tab bar keep stable geometry while labels and logical states change; motion happens inside those bounds.
 
 ## Three product loops
 
 ### Read
 
-1. Open `Read`; choose `One Card` or one of the four three-card presets from the visual tile carousel above the deck.
+1. Open `Read`; keep the current preset or use the small visual selector to choose `One Card` or one of the four three-card presets.
 2. Tap the prominent deck to open that reading directly, with no layout or spread-choice screen.
 3. Tap the table deck to shuffle the complete deck.
 4. Draw cards one at a time; each arrives face down and cannot repeat.
@@ -117,7 +117,7 @@ The MVP has three primary iPhone destinations:
 
 A standard three-destination iOS navigation shell keeps them directly reachable. Its visible tab bar uses a stable opaque or strongly translucent Ceremonial Obsidian surface so labels and selected state remain legible and content never causes the bar to change height, opacity, or position. An active reading remains intact when the user visits Learn or Cards. Detail views return to their source context; a meaning opened from a reading returns to the same reading, while a card opened from the library returns to the same filter and position.
 
-A discreet settings gear overlays the `Read` safe area without reserving layout height. Settings is not a fourth primary destination and never replaces or interrupts the deck flow. The empty Home is a compact, non-scrolling first viewport: concise identity, one horizontal carousel of illustrated preset tiles, one centered hero deck, its start cue, and the stable tab bar; it has no dropdown, long introductory block, separate setup screen, or duplicate primary button.
+A discreet settings gear overlays the `Read` safe area without reserving layout height. Settings is not a fourth primary destination and never replaces or interrupts the deck flow. The empty Home is a compact, non-scrolling first viewport: concise identity, one small preset selector, one dominant hero deck, its start cue, and the stable tab bar. The selector opens image-led panels only when requested; Home has no permanent carousel, dropdown, long introductory block, separate setup screen, or duplicate primary button.
 
 Exact visual presentation remains governed by the registered screen images.
 
@@ -126,7 +126,7 @@ Exact visual presentation remains governed by the registered screen images.
 ### Included
 
 1. **Read**
-   - Compact Deck Home with one inline selector for `One Card`, the three named `Three Cards` spreads, or the open three-card option; the centered deck starts the selected preset directly.
+   - Compact Deck Home with one small selector. Its first visual level chooses `One Card` or `Three Cards`; the second level appears only for `Three Cards` and offers the three named spreads plus the open option. The dominant deck starts the selected preset directly.
    - No `Layout Choice`, `Spread Choice`, active-reading replacement prompt, or visible `End Reading` action.
    - Tap the table deck to shuffle when unshuffled and to draw the next card when shuffled; after every drawn card is revealed, it offers another reading with the same preset.
    - One-at-a-time draw, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional motion governed by V-048.
@@ -258,7 +258,7 @@ Reference copy describes possibilities, not certainties. It must not diagnose, p
 - `drawnCardIDs`: the first one or three IDs consumed from that order.
 - `faceUpCardIDs`: the subset currently turned over.
 - `phase`: setup, ready to shuffle, ready to draw, in progress, or complete.
-- `lastPreset`: the most recent Home selection for the current app use; it changes no card identity and creates no reading until the deck is tapped.
+- `lastPreset`: the most recent explicit Home selection, stored locally as a versioned preset ID and restored on relaunch. It changes no card identity and creates no reading until the deck is tapped. An active reading temporarily governs the table without overwriting this preference.
 
 The reading session, favorite card IDs, and explicit app-language choice are the only durable app-authored product state. `preferredLanguage` is either `en` or `es`, uses stable content IDs, and changes presentation without migrating or rewriting a session. A supporter entitlement is owned and verified through the App Store and may be cached locally for presentation; it is not an account, reading record, or access gate. Focused presentation, selected tab, Learn article, Cards filter, library position, and scroll offsets may reset without data loss.
 

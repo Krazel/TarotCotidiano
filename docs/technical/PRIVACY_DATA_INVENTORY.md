@@ -14,6 +14,7 @@ The earlier Local-QA IPA SHA-256 is `8D8D9ECCD086D8EF03543FC155A3A0EE0C9CF4484F3
 | Information | Storage | Purpose | Transmission | Removal |
 |---|---|---|---|---|
 | Selected language (`en` or `es`) | App-owned `UserDefaults`, key `tarot.appLanguage.v1` | Keep the explicit in-app language choice | None | Delete the app or clear its container |
+| Preferred reading preset (one of five canonical preset IDs) | App-owned `UserDefaults`, key `tarot.readingPreset.v1` | Reopen Home with the user's last explicit reading style | None | Choose another style, delete the app, or clear its container |
 | Active reading | `active-session.v1.json` in the app's Application Support directory | Restore the exact shuffled deck, drawn cards and revealed state | None | End/back from the reading where applicable, or delete the app |
 | Reading continuity | `reading-continuity.v1.json` in the same directory | Recover the selected preset and safe transition state after interruption | None | Cleared with the reading where applicable, or delete the app |
 | Favorite card IDs | `favorites.v1.json` in the same directory | Keep the user's saved cards | None | Remove individual favorites or delete the app |
@@ -24,7 +25,7 @@ The JSON files contain app-defined card IDs and reading state, not names, email 
 
 - No camera, microphone, photos, contacts, calendar, location, Bluetooth, motion, health, notifications, local-network, tracking, or other protected-data permission is requested.
 - The target has no corresponding `UsageDescription` strings.
-- The app uses `UserDefaults` only for its own language preference. `PrivacyInfo.xcprivacy` declares no tracking, no collected data, and the applicable required-reason API category for app-only preferences.
+- The app uses `UserDefaults` only for its own language and reading-preset preferences. `PrivacyInfo.xcprivacy` declares no tracking, no collected data, and the applicable required-reason API category for app-only preferences.
 - No third-party frameworks, extensions, plug-ins, or embedded SDK privacy manifests were found in the audited IPA.
 
 ## Support email is separate from the app

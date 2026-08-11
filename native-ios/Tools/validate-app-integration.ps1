@@ -503,7 +503,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.2.1;',
+    'MARKETING_VERSION = 0.2.2;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -516,7 +516,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.2.1;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.2.2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -533,11 +533,58 @@ if ($readModelSource -cnotmatch [regex]::Escape("else if layout == nil") -or
     $readModelSource -match 'requestReadingFromLearn(?s).*?(layoutChoice|spreadChoice)') {
     throw "Learn CTAs must preselect an existing preset or prepare it directly without a choice screen."
 }
-if ($readModelSource -match '\bUserDefaults\b' -or
-    $readModelSource -cnotmatch [regex]::Escape("options: .atomic") -or
+if ($readModelSource -cnotmatch [regex]::Escape("options: .atomic") -or
     $appSource -cnotmatch [regex]::Escape('active-session.v1.json') -or
     $appSource -cnotmatch [regex]::Escape('reading-continuity.v1.json')) {
     throw "Reading continuity must use a distinct atomic JSON sidecar next to the active session."
+}
+
+$presetPreferenceContracts = @(
+    'private static let presetPreferenceKey = "tarot.readingPreset.v1"',
+    'private static let fallbackPreset: ReadingPreset = .pastPresentFuture',
+    'private let preferences: UserDefaults',
+    'private var homePresetPreference: ReadingPreset',
+    'preferences: UserDefaults = .standard',
+    'let homePresetPreference = Self.loadHomePresetPreference(from: preferences)',
+    'self.selectedPreset = homePresetPreference',
+    'private static func loadHomePresetPreference(from preferences: UserDefaults)',
+    'preferences.object(forKey: presetPreferenceKey)',
+    'ReadingPreset(rawValue: rawValue)',
+    'preferences.removeObject(forKey: presetPreferenceKey)',
+    'selectedPreset = homePresetPreference'
+)
+foreach ($contract in $presetPreferenceContracts) {
+    if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
+        throw "A-043 saved Home preset contract is missing: $contract"
+    }
+}
+$selectPresetStart = $readModelSource.IndexOf('func selectPreset(_ preset: ReadingPreset)')
+$startSelectedPresetStart = $readModelSource.IndexOf('func startSelectedPreset()', $selectPresetStart)
+if ($selectPresetStart -lt 0 -or $startSelectedPresetStart -le $selectPresetStart) {
+    throw "A-043 selectPreset source boundaries could not be validated."
+}
+$selectPresetSource = $readModelSource.Substring(
+    $selectPresetStart,
+    $startSelectedPresetStart - $selectPresetStart
+)
+$presetSelectionGuard = $selectPresetSource.IndexOf('guard !isBusy, surface == .home, layout == nil, session == nil else { return }')
+$presetPreferenceWrite = $selectPresetSource.IndexOf('preferences.set(preset.rawValue, forKey: Self.presetPreferenceKey)')
+$presetMemoryWrite = $selectPresetSource.IndexOf('homePresetPreference = preset')
+$presetPublication = $selectPresetSource.IndexOf('selectedPreset = preset')
+if ($presetSelectionGuard -lt 0 -or $presetPreferenceWrite -le $presetSelectionGuard -or
+    $presetMemoryWrite -le $presetPreferenceWrite -or $presetPublication -le $presetMemoryWrite -or
+    [regex]::Matches(
+        $readModelSource,
+        [regex]::Escape('preferences.set(preset.rawValue, forKey: Self.presetPreferenceKey)')
+    ).Count -ne 1) {
+    throw "A-043 must write the validated explicit Home selection before publishing it, exactly once."
+}
+$resetToHomeStart = $readModelSource.IndexOf('private func resetToHome()')
+$presentRecoveryStart = $readModelSource.IndexOf('private func presentRecovery', $resetToHomeStart)
+if ($resetToHomeStart -lt 0 -or $presentRecoveryStart -le $resetToHomeStart -or
+    $readModelSource.Substring($resetToHomeStart, $presentRecoveryStart - $resetToHomeStart) -cnotmatch
+        [regex]::Escape('selectedPreset = homePresetPreference')) {
+    throw "A-043 must return Home to the saved explicit preference after ending or discarding a session."
 }
 $storagePreparationCall = $appSource.IndexOf("storageDirectoryURL = try Self.prepareStorageDirectory()")
 $firstPersistencePath = $appSource.IndexOf('appendingPathComponent("active-session.v1.json"')
@@ -565,10 +612,10 @@ if ($readModelSource -match 'case\s+(layoutChoice|spreadChoice)\b|pendingReplace
     $activeReadSource -match 'LayoutChoiceView|ThreeCardSpreadChoiceView|activeHome|End Reading|Start a new reading\?') {
     throw "A-033 retired setup, replacement, active-Home, or End Reading behavior is still user-facing."
 }
-if ($activeReadSource -cnotmatch [regex]::Escape("ReadingPresetCarousel") -or
+if ($activeReadSource -cnotmatch [regex]::Escape("ReadingChoiceOverlay") -or
     $activeReadSource -cnotmatch [regex]::Escape("let railWidth = min(max(size.width * 0.22, 154), 200)") -or
     $activeReadSource -cnotmatch [regex]::Escape("let groupWidth = cardWidth * count + gap * max(count - 1, 0)")) {
-    throw "The direct visual preset selector or the approved large landscape table is missing."
+    throw "The progressive visual reading selector or the approved large landscape table is missing."
 }
 
 $motionSourcePath = Join-Path $appRoot "Design/CeremonialMotion.swift"
@@ -638,6 +685,21 @@ foreach ($entry in $a033VisualReferences.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
         (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
         throw "An approved A-033 visual reference is absent or changed: $($entry.Key)"
+    }
+}
+
+$a042VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/read-home-compact-selector-spanish-a-ceremonial-obsidian.png") = "9C0D453917EFC6D16DE3A6013E6B3BD3F45949F48D229F688C77A26E6FAA0C29"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-reading-count-selector-spanish-a-ceremonial-obsidian.png") = "07C576509A7D1EAD797AEC45F70E4BE9846104CBBC439473FF92DE57EA6B02A4"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-three-card-style-selector-spanish-a-ceremonial-obsidian.png") = "27C88125F761A813EF3D69FCFFF8D63CD70AE9688B7B0E4CA1CC871250BCC33F"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-compact-selector-landscape-spanish-a-ceremonial-obsidian.png") = "C1E3AB1BCBC9E8F15E1D19D1C0E1F6BC51A85CF23D5A8A4C00BFF05F5E67879D"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-reading-count-selector-landscape-spanish-a-ceremonial-obsidian.png") = "E8DC2B15607B4E7F762B12F76BFAB7DDA6D51C40125D9692885CB4DBA4BD5973"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-three-card-style-selector-landscape-spanish-a-ceremonial-obsidian.png") = "9E984B16F97181A8189CF851E66F94667394600F212BE0BF34BBE2701D62A944"
+}
+foreach ($entry in $a042VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "An approved A-042 visual reference is absent or changed: $($entry.Key)"
     }
 }
 
@@ -729,29 +791,58 @@ $homeSource = $activeReadSource.Substring($homeStart, $homeEnd - $homeStart)
 $emptyStart = $homeSource.IndexOf("private var emptyHome")
 if ($emptyStart -lt 0 -or
     $homeSource -cnotmatch [regex]::Escape('Button(action: openSettings)') -or
-    $homeSource -cnotmatch [regex]::Escape('homeControlClearance: CGFloat = 64') -or
     $homeSource -cnotmatch [regex]::Escape('if dynamicTypeSize.isAccessibilitySize') -or
-    $homeSource -cnotmatch [regex]::Escape('ViewThatFits(in: .vertical)') -or
-    $homeSource -cnotmatch [regex]::Escape('ReadingPresetCarousel') -or
+    $homeSource -cnotmatch [regex]::Escape('let isSmallPortrait = proxy.size.height < 620') -or
+    $homeSource -cnotmatch [regex]::Escape('let needsSmallPortraitScroll = !isLandscape && isSmallPortrait &&') -or
+    $homeSource -cnotmatch [regex]::Escape('(dynamicTypeSize == .xxLarge || dynamicTypeSize == .xxxLarge)') -or
+    $homeSource -cnotmatch [regex]::Escape('if dynamicTypeSize.isAccessibilitySize || needsSmallPortraitScroll') -or
+    $homeSource -cnotmatch [regex]::Escape('dynamicTypeSize.isAccessibilitySize ? 860 : 640') -or
+    $homeSource -cnotmatch [regex]::Escape('ReadingChoiceOverlay') -or
+    $homeSource -cnotmatch [regex]::Escape('ReadingCountGlyph') -or
+    $homeSource -cnotmatch [regex]::Escape('ThreeCardStyleGlyph') -or
+    $homeSource -cnotmatch [regex]::Escape('compactSelectorButton') -or
+    $homeSource -cnotmatch [regex]::Escape('private func chooseCount') -or
+    $homeSource -cnotmatch [regex]::Escape('private func chooseStyle') -or
+    $homeSource -cnotmatch [regex]::Escape('stagedPreset = model.selectedPreset') -or
+    $homeSource -cnotmatch [regex]::Escape('frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)') -or
     $homeSource -cnotmatch [regex]::Escape('ScrollView') -or
-    $homeSource -cnotmatch [regex]::Escape('DragGesture(minimumDistance: 12)') -or
-    $homeSource -cnotmatch [regex]::Escape('predictedEndTranslation.width') -or
-    $homeSource -cnotmatch [regex]::Escape('.accessibilityAdjustableAction') -or
     $homeSource -cnotmatch [regex]::Escape('.accessibilityAddTraits(selected ? .isSelected : [])') -or
+    $homeSource -cnotmatch [regex]::Escape('@AccessibilityFocusState private var headingFocused') -or
+    $homeSource -cnotmatch [regex]::Escape('@AccessibilityFocusState private var selectorFocused') -or
+    $homeSource -cnotmatch [regex]::Escape('.accessibilityFocused($selectorFocused)') -or
+    $homeSource -cnotmatch [regex]::Escape('.accessibilityAddTraits(.isModal)') -or
+    $homeSource -cnotmatch [regex]::Escape('dismissChoicesAndRestoreFocus()') -or
+    $homeSource -cnotmatch [regex]::Escape('let availableDeckHeight = max(size.height - verticalReservation, 0)') -or
+    $homeSource -cnotmatch [regex]::Escape('let landscapeVerticalReservation: CGFloat = 76') -or
+    $homeSource -cnotmatch [regex]::Escape('let availableDeckHeight = max(size.height - landscapeVerticalReservation, 0)') -or
+    $homeSource -cnotmatch [regex]::Escape('let horizontalDeckLimit = max(size.width - 48, 0)') -or
+    $homeSource -cnotmatch [regex]::Escape('.padding(.horizontal, protectsGear ? 48 : 0)') -or
+    $homeSource -cnotmatch [regex]::Escape('reduceMotion ? CeremonialMotion.reduced : CeremonialMotion.screen') -or
     $homeSource -cnotmatch [regex]::Escape('model.startSelectedPreset()') -or
+    $homeSource -cnotmatch [regex]::Escape('Text(AppLocalization.text(stage == .count ? "Choose Your Reading" : "Choose the Style"))') -or
     $homeSource -cnotmatch [regex]::Escape('Text("Tap the deck to begin")') -or
     $homeSource -cnotmatch [regex]::Escape('.accessibilityLabel("Start a Reading")') -or
     $homeSource -match [regex]::Escape('.accessibilityLabel("Complete 78-card tarot deck")')) {
-    throw "V-054/V-055 Home must keep its fixed visual carousel, direct/adjustable accessibility, overlaid gear, and one deck CTA."
+    throw "V-058-V-063 Home must keep its top-aligned hero deck, progressive visual selector, accessibility, overlaid gear, and one deck CTA."
 }
-if ($homeSource -match '\bMenu\s*\{|\bList\s*\{' -or
-    $homeSource -match 'ScrollView\s*\(\s*\.vertical') {
-    throw "A-033 Home must not expose a dropdown or vertical preset list."
+if ($homeSource -match '\bMenu\s*\{|\bList\s*\{|ReadingPresetCarousel|pageIndicator|homeControlClearance|DragGesture\s*\(' -or
+    $homeSource -match 'ScrollView\s*\(\s*\.vertical' -or
+    $homeSource -match 'max\(size\.width\s*-.*?,\s*236\)|max\(size\.width\s*\*\s*0\.20,\s*176\)|stage\s*==\s*\.count\s*\?\s*300\s*:\s*390') {
+    throw "A-042 Home must not retain the carousel, pagination, reserved gear clearance, dropdown, or vertical preset list."
 }
-$homeAccessibilityScroll = $homeSource.IndexOf("ScrollView", $homeSource.IndexOf("if dynamicTypeSize.isAccessibilitySize"))
-$homeAccessibilityClearance = $homeSource.IndexOf(".padding(.top, homeControlClearance)", $homeAccessibilityScroll)
-if ($homeAccessibilityScroll -lt 0 -or $homeAccessibilityClearance -le $homeAccessibilityScroll) {
-    throw "Home must reserve its 64-point top control clearance before accessibility-size content."
+$hiddenHomeAndGearCount = [regex]::Matches(
+    $homeSource,
+    [regex]::Escape('.accessibilityHidden(choiceStage != nil)')
+).Count
+if ($hiddenHomeAndGearCount -lt 2) {
+    throw "A-042 selector must hide both Home content and the overlaid Settings control from VoiceOver while modal."
+}
+$gearOverlay = $homeSource.IndexOf('.overlay(alignment: .topTrailing)')
+$gearButton = $homeSource.IndexOf('Button(action: openSettings)', $gearOverlay)
+$heroTopAlignment = $homeSource.IndexOf('frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)')
+if ($gearOverlay -lt 0 -or $gearButton -le $gearOverlay -or $heroTopAlignment -lt 0 -or
+    $homeSource -cnotmatch [regex]::Escape('.disabled(choiceStage != nil)')) {
+    throw "Settings must remain a non-reserving top-trailing overlay while Home content is anchored from the top."
 }
 
 $readingTableStart = $activeReadSource.IndexOf("private struct ReadingTableView")
@@ -924,7 +1015,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.2.1"'
+    'fallbackVersion = "0.2.2"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -977,6 +1068,13 @@ $requiredReadCopy = @(
     "Start a Reading",
     "Reading preset",
     "Selects this reading preset",
+    "Choose Your Reading",
+    "Choose the Style",
+    "Opens visual reading choices",
+    "Closes reading choices without changing the selection",
+    "Returns to one or three card choices",
+    "Selects one card",
+    "Opens four visual three-card styles",
     "Reset Reading",
     "Clears the cards and keeps this reading preset",
     "Ends this reading and returns to Read home",
@@ -1057,4 +1155,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.2.1 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-054/V-055 direct visual preset carousel, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards and 8 practical tutorials per language, approved A-031/A-033 visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.2.2 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-058-V-063 progressive visual selector, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards and 8 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

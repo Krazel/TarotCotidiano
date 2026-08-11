@@ -232,7 +232,15 @@
     "The previous reading was restored because reset did not finish." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Se ha restaurado la lectura anterior porque el reinicio no terminó." } } } },
     "Try This Reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Probar esta lectura" } } } },
     "Selects this reading preset or returns to the current reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Selecciona este tipo de lectura o vuelve a la lectura actual" } } } },
-    "Start a Reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Empezar lectura" } } } }
+    "Start a Reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Empezar lectura" } } } },
+    "Choose Your Reading" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Elige tu tirada" } } } },
+    "Choose the Style" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Elige el estilo" } } } },
+    "Close" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Cerrar" } } } },
+    "Opens visual reading choices" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre las opciones visuales de tirada" } } } },
+    "Closes reading choices without changing the selection" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Cierra las opciones sin cambiar la selecciÃ³n" } } } },
+    "Returns to one or three card choices" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Vuelve a elegir una o tres cartas" } } } },
+    "Selects one card" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Selecciona una carta" } } } },
+    "Opens four visual three-card styles" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre cuatro estilos visuales de tres cartas" } } } }
   },
   "version" : "1.0"
 }

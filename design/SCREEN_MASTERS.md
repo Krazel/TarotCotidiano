@@ -15,7 +15,7 @@ All paths below are repository-relative. Every listed SHA-256 and canvas size wa
 - `CURRENT` is the only status that governs final implementation and visual comparison.
 - `APPROVED, NOT ACTIVE` records an approved future surface that is not part of the current build.
 - `REPLACED` and `NOT SELECTED` never govern implementation, even when their files remain in the repository.
-- One PNG may govern two states only where the approved component deliberately keeps one fixed composition, as with the Home preset carousel.
+- One PNG may govern two states only where the approved component deliberately keeps one fixed composition. The current progressive Home selector has separate masters for closed, count-choice, and style-choice states.
 - A localized master governs the named language exactly. Where the decision register says that the other language uses the same composition, it governs layout only; runtime copy must still come from the verified localization bundle.
 - Accessibility adaptations allowed by `design/APPROVALS.md` remain valid, but they may not silently replace the composition.
 
@@ -23,8 +23,12 @@ All paths below are repository-relative. Every listed SHA-256 and canvas size wa
 
 | Master | Screen / state | Source approval | Path | Canvas | Orientation | Language | Approval date | SHA-256 |
 |---|---|---|---|---:|---|---|---|---|
-| M-S01-HOME-P | `S01.1/S01.2 Read Home` — visual preset carousel, any selected preset | V-054, A-021/A-033 | `design/tarot-deck/read-home-visual-preset-carousel-spanish-a-ceremonial-obsidian.png` | 862×1825 | Portrait | Spanish; layout also governs English | 2026-08-11 | `8D02A2AF9BFB395B8DE9998FC55203C9B571A9CBE7E2C7A36C93A3B16E1B1682` |
-| M-S01-HOME-L | `S01.1/S01.2 Read Home` — visual preset carousel, any selected preset | V-055, A-021/A-033 | `design/tarot-deck/read-home-visual-preset-carousel-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-11 | `F454660DDB68388A1FCC408806A86762F15283C71CAC30548B151D63F2F4040A` |
+| M-S01-HOME-P | `S01.1 Read Home` — compact selector closed, deck hero | V-058, A-021/A-042 | `design/tarot-deck/read-home-compact-selector-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-11 | `9C0D453917EFC6D16DE3A6013E6B3BD3F45949F48D229F688C77A26E6FAA0C29` |
+| M-S01-COUNT-P | `S01.2 Read Home` — one/three card visual selector open | V-059, A-021/A-042 | `design/tarot-deck/read-home-reading-count-selector-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-11 | `07C576509A7D1EAD797AEC45F70E4BE9846104CBBC439473FF92DE57EA6B02A4` |
+| M-S01-STYLE-P | `S01.3 Read Home` — three-card style visual selector open | V-060, A-021/A-042 | `design/tarot-deck/read-home-three-card-style-selector-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-11 | `27C88125F761A813EF3D69FCFFF8D63CD70AE9688B7B0E4CA1CC871250BCC33F` |
+| M-S01-HOME-L | `S01.1 Read Home` — compact selector closed, deck hero | V-061, A-021/A-042 | `design/tarot-deck/read-home-compact-selector-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-11 | `C1E3AB1BCBC9E8F15E1D19D1C0E1F6BC51A85CF23D5A8A4C00BFF05F5E67879D` |
+| M-S01-COUNT-L | `S01.2 Read Home` — one/three card visual selector open | V-062, A-021/A-042 | `design/tarot-deck/read-home-reading-count-selector-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-11 | `E8DC2B15607B4E7F762B12F76BFAB7DDA6D51C40125D9692885CB4DBA4BD5973` |
+| M-S01-STYLE-L | `S01.3 Read Home` — three-card style visual selector open | V-063, A-021/A-042 | `design/tarot-deck/read-home-three-card-style-selector-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-11 | `9E984B16F97181A8189CF851E66F94667394600F212BE0BF34BBE2701D62A944` |
 | M-S03-THREE-READY-P | `S03.1 Three Cards` — ready; deck is the shuffle control | V-046, A-021/A-031 | `design/tarot-deck/reading-table-three-cards-deck-tap-ready-spanish-a-ceremonial-obsidian.png` | 861×1827 | Portrait | Spanish; layout also governs English | 2026-08-10 | `C05A106C77884EEA07C28B5E2BA677875F678E4FAD5F97AAAAF553D636082BBD` |
 | M-S03-THREE-COMPLETE-DOWN-P | `S03.5 Three Cards` — layout complete, all face down and centered | V-047, A-021/A-031 | `design/tarot-deck/reading-table-three-cards-face-down-centered-spanish-a-ceremonial-obsidian.png` | 862×1825 | Portrait | Spanish; layout also governs English | 2026-08-10 | `E2218EC5FFB80986B6A72D72DD0E710F8DFBCEB8D39060637F0A49CA0C26F77E` |
 | M-S03-THREE-REVEALED-P | `S03.6 Three Cards` — all revealed, quick restart | V-052, A-021/A-033 | `design/tarot-deck/reading-table-three-cards-quick-restart-all-revealed-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-11 | `D30E951A91CE53049D5871E964DB05D4E9215B59BCECED12C159CA63E4E777E9` |
@@ -53,24 +57,25 @@ The files below remain preserved, but none is current. A replacement can govern 
 | Replaced / retired reference | Historical surface | Replacement or disposition |
 |---|---|---|
 | V-001, V-004 | Daily Tarot screens | Historical product only after A-014; no Tarot Deck master. |
-| V-013 | Read Home, empty | Replaced by V-024, then V-044, then current V-054. |
-| V-014 | Separate Layout Choice | Retired by A-033; current Home carousel V-054/V-055 owns preset selection. |
+| V-013 | Read Home, empty | Replaced by V-024, then V-044, V-054, and current V-058/V-061. |
+| V-014 | Separate Layout Choice | Retired by A-033; current progressive visual selector V-058–V-063 owns preset selection. |
 | V-005–V-012, V-015/V-016 | Earlier Three Cards table states | V-046/V-047/V-052/V-053 replace only the exact states they depict. A-031/A-033 also retired the separate primary buttons and `End Reading`; the remaining old states have no exact current master. V-040 separately replaced the old landscape proportions before V-053 replaced its complete all-revealed state. |
 | V-017, V-018 | Three Cards, all revealed | Replaced by current V-052/V-053 with quick restart. |
 | V-019, V-023, V-042 | Card meaning/detail states | A-031 makes `Upright / Al derecho` a plain editorial heading, not the pill shown in these images. No exact replacement master is registered. |
 | V-020, V-021 | Learn index/article | A-034 replaced the five-item learning model with eight bilingual tutorials and revised article content; no exact replacement master is registered. |
 | V-022 | Cards Library / All | A-030 added Favorites as a first-class filter; only the V-043 Favorites-empty state has a current exact master. |
-| V-024 | Read Home with Settings access | Replaced by V-044, then current V-054. |
+| V-024 | Read Home with Settings access | Replaced by V-044, V-054, and current V-058/V-061. |
 | V-025 | Settings | Replaced by current V-045 with the internal language selector. |
 | V-026 | Support the App | Replaced by V-027; V-027 remains approved but inactive. |
-| V-028 | Active-reading Home | Retired by A-033; restoration returns directly to the table and Home uses V-054/V-055. |
+| V-028 | Active-reading Home | Retired by A-033; restoration returns directly to the table and Home uses V-058–V-063. |
 | V-029–V-038 | Earlier One Card ready, shuffled, face-down and revealed states | V-056/V-057 replace only the exact revealed state. A-031/A-033 retired the separate primary buttons and `End Reading`; ready, shuffled and face-down states have no exact current master. |
-| V-039 | Separate Three Cards spread choice | Retired by A-033; preset selection moved to current V-054/V-055. |
+| V-039 | Separate Three Cards spread choice | Retired by A-033; preset selection now uses current V-058–V-063. |
 | V-040 | Three Cards large landscape, all revealed | Replaced for the complete all-revealed state by current V-053. |
 | V-041 | Reading Table motion storyboard | Replaced by current supporting specification V-048. |
-| V-044 | Read Home compact deck CTA | Replaced by current V-054. |
-| V-049, V-050 | Home dropdown, portrait closed/open | Rejected as a vertical text selector and replaced by current V-054. |
-| V-051 | Home dropdown, landscape | Replaced by current V-055. |
+| V-044 | Read Home compact deck CTA | Replaced by V-054 and then current V-058/V-061. |
+| V-049, V-050 | Home dropdown, portrait closed/open | Rejected as a vertical text selector; later V-054 was also replaced by current V-058–V-060. |
+| V-051 | Home dropdown, landscape | Replaced by V-055 and then current V-061–V-063. |
+| V-054, V-055 | Home visual preset carousel, portrait/landscape | Replaced by V-058–V-063 after owner QA: the carousel occupied too much permanent space and made the deck too small. Preserved as historical references. |
 
 ## Proposals and unselected files
 
@@ -81,8 +86,8 @@ These PNGs are deliberately outside the current-master table. They have no activ
 | `NOT SELECTED` | `design/tarot-deck/cards-library-all-a-ceremonial-obsidian.png` | 863×1823 | English | `93DB75D03B27D4849A882B17F762DBFF70708F0BE3B3D839927F8AF0855F73FA` | Initial library/search variant; V-022 points to the v2 image instead. |
 | `NOT SELECTED` | `design/tarot-deck/three-card-spread-choice-spanish-a-ceremonial-obsidian.png` | 862×1825 | Spanish | `3E5735C2912284C69655194E1522970E574FA32E9D62910DBECA420666D63894` | Initial spread-choice variant; V-039 pointed to v2 before that screen was retired. |
 | `NOT SELECTED` | `design/tarot-deck/reading-table-three-cards-quick-restart-spanish-a-ceremonial-obsidian.png` | 862×1825 | Spanish | `D4650207183752445A82755B3406CDFF13C7C3B0752CCA1BC2830419ACBD843A` | Earlier quick-restart exploration; current portrait master is V-052. |
-| `NOT SELECTED` | `design/tarot-deck/read-home-visual-preset-carousel-six-spanish-a-ceremonial-obsidian.png` | 862×1824 | Spanish | `78A16F15D9333460EAB9DA98BF1CD08CD73500067836E2D57164517104C01A60` | Six-preset exploration rejected by A-034; the product remains the five-preset carousel V-054. |
-| `NOT SELECTED` | `design/tarot-deck/read-home-visual-preset-carousel-six-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Spanish | `3BB4FAD8F849388258B5189537DA428E5167D22B9E76300C0EDB8C04C2848BD1` | Landscape companion to the rejected six-preset exploration; current Home master is V-055. |
+| `NOT SELECTED` | `design/tarot-deck/read-home-visual-preset-carousel-six-spanish-a-ceremonial-obsidian.png` | 862×1824 | Spanish | `78A16F15D9333460EAB9DA98BF1CD08CD73500067836E2D57164517104C01A60` | Six-preset exploration rejected by A-034; A-042 later retired permanent Home carousels altogether. |
+| `NOT SELECTED` | `design/tarot-deck/read-home-visual-preset-carousel-six-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Spanish | `3BB4FAD8F849388258B5189537DA428E5167D22B9E76300C0EDB8C04C2848BD1` | Landscape companion to the rejected six-preset exploration; A-042 later retired permanent Home carousels altogether. |
 
 ## Known canonical coverage gaps
 

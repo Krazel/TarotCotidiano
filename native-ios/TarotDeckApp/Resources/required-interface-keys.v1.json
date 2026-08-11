@@ -232,6 +232,14 @@
     "The reset reading is safe, but its recovery marker couldn't be updated.",
     "The previous reading was restored because reset did not finish.",
     "Try This Reading",
-    "Selects this reading preset or returns to the current reading"
+    "Selects this reading preset or returns to the current reading",
+    "Choose Your Reading",
+    "Choose the Style",
+    "Close",
+    "Opens visual reading choices",
+    "Closes reading choices without changing the selection",
+    "Returns to one or three card choices",
+    "Selects one card",
+    "Opens four visual three-card styles"
   ]
 }
