@@ -462,16 +462,42 @@ $requiredRecoveryContracts = @(
     "enum ThreeCardSpread",
     "enum ReadingPreset",
     "case resetting",
+    "case shuffling",
     "selectedPreset: ReadingPreset = .pastPresentFuture",
     "startSelectedPreset",
     "func leaveTable()",
     "func resetReading()",
-    "canPrepareAnotherReading"
+    "canPrepareAnotherReading",
+    "canShuffleDeck",
+    "isReadyToDeal",
+    "func dealCards()",
+    "coordinator.deal(count: layout.cardLimit)"
 )
 foreach ($contract in $requiredRecoveryContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
         throw "Read recovery contract is missing: $contract"
     }
+}
+$deckEngineSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckEngine.swift")
+$coordinatorSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckSessionCoordinator.swift")
+$atomicDealContracts = @(
+    'public func deal(',
+    'guard count > 0',
+    'guard count <= session.remainingCardCount',
+    'var candidate = session',
+    'session = candidate',
+    'let dealtCards = try engine.deal(count: count, from: &candidate, at: date)',
+    'try commit(candidate)'
+)
+foreach ($contract in $atomicDealContracts) {
+    if ("$deckEngineSource`n$coordinatorSource" -cnotmatch [regex]::Escape($contract)) {
+        throw "Atomic complete Deal contract is missing: $contract"
+    }
+}
+if ($activeReadSource -match [regex]::Escape('stagedPreset != .oneCard') -or
+    $activeReadSource -cnotmatch [regex]::Escape('stagedPreset.map { $0 != .oneCard } ?? false') -or
+    $activeReadSource -cnotmatch [regex]::Escape('if stagedPreset == .oneCard { stagedPreset = nil }')) {
+    throw "Entering Three Cards from One Card must leave all five styles visually unselected."
 }
 $readyWrite = $readModelSource.IndexOf("try self.continuityStore.save(.ready(layout, spread: self.spread))")
 $sessionWrite = $readModelSource.IndexOf("self.coordinator.startSession()")
@@ -505,7 +531,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.4.2;',
+    'MARKETING_VERSION = 0.5;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -518,7 +544,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.4.2;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.5;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -622,7 +648,7 @@ if ($activeReadSource -cnotmatch [regex]::Escape("ReadingChoiceOverlay") -or
 
 $motionSourcePath = Join-Path $appRoot "Design/CeremonialMotion.swift"
 $motionSpecPath = Join-Path $native.Path "../design/tarot-deck/MOTION_SPEC.md"
-$motionStoryboardPath = Join-Path $native.Path "../design/tarot-deck/reading-table-professional-motion-storyboard-v2-a-ceremonial-obsidian.png"
+$motionStoryboardPath = Join-Path $native.Path "../design/tarot-deck/reading-table-repeatable-shuffle-motion-storyboard-v3-a-ceremonial-obsidian.png"
 if (-not (Test-Path -LiteralPath $motionSourcePath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $motionSpecPath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $motionStoryboardPath -PathType Leaf)) {
@@ -635,6 +661,7 @@ $motionContracts = @(
     "CeremonialDealGeometryEffect: GeometryEffect",
     "CeremonialFlipFaceModifier: AnimatableModifier",
     "var animatableData: CGFloat",
+    "static let riffle",
     "shuffleSettleDuration: TimeInterval = 0.20",
     "UIImpactFeedbackGenerator",
     "Animation.timingCurve(0.20, 0.72, 0.18, 1.00, duration: 0.38)",
@@ -656,7 +683,7 @@ if ($readSource -cnotmatch [regex]::Escape("accessibilityReduceMotion") -or
 if ($motionSource -match '\brepeatForever\b|\bPhaseAnimator\b|\bKeyframeAnimator\b|\bsensoryFeedback\b|shuffleSettle\s*=\s*Animation\.spring') {
     throw "Motion source contains looping or iOS 17-only animation APIs."
 }
-$expectedMotionStoryboardSHA256 = "937F89E3DF7D2161E6AD2C835A4201135161E6ADED083A4BE52B8773A58190F0"
+$expectedMotionStoryboardSHA256 = "6E8FB19E641A6747F68696529B0E378C38FFCDB88AFE4281469DBAC7EE902544"
 $actualMotionStoryboardSHA256 = (Get-FileHash -LiteralPath $motionStoryboardPath -Algorithm SHA256).Hash
 if ($actualMotionStoryboardSHA256 -cne $expectedMotionStoryboardSHA256) {
     throw "The approved motion storyboard hash changed."
@@ -743,6 +770,25 @@ foreach ($entry in $a048VisualReferences.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
         (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
         throw "An approved A-048 visual reference is absent or changed: $($entry.Key)"
+    }
+}
+
+$a052VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/read-home-reading-count-selector-info-small-v2-spanish-a-ceremonial-obsidian.png") = "8FFA3087C0AE2102C3E138926242AFA7EE6E1A802C730037375B84B0603D46E5"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-three-card-style-selector-grid-five-neutral-v4-spanish-a-ceremonial-obsidian.png") = "5A5B0D1F6206C6F0575646F44BB11991D5AC1C397DCDEDFD4D1E9342F0E87230"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-ready-to-shuffle-controls-v1-spanish-a-ceremonial-obsidian.png") = "AFD4E9E6333C5A304F7D4D3E976440BF2C97B1C1E15914F2FED90D5AB667D4B9"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-ready-to-shuffle-controls-landscape-v1-spanish-a-ceremonial-obsidian.png") = "A9C1705BCB052D7DB05C75D4290715600500812057C89BB82B5E3A05E5860E22"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-shuffled-ready-deal-controls-v3-spanish-a-ceremonial-obsidian.png") = "008D26EC5D6D7C64237B5F333B7D99B8F250AAB97D4623AAF8F487BB4B25C547"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-shuffled-ready-deal-controls-landscape-v3-spanish-a-ceremonial-obsidian.png") = "77AF66B4D7E537EBCFFC1B075B81FA1BA89CEC00F509BB0F743A56EE63813437"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-yes-no-all-revealed-info-v2-spanish-a-ceremonial-obsidian.png") = "C295B0F6C197FFFAE23B89BE3EED2B3D888F57BF1E568500BCAF334ACB955E2B"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-yes-no-all-revealed-info-landscape-v2-spanish-a-ceremonial-obsidian.png") = "580079082489E69CA459AB598A976751A8403600E46EF0C15B6272A076BED89A"
+    (Join-Path $native.Path "../design/tarot-deck/read-contextual-tutorial-yes-no-v2-spanish-a-ceremonial-obsidian.png") = "BEB6283ED6AD8FCCCA2F5F880F1AABC10FDC743608564A8D33E200DED39D0F31"
+    $motionStoryboardPath = $expectedMotionStoryboardSHA256
+}
+foreach ($entry in $a052VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "An approved A-052 visual reference is absent or changed: $($entry.Key)"
     }
 }
 
@@ -947,7 +993,7 @@ $readingContracts = @(
     "ReadingMotionAnchorPreferenceKey",
     "anchorPreference",
     "runShuffleChoreography",
-    "runDeal(to:",
+    "private func runDealSequence",
     "runFlip(at:",
     "dealOverlay(anchors:",
     "CeremonialDealGeometryEffect(",
@@ -957,24 +1003,24 @@ $readingContracts = @(
     "CeremonialHaptics.drawn()",
     "visualBaseline = target",
     "if dealingPosition != nil { return true }",
-    "visualBaseline?.drawnCardIDs.count",
+    "Array(target.drawnCardIDs.prefix(position + 1))",
     ".disabled(interactionLocked || !canUseDeck)",
     "proxy.size.height * 0.34",
     "Tap the deck to shuffle.",
-    "Tap the deck to draw.",
-    "Tap the deck for another reading.",
-    "model.canPrepareAnotherReading",
-    "model.resetReading()",
+    "Tap again to shuffle, or deal when ready.",
+    "model.canShuffleDeck",
+    "model.dealCards()",
+    ".accessibilityHidden(!shouldShowDeck)",
     "cancelTransientMotion(establishing: visualState)",
     ".frame(width: 44, height: 44)",
     "Reset Reading"
 )
 foreach ($contract in $readingContracts) {
     if ($readingTableSource -cnotmatch [regex]::Escape($contract)) {
-        throw "V-048 reading-table contract is missing: $contract"
+        throw "A-052 reading-table contract is missing: $contract"
     }
 }
-if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("End Reading"|requestEndReading') {
+if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("End Reading"|requestEndReading|model\.drawCard\(\)|Tap the deck for another reading') {
     throw "The reading table still contains a duplicate primary shuffle/draw CTA."
 }
 if ($readingTableSource -match 'sin\(\.pi \* dealProgress\)|let firstHalf = min\(progress \* 2') {
@@ -982,7 +1028,7 @@ if ($readingTableSource -match 'sin\(\.pi \* dealProgress\)|let firstHalf = min\
 }
 $normalShuffleStart = $readingTableSource.IndexOf("withAnimation(CeremonialMotion.cut)")
 $shuffleSettle = $readingTableSource.IndexOf("withAnimation(CeremonialMotion.shuffleSettle)", $normalShuffleStart)
-$shuffleSettleWait = $readingTableSource.IndexOf("Task.sleep(nanoseconds: 200_000_000)", $shuffleSettle)
+$shuffleSettleWait = $readingTableSource.IndexOf("Task.sleep(nanoseconds: 190_000_000)", $shuffleSettle)
 $shuffleFinish = $readingTableSource.IndexOf("finishPresentation(token)", $shuffleSettleWait)
 $shuffleHaptic = $readingTableSource.IndexOf("CeremonialHaptics.shuffled()", $shuffleFinish)
 if ($normalShuffleStart -lt 0 -or $shuffleSettle -lt 0 -or $shuffleSettleWait -lt 0 -or
@@ -990,15 +1036,15 @@ if ($normalShuffleStart -lt 0 -or $shuffleSettle -lt 0 -or $shuffleSettleWait -l
     throw "Shuffle haptics must follow the complete fixed-duration settle phase."
 }
 $hapticDraw = $readingTableSource.IndexOf("CeremonialHaptics.drawn()")
-$dealLanding = $readingTableSource.IndexOf("visualBaseline = target", $readingTableSource.IndexOf("private func runDeal"))
+$dealLanding = $readingTableSource.IndexOf("Array(target.drawnCardIDs.prefix(position + 1))", $readingTableSource.IndexOf("private func runDealSequence"))
 if ($dealLanding -lt 0 -or $hapticDraw -lt 0 -or $hapticDraw -lt $dealLanding) {
     throw "Draw haptics must occur only after the committed deal lands."
 }
 
 $cardsSourceForMeaning = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Cards/CardsViews.swift")
-if ($cardsSourceForMeaning -cnotmatch [regex]::Escape('AppLocalization.text("Upright meaning")') -or
+if ($cardsSourceForMeaning -cnotmatch [regex]::Escape('AppLocalization.text("Meaning")') -or
     $cardsSourceForMeaning -match [regex]::Escape('Label("Upright"')) {
-    throw "Upright must be an editorial meaning heading, not a pseudo-button capsule."
+    throw "Card detail must show a plain Meaning heading, not an orientation pseudo-button."
 }
 if ($shellSource -cnotmatch [regex]::Escape("appearance.configureWithTransparentBackground()") -or
     $shellSource -cnotmatch [regex]::Escape("appearance.backgroundEffect = UIBlurEffect(style: .systemThinMaterialDark)") -or
@@ -1018,10 +1064,10 @@ $requiredA031CatalogKeys = @(
     "The complete language content couldn't be loaded. Nothing was changed.",
     "Tap the deck to begin",
     "Tap the deck to shuffle.",
-    "Tap the deck to draw.",
-    "Shuffles the deck",
-    "Draws the next card",
-    "Upright meaning"
+    "Tap again to shuffle, or deal when ready.",
+    "Shuffles all 78 cards again",
+    "Deal",
+    "Meaning"
     "Start a Reading"
 )
 foreach ($key in $requiredA031CatalogKeys) {
@@ -1113,7 +1159,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.4.2"'
+    'fallbackVersion = "0.5"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1156,6 +1202,11 @@ $requiredLearnContracts = @(
     "article.readingPresetID",
     "Try This Reading",
     "startReading(readingPresetID)",
+    "returnToReading == nil",
+    "Previous Tutorial",
+    "Next Tutorial",
+    "Back to Reading",
+    "openTutorial(destination.id)",
     "Example card %d of %d, face down",
     "Selects this reading preset or returns to the current reading"
 )
@@ -1163,6 +1214,15 @@ foreach ($contract in $requiredLearnContracts) {
     if ($learnSource -cnotmatch [regex]::Escape($contract)) {
         throw "A-034 Learn integration contract is missing: $contract"
     }
+}
+if ($shellSource -cnotmatch [regex]::Escape('tutorialReturnsToReading = activeReading') -or
+    $shellSource -cnotmatch [regex]::Escape('? [.article(articleID)]') -or
+    $shellSource -cnotmatch [regex]::Escape('previousTutorial: previousTutorial') -or
+    $shellSource -cnotmatch [regex]::Escape('nextTutorial: nextTutorial') -or
+    $shellSource -cnotmatch [regex]::Escape('selectedDestination = .read') -or
+    $readingTableSource -cnotmatch [regex]::Escape('ReadingPreset.resolved(') -or
+    $readingTableSource -cnotmatch [regex]::Escape('openReadingTutorial(articleID)')) {
+    throw "Active Reading tutorial navigation must preserve the session, browse all methods, and return directly to Read."
 }
 if ($learnSource -match 'Try a Three-Card Reading|article\.id\s*==\s*"read-three-cards"|\bisFirst\b' -or
     $contentSource -cnotmatch [regex]::Escape('article.sections.count == 3')) {
@@ -1189,9 +1249,7 @@ $requiredReadCopy = @(
     "Reset Reading",
     "Clears the cards and keeps this reading preset",
     "Ends this reading and returns to Read home",
-    "Complete deck, ready for another reading",
-    "Starts another reading with the same preset",
-    "Tap the deck for another reading."
+    "About This Reading"
 )
 foreach ($copy in $requiredReadCopy) {
     if ($activeReadSource -cnotmatch [regex]::Escape($copy)) {
@@ -1278,4 +1336,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.4.2 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-072-V-079 Learn/tutorial/info/Freeform implementation, V-064 stable translucent tab bar, documented For/Against/Destiny yes-or-no spread with preserved raw value open, distinct freeform raw value, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards, 4 foundations and 6 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.5 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, Learn/tutorial/info/Freeform implementation, stable translucent tab bar, documented For/Against/Destiny yes-or-no spread with preserved raw value open, distinct freeform raw value, exact table restoration, repeated pre-deal shuffle, atomic complete deal, transactional Back/reset, centered portrait and landscape tables, post-commit motion/accessibility contracts, local atomic favorites, 78 cards, 4 foundations and 6 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

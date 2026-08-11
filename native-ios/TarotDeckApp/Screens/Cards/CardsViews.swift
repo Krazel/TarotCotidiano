@@ -314,7 +314,7 @@ struct CardMeaningView: View {
                         )
 
                     meaningSection(
-                        title: AppLocalization.text("Upright meaning"),
+                        title: AppLocalization.text("Meaning"),
                         body: meaning.uprightMeaning
                     )
                     meaningSection(title: AppLocalization.text("In a reading"), body: meaning.inAReading)

@@ -91,6 +91,41 @@ final class DeckEngineTests: XCTestCase {
         XCTAssertEqual(session.nextDrawIndex, 2)
     }
 
+    func testDealCommitsRequestedCardsTogetherInDeckOrder() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+        var session = try engine.startSession(at: startDate)
+
+        let dealt = try engine.deal(
+            count: 3,
+            from: &session,
+            at: startDate.addingTimeInterval(1)
+        )
+
+        XCTAssertEqual(dealt.map(\.id), Array(StandardTarotDeck.cardIDs.prefix(3)))
+        XCTAssertTrue(dealt.allSatisfy { !$0.isRevealed && $0.orientation == .upright })
+        XCTAssertEqual(session.drawnCards, dealt)
+        XCTAssertEqual(session.nextDrawIndex, 3)
+    }
+
+    func testInvalidDealLeavesSessionUnchanged() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+        var session = try engine.startSession(at: startDate)
+        let original = session
+
+        XCTAssertThrowsError(try engine.deal(count: 0, from: &session)) { error in
+            XCTAssertEqual(error as? DeckEngineError, .invalidDealCount(0))
+        }
+        XCTAssertEqual(session, original)
+
+        XCTAssertThrowsError(try engine.deal(count: 79, from: &session)) { error in
+            XCTAssertEqual(
+                error as? DeckEngineError,
+                .insufficientCardsForDeal(requested: 79, remaining: 78)
+            )
+        }
+        XCTAssertEqual(session, original)
+    }
+
     func testUndrawnCardCannotBeRevealed() throws {
         let engine = DeckEngine(shuffler: IdentityShuffler())
         var session = try engine.startSession(at: startDate)

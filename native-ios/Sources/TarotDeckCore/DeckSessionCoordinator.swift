@@ -79,6 +79,16 @@ public actor DeckSessionCoordinator<
         return drawnCard
     }
 
+    /// Persists a complete spread with one store write. Presentation may animate
+    /// the returned cards sequentially, but restoration never observes a partial deal.
+    @discardableResult
+    public func deal(count: Int, at date: Date = Date()) throws -> [DrawnCard] {
+        var candidate = try activeSessionCopy()
+        let dealtCards = try engine.deal(count: count, from: &candidate, at: date)
+        try commit(candidate)
+        return dealtCards
+    }
+
     @discardableResult
     public func reveal(
         cardID: TarotCardID,

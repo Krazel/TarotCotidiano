@@ -19,12 +19,13 @@ struct TarotDeckMainShell<ReadContent: View>: View {
     let startReading: (String) -> Void
     let readContent: (
         @escaping (String) -> Void,
-        @escaping (String?) -> Void
+        @escaping (String?, Bool) -> Void
     ) -> ReadContent
 
     @State private var selectedDestination: TarotPrimaryDestination = .read
     @State private var readingMeaningCardID: String?
     @State private var learnPath: [LearnRoute] = []
+    @State private var tutorialReturnsToReading = false
 
     init(
         content: TarotContent,
@@ -33,7 +34,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
         startReading: @escaping (String) -> Void,
         @ViewBuilder readContent: @escaping (
             @escaping (String) -> Void,
-            @escaping (String?) -> Void
+            @escaping (String?, Bool) -> Void
         ) -> ReadContent
     ) {
         self.content = content
@@ -52,8 +53,11 @@ struct TarotDeckMainShell<ReadContent: View>: View {
                         guard content.meaningsByCardID[cardID] != nil else { return }
                         readingMeaningCardID = cardID
                     },
-                    { articleID in
-                        openReadingTutorial(articleID: articleID)
+                    { articleID, activeReading in
+                        openReadingTutorial(
+                            articleID: articleID,
+                            activeReading: activeReading
+                        )
                     }
                 )
             }
@@ -137,12 +141,27 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             )
         case .article(let articleID):
             if let article = content.guideArticles.first(where: { $0.id == articleID }) {
+                let tutorialIndex = content.tutorialArticles.firstIndex(where: { $0.id == articleID })
+                let previousTutorial = tutorialIndex.flatMap { index in
+                    index > 0 ? content.tutorialArticles[index - 1] : nil
+                }
+                let nextTutorial = tutorialIndex.flatMap { index in
+                    index + 1 < content.tutorialArticles.count
+                        ? content.tutorialArticles[index + 1]
+                        : nil
+                }
                 LearnArticleView(
                     article: article,
                     startReading: { presetID in
                         startReading(presetID)
                         selectedDestination = .read
-                    }
+                    },
+                    returnToReading: tutorialReturnsToReading
+                        ? returnToReading
+                        : nil,
+                    previousTutorial: previousTutorial,
+                    nextTutorial: nextTutorial,
+                    openTutorial: replaceTutorial
                 )
             } else {
                 TarotContentFailureView(
@@ -152,14 +171,32 @@ struct TarotDeckMainShell<ReadContent: View>: View {
         }
     }
 
-    private func openReadingTutorial(articleID: String?) {
+    private func openReadingTutorial(articleID: String?, activeReading: Bool) {
+        tutorialReturnsToReading = activeReading
         if let articleID,
            content.tutorialArticles.contains(where: { $0.id == articleID }) {
-            learnPath = [.tutorials, .article(articleID)]
+            learnPath = activeReading
+                ? [.article(articleID)]
+                : [.tutorials, .article(articleID)]
         } else {
             learnPath = [.tutorials]
         }
         selectedDestination = .learn
+    }
+
+    private func replaceTutorial(_ articleID: String) {
+        guard content.tutorialArticles.contains(where: { $0.id == articleID }) else { return }
+        if learnPath.last != nil {
+            learnPath[learnPath.count - 1] = .article(articleID)
+        } else {
+            learnPath = [.article(articleID)]
+        }
+    }
+
+    private func returnToReading() {
+        learnPath = []
+        tutorialReturnsToReading = false
+        selectedDestination = .read
     }
 
     private static func configureTabBarAppearance() {

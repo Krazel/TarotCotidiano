@@ -6,7 +6,7 @@ Actualizado: 2026-08-11
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.4.1 (1)` procesada y disponible mediante TestFlight Internal Only en iOS 16; `0.4.2 (1)` está integrada y validada localmente bajo A-051**. La nueva corrección aclara para qué sirve `Situación · Reto · Consejo` sin cambiar su diseño.
+Fase actual: **`0.4.1 (1)` continúa disponible mediante TestFlight Internal Only; `0.5 (1)` está en integración final autorizada para una nueva subida interna**. Incluye A-051 y añade barajado repetible, `Deal / Repartir`, mesa completa sin mazo, selector neutral compacto y tutorial contextual desde la tirada.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -16,9 +16,9 @@ Implementación visual final: **abierta para toda pantalla que tenga imagen comp
 
 Propietaria activa de implementación: **ninguna**. A-051 es una corrección editorial dentro de componentes existentes; el cerebro local conserva propiedad exclusiva de la coordinación y de `STATUS.md`, `DECISIONS.md`, `docs/product/**` y `design/**`. V-072–V-079 permanecen vigentes; A-051 no altera composición, assets ni jerarquía visual.
 
-A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
+A-031 fue ordenada explícitamente por el propietario el 2026-08-10. Su Home compacto, Settings bilingüe y geometría centrada siguen incorporados. A-052 sustituye ahora la interacción de mesa y el storyboard: V-082–V-089 definen shuffle repetible, riffle/square, Deal completo, mesa sin mazo y tutorial contextual.
 
-A-033 fue ordenada y corregida explícitamente por el propietario el 2026-08-11. V-054/V-055 sustituyen V-049–V-051: Home usa un carrusel visual de cinco fichas ilustradas, nunca un desplegable o lista vertical. V-052/V-053 y V-056/V-057 cubren el estado completo de Three Cards y One Card con reset/otra lectura. V-014, V-028, V-039, V-040 y V-044 quedan como referencias históricas allí donde A-033 las sustituye.
+A-033 fue ordenada y corregida explícitamente por el propietario el 2026-08-11. Su carrusel quedó sustituido después por el selector progresivo y, finalmente, por V-080/V-081: dos pasos visuales, cuadrícula 2×2 más Libre, sin lista vertical y sin selección fantasma. Las mesas con mazo de “otra lectura” son históricas; A-052 deja solo reset después de Deal.
 
 A-042 sustituye el carrusel de A-033 después de la prueba física del propietario. V-058/V-061 siguen gobernando el Home cerrado: mazo grande como hero, gear realmente superpuesto sin reserva de 64 puntos y botón selector pequeño. A-048 sustituye los paneles abiertos mediante V-074–V-077: elección visual una/tres cartas, cinco estilos de tres cartas e información directa a sus tutoriales. V-054/V-055, V-059/V-060/V-062/V-063 y V-065/V-066 quedan preservadas como referencias reemplazadas donde corresponda.
 
@@ -107,7 +107,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - V-041 y `design/tarot-deck/MOTION_SPEC.md` registran el storyboard y contrato de movimiento. La implementación iOS 16 añade transiciones breves, shuffle, draw, giro reveal/conceal, respuesta táctil de botones y haptics solo después de un estado durable. Reduce Motion y VoiceOver usan variantes de opacidad; restaurar, rotar o volver de segundo plano no reproduce efectos.
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
 - A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
-- A-031 está integrada localmente: selector `English / Español` atómico sobre 215 claves de interfaz, Home V-044 sin scroll normal y con adaptación AX, Settings V-045, mesa V-046/V-047 con centro horizontal y anclaje vertical estable, mazo como único control contextual, tab bar estable y ahora translúcida por A-044/V-064, encabezado `Upright meaning / Significado al derecho` y motion V-048 con reparto curvo, flip de dos caras, cancelación y haptics posteriores al aterrizaje.
+- A-031 está integrada localmente: selector `English / Español` atómico, Home sin scroll normal y con adaptación AX, Settings, mesa con centro horizontal y anclaje vertical estable, tab bar translúcida, encabezado `Meaning / Significado` y una nota `In a reading / En una tirada` que aplica el significado a la posición; motion conserva reparto, flip de dos caras, cancelación y haptics posteriores al aterrizaje.
 - Para `0.4.1 (1)` pasan los validadores de mazo, educación inglesa, localización española, integración, gate interno de TestFlight y workflows, además de `git diff --check`. La revisión independiente cerró sin hallazgos P0–P2; macOS/Xcode completó las 24 pruebas, el archive Release firmado y la subida interna en el run `31531477904`.
 
 ## Qué se conserva y qué queda fuera
@@ -139,6 +139,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: compilar y probar `0.4.2 (1)` en macOS/iPhone cuando el propietario autorice una nueva IPA o subida a TestFlight. Hasta entonces, `0.4.1 (1)` sigue siendo la build disponible.
+Siguiente punto exacto: terminar la validación local de `0.5 (1)`, compilar y probar en macOS mediante el workflow interno autorizado y verificar que la build procesada queda disponible en TestFlight. No habilitar testers externos ni App Review.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.

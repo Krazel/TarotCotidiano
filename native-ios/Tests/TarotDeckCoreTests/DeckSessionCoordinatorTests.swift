@@ -118,6 +118,52 @@ final class DeckSessionCoordinatorTests: XCTestCase {
         XCTAssertEqual(store.saveCount, 1)
     }
 
+    func testDealPersistsCompleteSpreadWithOneCommit() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorIdentityShuffler(),
+            store: store
+        )
+        try await coordinator.startSession(at: startDate)
+
+        let dealt = try await coordinator.deal(
+            count: 3,
+            at: startDate.addingTimeInterval(1)
+        )
+        let currentValue = await coordinator.currentSession()
+        let current = try XCTUnwrap(currentValue)
+
+        XCTAssertEqual(dealt.map(\.id), Array(StandardTarotDeck.cardIDs.prefix(3)))
+        XCTAssertEqual(current.drawnCards, dealt)
+        XCTAssertEqual(store.storedSession, current)
+        XCTAssertEqual(store.saveCount, 2) // start plus one complete deal
+    }
+
+    func testFailedDealSavePreservesPreviousMemoryAndStorage() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorIdentityShuffler(),
+            store: store
+        )
+        let original = try await coordinator.startSession(at: startDate)
+        store.failNextSave()
+
+        do {
+            _ = try await coordinator.deal(
+                count: 3,
+                at: startDate.addingTimeInterval(1)
+            )
+            XCTFail("Expected the injected deal save failure")
+        } catch {
+            XCTAssertEqual(error as? ControlledStoreError, .saveFailed)
+        }
+
+        let current = await coordinator.currentSession()
+        XCTAssertEqual(current, original)
+        XCTAssertEqual(store.storedSession, original)
+        XCTAssertEqual(store.saveCount, 1)
+    }
+
     func testFailedResetSavePreservesPreviousMemoryAndStoredSession() async throws {
         let store = ControlledSessionStore()
         let coordinator = DeckSessionCoordinator(

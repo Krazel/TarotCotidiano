@@ -31,11 +31,11 @@ App launch
         │   │   └── Tap hero deck → selected Reading Table, ready to shuffle
         │   ├── Reading Table
         │       ├── Tap deck to shuffle
-        │       ├── Tap deck to draw one at a time
+        │       ├── Deal the complete layout face down
         │       ├── Reveal independently
         │       ├── Revealed card → Card Meaning → exact table state
         │       ├── Small reset → same preset, ready to shuffle
-        │       ├── Completed deck → another reading with same preset
+        │       ├── Info → tutorial ↔ previous / next → unchanged table
         │       └── Back → end reading and return Home
         │   └── Settings gear
         │       ├── English / Español
@@ -60,7 +60,7 @@ App launch
 - `Read` returns directly to its current Reading Table when the session is active; Back ends it transactionally and returns to Deck Home.
 - A card opened from a reading returns to the exact table state and does not offer previous/next browsing.
 - A card opened from Cards returns to the same library filter and scroll position; previous/next stays within that filter.
-- A foundation article returns to the Learn index. A reading tutorial returns to the Tutorials index. Learn has no stored progress or completion state.
+- A foundation article returns to the Learn index. A normal reading tutorial returns to the Tutorials index. A tutorial opened from an active table offers Previous/Next across all six methods and `Back to Reading`, which returns to that exact table without changing the session. Learn has no stored progress or completion state.
 - Opening or dismissing Settings, support, legal text, or the rating action never changes a reading.
 - Changing `English / Español` updates the complete visible interface immediately, preserves navigation and reading state, and persists the explicit choice for relaunch.
 - The exact tab, bar, sheet, and landscape treatment must follow the registered visual references.
@@ -121,7 +121,7 @@ An image-led panel presents exactly two direct choices: `One Card` and `Three Ca
 
 ### S01.3 — Three-card style selector
 
-An image-led panel presents exactly five direct tiles: timeline, situation/challenge/advice, relationship, yes/no, and Freeform. The current preset receives the gold selected treatment. Each tile has two non-nested actions: its body commits the prospective preset and closes the panel; its 44-point information button closes the chooser and opens the matching tutorial without changing the preset. Back returns to `S01.2`; Close preserves the prior preset and returns Home. V-076 portrait and V-077 landscape govern the state. The panel may scroll only for accessibility text sizes, never as a plain vertical list.
+An image-led panel presents exactly five direct tiles in a compact 2×2 grid plus a full-width Freeform tile: timeline, situation/challenge/advice, relationship, yes/no, and Freeform. All five are visible at normal text sizes. If One Card was active when Three Cards was chosen, no style receives a selected mark until the user actually chooses one. Each tile has two non-nested actions: its body commits the prospective preset and closes the panel; its visually small but 44-point information button closes the chooser and opens the matching tutorial without changing the preset. Back returns to `S01.2`; Close preserves the prior preset and returns Home. The panel may scroll only for accessibility text sizes, never as a plain vertical list.
 
 ### Retired setup and replacement states
 
@@ -131,14 +131,15 @@ The former active-reading Home, `Start a new reading?` confirmation, `Layout Cho
 
 ### Goal
 
-Represent `shuffle → draw → turn over → inspect → read → repeat or leave` without generating a conclusion.
+Represent `shuffle/reshuffle → deal complete layout → turn over → inspect → read → reset or leave` without generating a conclusion.
 
 ### Shared elements
 
 - Layout identity: `One Card` or `Three Cards`.
 - One neutral position, or three stable positions labelled from the selected spread. The Yes or No spread uses `For`, `Against`, and `Destiny`; the third shows what Destiny holds for the question.
-- Face-down deck while cards remain, or a clear exhausted state. While present, the deck itself is the one phase-appropriate primary control.
-- Localized state copy explains the available deck action without duplicating it as a button.
+- Face-down deck only before Deal. It remains tappable to reshuffle while zero cards are dealt, then disappears for the rest of the reading.
+- Localized state copy explains the deck action; `Deal / Repartir` is the separate explicit transition from shuffling to the complete face-down layout.
+- A persistent information action opens the active preset tutorial without mutating the reading.
 - A small reset action with a 44-point accessible hit target, visually secondary to the deck.
 - Revealed card name; meaning remains behind an intentional tap.
 - No prediction, combined interpretation, question field, prompt, save, share, upsell, or progress reward.
@@ -146,37 +147,36 @@ Represent `shuffle → draw → turn over → inspect → read → repeat or lea
 ### S03.1 — Ready to shuffle
 
 - All positions are empty.
-- The deck is present as the primary control but cannot be drawn yet.
+- The deck is present as the primary shuffle control. `Deal / Repartir` is visible but disabled.
 - Visible cue: **Tap the deck to shuffle** / **Toca el mazo para barajar**.
 - Accessible action name: **Shuffle Deck** / **Barajar mazo**.
 - There is no separate shuffle button.
 
-Transition: tap the deck → V-048 press, cut, and interleave sequence → durable shuffled state → `S03.2`.
+Transition: tap the deck → V-089 press, split/cut, interleave, riffle, and square sequence → durable shuffled state → `S03.2`.
 
 Motion and haptics cannot become a blocking ritual. Reduce Motion receives an equivalent state change without ornamental movement.
 
-### S03.2 — Shuffled, no card drawn
+### S03.2 — Shuffled, ready to deal
 
 - The deck is face down and ready.
 - Empty position count matches the chosen layout.
-- The same deck is now the draw control; its frame and surrounding viewport do not move when its action changes.
-- Visible cue: **Tap the deck to draw** / **Toca el mazo para sacar**.
-- Accessible action name: **Draw Card** / **Sacar carta**.
-- There is no separate draw button.
+- The same deck remains tappable to reshuffle all 78 cards as often as desired while zero cards are dealt.
+- Visible cue: **Tap again to shuffle, or deal when ready** / **Toca de nuevo para volver a barajar o reparte cuando quieras**.
+- `Deal / Repartir` is enabled and commits the complete layout face down.
 
-Transition: tap or activate the deck → V-048 deal path → durable draw state → `S03.3`.
+Transition: activate `Deal / Repartir` → complete layout persisted atomically → sequential deal presentation → complete face-down table.
 
-### S03.3 — Latest card face down
+### S03.3 — Complete layout face down
 
 - The next unique card occupies the next position and remains face down.
 - Tapping that card turns it over.
-- If positions remain, tapping or activating the deck draws the next card; no **Draw Next Card** button appears.
+- All selected positions are already occupied because Deal commits the complete layout atomically.
 - Previously drawn cards keep their independent face state.
 
 Transitions:
 
 - `Turn card over` → `S03.4` or `S03.6`, depending on completion.
-- `Deck: Draw Next Card` → another `S03.3` until all positions are occupied.
+- Revealing any face-down card preserves the other positions and their independent face state.
 - `Back` → transactionally delete the session → `S01.1`.
 
 ### S03.4 — Reading in progress, mixed face states
@@ -201,8 +201,8 @@ Transitions:
 - The table is quiet and complete.
 - Every card can open `S04.1` independently.
 - The app adds no summary, combined meaning, celebration, or score.
-- The small deck reappears in its reserved frame with **Tap the deck for another reading** / **Toca el mazo para otra lectura**. Tapping it clears the completed session and creates the same preset in `S03.1`, ready to shuffle.
-- V-052 portrait and V-053 landscape govern Three Cards; V-056 portrait and V-057 landscape govern One Card.
+- The deck remains absent. The small reset action is the only quick way to prepare another reading with the same preset.
+- V-086 portrait and V-087 landscape govern the complete no-deck Three Cards treatment. One Card uses the same no-deck/reset rule while preserving its approved large-card scale.
 
 ### Reading interaction rules
 
@@ -211,16 +211,16 @@ Transitions:
 - A face-down card's identity never appears in visible copy, VoiceOver, logs intended for the user, resume status, or navigation state.
 - Shuffle order remains stable after app restoration.
 - The user cannot reshuffle midway. Reset clears the current session and creates the same preset ready to shuffle; it never preserves prior drawn IDs.
-- The deck accepts exactly one action for its phase: shuffle in `S03.1`, draw in `S03.2`–`S03.4` while a position remains, no action while the layout is full with a face-down card, and another reading with the same preset once every position is face up. A second primary button never mirrors that action.
+- The deck accepts one action only before dealing: shuffle or reshuffle. `Deal / Repartir` is disabled until the first valid shuffle and commits the complete layout. After Deal, neither the deck nor Deal remains actionable.
 - Back clears the active reading without a confirmation. If durable clear fails, the user remains on the exact table state with recoverable error feedback.
 - Tapping a face-down card reveals it; tapping a revealed card opens its meaning. Both actions have explicit VoiceOver alternatives.
 - Leaving `Read` for Learn or Cards preserves logical state without replaying motion.
 
 ### Reading viewport and motion contract
 
-- Corrected V-046 governs the portrait ready state and labelled positions; corrected V-047 preserves the same horizontal group and vertical slot anchor in the complete face-down state. V-040 governs the large three-card landscape composition, and V-048 supersedes V-041 for principal motion.
+- V-082/V-083 govern the ready portrait/landscape states; V-084/V-085 govern shuffled/Deal. V-047 preserves the horizontal group and vertical slot anchor in the complete face-down state. V-086/V-087 govern the complete no-deck state, and V-089 supersedes V-048 for principal motion.
 - The outer viewport, header corridor, position frames, deck frame while present, and persistent actions stay fixed during press, cut, interleave, deal, and flip. Helper copy may crossfade in place; it must not insert or remove layout height.
-- Shuffle follows the contained V-048 sequence `rest → press → cut → interleave → settled shuffled state`. Deal uses one clear path from the stable deck frame to the next stable position. Reveal uses a contained card flip without exposing identity before the logical reveal commits.
+- Shuffle follows the current sequence `rest → press → split/cut → interleave → riffle → square/ready` and repeats on every pre-deal deck tap. Deal presents the already committed cards sequentially from the stable deck frame. Reveal uses a contained card flip without exposing identity before the logical reveal commits.
 - One input produces one state transition. Additional taps are ignored while the current transition is in flight.
 - Persistence commits the resulting logical state once; success haptics occur only after that durable commit. Backgrounding, restoration, tab switching, or rotation presents the stable result and never replays motion or haptics.
 - Reduce Motion replaces cut, interleave, deal, and flip with short in-place opacity/state changes while preserving the same order, privacy, and controls. VoiceOver receives the same logical actions and post-commit announcements without requiring a gesture-only path.
@@ -238,7 +238,7 @@ Required content:
 - large bundled card art;
 - localized English or Spanish name;
 - arcana identity and suit/rank where applicable;
-- semantic section heading **Upright meaning** / **Significado al derecho**;
+- semantic section heading **Meaning** / **Significado**;
 - three to five keywords;
 - concise general meaning;
 - **In a reading** note that suggests what the user might notice without giving a personalized answer;
@@ -247,7 +247,7 @@ Required content:
 Rules:
 
 - only a face-up card can open this screen;
-- `Upright meaning` / `Significado al derecho` is plain heading text, not a capsule, button, toggle, filter, or orientation control;
+- `Meaning` / `Significado` is plain heading text. `In a reading` / `En una tirada` applies the meaning to the question and the role assigned to that card in the spread;
 - no previous/next control, so the user cannot browse into cards absent from the reading;
 - no question, generated interpretation, prediction, advice command, note, share, history, or related-card recommendation;
 - one favorite control saves or removes this canonical card locally without changing the reading;
@@ -372,7 +372,7 @@ Required content:
 - large bundled card art;
 - localized English or Spanish name;
 - arcana identity and suit/rank where applicable;
-- **Upright meaning** / **Significado al derecho** as a semantic heading, never button-styled;
+- **Meaning** / **Significado** as a semantic heading, never button-styled;
 - the same keywords, meaning, reading note, and artwork description associated with this canonical `cardID`;
 - position text such as **17 of 78** or **4 of 14**, based on the active filter;
 - previous and next actions.
@@ -554,7 +554,7 @@ Both English and Spanish reference-content key sets must equal the identity-mani
 - A face-down reading card announces its role and state without identity, for example **Challenge, face down. Double-tap to reveal.** Yes or No announces `For`, `Against`, or `Destiny` without exposing card identity.
 - A revealed reading card announces position, identity, and available meaning action.
 - Library items announce card name and position in the current filter.
-- Card detail exposes title, the semantic `Upright meaning` / `Significado al derecho` heading, keywords, meaning, reading note, and artwork description in a logical order; the heading has no button trait.
+- Card detail exposes title, the semantic `Meaning` / `Significado` heading, keywords, meaning, reading note, and artwork description in a logical order; the heading has no button trait.
 - The Settings gear has the label **Settings** rather than relying on its symbol; each Settings row exposes its purpose and current supporter state where applicable.
 - The language selector announces its group label, both options, and selected state; a switch announces completion in the newly active language without moving focus unexpectedly.
 - Support level controls announce name, live price, monthly period, selected state, and equivalent-access explanation. Purchase and restore status changes are announced without trapping focus.
@@ -623,7 +623,7 @@ Result: the same two cards and face states return; focused presentation is dismi
 
 `Reading Table` → Back → `Read Home` → choose another preset → tap hero deck
 
-Result: Back durably clears only the active session and returns Home without confirmation. On a completed all-revealed table, tapping the reappeared deck instead creates another reading with the same preset, ready to shuffle.
+Result: Back durably clears only the active session and returns Home without confirmation. On a completed table the deck stays absent; reset creates another reading with the same preset, ready to shuffle.
 
 ### H. Content and privacy integrity
 
@@ -657,9 +657,9 @@ Result: Settings changes immediately to Spanish, the exact spread, order, drawn 
 
 ### M. Deck-led table motion without viewport jumps
 
-`Read empty` → choose a three-card preset inline → tap hero deck → tap table deck to shuffle → tap it three times to deal → tap each card to reveal → tap the reappeared deck for another reading
+`Read empty` → choose a three-card preset inline → tap hero deck → tap table deck to shuffle or reshuffle → tap Deal once → reveal cards independently → reset when another reading is wanted
 
-Result: no duplicate primary shuffle/draw button appears; one tap causes one durable action; the V-048 sequence stays inside fixed bounds; all three completed cards are centered with equal gaps; backgrounding or Reduce Motion yields the same logical state without replay.
+Result: shuffle and Deal remain distinct; Deal creates one durable complete layout; motion stays inside fixed bounds; all three cards are centered with equal gaps; backgrounding or Reduce Motion yields the same logical state without replay.
 
 ## Visual-first implementation inventory
 
@@ -692,15 +692,15 @@ Additional registered references under A-021:
 22. `S03.6 One Card / The Hermit revealed` — V-035 portrait and V-036 landscape.
 23. `S02.2 Three-card spread choice / Spanish` — V-039, historical and superseded by V-049–V-051 under A-033.
 24. `S03 Three Cards / Past · Present · Future / large landscape / Spanish` — V-040, which supersedes the previous landscape proportions for the three-card table.
-25. `S03 Reading Table / professional motion storyboard V2` — V-048, which supersedes V-041 with press, cut, interleave, deal, and flip inside a stable viewport.
+25. `S03 Reading Table / repeatable physical shuffle storyboard V3` — V-089, which supersedes V-048 with press, split/cut, interleave, riffle, square, Deal, and flip inside a stable viewport.
 26. `S08.2 Card Detail / favorite saved` — V-042.
 27. `S07.3 Cards / Favorites empty` — V-043.
 28. `S03.1 Three Cards / ready / deck tap`, portrait Spanish — V-046, which supersedes V-015 for portrait interaction; English uses the same composition.
 29. `S03.5 Three Cards / complete / all face down / centered`, portrait Spanish — V-047; English uses the same composition.
-30. `S03.6 Three Cards / all revealed / quick restart`, portrait Spanish — V-052.
-31. `S03.6 Three Cards / all revealed / quick restart`, landscape Spanish — V-053.
-32. `S03.6 One Card / revealed / quick restart`, portrait Spanish — V-056.
-33. `S03.6 One Card / revealed / quick restart`, landscape Spanish — V-057.
+30. `S03.6 Three Cards / all revealed / no deck / contextual info`, portrait Spanish — V-086.
+31. `S03.6 Three Cards / all revealed / no deck / contextual info`, landscape Spanish — V-087.
+32. `S03 active reading / contextual tutorial`, portrait Spanish — V-088.
+33. `S03 Reading Table / repeatable physical shuffle motion V3` — V-089.
 
 Still requiring a complete reference before final implementation: the remaining `S10` supporter/restore/unavailable variants and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement the approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized.
 
@@ -708,7 +708,7 @@ A shared card-reference component may serve S04 and S08 only after both navigati
 
 ## MVP completion gate
 
-The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/meaning interaction conforms to V-046–V-048/V-052–V-057/V-067–V-079, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the foundation lessons and six reading tutorials are bundled with exact bilingual parity and six-preset mappings, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
+The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/tutorial interaction conforms to V-080–V-089, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the foundation lessons and six reading tutorials are bundled with exact bilingual parity and six-preset mappings, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
 
 Settings and support are complete at product-design level when S09/S10 references and states are registered, free access is invariant across every purchase state, equivalent levels and supporter acknowledgement are represented, Restore Purchases and renewal/cancellation disclosures are present, and Privacy, Terms, and Rate the App remain distinct destinations. Live StoreKit products, prices, contracts, tax/banking setup, builds, and purchase review require separate authority and do not block core completion.
 

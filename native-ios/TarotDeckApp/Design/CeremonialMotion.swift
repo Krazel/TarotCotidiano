@@ -11,6 +11,7 @@ enum CeremonialMotion {
     static let pressRelease = Animation.easeOut(duration: 0.10)
     static let cut = Animation.easeInOut(duration: 0.18)
     static let interleave = Animation.easeInOut(duration: 0.24)
+    static let riffle = Animation.timingCurve(0.30, 0.00, 0.20, 1.00, duration: 0.24)
     static let shuffleSettleDuration: TimeInterval = 0.20
     static let shuffleSettle = Animation.timingCurve(
         0.20,
@@ -151,7 +152,7 @@ enum CeremonialHaptics {
     }
 }
 
-/// A restrained cut-and-settle treatment for a face-down deck.
+/// A tactile split, interleave, riffle and square treatment for a face-down deck.
 struct CeremonialShufflingDeck: View {
     let phase: Int
     let reduceMotion: Bool
@@ -160,31 +161,79 @@ struct CeremonialShufflingDeck: View {
     var body: some View {
         ZStack {
             if !reduceMotion {
-                CeremonialCardBack(spokenLabel: "")
-                    .offset(
-                        x: phase == 1 ? -14 : (phase == 2 ? -3 : 0),
-                        y: phase == 1 ? -3 : 0
-                    )
-                    .rotationEffect(.degrees(phase == 1 ? -1.5 : (phase == 2 ? -0.35 : 0)))
-                    .opacity(phase == 1 || phase == 2 ? 1 : 0)
-                    .accessibilityHidden(true)
+                ForEach(0..<3, id: \.self) { layer in
+                    CeremonialCardBack(spokenLabel: "")
+                        .offset(
+                            x: leftOffsetX,
+                            y: CGFloat(layer) * 2 + splitLift
+                        )
+                        .rotationEffect(.degrees(leftRotation))
+                        .opacity(splitOpacity)
+                        .accessibilityHidden(true)
 
-                CeremonialCardBack(spokenLabel: "")
-                    .offset(
-                        x: phase == 1 ? 14 : (phase == 2 ? 3 : 0),
-                        y: phase == 1 ? 3 : 0
-                    )
-                    .rotationEffect(.degrees(phase == 1 ? 1.5 : (phase == 2 ? 0.35 : 0)))
-                    .opacity(phase == 1 || phase == 2 ? 1 : 0)
-                    .accessibilityHidden(true)
+                    CeremonialCardBack(spokenLabel: "")
+                        .offset(
+                            x: rightOffsetX,
+                            y: CGFloat(layer) * 2 - splitLift
+                        )
+                        .rotationEffect(.degrees(rightRotation))
+                        .opacity(splitOpacity)
+                        .accessibilityHidden(true)
+                }
             }
 
             CeremonialCardBack(spokenLabel: "")
-                .opacity(!reduceMotion && (phase == 1 || phase == 2) ? 0 : 1)
+                .scaleEffect(phase == 1 ? 0.965 : (phase == 5 ? 1.012 : 1))
+                .offset(y: phase == 1 ? 3 : 0)
+                .opacity(!reduceMotion && (2...4).contains(phase) ? 0 : 1)
                 .opacity(reduceMotion && phase != 0 ? 0.72 : 1)
                 .accessibilityHidden(true)
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(spokenLabel)
+    }
+
+    private var splitOpacity: Double {
+        (2...4).contains(phase) ? 1 : 0
+    }
+
+    private var leftOffsetX: CGFloat {
+        switch phase {
+        case 2: return -20
+        case 3: return -8
+        case 4: return -2
+        default: return 0
+        }
+    }
+
+    private var rightOffsetX: CGFloat {
+        switch phase {
+        case 2: return 20
+        case 3: return 8
+        case 4: return 2
+        default: return 0
+        }
+    }
+
+    private var splitLift: CGFloat {
+        phase == 4 ? 5 : 0
+    }
+
+    private var leftRotation: Double {
+        switch phase {
+        case 2: return -2.4
+        case 3: return 4.5
+        case 4: return 1.2
+        default: return 0
+        }
+    }
+
+    private var rightRotation: Double {
+        switch phase {
+        case 2: return 2.4
+        case 3: return -4.5
+        case 4: return -1.2
+        default: return 0
+        }
     }
 }

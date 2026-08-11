@@ -72,7 +72,7 @@ The MVP proves that promise through:
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
 10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
 11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
-12. **The deck is the control.** Home keeps the deck large and exposes only one small selector button before it is touched. That button opens a progressive visual chooser: one or three cards first, then the five illustrated three-card styles only when needed. Each choice has a separate information action that opens its tutorial without selecting or starting it. The chooser is never a dropdown, permanent carousel, or vertical text list. The deck then starts the selected preset directly; on the table it shuffles, draws, or offers another reading according to the current state.
+12. **The deck starts the ritual.** Home keeps the deck large and exposes only one small selector button before it is touched. That button opens a progressive visual chooser: one or three cards first, then the five illustrated three-card styles only when needed. Each choice has a separate information action that opens its tutorial without selecting or starting it. The chooser is never a dropdown, permanent carousel, or vertical text list. On the table, tapping the deck shuffles all 78 cards and may be repeated freely until the user chooses `Deal / Repartir`.
 13. **The viewport does not jump.** Persistent controls, the deck frame, reading positions, and visible tab bar keep stable geometry while labels and logical states change; motion happens inside those bounds.
 
 ## Three product loops
@@ -82,10 +82,10 @@ The MVP proves that promise through:
 1. Open `Read`; keep the current preset or use the small visual selector to choose `One Card` or one of the five three-card presets.
 2. Tap the prominent deck to open that reading directly, with no layout or spread-choice screen.
 3. Tap the table deck to shuffle the complete deck.
-4. Draw cards one at a time; each arrives face down and cannot repeat.
+4. Tap the deck again as often as desired, then choose `Deal / Repartir` to place the complete one- or three-card layout face down as one durable action.
 5. Turn cards over manually in any order.
 6. Tap a revealed card when a meaning is helpful, then return to the exact table state.
-7. Back ends the reading and returns Home without a confirmation. A small reset control restarts the same preset; once every drawn card is revealed, the deck also offers another reading with that preset.
+7. Back ends the reading and returns Home without a confirmation. A small reset control restarts the same preset. Once cards are dealt, the deck does not reappear.
 
 The app never decides what the cards mean together. Reading completion is not rewarded, scored, or saved to history.
 
@@ -129,8 +129,9 @@ Exact visual presentation remains governed by the registered screen images.
    - Compact Deck Home with one small selector. Its first visual level chooses `One Card` or `Three Cards`; the second level appears only for `Three Cards` and offers five visual styles: timeline, situation/challenge/advice, relationship, Yes or No, and Freeform. The dominant deck starts the selected preset directly.
    - Every concrete choice exposes a separate information button. Information navigates to the matching tutorial and never changes the saved selection or starts a reading.
    - No `Layout Choice`, `Spread Choice`, active-reading replacement prompt, or visible `End Reading` action.
-   - Tap the table deck to shuffle when unshuffled and to draw the next card when shuffled; after every drawn card is revealed, it offers another reading with the same preset.
-   - One-at-a-time draw, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional motion governed by V-048.
+   - Tap the table deck to shuffle or reshuffle before any card is dealt. `Deal / Repartir` commits the complete layout face down; the deck then disappears and never becomes a second restart control.
+   - Atomic complete dealing, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional repeated-shuffle motion.
+   - A persistent information action opens the active preset's tutorial. Previous/Next moves among all six tutorials; `Back to Reading / Volver a la tirada` returns to the exact unchanged table.
    - Meaning available only after tapping a revealed card.
 
 2. **Learn**
@@ -144,7 +145,7 @@ Exact visual presentation remains governed by the registered screen images.
 3. **Cards**
    - All 78 cards in canonical order.
    - Filters for favorites, all cards, Major Arcana, and the four suits.
-   - Large card detail with identity, `Upright meaning` / `Significado al derecho` as an editorial heading, upright keywords, concise meaning, practical reading note, favorite control, and previous/next browsing.
+   - Large card detail with identity, `Meaning` / `Significado`, upright keywords, concise meaning, a practical `In a reading` note, favorite control, and previous/next browsing.
 
 4. **Deck and content integrity**
    - Standard 22 Major Arcana plus 56 Minor Arcana.
@@ -253,7 +254,7 @@ Reference copy describes possibilities, not certainties. It must not diagnose, p
 - `shuffledOrder`: a permutation of all 78 stable card IDs.
 - `drawnCardIDs`: the first one or three IDs consumed from that order.
 - `faceUpCardIDs`: the subset currently turned over.
-- `phase`: setup, ready to shuffle, ready to draw, in progress, or complete.
+- `phase`: setup, ready to shuffle, shuffled and ready to deal, in progress, or complete.
 - `lastPreset`: the most recent explicit Home selection, stored locally as a versioned preset ID and restored on relaunch. It changes no card identity and creates no reading until the deck is tapped. An active reading temporarily governs the table without overwriting this preference.
 
 The reading session, favorite card IDs, and explicit app-language choice are the only durable app-authored product state. `preferredLanguage` is either `en` or `es`, uses stable content IDs, and changes presentation without migrating or rewriting a session. A supporter entitlement is owned and verified through the App Store and may be cached locally for presentation; it is not an account, reading record, or access gate. Focused presentation, selected tab, Learn article, Cards filter, library position, and scroll offsets may reset without data loss.
@@ -316,8 +317,8 @@ The expanded MVP is release-candidate ready when:
 8. Every visible string and all 78 card references are complete in English and Spanish; the internal selector changes the complete validated language bundle immediately, persists its explicit choice, and preserves all language-neutral IDs and reading state. Core flows work offline, and no account, analytics, notification, or personal-data collection exists.
 9. Settings is accessible from the overlaid Read gear and contains language, support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
 10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
-11. Home selects the preset inline and uses the deck to start it directly. Reading Table uses the deck as the phase-appropriate CTA, provides only a small reset secondary action, ends transactionally through Back without confirmation, keeps viewport geometry stable, centers the completed three-card layout, and implements the professional V-048 press/cut/interleave/deal/flip sequence with an equivalent Reduce Motion path.
-12. `Upright meaning` / `Significado al derecho` renders as a semantic heading, never as a button, capsule, toggle, or promise of reversed meanings.
+11. Home selects the preset inline and uses the deck to start it directly. Reading Table uses the deck only to shuffle or reshuffle before Deal, provides a separate `Deal / Repartir` transition and only a small reset secondary action after dealing, ends transactionally through Back without confirmation, keeps viewport geometry stable, centers the completed three-card layout, and implements the approved split/interleave/riffle/square, deal, and flip sequences with an equivalent Reduce Motion path.
+12. `Meaning` / `Significado` renders as a semantic heading. `In a reading` / `En una tirada` explains how that general meaning can be applied to the question and the card's assigned position.
 13. Final implementation captures have been compared with the registered references at matching sizes.
 
 Commit, push, TestFlight, App Store submission, and publication remain separate actions requiring explicit authorization.

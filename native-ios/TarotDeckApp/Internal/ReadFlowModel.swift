@@ -156,6 +156,7 @@ private struct ReadingContinuityRecord: Codable, Equatable {
     enum Phase: String, Codable {
         case readyToShuffle
         case active
+        case shuffling
         case resetting
     }
 
@@ -172,7 +173,7 @@ private struct ReadingContinuityRecord: Codable, Equatable {
         guard layout == .threeCards || spread == nil else { return false }
         switch phase {
         case .readyToShuffle: return sessionID == nil
-        case .active, .resetting: return sessionID != nil
+        case .active, .shuffling, .resetting: return sessionID != nil
         }
     }
 
@@ -182,6 +183,10 @@ private struct ReadingContinuityRecord: Codable, Equatable {
 
     static func active(sessionID: UUID, layout: ReadingLayout, spread: ThreeCardSpread?) -> Self {
         Self(phase: .active, layout: layout, spread: spread, sessionID: sessionID)
+    }
+
+    static func shuffling(sessionID: UUID, layout: ReadingLayout, spread: ThreeCardSpread?) -> Self {
+        Self(phase: .shuffling, layout: layout, spread: spread, sessionID: sessionID)
     }
 
     static func resetting(sessionID: UUID, layout: ReadingLayout, spread: ThreeCardSpread?) -> Self {
@@ -235,6 +240,7 @@ final class ReadFlowModel: ObservableObject {
         case startPreset(ReadingPreset)
         case learnPreset(ReadingPreset)
         case shuffle
+        case deal
         case draw
         case reveal(position: Int)
         case conceal(position: Int)
@@ -292,6 +298,20 @@ final class ReadFlowModel: ObservableObject {
 
     var isReadyToShuffle: Bool {
         surface == .table && session == nil && layout != nil
+    }
+
+    var canShuffleDeck: Bool {
+        guard surface == .table, let layout else { return false }
+        if session == nil { return true }
+        guard let session, isCanonicalSession(session, for: layout) else { return false }
+        return session.drawnCards.isEmpty
+    }
+
+    var isReadyToDeal: Bool {
+        guard let session, let layout, isCanonicalSession(session, for: layout) else {
+            return false
+        }
+        return session.drawnCards.isEmpty
     }
 
     var hasActiveReading: Bool {
@@ -488,38 +508,63 @@ final class ReadFlowModel: ObservableObject {
     }
 
     func shuffleDeck() {
-        guard isReadyToShuffle, let layout else { return }
+        guard canShuffleDeck, let layout else { return }
         perform(
             retry: .shuffle,
             failureMessage: "We couldn't finish shuffling. The previous reading state remains available."
         ) {
-            // Reassert the write-ahead record before touching the durable deck session.
-            try self.continuityStore.save(.ready(layout, spread: self.spread))
-
             let started: DeckSession
             if let existing = await self.coordinator.currentSession() {
-                if existing.drawnCards.isEmpty,
-                   self.isCanonicalSession(existing, for: layout) {
-                    started = existing
-                } else {
-                    try await self.coordinator.clearSession()
-                    started = try await self.coordinator.startSession()
-                    guard self.isCanonicalSession(started, for: layout) else {
-                        throw ReadFlowInvariantError.invalidSession
-                    }
-                }
-            } else {
-                started = try await self.coordinator.startSession()
-                guard self.isCanonicalSession(started, for: layout) else {
+                guard existing.drawnCards.isEmpty,
+                      self.isCanonicalSession(existing, for: layout) else {
                     throw ReadFlowInvariantError.invalidSession
                 }
+
+                try self.continuityStore.save(
+                    .shuffling(
+                        sessionID: existing.id,
+                        layout: layout,
+                        spread: self.spread
+                    )
+                )
+                do {
+                    started = try await self.coordinator.reset()
+                } catch {
+                    try? self.continuityStore.save(
+                        .active(
+                            sessionID: existing.id,
+                            layout: layout,
+                            spread: self.spread
+                        )
+                    )
+                    throw error
+                }
+            } else {
+                // Reassert the write-ahead record before creating the first shuffled session.
+                try self.continuityStore.save(.ready(layout, spread: self.spread))
+                started = try await self.coordinator.startSession()
             }
 
-            // A crash between startSession and this save restores as ready+canonical zero-draw
-            // session; reconcile() promotes that exact pair instead of discarding it.
-            try self.continuityStore.save(
-                .active(sessionID: started.id, layout: layout, spread: self.spread)
-            )
+            guard self.isCanonicalSession(started, for: layout),
+                  started.drawnCards.isEmpty else {
+                throw ReadFlowInvariantError.invalidSession
+            }
+
+            do {
+                try self.continuityStore.save(
+                    .active(sessionID: started.id, layout: layout, spread: self.spread)
+                )
+            } catch {
+                // The shuffled deck itself is already committed atomically. Publish that truthful
+                // result and leave the shuffling marker for restore() to reconcile safely.
+                self.session = started
+                self.presentIssue(
+                    title: "Shuffle recovery paused",
+                    message: "The deck was shuffled, but its recovery marker still needs to be updated.",
+                    retry: .restore
+                )
+                return
+            }
             self.session = started
         }
     }
@@ -536,6 +581,31 @@ final class ReadFlowModel: ObservableObject {
             _ = try await self.coordinator.draw()
             guard let updated = await self.coordinator.currentSession(),
                   self.isCanonicalSession(updated, for: layout) else {
+                throw ReadFlowInvariantError.invalidSession
+            }
+            self.session = updated
+        }
+    }
+
+    /// Commits the complete one- or three-card layout before the UI presents
+    /// the cards sequentially. Restoration therefore never sees a partial deal.
+    func dealCards() {
+        guard isReadyToDeal, let session, let layout else { return }
+        guard session.drawnCards.isEmpty,
+              isCanonicalSession(session, for: layout) else {
+            discardInvalidPublishedSession()
+            return
+        }
+
+        perform(
+            retry: .deal,
+            failureMessage: "We couldn't deal the cards. Nothing was changed."
+        ) {
+            let dealt = try await self.coordinator.deal(count: layout.cardLimit)
+            guard dealt.count == layout.cardLimit,
+                  let updated = await self.coordinator.currentSession(),
+                  self.isCanonicalSession(updated, for: layout),
+                  updated.drawnCards.count == layout.cardLimit else {
                 throw ReadFlowInvariantError.invalidSession
             }
             self.session = updated
@@ -609,6 +679,7 @@ final class ReadFlowModel: ObservableObject {
         case .startPreset(let preset): startPreset(preset)
         case .learnPreset(let preset): prepareLearnPreset(preset)
         case .shuffle: shuffleDeck()
+        case .deal: dealCards()
         case .draw: drawCard()
         case .reveal(let position):
             guard let session, session.drawnCards.indices.contains(position) else { return }
@@ -661,6 +732,27 @@ final class ReadFlowModel: ObservableObject {
                 )
             }
 
+        case (.noSavedSession, .some(let record))
+            where record.isStructurallyValid && record.phase == .shuffling:
+            do {
+                try continuityStore.save(.ready(record.layout, spread: record.resolvedSpread))
+                layout = record.layout
+                spread = record.resolvedSpread
+                selectedPreset = ReadingPreset.resolved(
+                    layout: record.layout,
+                    spread: record.resolvedSpread
+                )
+                session = nil
+                surface = .table
+                presentRecovery("The deck is ready to shuffle again.")
+            } catch {
+                presentIssue(
+                    title: "Reading recovery paused",
+                    message: "The deck is safe, but its shuffle marker couldn't be updated.",
+                    retry: .restore
+                )
+            }
+
         case (.restored(let restored), .some(let record))
             where record.isStructurallyValid
                 && record.phase == .active
@@ -698,6 +790,40 @@ final class ReadFlowModel: ObservableObject {
                 presentIssue(
                     title: "Reading recovery paused",
                     message: "We found the saved reading but couldn't finish restoring it.",
+                    retry: .restore
+                )
+            }
+
+        case (.restored(let restored), .some(let record))
+            where record.isStructurallyValid
+                && record.phase == .shuffling
+                && restored.drawnCards.isEmpty
+                && isCanonicalSession(restored, for: record.layout):
+            do {
+                try continuityStore.save(
+                    .active(
+                        sessionID: restored.id,
+                        layout: record.layout,
+                        spread: record.resolvedSpread
+                    )
+                )
+                layout = record.layout
+                spread = record.resolvedSpread
+                selectedPreset = ReadingPreset.resolved(
+                    layout: record.layout,
+                    spread: record.resolvedSpread
+                )
+                session = restored
+                surface = .table
+                presentRecovery(
+                    restored.id == record.sessionID
+                        ? "The previous shuffled order was restored safely."
+                        : "Your newly shuffled deck was recovered safely."
+                )
+            } catch {
+                presentIssue(
+                    title: "Reading recovery paused",
+                    message: "We found the shuffled deck but couldn't finish restoring it.",
                     retry: .restore
                 )
             }

@@ -265,6 +265,11 @@ private struct TutorialMethodRow: View {
 struct LearnArticleView: View {
     let article: TarotGuideArticle
     let startReading: (String) -> Void
+    let returnToReading: (() -> Void)?
+    let previousTutorial: TarotGuideArticle?
+    let nextTutorial: TarotGuideArticle?
+    let openTutorial: (String) -> Void
+    @AccessibilityFocusState private var titleFocused: Bool
 
     var body: some View {
         ZStack {
@@ -282,7 +287,8 @@ struct LearnArticleView: View {
                         articleSection(number: index + 1, section: section)
                     }
 
-                    if let readingPresetID = article.readingPresetID {
+                    if let readingPresetID = article.readingPresetID,
+                       returnToReading == nil {
                         Button {
                             startReading(readingPresetID)
                         } label: {
@@ -291,6 +297,10 @@ struct LearnArticleView: View {
                         }
                         .buttonStyle(CeremonialPrimaryButtonStyle())
                         .accessibilityHint("Selects this reading preset or returns to the current reading")
+                    }
+
+                    if article.readingPresetID != nil {
+                        tutorialNavigation
                     }
                 }
                 .frame(maxWidth: 680)
@@ -304,8 +314,23 @@ struct LearnArticleView: View {
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(returnToReading != nil)
         .toolbarBackground(CeremonialObsidianTheme.background.opacity(0.96), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
+        .toolbar {
+            if let returnToReading {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: returnToReading) {
+                        Label("Back to Reading", systemImage: "chevron.left")
+                    }
+                    .accessibilityHint("Returns to the unchanged reading.")
+                }
+            }
+        }
+        .id(article.id)
+        .onAppear {
+            Task { @MainActor in titleFocused = true }
+        }
     }
 
     private var header: some View {
@@ -315,6 +340,7 @@ struct LearnArticleView: View {
                 .multilineTextAlignment(.center)
                 .frame(maxWidth: .infinity)
                 .accessibilityAddTraits(.isHeader)
+                .accessibilityFocused($titleFocused)
 
             Text(article.summary)
                 .font(.system(.title3, design: .serif))
@@ -323,6 +349,48 @@ struct LearnArticleView: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.bottom, 6)
+    }
+
+    private var tutorialNavigation: some View {
+        HStack(spacing: 14) {
+            tutorialNavigationButton(
+                article: previousTutorial,
+                title: "Previous Tutorial",
+                systemName: "chevron.left",
+                valuePrefix: "Previous: %@"
+            )
+
+            tutorialNavigationButton(
+                article: nextTutorial,
+                title: "Next Tutorial",
+                systemName: "chevron.right",
+                valuePrefix: "Next: %@"
+            )
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 8)
+    }
+
+    private func tutorialNavigationButton(
+        article destination: TarotGuideArticle?,
+        title: String,
+        systemName: String,
+        valuePrefix: String
+    ) -> some View {
+        Button {
+            guard let destination else { return }
+            openTutorial(destination.id)
+        } label: {
+            Label(title, systemImage: systemName)
+                .frame(maxWidth: .infinity, minHeight: 44)
+        }
+        .buttonStyle(.bordered)
+        .tint(CeremonialObsidianTheme.brightGold)
+        .disabled(destination == nil)
+        .opacity(destination == nil ? 0.35 : 1)
+        .accessibilityValue(
+            destination.map { AppLocalization.format(valuePrefix, $0.title) } ?? ""
+        )
     }
 
     private func readingIllustration(labels: [String]) -> some View {

@@ -50,6 +50,36 @@ public struct DeckEngine<Shuffler: DeckShuffling>: Sendable {
         return drawnCard
     }
 
+    /// Draws a complete spread as one logical transition. Callers either receive
+    /// every requested face-down card, in deck order, or the session is unchanged.
+    @discardableResult
+    public func deal(
+        count: Int,
+        from session: inout DeckSession,
+        at date: Date = Date()
+    ) throws -> [DrawnCard] {
+        try session.validate()
+        guard count > 0 else {
+            throw DeckEngineError.invalidDealCount(count)
+        }
+        guard count <= session.remainingCardCount else {
+            throw DeckEngineError.insufficientCardsForDeal(
+                requested: count,
+                remaining: session.remainingCardCount
+            )
+        }
+
+        var candidate = session
+        var dealtCards: [DrawnCard] = []
+        dealtCards.reserveCapacity(count)
+        for _ in 0..<count {
+            dealtCards.append(try draw(from: &candidate, at: date))
+        }
+
+        session = candidate
+        return dealtCards
+    }
+
     @discardableResult
     public func reveal(
         cardID: TarotCardID,
@@ -134,5 +164,7 @@ public enum DeckEngineError: Error, Equatable, Sendable {
     case duplicateCardIDs
     case invalidShuffleOutput
     case deckExhausted
+    case invalidDealCount(Int)
+    case insufficientCardsForDeal(requested: Int, remaining: Int)
     case cardHasNotBeenDrawn(TarotCardID)
 }
