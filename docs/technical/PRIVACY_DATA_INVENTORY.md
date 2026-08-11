@@ -1,13 +1,13 @@
 # Privacy and data inventory
 
 Updated: 2026-08-11
-Scope: Tarot Deck `0.2.1 (1)` TestFlight Internal Only source, its declared dependencies, plus the verified unsigned `0.2 (1)` Local-QA IPA from CI run 12. The signed archive remains to be audited after upload.
+Scope: Tarot Deck `0.2.1 (1)` TestFlight Internal Only source and signed archive verified by CI run `31487778972`, plus the historical unsigned `0.2 (1)` Local-QA IPA from CI run 12.
 
 ## Current declaration
 
 App Store Connect's **Data Not Collected / No se recopilan datos** answer is accurate for the audited app build. The app has no account, backend, analytics, advertising, tracking, StoreKit, third-party runtime SDK, network client, or system permission request. It does not transmit readings, favorites, language choices, device identifiers, contact information, or diagnostics to the developer.
 
-The audited IPA SHA-256 is `8D8D9ECCD086D8EF03543FC155A3A0EE0C9CF4484F33DDE5B6053DDB31B9A0CF`. It is the earlier unsigned Debug Local-QA artifact, not the signed candidate. Release `0.2.1 (1)` now uses the real app composition and a privacy manifest; repeat the binary inspection against the signed archive before treating this inventory as final evidence.
+The earlier Local-QA IPA SHA-256 is `8D8D9ECCD086D8EF03543FC155A3A0EE0C9CF4484F33DDE5B6053DDB31B9A0CF`. The signed Internal Only IPA has SHA-256 `13CDBC1F398CA4CECBEA5864CD4C89153CAC9879A7E03AC66336FCD8E5E0FA47`; CI verified bundle `com.krazel.tarotdeck`, version `0.2.1 (1)`, iOS 16, arm64, valid distribution signature, `get-task-allow=false`, embedded profile and `PrivacyInfo.xcprivacy` before upload. App Store Connect processed it and made it available only to the existing internal group.
 
 ## Information stored locally by the app
 
