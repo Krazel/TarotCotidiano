@@ -6,7 +6,7 @@ Tarot began as a card game; divinatory reading developed later. There is no sing
 2. **Widespread modern practice:** One Card and flexible three-position spreads; card meaning is combined with position, question, imagery, and the other cards.
 3. **Editorial adaptation:** upright-only reference, conditional language, privacy boundaries, and no automatic interpretation or verdict.
 
-The seven tutorials use the following source base without copying source text:
+The four foundations and six reading tutorials use the following source base without copying source text:
 
 - Arthur Edward Waite, *The Pictorial Key to the Tarot*, Part III, for documented historical procedures and the variety of methods.
 - Joan Bunning, lessons on spreads, writing a question, and combining sources of meaning, for recognizable modern teaching practice.
@@ -15,15 +15,16 @@ The seven tutorials use the following source base without copying source text:
 
 ## Existing Read presets
 
-The app keeps exactly five presets:
+The app keeps exactly six presets:
 
 1. `One Card`
 2. `Past · Present · Possible Future`
 3. `Situation · Challenge · Advice`
 4. `You · The other person · Connection`
 5. `Yes or No` (`For · Against · Outcome`)
+6. `Freeform` (`Card 1 · Card 2 · Card 3`)
 
-Tutorial wording may use `Possible Direction`, `Guidance`, and `Likely Outcome` to teach conditional, non-commanding interpretation. The Yes or No preset retains the language-neutral persisted ID `open` so existing local preferences and sessions migrate without loss; it does not add a sixth visual preset.
+Tutorial wording may use `Possible Direction`, `Guidance`, and `Likely Outcome` to teach conditional, non-commanding interpretation. The Yes or No preset retains the language-neutral persisted ID `open` so existing local preferences and sessions migrate without loss. Freeform uses the distinct new ID `freeform` and neutral order labels without assigned roles.
 
 ## For, against, and outcome
 

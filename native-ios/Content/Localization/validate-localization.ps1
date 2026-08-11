@@ -188,31 +188,37 @@ Assert-Unique $artworkDescriptions.ToArray() 'card-meanings artworkDescription'
 Assert-True ([int]$guide.schemaVersion -eq 1) 'beginner-guide schemaVersion must be 1.'
 Assert-True ([string]$guide.language -eq 'es') 'beginner-guide language must be es.'
 $expectedArticleIDs = @(
-    'prepare-a-reading',
+    'how-to-read-tarot',
+    'shuffle-and-draw',
+    'symbols-and-patterns',
+    'build-your-interpretation',
     'one-card-focus',
     'past-present-possible-direction',
     'situation-challenge-guidance',
     'you-other-person-connection',
     'yes-or-no-with-context',
-    'read-symbols-whole-spread'
+    'freeform-reading'
 )
 $expectedPresetIDs = @(
+    $null,
+    $null,
+    $null,
     $null,
     'oneCard',
     'pastPresentFuture',
     'situationChallengeAdvice',
     'relationship',
     'open',
-    $null
+    'freeform'
 )
 $articles = @($guide.articles)
-Assert-True ($articles.Count -eq 7) 'beginner-guide must contain exactly seven articles.'
+Assert-True ($articles.Count -eq 10) 'beginner-guide must contain exactly ten articles.'
 Assert-Text $guide.title 'beginner-guide.title'
 Assert-Text $guide.introduction 'beginner-guide.introduction'
 $userFacingText.Add([string]$guide.title)
 $userFacingText.Add([string]$guide.introduction)
 
-for ($index = 0; $index -lt 7; $index++) {
+for ($index = 0; $index -lt 10; $index++) {
     $article = $articles[$index]
     Assert-True ([string]$article.id -ceq $expectedArticleIDs[$index]) "Article ID/order mismatch at index $index."
     Assert-True ([int]$article.order -eq ($index + 1)) "Article order mismatch for $($article.id)."
@@ -247,6 +253,15 @@ foreach ($requiredYesNoCopy in @(
     Assert-True ($yesNoText.Contains($requiredYesNoCopy)) "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
 }
 
+$freeformArticle = $articles | Where-Object { $_.id -eq 'freeform-reading' }
+$freeformText = @($freeformArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+foreach ($requiredFreeformCopy in @(
+    'sin asignarles funciones fijas',
+    'Carta 1, la Carta 2 y la Carta 3'
+)) {
+    Assert-True ($freeformText.Contains($requiredFreeformCopy)) "Freeform tutorial is missing required context: $requiredFreeformCopy"
+}
+
 $tutorialText = @(
     [string]$guide.introduction
     @($articles | ForEach-Object {
@@ -268,4 +283,4 @@ foreach ($value in $userFacingText) {
 Write-Output 'Localization validation passed.'
 Write-Output 'Card copy: 78/78 IDs, names and accessibility labels.'
 Write-Output 'Card meanings: 78/78 records, upright-only, four keywords each.'
-Write-Output 'Practical tutorials: 7/7, five Read presets mapped, documented yes-or-no method included.'
+Write-Output 'Foundations: 4/4; practical tutorials: 6/6; six Read presets mapped, documented yes-or-no method included.'

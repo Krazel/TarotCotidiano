@@ -6,6 +6,7 @@ struct ReadRootView: View {
     let content: TarotContent
     @ObservedObject var languageStore: AppLanguageStore
     let inspectRevealedCard: (String) -> Void
+    let openReadingTutorial: (String?) -> Void
     @State private var showsSettings = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
@@ -20,7 +21,8 @@ struct ReadRootView: View {
                 case .home:
                     ReadHomeView(
                         model: model,
-                        openSettings: { showsSettings = true }
+                        openSettings: { showsSettings = true },
+                        openReadingTutorial: openReadingTutorial
                     )
 
                 case .table:
@@ -111,6 +113,7 @@ private enum ReadingChoiceStage: Equatable {
 private struct ReadHomeView: View {
     @ObservedObject var model: ReadFlowModel
     let openSettings: () -> Void
+    let openReadingTutorial: (String?) -> Void
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var choiceStage: ReadingChoiceStage?
@@ -129,6 +132,8 @@ private struct ReadHomeView: View {
                     stagedPreset: stagedPreset,
                     chooseCount: chooseCount,
                     chooseStyle: chooseStyle,
+                    showCountInformation: showCountInformation,
+                    showStyleInformation: showStyleInformation,
                     goBack: { present(.count) },
                     cancel: cancelChoices
                 )
@@ -351,6 +356,16 @@ private struct ReadHomeView: View {
         dismissChoicesAndRestoreFocus()
     }
 
+    private func showCountInformation(_ count: Int) {
+        choiceStage = nil
+        openReadingTutorial(count == 1 ? "one-card-focus" : nil)
+    }
+
+    private func showStyleInformation(_ preset: ReadingPreset) {
+        choiceStage = nil
+        openReadingTutorial(preset.tutorialArticleID)
+    }
+
     private func cancelChoices() {
         stagedPreset = model.selectedPreset
         dismissChoicesAndRestoreFocus()
@@ -375,6 +390,8 @@ private struct ReadingChoiceOverlay: View {
     let stagedPreset: ReadingPreset
     let chooseCount: (Int) -> Void
     let chooseStyle: (ReadingPreset) -> Void
+    let showCountInformation: (Int) -> Void
+    let showStyleInformation: (ReadingPreset) -> Void
     let goBack: () -> Void
     let cancel: () -> Void
 
@@ -385,7 +402,7 @@ private struct ReadingChoiceOverlay: View {
         GeometryReader { proxy in
             let isLandscape = proxy.size.width > proxy.size.height && !dynamicTypeSize.isAccessibilitySize
             let portraitPanelHeight = max(
-                proxy.size.height * (stage == .count ? 0.54 : 0.72),
+                proxy.size.height * (stage == .count ? 0.54 : 0.82),
                 0
             )
             let landscapePanelHeight = max(
@@ -506,75 +523,166 @@ private struct ReadingChoiceOverlay: View {
     private func countChoice(count: Int, compact: Bool) -> some View {
         let selected = count == 1 ? stagedPreset == .oneCard : stagedPreset != .oneCard
 
-        return Button {
-            chooseCount(count)
-        } label: {
-            VStack(spacing: compact ? 6 : 12) {
-                ReadingCountGlyph(count: count, cardWidth: compact ? 52 : 70)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .accessibilityHidden(true)
+        return ZStack {
+            choiceTileBackground(selected: selected, cornerRadius: 22)
 
-                Text(AppLocalization.text(count == 1 ? "One Card" : "Three Cards"))
-                    .font(.system(compact ? .body : .title3, design: .serif, weight: .semibold))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
-                    .minimumScaleFactor(0.75)
+            Button {
+                chooseCount(count)
+            } label: {
+                VStack(spacing: compact ? 6 : 12) {
+                    ReadingCountGlyph(count: count, cardWidth: compact ? 52 : 70)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .accessibilityHidden(true)
+
+                    Text(AppLocalization.text(count == 1 ? "One Card" : "Three Cards"))
+                        .font(.system(compact ? .body : .title3, design: .serif, weight: .semibold))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.75)
+                }
+                .padding(compact ? 10 : 14)
+                .padding(.top, 22)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(Rectangle())
             }
-            .padding(compact ? 10 : 14)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background { choiceTileBackground(selected: selected, cornerRadius: 22) }
-            .overlay(alignment: .topTrailing) { selectionMark(selected: selected) }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(AppLocalization.text(count == 1 ? "One Card" : "Three Cards")))
+            .accessibilityHint(Text(AppLocalization.text(count == 1 ? "Selects one card" : "Opens five visual three-card styles")))
+            .accessibilityAddTraits(selected ? .isSelected : [])
+
+            VStack {
+                HStack {
+                    informationButton {
+                        showCountInformation(count)
+                    }
+                    .accessibilityLabel(AppLocalization.format(
+                        "Learn how to use %@",
+                        AppLocalization.text(count == 1 ? "One Card" : "Three Cards")
+                    ))
+                    Spacer()
+                    selectionMark(selected: selected)
+                }
+                Spacer()
+            }
+            .padding(8)
         }
-        .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(AppLocalization.text(count == 1 ? "One Card" : "Three Cards")))
-        .accessibilityHint(Text(AppLocalization.text(count == 1 ? "Selects one card" : "Opens four visual three-card styles")))
-        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 
     private func styleChoices(compact: Bool) -> some View {
         let columns = [GridItem(.flexible(), spacing: compact ? 10 : 12), GridItem(.flexible())]
-        let presets: [ReadingPreset] = [.pastPresentFuture, .situationChallengeAdvice, .relationship, .open]
+        let pairedPresets: [ReadingPreset] = [
+            .pastPresentFuture,
+            .situationChallengeAdvice,
+            .relationship,
+            .open
+        ]
 
-        return ScrollView {
-            LazyVGrid(columns: columns, spacing: compact ? 10 : 12) {
-                ForEach(presets) { preset in
-                    styleChoice(preset, compact: compact)
+        return Group {
+            if compact {
+                HStack(spacing: 10) {
+                    ForEach(pairedPresets + [.freeform]) { preset in
+                        styleChoice(preset, compact: true)
+                    }
                 }
+            } else {
+                ScrollView {
+                    VStack(spacing: 12) {
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(pairedPresets) { preset in
+                                styleChoice(preset, compact: false)
+                            }
+                        }
+
+                        styleChoice(.freeform, compact: false)
+                    }
+                }
+                .scrollIndicators(.hidden)
             }
         }
-        .scrollIndicators(.hidden)
     }
 
     private func styleChoice(_ preset: ReadingPreset, compact: Bool) -> some View {
         let selected = preset == stagedPreset
 
-        return Button {
-            chooseStyle(preset)
-        } label: {
-            VStack(spacing: compact ? 5 : 9) {
-                ThreeCardStyleGlyph(preset: preset, cardWidth: compact ? 36 : 44)
-                    .frame(height: compact ? 60 : 82)
-                    .accessibilityHidden(true)
+        return ZStack {
+            choiceTileBackground(selected: selected, cornerRadius: 20)
 
-                Text(preset.title)
-                    .font(.system(compact ? .subheadline : .body, design: .serif, weight: .semibold))
-                    .multilineTextAlignment(.center)
-                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
-                    .minimumScaleFactor(0.70)
-                    .frame(maxWidth: .infinity)
+            Button {
+                chooseStyle(preset)
+            } label: {
+                VStack(spacing: compact ? 5 : 9) {
+                    ThreeCardStyleGlyph(preset: preset, cardWidth: compact ? 36 : 44)
+                        .frame(height: compact ? 60 : 82)
+                        .accessibilityHidden(true)
+
+                    Text(preset.title)
+                        .font(.system(compact ? .subheadline : .body, design: .serif, weight: .semibold))
+                        .multilineTextAlignment(.center)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                        .minimumScaleFactor(0.70)
+                        .frame(maxWidth: .infinity)
+
+                    if preset == .freeform {
+                        Text(AppLocalization.text("No assigned positions"))
+                            .font(.caption)
+                            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 1)
+                    }
+                }
+                .padding(.horizontal, compact ? 8 : 10)
+                .padding(.vertical, compact ? 7 : 10)
+                .padding(.top, 18)
+                .frame(maxWidth: .infinity, minHeight: compact ? 108 : 154, maxHeight: .infinity)
+                .contentShape(Rectangle())
             }
-            .padding(.horizontal, compact ? 8 : 10)
-            .padding(.vertical, compact ? 7 : 10)
-            .frame(maxWidth: .infinity, minHeight: compact ? 108 : 154, maxHeight: .infinity)
-            .background { choiceTileBackground(selected: selected, cornerRadius: 20) }
-            .overlay(alignment: .topTrailing) { selectionMark(selected: selected) }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(preset.title)
+            .accessibilityHint("Selects this reading preset")
+            .accessibilityAddTraits(selected ? .isSelected : [])
+
+            VStack {
+                HStack {
+                    Spacer()
+                    informationButton {
+                        showStyleInformation(preset)
+                    }
+                    .accessibilityLabel(AppLocalization.format("Learn how to use %@", preset.title))
+                }
+                Spacer()
+            }
+            .padding(8)
+
+            if selected {
+                VStack {
+                    HStack {
+                        selectionMark(selected: true)
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(8)
+            }
+        }
+    }
+
+    private func informationButton(action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: "info")
+                .font(.system(.body, weight: .semibold))
+                .frame(width: 44, height: 44)
+                .background {
+                    Circle()
+                        .fill(Color.black.opacity(0.28))
+                        .overlay {
+                            Circle().stroke(CeremonialObsidianTheme.brightGold, lineWidth: 1)
+                        }
+                }
+                .contentShape(Circle())
         }
         .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(preset.title)
-        .accessibilityHint("Selects this reading preset")
-        .accessibilityAddTraits(selected ? .isSelected : [])
+        .accessibilityHint("Opens the matching reading tutorial without changing your selection")
     }
 
     private func choiceTileBackground(selected: Bool, cornerRadius: CGFloat) -> some View {
@@ -596,7 +704,6 @@ private struct ReadingChoiceOverlay: View {
             .foregroundStyle(CeremonialObsidianTheme.background)
             .frame(width: 34, height: 34)
             .background(Circle().fill(CeremonialObsidianTheme.brightGold))
-            .padding(8)
             .opacity(selected ? 1 : 0)
             .accessibilityHidden(true)
     }

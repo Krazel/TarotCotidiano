@@ -2,7 +2,8 @@ import SwiftUI
 
 struct LearnIndexView: View {
     let content: TarotContent
-    let startReading: (String) -> Void
+    let openArticle: (String) -> Void
+    let openTutorials: () -> Void
 
     var body: some View {
         ZStack {
@@ -12,37 +13,30 @@ struct LearnIndexView: View {
                 LazyVStack(spacing: 14) {
                     titleBlock
 
-                    HStack(spacing: 10) {
-                        Image(systemName: "sparkle")
-                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
-
-                        Text("TUTORIALS")
-                            .font(.system(.caption, design: .rounded, weight: .bold))
-                            .tracking(1.4)
-                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
-
-                        Rectangle()
-                            .fill(CeremonialObsidianTheme.gold.opacity(0.45))
-                            .frame(height: 1)
-                    }
-                    .accessibilityElement(children: .combine)
-                    .accessibilityAddTraits(.isHeader)
-
-                    ForEach(content.guideArticles) { article in
-                        NavigationLink {
-                            LearnArticleView(
-                                article: article,
-                                startReading: startReading
-                            )
+                    ForEach(content.foundationArticles) { article in
+                        Button {
+                            openArticle(article.id)
                         } label: {
-                            LearnArticleRow(article: article)
+                            FoundationArticleRow(
+                                article: article,
+                                featured: article.id == "how-to-read-tarot"
+                            )
                         }
                         .buttonStyle(.plain)
+
+                        if article.id == "shuffle-and-draw" {
+                            Button(action: openTutorials) {
+                                TutorialsPortalRow()
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
                 }
+                .frame(maxWidth: 720)
                 .padding(.horizontal, 20)
                 .padding(.top, 22)
                 .padding(.bottom, 28)
+                .frame(maxWidth: .infinity)
             }
             .scrollIndicators(.hidden)
         }
@@ -58,7 +52,7 @@ struct LearnIndexView: View {
                 .fixedSize(horizontal: false, vertical: true)
                 .accessibilityAddTraits(.isHeader)
 
-            Text("Tutorials for reading your cards")
+            Text("A simple way to read for yourself")
                 .font(.system(.title3, design: .serif))
                 .foregroundStyle(CeremonialObsidianTheme.brightGold)
                 .multilineTextAlignment(.center)
@@ -67,32 +61,178 @@ struct LearnIndexView: View {
     }
 }
 
-private struct LearnArticleRow: View {
+private struct FoundationArticleRow: View {
     let article: TarotGuideArticle
+    let featured: Bool
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: iconName)
-                .font(.system(size: 26, weight: .light))
-                .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                .frame(width: 42)
+                .font(.system(size: featured ? 32 : 26, weight: .light))
+                .foregroundStyle(featured ? CeremonialObsidianTheme.background : CeremonialObsidianTheme.brightGold)
+                .frame(width: 46)
 
             VStack(alignment: .leading, spacing: 7) {
+                if featured {
+                    Text("BEGIN HERE")
+                        .font(.system(.caption, design: .rounded, weight: .bold))
+                        .tracking(1.1)
+                        .foregroundStyle(CeremonialObsidianTheme.background.opacity(0.82))
+                }
+
                 Text(article.title)
-                    .font(.system(.title3, design: .serif, weight: .semibold))
-                    .foregroundStyle(CeremonialObsidianTheme.parchment)
+                    .font(.system(featured ? .title2 : .title3, design: .serif, weight: .semibold))
+                    .foregroundStyle(featured ? CeremonialObsidianTheme.background : CeremonialObsidianTheme.parchment)
 
                 Text(article.summary)
                     .font(.subheadline)
-                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                    .foregroundStyle(featured ? CeremonialObsidianTheme.background.opacity(0.78) : CeremonialObsidianTheme.secondaryText)
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 3)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Image(systemName: "chevron.right")
                 .font(.headline)
-                .foregroundStyle(CeremonialObsidianTheme.parchment)
+                .foregroundStyle(featured ? CeremonialObsidianTheme.background : CeremonialObsidianTheme.parchment)
+        }
+        .padding(18)
+        .frame(minHeight: featured ? 132 : 94)
+        .background {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(featured ? CeremonialObsidianTheme.parchment : CeremonialObsidianTheme.cardSurface.opacity(0.96))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(CeremonialObsidianTheme.gold.opacity(featured ? 0.92 : 0.35), lineWidth: featured ? 2 : 1)
+                }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(article.title). \(article.summary)")
+        .accessibilityHint("Opens this guide article")
+    }
+
+    private var iconName: String {
+        switch article.id {
+        case "how-to-read-tarot": return "sun.max"
+        case "shuffle-and-draw": return "rectangle.stack"
+        case "symbols-and-patterns": return "eye"
+        case "build-your-interpretation": return "text.book.closed"
+        default: return "sparkles"
+        }
+    }
+}
+
+private struct TutorialsPortalRow: View {
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: "rectangle.on.rectangle")
+                .font(.system(size: 28, weight: .light))
+                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                .frame(width: 46)
+
+            VStack(alignment: .leading, spacing: 7) {
+                Text("Reading Tutorials")
+                    .font(.system(.title2, design: .serif, weight: .semibold))
+
+                Text("One card, yes or no, and more practical methods.")
+                    .font(.subheadline)
+                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "chevron.right")
+                .font(.headline)
+        }
+        .padding(18)
+        .frame(minHeight: 104)
+        .background {
+            RoundedRectangle(cornerRadius: 20)
+                .fill(CeremonialObsidianTheme.cardSurface.opacity(0.98))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(CeremonialObsidianTheme.brightGold, lineWidth: 1.5)
+                }
+                .shadow(color: CeremonialObsidianTheme.brightGold.opacity(0.22), radius: 10)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("Opens six reading tutorials")
+    }
+}
+
+struct ReadingTutorialsView: View {
+    let articles: [TarotGuideArticle]
+    let openArticle: (String) -> Void
+
+    var body: some View {
+        ZStack {
+            CeremonialBackdrop()
+
+            ScrollView {
+                LazyVStack(spacing: 12) {
+                    VStack(spacing: 8) {
+                        Text("Reading Tutorials")
+                            .font(.system(.largeTitle, design: .serif, weight: .semibold))
+                            .multilineTextAlignment(.center)
+                            .accessibilityAddTraits(.isHeader)
+
+                        Text("Choose a practical way to read the cards.")
+                            .font(.system(.title3, design: .serif))
+                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.bottom, 22)
+
+                    ForEach(articles) { article in
+                        Button {
+                            openArticle(article.id)
+                        } label: {
+                            TutorialMethodRow(article: article)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: 720)
+                .padding(.horizontal, 20)
+                .padding(.top, 22)
+                .padding(.bottom, 28)
+                .frame(maxWidth: .infinity)
+            }
+            .scrollIndicators(.hidden)
+        }
+        .foregroundStyle(CeremonialObsidianTheme.parchment)
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(CeremonialObsidianTheme.background.opacity(0.96), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+    }
+}
+
+private struct TutorialMethodRow: View {
+    let article: TarotGuideArticle
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+        HStack(spacing: 16) {
+            Image(systemName: iconName)
+                .font(.system(size: 25, weight: .light))
+                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                .frame(width: 46)
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text(article.title)
+                    .font(.system(.title3, design: .serif, weight: .semibold))
+                    .multilineTextAlignment(.leading)
+
+                Text(article.summary)
+                    .font(.subheadline)
+                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Image(systemName: "chevron.right")
+                .font(.headline)
         }
         .padding(18)
         .frame(minHeight: 94)
@@ -106,19 +246,18 @@ private struct LearnArticleRow: View {
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(article.title). \(article.summary)")
-        .accessibilityHint("Opens this guide article")
+        .accessibilityHint("Opens this reading tutorial")
     }
 
     private var iconName: String {
-        switch article.id {
-        case "prepare-a-reading": return "sun.max"
-        case "one-card-focus": return "rectangle.portrait"
-        case "past-present-possible-direction": return "arrow.right"
-        case "situation-challenge-guidance": return "scope"
-        case "you-other-person-connection": return "person.2"
-        case "yes-or-no-with-context": return "arrow.left.arrow.right"
-        case "read-symbols-whole-spread": return "eye"
-        default: return "text.book.closed"
+        switch article.readingPresetID {
+        case "oneCard": return "rectangle.portrait"
+        case "pastPresentFuture": return "arrow.right"
+        case "situationChallengeAdvice": return "scope"
+        case "relationship": return "person.2"
+        case "open": return "arrow.left.arrow.right"
+        case "freeform": return "rectangle.on.rectangle"
+        default: return "sparkles"
         }
     }
 }
@@ -225,6 +364,8 @@ struct LearnArticleView: View {
             return (0..<3).map { ThreeCardSpread.relationship.positionTitle(at: $0) }
         case "open":
             return (0..<3).map { ThreeCardSpread.open.positionTitle(at: $0) }
+        case "freeform":
+            return (0..<3).map { ThreeCardSpread.freeform.positionTitle(at: $0) }
         default:
             return []
         }

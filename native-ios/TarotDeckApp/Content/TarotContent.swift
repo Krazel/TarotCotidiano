@@ -112,6 +112,21 @@ struct TarotContent: Equatable {
     let guideIntroduction: String
     let guideArticles: [TarotGuideArticle]
 
+    var foundationArticles: [TarotGuideArticle] {
+        guideArticles.filter { Self.foundationArticleIDs.contains($0.id) }
+    }
+
+    var tutorialArticles: [TarotGuideArticle] {
+        guideArticles.filter { $0.readingPresetID != nil }
+    }
+
+    private static let foundationArticleIDs: Set<String> = [
+        "how-to-read-tarot",
+        "shuffle-and-draw",
+        "symbols-and-patterns",
+        "build-your-interpretation"
+    ]
+
     func meaning(for card: TarotCardRecord) -> TarotCardMeaning? {
         meaningsByCardID[card.id]
     }
@@ -141,7 +156,7 @@ enum TarotContentLoadError: LocalizedError {
         case .missingArtworkDescriptions:
             return AppLocalization.text("Every card meaning requires an artwork description.")
         case .invalidGuideCount(let count):
-            return AppLocalization.format("Expected 7 guide articles, found %d.", count)
+            return AppLocalization.format("Expected 10 guide articles, found %d.", count)
         case .mismatchedCardIDs:
             return AppLocalization.text("The deck and meaning card identifiers do not match.")
         case .invalidLocalizedContent:
@@ -152,20 +167,36 @@ enum TarotContentLoadError: LocalizedError {
 
 enum TarotContentLoader {
     private static let expectedGuideIDs = [
-        "prepare-a-reading",
+        "how-to-read-tarot",
+        "shuffle-and-draw",
+        "symbols-and-patterns",
+        "build-your-interpretation",
         "one-card-focus",
         "past-present-possible-direction",
         "situation-challenge-guidance",
         "you-other-person-connection",
         "yes-or-no-with-context",
-        "read-symbols-whole-spread"
+        "freeform-reading"
+    ]
+    private static let expectedGuidePresetIDs: [String?] = [
+        nil,
+        nil,
+        nil,
+        nil,
+        "oneCard",
+        "pastPresentFuture",
+        "situationChallengeAdvice",
+        "relationship",
+        "open",
+        "freeform"
     ]
     private static let allowedReadingPresetIDs: Set<String> = [
         "oneCard",
         "pastPresentFuture",
         "situationChallengeAdvice",
         "relationship",
-        "open"
+        "open",
+        "freeform"
     ]
 
     private struct DeckDocument: Decodable {
@@ -322,7 +353,9 @@ enum TarotContentLoader {
         let ordered = articles.sorted { $0.order < $1.order }
         guard ordered.map(\.id) == expectedGuideIDs,
               ordered.map(\.order) == Array(1...expectedGuideIDs.count),
-              Set(ordered.map(\.id)).count == expectedGuideIDs.count else {
+              Set(ordered.map(\.id)).count == expectedGuideIDs.count,
+              ordered.map(\.readingPresetID) == expectedGuidePresetIDs,
+              Set(ordered.compactMap(\.readingPresetID)).count == 6 else {
             return false
         }
 

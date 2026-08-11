@@ -1,75 +1,111 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "3.0.0",
+  "contentVersion": "4.0.0",
   "language": "es",
   "title": "Aprende a leer el tarot",
-  "introduction": "Siete tutoriales prácticos para preparar una lectura, usar cada tirada y relacionar las cartas.",
+  "introduction": "Aprende los fundamentos y elige después un tutorial práctico para la tirada que quieras hacer.",
   "articles": [
     {
-      "id": "prepare-a-reading",
+      "id": "how-to-read-tarot",
       "order": 1,
-      "title": "Preparar una lectura",
-      "summary": "Elige una pregunta, selecciona la tirada y prepara el mazo antes de sacar las cartas.",
+      "title": "Cómo leer el tarot",
+      "summary": "Prepara, saca y relaciona las cartas en una lectura clara.",
       "readingPresetID": null,
       "sections": [
-        { "heading": "Elige el tema", "body": "Decide qué quieres preguntar o explorar. Mantén la pregunta lo bastante breve para recordarla mientras barajas." },
-        { "heading": "Elige la tirada", "body": "Selecciona Una carta o una tirada de tres cartas. Lee primero los nombres de las posiciones para que cada carta tenga una función clara." },
-        { "heading": "Baraja y saca", "body": "Baraja manteniendo la pregunta presente. Saca las cartas en el orden de las posiciones y después gíralas una a una." }
+        { "heading": "Elige el tema", "body": "Decide qué quieres explorar y elige una tirada cuyas posiciones encajen con ese tema." },
+        { "heading": "Saca las cartas", "body": "Baraja manteniendo el tema presente y coloca cada carta siguiendo el orden de las posiciones." },
+        { "heading": "Construye la lectura", "body": "Lee cada carta en su posición y relaciona imágenes repetidas, contrastes y cambios en la tirada." }
+      ]
+    },
+    {
+      "id": "shuffle-and-draw",
+      "order": 2,
+      "title": "Barajar y sacar",
+      "summary": "Prepara el mazo y empieza una lectura carta a carta.",
+      "readingPresetID": null,
+      "sections": [
+        { "heading": "Prepara el mazo", "body": "Elige primero la tirada para saber cuántas cartas sacar y qué significa cada posición." },
+        { "heading": "Baraja", "body": "Mantén el tema presente mientras barajas y detente cuando estés listo para empezar." },
+        { "heading": "Saca en orden", "body": "Saca una carta para cada posición de izquierda a derecha y gíralas en el orden que prefieras." }
+      ]
+    },
+    {
+      "id": "symbols-and-patterns",
+      "order": 3,
+      "title": "Símbolos y patrones",
+      "summary": "Observa las imágenes y encuentra conexiones entre las cartas.",
+      "readingPresetID": null,
+      "sections": [
+        { "heading": "Mira primero", "body": "Observa figuras, objetos, colores, números y movimiento antes de abrir el significado de referencia." },
+        { "heading": "Compara las cartas", "body": "Busca palos, números, símbolos, ambientes, direcciones o contrastes que se repitan en la tirada." },
+        { "heading": "Conecta con la posición", "body": "Relaciona cada patrón visible con la función de su posición para mantener el enfoque." }
+      ]
+    },
+    {
+      "id": "build-your-interpretation",
+      "order": 4,
+      "title": "Construir tu interpretación",
+      "summary": "Une posiciones, símbolos y significados en una respuesta clara.",
+      "readingPresetID": null,
+      "sections": [
+        { "heading": "Lee cada posición", "body": "Empieza por una carta cada vez y relaciona su significado con la posición que ocupa." },
+        { "heading": "Encuentra la relación", "body": "Compara las cartas para ver qué apoya, cambia, repite o cuestiona la primera idea." },
+        { "heading": "Exprésalo con sencillez", "body": "Une las posiciones en una o dos frases que vuelvan al tema inicial." }
       ]
     },
     {
       "id": "one-card-focus",
-      "order": 2,
-      "title": "Enfoque de una carta",
-      "summary": "Usa una carta para encontrar la idea o influencia principal de tu pregunta.",
+      "order": 5,
+      "title": "Una carta",
+      "summary": "Usa una carta para obtener un enfoque claro.",
       "readingPresetID": "oneCard",
       "sections": [
-        { "heading": "Para qué sirve", "body": "Usa esta lectura cuando quieras un solo enfoque en lugar de una tirada completa de tres cartas." },
-        { "heading": "Saca la carta", "body": "Mantén la pregunta presente, baraja, saca una carta y ponla boca arriba." },
-        { "heading": "Lee el mensaje", "body": "Observa la imagen y las palabras clave, y relaciona el significado al derecho con tu pregunta." }
+        { "heading": "Elige el enfoque", "body": "Usa esta lectura cuando baste con una idea, influencia o punto de atención central." },
+        { "heading": "Saca una carta", "body": "Mantén el enfoque presente, baraja, saca una carta y ponla boca arriba." },
+        { "heading": "Lee el mensaje", "body": "Observa la imagen y las palabras clave, y relaciona el significado al derecho con tu enfoque." }
       ]
     },
     {
       "id": "past-present-possible-direction",
-      "order": 3,
+      "order": 6,
       "title": "Pasado, presente, posible dirección",
-      "summary": "Lee qué formó la situación, qué está activo ahora y hacia dónde se dirige.",
+      "summary": "Lee cómo se desarrolló una situación y hacia dónde puede dirigirse.",
       "readingPresetID": "pastPresentFuture",
       "sections": [
         { "heading": "Las tres posiciones", "body": "La carta 1 es el Pasado, la 2 es el Presente y la 3 es la Posible dirección." },
         { "heading": "Coloca las cartas", "body": "Baraja y saca tres cartas de izquierda a derecha, manteniendo cada carta en su posición." },
-        { "heading": "Lee la secuencia", "body": "Lee primero cada posición y después observa qué continúa o cambia desde la primera carta hasta la tercera." }
+        { "heading": "Lee la secuencia", "body": "Lee primero cada posición y observa qué continúa o cambia desde la primera carta hasta la tercera." }
       ]
     },
     {
       "id": "situation-challenge-guidance",
-      "order": 4,
-      "title": "Situación, reto, orientación",
-      "summary": "Mira el asunto, el obstáculo o influencia principal y la orientación de la tirada.",
+      "order": 7,
+      "title": "Situación, reto, consejo",
+      "summary": "Mira el asunto, su reto y el consejo que ofrece la tirada.",
       "readingPresetID": "situationChallengeAdvice",
       "sections": [
-        { "heading": "Las tres posiciones", "body": "La carta 1 es la Situación, la 2 es el Reto y la 3 es la Orientación." },
-        { "heading": "Coloca las cartas", "body": "Pregunta por el asunto, baraja y saca tres cartas de izquierda a derecha." },
-        { "heading": "Relaciona la tirada", "body": "Lee cómo afecta el reto a la situación y cómo responde la orientación a las dos primeras cartas." }
+        { "heading": "Las tres posiciones", "body": "La carta 1 es la Situación, la 2 es el Reto y la 3 es el Consejo." },
+        { "heading": "Coloca las cartas", "body": "Mantén el asunto presente, baraja y saca tres cartas de izquierda a derecha." },
+        { "heading": "Relaciona la tirada", "body": "Lee cómo afecta el Reto a la Situación y cómo responde el Consejo a las dos cartas." }
       ]
     },
     {
       "id": "you-other-person-connection",
-      "order": 5,
-      "title": "Tú, otra persona, vínculo",
-      "summary": "Explora tu papel, el de la otra persona y el vínculo que existe entre ambos.",
+      "order": 8,
+      "title": "Tú, la otra persona, conexión",
+      "summary": "Explora a dos personas y la conexión que existe entre ellas.",
       "readingPresetID": "relationship",
       "sections": [
-        { "heading": "Las tres posiciones", "body": "La carta 1 te representa a ti, la 2 a la otra persona y la 3 al Vínculo." },
+        { "heading": "Las tres posiciones", "body": "La carta 1 te representa a ti, la 2 a la otra persona y la 3 a la Conexión." },
         { "heading": "Coloca las cartas", "body": "Piensa en la relación, baraja y saca tres cartas de izquierda a derecha." },
-        { "heading": "Lee la dinámica", "body": "Compara las dos primeras cartas y usa la tercera para describir el vínculo que forman juntas." }
+        { "heading": "Lee la dinámica", "body": "Compara las dos primeras cartas y usa la tercera para describir la conexión que forman juntas." }
       ]
     },
     {
       "id": "yes-or-no-with-context",
-      "order": 6,
+      "order": 9,
       "title": "A favor, en contra y resultado",
-      "summary": "Usa tres cartas para leer una pregunta clara de sí o no.",
+      "summary": "Usa tres cartas para una pregunta clara de sí o no.",
       "readingPresetID": "open",
       "sections": [
         { "heading": "Haz la pregunta", "body": "Elige una pregunta clara que pueda responderse con sí o no y mantenla presente mientras barajas." },
@@ -78,15 +114,15 @@
       ]
     },
     {
-      "id": "read-symbols-whole-spread",
-      "order": 7,
-      "title": "Leer símbolos y el conjunto",
-      "summary": "Relaciona los símbolos visibles, los significados y las posiciones en una lectura completa.",
-      "readingPresetID": null,
+      "id": "freeform-reading",
+      "order": 10,
+      "title": "Libre",
+      "summary": "Usa tres cartas sin posiciones asignadas.",
+      "readingPresetID": "freeform",
       "sections": [
-        { "heading": "Observa cada carta", "body": "Mira las figuras, objetos, colores, números y dirección del movimiento antes de leer el significado de referencia." },
-        { "heading": "Compara las cartas", "body": "Observa palos, números, símbolos, ambientes o contrastes que se repiten en la tirada." },
-        { "heading": "Resume la tirada", "body": "Une las posiciones y los detalles repetidos en una o dos frases que respondan a la pregunta original." }
+        { "heading": "Elige el enfoque", "body": "Usa Libre cuando quieras tres cartas sin asignarles funciones fijas antes de sacarlas." },
+        { "heading": "Saca tres cartas", "body": "Baraja y saca la Carta 1, la Carta 2 y la Carta 3 de izquierda a derecha." },
+        { "heading": "Lee el conjunto", "body": "Lee cada carta en orden y relaciona imágenes repetidas, contrastes y movimiento entre las tres." }
       ]
     }
   ]

@@ -87,24 +87,27 @@ $spanishGuide = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Localizat
 
 if ($deck.cards.Count -ne 78) { throw "Deck must contain 78 cards." }
 if ($meanings.cards.Count -ne 78) { throw "Meanings must contain 78 cards." }
-if ($guide.articles.Count -ne 7) { throw "Guide must contain 7 tutorials." }
+if ($guide.articles.Count -ne 10) { throw "Guide must contain 4 foundations and 6 reading tutorials." }
 if ($spanishCopy.language -cne "es" -or $spanishCopy.cards.Count -ne 78) {
     throw "Spanish card copy must contain exactly 78 records."
 }
 if ($spanishMeanings.language -cne "es" -or $spanishMeanings.cards.Count -ne 78) {
     throw "Spanish meanings must contain exactly 78 records."
 }
-if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 7) {
-    throw "Spanish guide must contain exactly 7 tutorials."
+if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 10) {
+    throw "Spanish guide must contain exactly 4 foundations and 6 reading tutorials."
 }
 $expectedGuideIDs = @(
-    "prepare-a-reading",
+    "how-to-read-tarot",
+    "shuffle-and-draw",
+    "symbols-and-patterns",
+    "build-your-interpretation",
     "one-card-focus",
     "past-present-possible-direction",
     "situation-challenge-guidance",
     "you-other-person-connection",
     "yes-or-no-with-context",
-    "read-symbols-whole-spread"
+    "freeform-reading"
 )
 if (@(Compare-Object $expectedGuideIDs @($guide.articles.id)).Count -gt 0 -or
     @(Compare-Object @($guide.articles.id) @($spanishGuide.articles.id)).Count -gt 0 -or
@@ -502,7 +505,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.3;',
+    'MARKETING_VERSION = 0.4;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -515,7 +518,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.3;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.4;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -726,7 +729,25 @@ foreach ($entry in $a045VisualReferences.GetEnumerator()) {
     }
 }
 
+$a048VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/learn-index-foundations-with-tutorials-spanish-a-ceremonial-obsidian.png") = "4A189CAF9A748D7ADF91C1E5B86A79B6CD7525CF79B34A8A105BD9064A4F80C6"
+    (Join-Path $native.Path "../design/tarot-deck/learn-reading-tutorials-index-spanish-a-ceremonial-obsidian.png") = "75A1B78C069CD8FB5FB5DDB7931F949BE9BDCD5AFA6D5D374F3331370B73FF28"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-reading-count-selector-info-spanish-a-ceremonial-obsidian.png") = "8AD118426B2D1B7BDA0F00F4012EF59DF85A2152791510F4E8BC41BDFAECA576"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-reading-count-selector-info-landscape-spanish-a-ceremonial-obsidian.png") = "77BCD0B4FA279E5A92E18D2B27B1E332E3788E5412B0EEE3BE7E28B515EAE943"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-three-card-style-selector-free-info-spanish-a-ceremonial-obsidian.png") = "95057F7A6F6BAE859088D7D2EE806130EFBB88B8635A05DADDD455466DD6E503"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-three-card-style-selector-free-info-landscape-spanish-a-ceremonial-obsidian.png") = "B8F5598D312B7587CE31A2F3D86AD92246A4FB7DB0546E8A305B4701CF192FBE"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-free-three-cards-face-down-spanish-a-ceremonial-obsidian.png") = "06A7E6172BBB0118C450E70CBB7B1D0AFFF26049C8AD0DC8E65B34415B2F3F64"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-free-three-cards-face-down-landscape-spanish-a-ceremonial-obsidian.png") = "237339897355BBA5CF0B985EE5D9536A8F0444AC03C773D89A0F33CDBFE82E3B"
+}
+foreach ($entry in $a048VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "An approved A-048 visual reference is absent or changed: $($entry.Key)"
+    }
+}
+
 $yesNoModelContracts = @(
+    'case open',
     'return AppLocalization.text("Yes or No")',
     'return AppLocalization.text("For, against, and the likely outcome.")',
     'titles = ["For", "Against", "Outcome"]'
@@ -734,6 +755,35 @@ $yesNoModelContracts = @(
 foreach ($contract in $yesNoModelContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
         throw "A-045 Yes or No model contract is missing: $contract"
+    }
+}
+
+$freeformModelContracts = @(
+    'case freeform',
+    'return AppLocalization.text("Freeform")',
+    'return AppLocalization.text("Three cards without assigned positions.")',
+    'titles = ["Card 1", "Card 2", "Card 3"]',
+    'case .freeform: return .freeform',
+    'case .open: return .open'
+)
+foreach ($contract in $freeformModelContracts) {
+    if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
+        throw "A-048 Freeform migration contract is missing: $contract"
+    }
+}
+if ([regex]::Matches($readModelSource, [regex]::Escape('spread ?? .freeform')).Count -ne 2 -or
+    $readModelSource -cmatch [regex]::Escape('spread ?? .open')) {
+    throw "A-048 continuity migration must resolve exactly two missing three-card spreads to Freeform while preserving explicit open."
+}
+
+$guideRuntimeContracts = @(
+    'private static let expectedGuidePresetIDs: [String?]',
+    'ordered.map(\.readingPresetID) == expectedGuidePresetIDs',
+    'Set(ordered.compactMap(\.readingPresetID)).count == 6'
+)
+foreach ($contract in $guideRuntimeContracts) {
+    if ($contentSource -cnotmatch [regex]::Escape($contract)) {
+        throw "A-048 exact runtime guide sequence contract is missing: $contract"
     }
 }
 if ($readModelSource -cmatch [regex]::Escape('AppLocalization.text("Open reading")') -or
@@ -1056,7 +1106,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.3"'
+    'fallbackVersion = "0.4"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1086,11 +1136,16 @@ if ($learnSource -match '\.font\(\.system\(size:\s*52\b' -or
     throw "Learn Dynamic Type adaptations are missing."
 }
 $requiredLearnContracts = @(
-    'Text("TUTORIALS")',
-    'Text("Tutorials for reading your cards")',
-    'LearnArticleRow(article: article)',
+    'Text("A simple way to read for yourself")',
+    'FoundationArticleRow(',
+    'Text("BEGIN HERE")',
+    'TutorialsPortalRow()',
+    'struct ReadingTutorialsView',
+    'Text("Reading Tutorials")',
+    'TutorialMethodRow(article: article)',
     'readingIllustration(labels: positionLabels(for: readingPresetID))',
     'ThreeCardSpread.open.positionTitle',
+    'ThreeCardSpread.freeform.positionTitle',
     "article.readingPresetID",
     "Try This Reading",
     "startReading(readingPresetID)",
@@ -1102,9 +1157,9 @@ foreach ($contract in $requiredLearnContracts) {
         throw "A-034 Learn integration contract is missing: $contract"
     }
 }
-if ($learnSource -match 'Try a Three-Card Reading|article\.id\s*==\s*"read-three-cards"|BEGIN HERE|\bisFirst\b' -or
+if ($learnSource -match 'Try a Three-Card Reading|article\.id\s*==\s*"read-three-cards"|\bisFirst\b' -or
     $contentSource -cnotmatch [regex]::Escape('article.sections.count == 3')) {
-    throw "Learn must keep one equal tutorial section and exactly three concise sections per article."
+    throw "Learn must keep the approved foundations/tutorial hierarchy and exactly three concise sections per article."
 }
 $artworkSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Components/TarotArtworkView.swift")
 if ($readSource -match '\.font\(\.system\(size:\s*50\b' -or
@@ -1121,7 +1176,9 @@ $requiredReadCopy = @(
     "Closes reading choices without changing the selection",
     "Returns to one or three card choices",
     "Selects one card",
-    "Opens four visual three-card styles",
+    "Opens five visual three-card styles",
+    "Learn how to use %@",
+    "Opens the matching reading tutorial without changing your selection",
     "Reset Reading",
     "Clears the cards and keeps this reading preset",
     "Ends this reading and returns to Read home",
@@ -1133,6 +1190,18 @@ foreach ($copy in $requiredReadCopy) {
     if ($activeReadSource -cnotmatch [regex]::Escape($copy)) {
         throw "Required approved Read copy is missing: $copy"
     }
+}
+
+$informationStart = $activeReadSource.IndexOf('private func showCountInformation')
+$selectionStart = $activeReadSource.IndexOf('private func chooseStyle')
+$informationEnd = $activeReadSource.IndexOf('private func cancelChoices', $informationStart)
+if ($informationStart -lt 0 -or $selectionStart -lt 0 -or $informationEnd -le $informationStart) {
+    throw "A-048 information navigation source boundaries could not be validated."
+}
+$informationSource = $activeReadSource.Substring($informationStart, $informationEnd - $informationStart)
+if ($informationSource -match 'selectPreset|preferences\.|startSelectedPreset|startPreset|chooseStyle\(' -or
+    $activeReadSource -cnotmatch [regex]::Escape('openReadingTutorial(preset.tutorialArticleID)')) {
+    throw "Selector information actions must open Learn without selecting, persisting, or starting a preset."
 }
 
 if ($ReleaseGate) {
@@ -1202,4 +1271,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.3 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-058/V-059/V-061/V-062 plus V-065/V-066 progressive visual selector, V-064 stable translucent tab bar, V-070/V-071 unified concise Learn, documented For/Against/Outcome yes-or-no spread, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards and 7 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.4 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, V-072-V-079 Learn/tutorial/info/Freeform implementation, V-064 stable translucent tab bar, documented For/Against/Outcome yes-or-no spread with preserved raw value open, distinct freeform raw value, exact table restoration, transactional Back/reset, quick restart, centered portrait and large landscape tables, V-048 post-commit motion/accessibility contracts, local atomic favorites, 78 cards, 4 foundations and 6 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

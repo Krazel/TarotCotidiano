@@ -150,7 +150,6 @@
     "We couldn't turn that card face down. Nothing was changed." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "No se pudo poner esa carta boca abajo. No se cambió nada." } } } },
     "Every card meaning requires an artwork description." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "El significado de cada carta necesita una descripción de la ilustración." } } } },
     "Example card %d of %d, face down" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Carta de ejemplo %d de %d, boca abajo" } } } },
-    "Expected 7 guide articles, found %d." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Se esperaban 7 artículos de guía; se encontraron %d." } } } },
     "Expected 78 card meanings, found %d." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Se esperaban 78 significados; se encontraron %d." } } } },
     "Expected 78 cards, found %d." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Se esperaban 78 cartas; se encontraron %d." } } } },
     "Missing bundled content resource: %@." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Falta un recurso de contenido incluido: %@." } } } },
@@ -242,7 +241,23 @@
     "Closes reading choices without changing the selection" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Cierra las opciones sin cambiar la selecciÃ³n" } } } },
     "Returns to one or three card choices" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Vuelve a elegir una o tres cartas" } } } },
     "Selects one card" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Selecciona una carta" } } } },
-    "Opens four visual three-card styles" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre cuatro estilos visuales de tres cartas" } } } }
+    "Freeform" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Libre" } } } },
+    "Three cards without assigned positions." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Tres cartas sin posiciones asignadas." } } } },
+    "Card 1" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Carta 1" } } } },
+    "Card 2" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Carta 2" } } } },
+    "Card 3" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Carta 3" } } } },
+    "No assigned positions" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Sin posiciones asignadas" } } } },
+    "Learn how to use %@" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Aprende a usar %@" } } } },
+    "Opens the matching reading tutorial without changing your selection" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre el tutorial correspondiente sin cambiar tu selección" } } } },
+    "Opens five visual three-card styles" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre cinco estilos visuales de tres cartas" } } } },
+    "BEGIN HERE" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "EMPIEZA AQUÍ" } } } },
+    "Reading Tutorials" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Tutoriales de tiradas" } } } },
+    "One card, yes or no, and more practical methods." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Una carta, sí o no y más métodos prácticos." } } } },
+    "Opens six reading tutorials" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre seis tutoriales de tiradas" } } } },
+    "Choose a practical way to read the cards." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Elige una forma práctica de leer las cartas." } } } },
+    "Opens this reading tutorial" : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Abre este tutorial de tirada" } } } },
+    "The selected tutorial is unavailable." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "El tutorial seleccionado no está disponible." } } } },
+    "Expected 10 guide articles, found %d." : { "localizations" : { "es" : { "stringUnit" : { "state" : "translated", "value" : "Se esperaban 10 artículos de guía; se encontraron %d." } } } }
   },
   "version" : "1.0"
 }

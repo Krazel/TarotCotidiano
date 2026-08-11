@@ -26,9 +26,10 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
     case situationChallengeAdvice
     case relationship
     case open
+    case freeform
 
     static var namedCases: [Self] {
-        [.pastPresentFuture, .situationChallengeAdvice, .relationship]
+        [.pastPresentFuture, .situationChallengeAdvice, .relationship, .open, .freeform]
     }
 
     var title: String {
@@ -41,6 +42,8 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
             return AppLocalization.text("You · The other person · Connection")
         case .open:
             return AppLocalization.text("Yes or No")
+        case .freeform:
+            return AppLocalization.text("Freeform")
         }
     }
 
@@ -54,6 +57,8 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
             return AppLocalization.text("Two perspectives and the connection between them.")
         case .open:
             return AppLocalization.text("For, against, and the likely outcome.")
+        case .freeform:
+            return AppLocalization.text("Three cards without assigned positions.")
         }
     }
 
@@ -68,6 +73,8 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
             titles = ["You", "The other person", "Connection"]
         case .open:
             titles = ["For", "Against", "Outcome"]
+        case .freeform:
+            titles = ["Card 1", "Card 2", "Card 3"]
         }
         guard titles.indices.contains(index) else { return "" }
         return AppLocalization.text(titles[index])
@@ -80,6 +87,7 @@ enum ReadingPreset: String, CaseIterable, Equatable, Identifiable, Sendable {
     case situationChallengeAdvice
     case relationship
     case open
+    case freeform
 
     var id: String { rawValue }
 
@@ -94,6 +102,7 @@ enum ReadingPreset: String, CaseIterable, Equatable, Identifiable, Sendable {
         case .situationChallengeAdvice: return .situationChallengeAdvice
         case .relationship: return .relationship
         case .open: return .open
+        case .freeform: return .freeform
         }
     }
 
@@ -104,6 +113,7 @@ enum ReadingPreset: String, CaseIterable, Equatable, Identifiable, Sendable {
         case .situationChallengeAdvice: return ThreeCardSpread.situationChallengeAdvice.title
         case .relationship: return ThreeCardSpread.relationship.title
         case .open: return ThreeCardSpread.open.title
+        case .freeform: return ThreeCardSpread.freeform.title
         }
     }
 
@@ -118,13 +128,25 @@ enum ReadingPreset: String, CaseIterable, Equatable, Identifiable, Sendable {
         }
     }
 
+    var tutorialArticleID: String {
+        switch self {
+        case .oneCard: return "one-card-focus"
+        case .pastPresentFuture: return "past-present-possible-direction"
+        case .situationChallengeAdvice: return "situation-challenge-guidance"
+        case .relationship: return "you-other-person-connection"
+        case .open: return "yes-or-no-with-context"
+        case .freeform: return "freeform-reading"
+        }
+    }
+
     static func resolved(layout: ReadingLayout, spread: ThreeCardSpread?) -> Self {
         guard layout == .threeCards else { return .oneCard }
-        switch spread ?? .open {
+        switch spread ?? .freeform {
         case .pastPresentFuture: return .pastPresentFuture
         case .situationChallengeAdvice: return .situationChallengeAdvice
         case .relationship: return .relationship
         case .open: return .open
+        case .freeform: return .freeform
         }
     }
 }
@@ -142,7 +164,7 @@ private struct ReadingContinuityRecord: Codable, Equatable {
     let sessionID: UUID?
 
     var resolvedSpread: ThreeCardSpread? {
-        layout == .threeCards ? (spread ?? .open) : nil
+        layout == .threeCards ? (spread ?? .freeform) : nil
     }
 
     var isStructurallyValid: Bool {

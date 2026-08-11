@@ -1,39 +1,75 @@
 {
   "schemaVersion": 1,
-  "contentVersion": "3.0.0",
+  "contentVersion": "4.0.0",
   "language": "en",
   "title": "Learn to Read Tarot",
-  "introduction": "Seven practical tutorials for preparing a reading, using each spread, and connecting the cards.",
+  "introduction": "Learn the foundations, then choose a practical tutorial for the reading you want to make.",
   "articles": [
     {
-      "id": "prepare-a-reading",
+      "id": "how-to-read-tarot",
       "order": 1,
-      "title": "Prepare a Reading",
-      "summary": "Choose a question, select the spread, and prepare the deck before you draw.",
+      "title": "How to Read Tarot",
+      "summary": "Prepare, draw, and connect the cards in a clear reading.",
       "readingPresetID": null,
       "sections": [
-        { "heading": "Choose the Focus", "body": "Decide what you want to ask or explore. Keep the question short enough to remember while you shuffle." },
-        { "heading": "Choose the Spread", "body": "Select One Card or a three-card spread. Read the position names first so every card has a clear role." },
-        { "heading": "Shuffle and Draw", "body": "Shuffle while holding the question in mind. Draw the cards in position order, then reveal and read them one by one." }
+        { "heading": "Choose Your Focus", "body": "Decide what you want to explore, then choose a reading whose positions fit that focus." },
+        { "heading": "Draw the Cards", "body": "Shuffle while holding the focus in mind, then draw and place each card in position order." },
+        { "heading": "Build the Reading", "body": "Read each card in its position, then connect repeated images, contrasts, and changes across the spread." }
+      ]
+    },
+    {
+      "id": "shuffle-and-draw",
+      "order": 2,
+      "title": "Shuffle and Draw",
+      "summary": "Prepare the deck and begin a reading one card at a time.",
+      "readingPresetID": null,
+      "sections": [
+        { "heading": "Prepare the Deck", "body": "Choose the reading first so you know how many cards to draw and what each position means." },
+        { "heading": "Shuffle", "body": "Keep the focus in mind while you shuffle, then stop when you are ready to begin." },
+        { "heading": "Draw in Order", "body": "Draw one card for each position from left to right and turn them over in the order you prefer." }
+      ]
+    },
+    {
+      "id": "symbols-and-patterns",
+      "order": 3,
+      "title": "Symbols and Patterns",
+      "summary": "Observe the images and find connections between the cards.",
+      "readingPresetID": null,
+      "sections": [
+        { "heading": "Look First", "body": "Notice figures, objects, colors, numbers, and movement before opening the reference meaning." },
+        { "heading": "Compare the Cards", "body": "Look for repeated suits, numbers, symbols, moods, directions, or clear contrasts across the spread." },
+        { "heading": "Connect to Position", "body": "Relate each visible pattern to the role of its position so the spread stays focused." }
+      ]
+    },
+    {
+      "id": "build-your-interpretation",
+      "order": 4,
+      "title": "Build Your Interpretation",
+      "summary": "Join positions, symbols, and meanings into one clear response.",
+      "readingPresetID": null,
+      "sections": [
+        { "heading": "Read Each Position", "body": "Start with one card at a time and connect its meaning directly to the position it occupies." },
+        { "heading": "Find the Relationship", "body": "Compare the cards to see what supports, changes, repeats, or challenges the first idea." },
+        { "heading": "Say It Simply", "body": "Bring the positions together in one or two sentences that return to the original focus." }
       ]
     },
     {
       "id": "one-card-focus",
-      "order": 2,
-      "title": "One Card Focus",
-      "summary": "Use one card to find the main idea or influence around your question.",
+      "order": 5,
+      "title": "One Card",
+      "summary": "Use one card for a clear focus.",
       "readingPresetID": "oneCard",
       "sections": [
-        { "heading": "What It Is For", "body": "Use this reading when you want one clear focus rather than a full three-card spread." },
-        { "heading": "Draw the Card", "body": "Hold the question in mind, shuffle, draw one card, and turn it face up." },
-        { "heading": "Read the Message", "body": "Notice the image and keywords, then connect the upright meaning directly to your question." }
+        { "heading": "Choose the Focus", "body": "Use this reading when one central idea, influence, or point of attention is enough." },
+        { "heading": "Draw One Card", "body": "Hold the focus in mind, shuffle, draw one card, and turn it face up." },
+        { "heading": "Read the Message", "body": "Notice the image and keywords, then connect the upright meaning to the focus you chose." }
       ]
     },
     {
       "id": "past-present-possible-direction",
-      "order": 3,
+      "order": 6,
       "title": "Past, Present, Possible Direction",
-      "summary": "Read what shaped the situation, what is active now, and where it is heading.",
+      "summary": "Read how a situation developed and where it may be heading.",
       "readingPresetID": "pastPresentFuture",
       "sections": [
         { "heading": "The Three Positions", "body": "Card 1 is the Past, card 2 is the Present, and card 3 is the Possible Direction." },
@@ -43,21 +79,21 @@
     },
     {
       "id": "situation-challenge-guidance",
-      "order": 4,
+      "order": 7,
       "title": "Situation, Challenge, Guidance",
-      "summary": "See the issue, the main obstacle or influence, and the guidance offered by the spread.",
+      "summary": "See the issue, its challenge, and the guidance offered.",
       "readingPresetID": "situationChallengeAdvice",
       "sections": [
         { "heading": "The Three Positions", "body": "Card 1 is the Situation, card 2 is the Challenge, and card 3 is the Guidance." },
-        { "heading": "Lay Out the Cards", "body": "Ask about the issue, then shuffle and draw three cards from left to right." },
-        { "heading": "Connect the Reading", "body": "Read how the challenge affects the situation and how the guidance responds to both cards." }
+        { "heading": "Lay Out the Cards", "body": "Hold the issue in mind, then shuffle and draw three cards from left to right." },
+        { "heading": "Connect the Reading", "body": "Read how the Challenge affects the Situation and how the Guidance responds to both cards." }
       ]
     },
     {
       "id": "you-other-person-connection",
-      "order": 5,
+      "order": 8,
       "title": "You, Other Person, Connection",
-      "summary": "Explore your role, the other person's role, and the connection between you.",
+      "summary": "Explore two people and the connection between them.",
       "readingPresetID": "relationship",
       "sections": [
         { "heading": "The Three Positions", "body": "Card 1 represents You, card 2 the Other Person, and card 3 the Connection." },
@@ -67,9 +103,9 @@
     },
     {
       "id": "yes-or-no-with-context",
-      "order": 6,
+      "order": 9,
       "title": "For, Against, and Outcome",
-      "summary": "Use three cards to read one clear yes-or-no question.",
+      "summary": "Use three cards for one clear yes-or-no question.",
       "readingPresetID": "open",
       "sections": [
         { "heading": "Ask the Question", "body": "Choose one clear question that can be answered with yes or no, and keep it in mind while shuffling." },
@@ -78,15 +114,15 @@
       ]
     },
     {
-      "id": "read-symbols-whole-spread",
-      "order": 7,
-      "title": "Read Symbols and the Whole Spread",
-      "summary": "Connect visible symbols, card meanings, and positions into one complete reading.",
-      "readingPresetID": null,
+      "id": "freeform-reading",
+      "order": 10,
+      "title": "Freeform",
+      "summary": "Use three cards without assigned positions.",
+      "readingPresetID": "freeform",
       "sections": [
-        { "heading": "Observe Each Card", "body": "Look at the figures, objects, colors, numbers, and direction of movement before reading the reference meaning." },
-        { "heading": "Compare the Cards", "body": "Notice repeated suits, numbers, symbols, moods, or contrasts across the spread." },
-        { "heading": "Summarize the Spread", "body": "Bring the positions and repeated details together in one or two sentences that answer the original question." }
+        { "heading": "Choose the Focus", "body": "Use Freeform when you want three cards without giving them fixed roles before the draw." },
+        { "heading": "Draw Three Cards", "body": "Shuffle and draw Card 1, Card 2, and Card 3 from left to right." },
+        { "heading": "Read the Whole", "body": "Read each card in order, then connect repeated images, contrasts, and movement across all three." }
       ]
     }
   ]

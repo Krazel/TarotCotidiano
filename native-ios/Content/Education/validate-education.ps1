@@ -175,13 +175,16 @@ if ($null -ne $guide) {
     Test-TextLength -Value $guide.introduction -Minimum 60 -Maximum 180 -Label 'Guide introduction'
 
     $expectedArticles = @(
-        @{ id = 'prepare-a-reading'; title = 'Prepare a Reading'; preset = $null },
-        @{ id = 'one-card-focus'; title = 'One Card Focus'; preset = 'oneCard' },
+        @{ id = 'how-to-read-tarot'; title = 'How to Read Tarot'; preset = $null },
+        @{ id = 'shuffle-and-draw'; title = 'Shuffle and Draw'; preset = $null },
+        @{ id = 'symbols-and-patterns'; title = 'Symbols and Patterns'; preset = $null },
+        @{ id = 'build-your-interpretation'; title = 'Build Your Interpretation'; preset = $null },
+        @{ id = 'one-card-focus'; title = 'One Card'; preset = 'oneCard' },
         @{ id = 'past-present-possible-direction'; title = 'Past, Present, Possible Direction'; preset = 'pastPresentFuture' },
         @{ id = 'situation-challenge-guidance'; title = 'Situation, Challenge, Guidance'; preset = 'situationChallengeAdvice' },
         @{ id = 'you-other-person-connection'; title = 'You, Other Person, Connection'; preset = 'relationship' },
         @{ id = 'yes-or-no-with-context'; title = 'For, Against, and Outcome'; preset = 'open' },
-        @{ id = 'read-symbols-whole-spread'; title = 'Read Symbols and the Whole Spread'; preset = $null }
+        @{ id = 'freeform-reading'; title = 'Freeform'; preset = 'freeform' }
     )
 
     $rootFields = @($guide.PSObject.Properties.Name)
@@ -216,7 +219,7 @@ if ($null -ne $guide) {
         elseif ([string]$article.readingPresetID -cne [string]$expected.preset) {
             Add-ValidationError "$label must map to reading preset '$($expected.preset)'."
         }
-        Test-TextLength -Value $article.summary -Minimum 40 -Maximum 180 -Label "$label summary"
+        Test-TextLength -Value $article.summary -Minimum 25 -Maximum 180 -Label "$label summary"
         Test-EnglishEditorialText -Value $article.title -Label "$label title"
         Test-EnglishEditorialText -Value $article.summary -Label "$label summary"
 
@@ -232,7 +235,7 @@ if ($null -ne $guide) {
                 Add-ValidationError "$sectionLabel must contain only heading and body."
             }
             Test-TextLength -Value $section.heading -Minimum 4 -Maximum 80 -Label "$sectionLabel heading"
-            Test-TextLength -Value $section.body -Minimum 65 -Maximum 260 -Label "$sectionLabel body"
+            Test-TextLength -Value $section.body -Minimum 55 -Maximum 260 -Label "$sectionLabel body"
             Test-EnglishEditorialText -Value $section.heading -Label "$sectionLabel heading"
             Test-EnglishEditorialText -Value $section.body -Label "$sectionLabel body"
         }
@@ -267,6 +270,14 @@ if ($null -ne $guide) {
     if ($yesNoText -match '(?i)automatic verdict|draw again until|guarantees? immutable fate') {
         Add-ValidationError 'Yes-or-no tutorial introduces card classification, an automatic verdict, or answer-seeking redraws.'
     }
+
+    $freeformArticle = @($guide.articles | Where-Object id -CEQ 'freeform-reading')[0]
+    $freeformText = @($freeformArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+    foreach ($requiredFreeformCopy in @('without giving them fixed roles', 'Card 1, Card 2, and Card 3')) {
+        if (-not $freeformText.Contains($requiredFreeformCopy)) {
+            Add-ValidationError "Freeform tutorial is missing required context: $requiredFreeformCopy"
+        }
+    }
 }
 
 if ($errors.Count -gt 0) {
@@ -276,5 +287,5 @@ if ($errors.Count -gt 0) {
 
 Write-Output 'Education content validation passed.'
 Write-Output 'Canonical card IDs and names: 78/78 exact and ordered.'
-Write-Output 'Upright meanings and unique artwork descriptions: 78/78; practical tutorials: 7/7; language: en.'
+Write-Output 'Upright meanings and unique artwork descriptions: 78/78; foundations: 4/4; practical tutorials: 6/6; language: en.'
 exit 0

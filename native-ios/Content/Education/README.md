@@ -5,7 +5,7 @@ This directory contains the English, offline educational content approved for th
 ## Files
 
 - `card-meanings.v1.json`: upright-only reference meanings and original VoiceOver artwork descriptions for the canonical 78-card deck.
-- `beginner-guide.v1.json`: seven fixed practical tutorials for preparing, using the five Read presets, and reading the whole spread.
+- `beginner-guide.v1.json`: four fixed foundations plus six practical tutorials mapped to the six Read presets.
 - `validate-education.ps1`: dependency-free validation against `../tarot-deck.v1.json`.
 
 ## Editorial boundaries
@@ -29,4 +29,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File native-ios/Content/Education
 
 The script exits nonzero if the schema, language, structure, IDs, order, names, keyword counts, text lengths, artwork-description uniqueness, or editorial exclusions fail.
 
-The guide validator also fixes the seven approved tutorial IDs, titles, display order, three-section learning contract, and optional mapping to one of the five existing Read presets. It does not record reading progress or completion.
+The guide validator fixes the four foundation IDs, six tutorial IDs, titles, display order, three-section learning contract, and exact mapping to the six existing Read presets. It does not record reading progress or completion.

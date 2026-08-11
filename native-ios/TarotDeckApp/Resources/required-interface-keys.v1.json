@@ -58,7 +58,6 @@
     "End this reading?",
     "Every card meaning requires an artwork description.",
     "Example card %d of %d, face down",
-    "Expected 7 guide articles, found %d.",
     "Expected 78 card meanings, found %d.",
     "Expected 78 cards, found %d.",
     "Explore all 78 cards",
@@ -241,7 +240,23 @@
     "Closes reading choices without changing the selection",
     "Returns to one or three card choices",
     "Selects one card",
-    "Opens four visual three-card styles",
-    "Yes or No"
+    "Yes or No",
+    "Freeform",
+    "Three cards without assigned positions.",
+    "Card 1",
+    "Card 2",
+    "Card 3",
+    "No assigned positions",
+    "Learn how to use %@",
+    "Opens the matching reading tutorial without changing your selection",
+    "Opens five visual three-card styles",
+    "BEGIN HERE",
+    "Reading Tutorials",
+    "One card, yes or no, and more practical methods.",
+    "Opens six reading tutorials",
+    "Choose a practical way to read the cards.",
+    "Opens this reading tutorial",
+    "The selected tutorial is unavailable.",
+    "Expected 10 guide articles, found %d."
   ]
 }
