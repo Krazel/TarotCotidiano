@@ -243,15 +243,26 @@ for ($index = 0; $index -lt 10; $index++) {
 }
 
 $yesNoArticle = $articles | Where-Object { $_.id -eq 'yes-or-no-with-context' }
-$yesNoText = @($yesNoArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+$expectedYesNoHeadings = @(
+    ('Carta 1 ' + [char]0x2014 + ' A favor'),
+    ('Carta 2 ' + [char]0x2014 + ' En contra'),
+    ('Carta 3 ' + [char]0x2014 + ' Destino')
+)
+Assert-True ((@($yesNoArticle.sections | ForEach-Object { [string]$_.heading }) -join "`n") -ceq ($expectedYesNoHeadings -join "`n")) 'El tutorial Sí/No debe usar la secuencia exacta Carta 1 A favor, Carta 2 En contra, Carta 3 Destino.'
+$yesNoText = @(
+    [string]$yesNoArticle.title
+    [string]$yesNoArticle.summary
+    @($yesNoArticle.sections | ForEach-Object { [string]$_.heading; [string]$_.body })
+) -join ' '
 foreach ($requiredYesNoCopy in @(
-    [regex]::Unescape('la carta 1 es A favor y apoya el s\u00ED'),
-    [regex]::Unescape('la 2 es En contra y apoya el no'),
-    'la 3 es el Resultado',
-    'formar la respuesta final de la tirada'
+    [regex]::Unescape('qu\u00E9 favorece el s\u00ED'),
+    [regex]::Unescape('resistencias u obst\u00E1culos que favorecen el no'),
+    [regex]::Unescape('qu\u00E9 depara el Destino'),
+    'respuesta final considerando las cartas A favor y En contra'
 )) {
     Assert-True ($yesNoText.Contains($requiredYesNoCopy)) "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
 }
+Assert-True ($yesNoText -notmatch '(?i)\b(resultado|probable|certeza)\b') 'El tutorial Sí/No debe usar Destino sin copy anterior ni disclaimers de certeza.'
 
 $freeformArticle = $articles | Where-Object { $_.id -eq 'freeform-reading' }
 $freeformText = @($freeformArticle.sections | ForEach-Object { [string]$_.body }) -join ' '

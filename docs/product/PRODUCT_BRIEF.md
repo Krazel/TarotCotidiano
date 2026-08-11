@@ -66,7 +66,7 @@ The MVP proves that promise through:
 3. **Reference is optional and contextual.** Meaning is available on demand, never pushed over the table or revealed automatically.
 4. **Physical actions stay legible.** Shuffle, draw, place, turn over, inspect, and clear are distinct actions.
 5. **Complete means complete.** All 78 canonical identities, artwork records, and upright meanings ship together.
-6. **Simple layouts, explicit intent.** A three-card reading either assigns `Past · Present · Possible Future`, `Situation · Challenge · Advice`, `You · The other person · Connection`, or `For · Against · Outcome`, or deliberately uses Freeform with neutral `Card 1 · Card 2 · Card 3` labels.
+6. **Simple layouts, explicit intent.** A three-card reading either assigns `Past · Present · Possible Future`, `Situation · Challenge · Advice`, `You · The other person · Connection`, or `For · Against · Destiny`, or deliberately uses Freeform with neutral `Card 1 · Card 2 · Card 3` labels.
 7. **Private and local.** The app collects no question, notes, account, analytics profile, or cloud record.
 8. **Bounded learning.** The guide teaches a usable method; it is not a course, feed, streak, or content program.
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
@@ -135,7 +135,8 @@ Exact visual presentation remains governed by the registered screen images.
 
 2. **Learn**
    - A foundations index that restores the prior hierarchy: one featured `How to Read Tarot` entry, concise `Shuffle and Draw`, `Symbols and Patterns`, and `Build Your Interpretation` lessons, plus one prominent `Reading Tutorials` portal.
-   - `Reading Tutorials` contains exactly six concrete methods: One Card, Past/Present/Possible Direction, Situation/Challenge/Guidance, You/Other Person/Connection, For/Against/Outcome, and Freeform.
+   - `Reading Tutorials` contains exactly six concrete methods: One Card, Past/Present/Possible Direction, Situation/Challenge/Guidance, You/Other Person/Connection, For/Against/Destiny, and Freeform.
+   - The Yes or No tutorial dedicates one concise section to each position: Card 1 explains what supports yes, Card 2 explains what supports no, and Card 3 explains what Destiny holds for the question.
    - Every article contains exactly three concise practical parts. Methodological sourcing stays in internal documentation instead of interrupting the lesson.
    - `Try This Reading` maps only to its existing Read preset. The persisted raw value `open` remains Yes or No for migration; Freeform adds the distinct raw value `freeform` and neutral card-order labels.
 

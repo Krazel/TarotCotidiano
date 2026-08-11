@@ -104,13 +104,13 @@
     {
       "id": "yes-or-no-with-context",
       "order": 9,
-      "title": "A favor, en contra y resultado",
-      "summary": "Usa tres cartas para una pregunta clara de sí o no.",
+      "title": "A favor, en contra y destino",
+      "summary": "Usa tres cartas para responder una pregunta clara de sí o no.",
       "readingPresetID": "open",
       "sections": [
-        { "heading": "Haz la pregunta", "body": "Elige una pregunta clara que pueda responderse con sí o no y mantenla presente mientras barajas." },
-        { "heading": "Coloca las cartas", "body": "Saca de izquierda a derecha: la carta 1 es A favor y apoya el sí, la 2 es En contra y apoya el no, y la 3 es el Resultado." },
-        { "heading": "Lee el resultado", "body": "Lee la carta Resultado junto con A favor y En contra para formar la respuesta final de la tirada." }
+        { "heading": "Carta 1 — A favor", "body": "Mantén presente tu pregunta de sí o no, baraja y saca la primera carta. Lee qué favorece el sí: los apoyos, fortalezas o condiciones que actúan a favor de la pregunta." },
+        { "heading": "Carta 2 — En contra", "body": "Saca la segunda carta a la derecha. Lee las resistencias u obstáculos que favorecen el no y actúan en contra de la pregunta." },
+        { "heading": "Carta 3 — Destino", "body": "Saca la tercera carta a la derecha. Lee qué depara el Destino y forma la respuesta final considerando las cartas A favor y En contra." }
       ]
     },
     {

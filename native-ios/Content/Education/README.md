@@ -15,7 +15,7 @@ This directory contains the English, offline educational content approved for th
 - Artwork descriptions state the principal visible elements of the historical card image without interpreting them.
 - The MVP includes upright meanings only. Opposite-orientation interpretations are intentionally absent.
 - Tutorials contain only the method: what the reading is for, how to place or draw the cards, and how to read the result.
-- The Yes or No lesson uses the documented `For / Against / Outcome` structure and retains the persisted preset ID `open`.
+- The Yes or No lesson presents `For / Against / Destiny` and retains the persisted preset ID `open`.
 - The educational layer is fully bundled and does not store the reader's question or interpretation.
 - Card IDs and order must remain identical to the canonical deck manifest. Artwork can change later without changing these IDs.
 

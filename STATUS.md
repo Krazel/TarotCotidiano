@@ -6,7 +6,7 @@ Actualizado: 2026-08-11
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.4 (1)` procesada y disponible mediante TestFlight Internal Only en iOS 16**. App Store Connect la muestra `En pruebas`, asignada al grupo interno `Testers`. A-048 recupera la jerarquía anterior de Aprender, crea una biblioteca separada de seis tutoriales, enlaza información desde el selector y añade `Libre` sin alterar el raw value histórico de Sí/No.
+Fase actual: **`0.4 (1)` procesada y disponible mediante TestFlight Internal Only en iOS 16; `0.4.1 (1)` está en preparación autorizada bajo A-050**. La corrección renombra la tercera posición de Sí/No como `Destiny / Destino` y convierte su tutorial en tres bloques, uno por carta.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. `/root/learn_information_architecture` cerró el ámbito A-048 de código, contenido, localización, validadores y versión `0.4 (1)`. El cerebro local conserva propiedad exclusiva de `STATUS.md`, `DECISIONS.md`, `docs/product/**` y `design/**`. V-072–V-079 fueron creadas, guardadas, hash-verificadas y aprobadas automáticamente antes de abrir la UI por A-021/A-048.
+Propietaria activa de implementación: **ninguna**. A-050 quedó integrada y auditada sin hallazgos P0–P2; el cerebro local conserva propiedad exclusiva de la coordinación y de `STATUS.md`, `DECISIONS.md`, `docs/product/**` y `design/**`. V-072–V-079 permanecen vigentes; A-050 no altera composición, assets ni jerarquía visual.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. V-044–V-048 existen y quedaron aprobadas automáticamente por A-021: Home compacto, Settings con selector `English / Español`, mesa con mazo táctil, tres cartas face-down centradas y storyboard profesional `press → cut → interleave → deal → flip`. V-046/V-047 fueron corregidas el mismo día para compartir etiquetas, centro horizontal y un único anclaje vertical estable.
 
@@ -107,7 +107,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - La revisión final independiente de motion cerró sin P0–P2: comprobó compatibilidad estática iOS 16, foco VoiceOver post-commit, supresión de replay/haptics en background, privacidad face-down, PBX y contratos del validador.
 - A-030 está integrada mediante un único `FavoriteCardsStore` compartido por Read y Cards. Guarda solo `cardID` canónicos en `favorites.v1.json`, con JSON atómico y directorio excluido de backup; el filtro `Favorites/Favoritas`, su estado vacío y el corazón del detalle siguen V-042/V-043. La revisión independiente cerró sin P0–P2.
 - A-031 está integrada localmente: selector `English / Español` atómico sobre 215 claves de interfaz, Home V-044 sin scroll normal y con adaptación AX, Settings V-045, mesa V-046/V-047 con centro horizontal y anclaje vertical estable, mazo como único control contextual, tab bar estable y ahora translúcida por A-044/V-064, encabezado `Upright meaning / Significado al derecho` y motion V-048 con reparto curvo, flip de dos caras, cancelación y haptics posteriores al aterrizaje.
-- Para `0.4 (1)` pasan localmente los validadores de mazo, educación inglesa, localización española, integración, gate interno de TestFlight y ambos workflows, además de `git diff --check`. La compilación Swift/Xcode de esta versión concreta todavía requiere macOS/CI autorizado; no se afirma build ni IPA de `0.4 (1)`.
+- Para `0.4.1 (1)` pasan localmente los validadores de mazo, educación inglesa, localización española, integración, gate interno de TestFlight y ambos workflows, además de `git diff --check`. La revisión independiente cerró sin hallazgos P0–P2; la compilación Swift/Xcode de esta corrección todavía requiere el workflow macOS autorizado.
 
 ## Qué se conserva y qué queda fuera
 
@@ -138,6 +138,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: instalar y probar físicamente `0.4 (1)` desde TestFlight, comparando Home, selectores, Learn, Tutoriales y Libre contra V-072–V-079. La migración `open` → Sí/No permanece intacta y `freeform` es un valor nuevo. En paralelo, continuar la sustitución de las 78 imágenes antes de distribución externa o pública.
+Siguiente punto exacto: integrar y validar `Destiny / Destino` y el tutorial por carta como `0.4.1 (1)`, ejecutar la build protegida y subirla bajo A-050 solo a TestFlight Internal Only. La migración `open` → Sí/No permanece intacta y `freeform` sigue siendo un valor separado.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.

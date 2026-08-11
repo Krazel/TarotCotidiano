@@ -21,20 +21,20 @@ The app keeps exactly six presets:
 2. `Past · Present · Possible Future`
 3. `Situation · Challenge · Advice`
 4. `You · The other person · Connection`
-5. `Yes or No` (`For · Against · Outcome`)
+5. `Yes or No` (`For · Against · Destiny`)
 6. `Freeform` (`Card 1 · Card 2 · Card 3`)
 
-Tutorial wording may use `Possible Direction`, `Guidance`, and `Likely Outcome` to teach conditional, non-commanding interpretation. The Yes or No preset retains the language-neutral persisted ID `open` so existing local preferences and sessions migrate without loss. Freeform uses the distinct new ID `freeform` and neutral order labels without assigned roles.
+The Yes or No preset retains the language-neutral persisted ID `open` so existing local preferences and sessions migrate without loss. Freeform uses the distinct new ID `freeform` and neutral order labels without assigned roles.
 
-## For, against, and outcome
+## For, against, and destiny
 
 The Yes or No preset follows a documented three-card structure found in printed deck instructions and contemporary teaching:
 
 1. `For` — what supports a yes.
 2. `Against` — what supports a no or creates resistance.
-3. `Outcome` — the final answer inside the spread and the likely direction if current conditions continue.
+3. `Destiny` — what Destiny holds and the final answer after considering the first two cards.
 
-The reader asks one concise closed question, keeps it in mind while shuffling, draws left to right, and reads the third card in light of the first two. No card has a universal yes/no classification and the app does not calculate a result. The reader stops rather than redrawing for a preferred answer. `Outcome` is not presented as immutable fate or certainty outside the reading.
+The reader asks one concise closed question, keeps it in mind while shuffling, draws left to right, and reads Destiny in light of For and Against to form the final answer.
 
 Source basis: Emanuela Signorini's [booklet for *Romantic Tarot*](https://magicspot.eu/wp-content/uploads/doc/Romantic-Tarot-guidebook.pdf) documents `things in favour / things against / result`; Lou Siday documents [`Support / Opposition / Outcome`](https://tarottechnique.com/tarot-spreads/yes-or-no-tarot-spread-guide/) specifically for a yes-or-no question. [Lo Scarabeo's official record](https://www.loscarabeo.com/en/products/romantic-tarot) corroborates the printed deck and booklet. These establish the method without claiming a single official tarot canon.
 

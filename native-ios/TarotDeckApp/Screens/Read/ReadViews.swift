@@ -623,7 +623,13 @@ private struct ReadingChoiceOverlay: View {
                         .minimumScaleFactor(0.70)
                         .frame(maxWidth: .infinity)
 
-                    if preset == .freeform {
+                    if preset == .open {
+                        Text(preset.selectorDetail)
+                            .font(.caption)
+                            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                            .multilineTextAlignment(.center)
+                            .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                    } else if preset == .freeform {
                         Text(AppLocalization.text("No assigned positions"))
                             .font(.caption)
                             .foregroundStyle(CeremonialObsidianTheme.secondaryText)
@@ -639,6 +645,7 @@ private struct ReadingChoiceOverlay: View {
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(preset.title)
+            .accessibilityValue(preset == .open ? preset.selectorDetail : "")
             .accessibilityHint("Selects this reading preset")
             .accessibilityAddTraits(selected ? .isSelected : [])
 

@@ -56,7 +56,7 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
         case .relationship:
             return AppLocalization.text("Two perspectives and the connection between them.")
         case .open:
-            return AppLocalization.text("For, against, and the likely outcome.")
+            return AppLocalization.text("For, against, and destiny.")
         case .freeform:
             return AppLocalization.text("Three cards without assigned positions.")
         }
@@ -72,7 +72,7 @@ enum ThreeCardSpread: String, Codable, CaseIterable, Equatable, Sendable {
         case .relationship:
             titles = ["You", "The other person", "Connection"]
         case .open:
-            titles = ["For", "Against", "Outcome"]
+            titles = ["For", "Against", "Destiny"]
         case .freeform:
             titles = ["Card 1", "Card 2", "Card 3"]
         }
@@ -124,6 +124,7 @@ enum ReadingPreset: String, CaseIterable, Equatable, Identifiable, Sendable {
     var selectorDetail: String {
         switch self {
         case .oneCard: return AppLocalization.text("One clear focus")
+        case .open: return ThreeCardSpread.open.summary
         default: return title
         }
     }

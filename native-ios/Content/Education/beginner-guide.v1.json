@@ -104,13 +104,13 @@
     {
       "id": "yes-or-no-with-context",
       "order": 9,
-      "title": "For, Against, and Outcome",
-      "summary": "Use three cards for one clear yes-or-no question.",
+      "title": "For, Against, and Destiny",
+      "summary": "Use three cards to answer one clear yes-or-no question.",
       "readingPresetID": "open",
       "sections": [
-        { "heading": "Ask the Question", "body": "Choose one clear question that can be answered with yes or no, and keep it in mind while shuffling." },
-        { "heading": "Lay Out the Cards", "body": "Draw from left to right: card 1 is For and supports yes, card 2 is Against and supports no, and card 3 is the Outcome." },
-        { "heading": "Read the Outcome", "body": "Read the Outcome card together with the For and Against cards to form the final answer to the spread." }
+        { "heading": "Card 1 - For", "body": "Keep your yes-or-no question in mind, shuffle, and draw the first card. Read it as what favors a yes: the support, strengths, or conditions working for the question." },
+        { "heading": "Card 2 - Against", "body": "Draw the second card to the right. Read it as what favors a no: the resistance, obstacles, or conditions working against the question." },
+        { "heading": "Card 3 - Destiny", "body": "Draw the third card to the right. Read it as what Destiny holds, then form the final answer by considering the For and Against cards." }
       ]
     },
     {

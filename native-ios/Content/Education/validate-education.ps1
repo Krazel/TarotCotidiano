@@ -34,8 +34,9 @@ function Test-TextLength {
 function Test-EnglishEditorialText {
     param([string]$Value, [string]$Label)
 
-    if ($Value -match '[^\x09\x0A\x0D\x20-\x7E]') {
-        Add-ValidationError "$Label contains non-ASCII text; production English copy must use the approved character set."
+    $normalizedValue = $Value -replace ([string][char]0x2014), '-'
+    if ($normalizedValue -match '[^\x09\x0A\x0D\x20-\x7E]') {
+        Add-ValidationError "$Label contains text outside the approved English character set."
     }
 
     $excludedPatterns = @(
@@ -183,7 +184,7 @@ if ($null -ne $guide) {
         @{ id = 'past-present-possible-direction'; title = 'Past, Present, Possible Direction'; preset = 'pastPresentFuture' },
         @{ id = 'situation-challenge-guidance'; title = 'Situation, Challenge, Guidance'; preset = 'situationChallengeAdvice' },
         @{ id = 'you-other-person-connection'; title = 'You, Other Person, Connection'; preset = 'relationship' },
-        @{ id = 'yes-or-no-with-context'; title = 'For, Against, and Outcome'; preset = 'open' },
+        @{ id = 'yes-or-no-with-context'; title = 'For, Against, and Destiny'; preset = 'open' },
         @{ id = 'freeform-reading'; title = 'Freeform'; preset = 'freeform' }
     )
 
@@ -256,19 +257,31 @@ if ($null -ne $guide) {
     }
 
     $yesNoArticle = @($guide.articles | Where-Object id -CEQ 'yes-or-no-with-context')[0]
-    $yesNoText = @($yesNoArticle.sections | ForEach-Object { [string]$_.body }) -join ' '
+    $actualYesNoHeadings = @($yesNoArticle.sections | ForEach-Object {
+        ([string]$_.heading) -replace ([string][char]0x2014), '-'
+    })
+    $expectedYesNoHeadings = @('Card 1 - For', 'Card 2 - Against', 'Card 3 - Destiny')
+    if (($actualYesNoHeadings -join "`n") -cne ($expectedYesNoHeadings -join "`n")) {
+        Add-ValidationError 'Yes-or-no tutorial must use the exact Card 1 For, Card 2 Against, Card 3 Destiny sequence.'
+    }
+    $yesNoText = @(
+        [string]$yesNoArticle.title
+        [string]$yesNoArticle.summary
+        @($yesNoArticle.sections | ForEach-Object { [string]$_.heading; [string]$_.body })
+    ) -join ' '
     foreach ($requiredYesNoCopy in @(
-        'card 1 is For and supports yes',
-        'card 2 is Against and supports no',
-        'card 3 is the Outcome',
-        'form the final answer to the spread'
+        'what favors a yes',
+        'what favors a no',
+        'the resistance, obstacles',
+        'what Destiny holds',
+        'final answer by considering the For and Against cards'
     )) {
         if (-not $yesNoText.Contains($requiredYesNoCopy)) {
             Add-ValidationError "Yes-or-no tutorial is missing required context: $requiredYesNoCopy"
         }
     }
-    if ($yesNoText -match '(?i)automatic verdict|draw again until|guarantees? immutable fate') {
-        Add-ValidationError 'Yes-or-no tutorial introduces card classification, an automatic verdict, or answer-seeking redraws.'
+    if ($yesNoText -match '(?i)\b(outcome|likely|probable|certainty)\b') {
+        Add-ValidationError 'Yes-or-no tutorial must use Destiny without legacy outcome or certainty disclaimers.'
     }
 
     $freeformArticle = @($guide.articles | Where-Object id -CEQ 'freeform-reading')[0]

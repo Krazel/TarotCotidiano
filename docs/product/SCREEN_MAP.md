@@ -104,7 +104,7 @@ Selector options:
 - **Past · Present · Future** / **Pasado · Presente · Futuro**;
 - **Situation · Challenge · Advice** / **Situación · Reto · Consejo**;
 - **You · The other person · Connection** / **Tú · La otra persona · Conexión**;
-- **Yes or No** / **Sí o no** — `For / Against / Outcome` (`A favor / En contra / Resultado`).
+- **Yes or No** / **Sí o no** — `For / Against / Destiny` (`A favor / En contra / Destino`).
 - **Freeform** / **Libre** — neutral `Card 1 / Card 2 / Card 3` (`Carta 1 / Carta 2 / Carta 3`) without assigned roles.
 
 The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where two illustrated choices select `One Card` or `Three Cards`. Choosing `Three Cards` opens `S01.3`, where five illustrated tiles select timeline, situation/challenge/advice, relationship, yes/no, or Freeform. Selecting a tile changes and locally persists the prospective Home preset, then closes the chooser; tapping the hero deck creates that reading and opens `S03.1` directly. A separate information button opens the matching tutorial without selecting, persisting, or starting that preset. The saved preset returns after relaunch when no active session exists.
@@ -134,7 +134,7 @@ Represent `shuffle → draw → turn over → inspect → read → repeat or lea
 ### Shared elements
 
 - Layout identity: `One Card` or `Three Cards`.
-- One neutral position, or three stable positions labelled from the selected spread. The Yes or No spread uses `For`, `Against`, and `Outcome`; the third is the final answer within this spread and a likely direction, not an immutable guarantee.
+- One neutral position, or three stable positions labelled from the selected spread. The Yes or No spread uses `For`, `Against`, and `Destiny`; the third shows what Destiny holds for the question.
 - Face-down deck while cards remain, or a clear exhausted state. While present, the deck itself is the one phase-appropriate primary control.
 - Localized state copy explains the available deck action without duplicating it as a button.
 - A small reset action with a 44-point accessible hit target, visually secondary to the deck.
@@ -284,7 +284,7 @@ Missing, reordered, mismatched, or malformed bundled Learn content is a developm
 
 Title: **Reading Tutorials** / **Tutoriales de tiradas**
 
-Six equal method rows appear under V-073: One Card; Past/Present/Possible Direction; Situation/Challenge/Guidance; You/Other Person/Connection; For/Against/Outcome; and Freeform. Tapping opens the matching `S06.1`. Back returns to the Learn Index. There is no recommendation, completion state, quiz, or remote content.
+Six equal method rows appear under V-073: One Card; Past/Present/Possible Direction; Situation/Challenge/Guidance; You/Other Person/Connection; For/Against/Destiny; and Freeform. Tapping opens the matching `S06.1`. Back returns to the Learn Index. There is no recommendation, completion state, quiz, or remote content.
 
 ## S06 — Learn Article
 
@@ -305,7 +305,7 @@ Article behavior:
 - reading position and completion are not stored;
 - no interactive quiz, question field, notes, sharing, external link, comments, or next-lesson gate;
 - user-facing copy stays on the practical method; source classification and editorial caveats remain in internal content documentation rather than appearing as repeated lesson disclaimers;
-- the yes-or-no tutorial opens the persisted `open` preset and teaches `For / Against / Outcome`;
+- the yes-or-no tutorial opens the persisted `open` preset and teaches three explicit blocks: Card 1 `For`, Card 2 `Against`, and Card 3 `Destiny`;
 - the Freeform tutorial opens the distinct `freeform` preset and teaches neutral `Card 1 / Card 2 / Card 3` order without assigned roles;
 - an existing reading is never silently replaced; the Read model preserves its current safe behavior when a tutorial CTA is used;
 - Dynamic Type may reflow the article vertically without truncation.
@@ -549,7 +549,7 @@ Both English and Spanish reference-content key sets must equal the identity-mani
 
 - Primary destinations expose clear `Read`, `Learn`, and `Cards` labels and selected state.
 - Every actionable target is at least 44×44 points and has a non-gesture alternative.
-- A face-down reading card announces its role and state without identity, for example **Challenge, face down. Double-tap to reveal.** Yes or No announces `For`, `Against`, or `Outcome` without exposing card identity.
+- A face-down reading card announces its role and state without identity, for example **Challenge, face down. Double-tap to reveal.** Yes or No announces `For`, `Against`, or `Destiny` without exposing card identity.
 - A revealed reading card announces position, identity, and available meaning action.
 - Library items announce card name and position in the current filter.
 - Card detail exposes title, the semantic `Upright meaning` / `Significado al derecho` heading, keywords, meaning, reading note, and artwork description in a logical order; the heading has no button trait.
@@ -595,7 +595,7 @@ Result: draw order and selected roles stay stable, meanings do not reveal other 
 
 ### C. Learn the basic method
 
-`Learn` → `Reading Tutorials` → `For, Against, and Outcome` → learn the three positions and result → `Try This Reading` → `Yes or No`
+`Learn` → `Reading Tutorials` → `For, Against, and Destiny` → learn what to do with each of the three cards → `Try This Reading` → `Yes or No`
 
 Result: the documented Yes or No preset is selected explicitly; information-only navigation would not change it. No verdict, progress, account, quiz, personal question, or interpretation is stored.
 
