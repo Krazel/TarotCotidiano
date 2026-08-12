@@ -80,22 +80,23 @@ jobs:
           for attempt in $(seq 1 40); do
             response="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
               --data-urlencode 'fields[builds]=version,uploadedDate,processingState,buildAudienceType,preReleaseVersion,minOsVersion' \
-              --data-urlencode 'include=preReleaseVersion' \
+              --data-urlencode 'fields[preReleaseVersions]=version,platform' \
+              --data-urlencode "filter[app]=$APP_ID" \
+              --data-urlencode "filter[version]=$MARKETING_VERSION" \
+              --data-urlencode "filter[builds.version]=$BUILD_NUMBER" \
+              --data-urlencode 'filter[builds.buildAudienceType]=INTERNAL_ONLY' \
+              --data-urlencode 'include=builds' \
               --data-urlencode 'limit=200' \
-              "$API_ROOT/apps/$APP_ID/builds")"
+              --data-urlencode 'limit[builds]=50' \
+              "$API_ROOT/preReleaseVersions")"
             build_id="$(jq -r --arg version "$MARKETING_VERSION" --arg build "$BUILD_NUMBER" '
-              . as $root
-              | [.data[]
-                  | select(.attributes.version == $build)
-                  | . as $buildResource
-                  | ($buildResource.relationships.preReleaseVersion.data.id // "") as $preID
-                  | select(any($root.included[]?; .type == "preReleaseVersions" and .id == $preID and .attributes.version == $version))
-                ][0].id // ""
+              select(any(.data[]; .attributes.version == $version and .attributes.platform == "IOS"))
+              | [.included[]? | select(.type == "builds" and .attributes.version == $build)][0].id // ""
             ' <<<"$response")"
             if [[ -n "$build_id" ]]; then
-              processing_state="$(jq -r --arg id "$build_id" '.data[] | select(.id == $id) | .attributes.processingState' <<<"$response")"
-              audience="$(jq -r --arg id "$build_id" '.data[] | select(.id == $id) | .attributes.buildAudienceType' <<<"$response")"
-              uploaded_date="$(jq -r --arg id "$build_id" '.data[] | select(.id == $id) | .attributes.uploadedDate' <<<"$response")"
+              processing_state="$(jq -r --arg id "$build_id" '.included[] | select(.id == $id) | .attributes.processingState' <<<"$response")"
+              audience="$(jq -r --arg id "$build_id" '.included[] | select(.id == $id) | .attributes.buildAudienceType' <<<"$response")"
+              uploaded_date="$(jq -r --arg id "$build_id" '.included[] | select(.id == $id) | .attributes.uploadedDate' <<<"$response")"
               [[ "$audience" == "INTERNAL_ONLY" ]] || { echo "::error::Unexpected build audience: $audience"; exit 1; }
               if [[ "$processing_state" == "VALID" ]]; then
                 break
