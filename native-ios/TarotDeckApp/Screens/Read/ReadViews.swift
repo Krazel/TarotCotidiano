@@ -1931,7 +1931,7 @@ private struct ReadingTableView: View {
     }
 
     private var presentedReadingIsCompleteAndRevealed: Bool {
-        guard let layout = model.layout else { return false }
+        guard model.layout != nil else { return false }
         let slots = visualBaseline?.slots ?? visualState.slots
         return slots.count == model.activeCardCount
             && slots.allSatisfy { $0?.isRevealed == true }

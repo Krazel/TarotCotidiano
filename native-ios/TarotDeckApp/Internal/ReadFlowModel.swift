@@ -538,8 +538,10 @@ final class ReadFlowModel: ObservableObject {
     func activePositionTitle(at index: Int) -> String {
         guard let layout else { return AppLocalization.format("Card %d", index + 1) }
         if layout == .customCards {
-            let label = activeDefinition?.positions.sorted { $0.order < $1.order }[safe: index]?.label
-                .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let positions = activeDefinition?.positions.sorted { $0.order < $1.order } ?? []
+            let label = positions.indices.contains(index)
+                ? positions[index].label.trimmingCharacters(in: .whitespacesAndNewlines)
+                : ""
             return label.isEmpty ? AppLocalization.format("Card %d", index + 1) : label
         }
         if layout == .oneCard { return AppLocalization.text("Card 1") }
