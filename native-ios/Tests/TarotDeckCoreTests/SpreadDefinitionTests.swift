@@ -44,9 +44,14 @@ final class SpreadDefinitionTests: XCTestCase {
             libraryURL: directory.appendingPathComponent("library.json"),
             draftURL: directory.appendingPathComponent("draft.json")
         )
+        // Use an integer-second timestamp so JSON number serialization is
+        // deterministic across Foundation implementations and architectures.
+        let persistedTimestamp = Date(timeIntervalSince1970: 1_700_000_000)
         let definition = SpreadDefinition(
             name: "Six",
-            positions: SpreadDefinition.arrangedPositions(count: 6, columns: 3)
+            positions: SpreadDefinition.arrangedPositions(count: 6, columns: 3),
+            createdAt: persistedTimestamp,
+            updatedAt: persistedTimestamp
         )
         try store.saveLibrary(CustomSpreadLibrary(spreads: [definition]))
         try store.saveDraft(definition)

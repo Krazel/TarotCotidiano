@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   archive-export-upload:
-    name: TestFlight INTERNAL ONLY - 0.7.2 (1)
+    name: TestFlight INTERNAL ONLY - 0.7.2 (2)
     if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY' }}
     runs-on: macos-latest
     timeout-minutes: 45
@@ -99,7 +99,7 @@ jobs:
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            CURRENT_PROJECT_VERSION=1 \
+            CURRENT_PROJECT_VERSION=2 \
             MARKETING_VERSION=0.7.2 \
             COMPILER_INDEX_STORE_ENABLE=NO
 
@@ -121,7 +121,7 @@ jobs:
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "0.7.2" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
@@ -176,7 +176,7 @@ jobs:
           VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-testflight-verify.XXXXXX")"
           OUTPUT_PATH="$RUNNER_TEMP/tarot-testflight-evidence"
           SHORT_COMMIT="${GITHUB_SHA:0:12}"
-          BASE_NAME="TarotDeck-0.7.2-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
+          BASE_NAME="TarotDeck-0.7.2-2-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
           IPA_PATH="$SOURCE_IPA"
           MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
           SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
@@ -194,7 +194,7 @@ jobs:
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "0.7.2" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
@@ -205,7 +205,7 @@ jobs:
           jq -n \
             --arg app "Tarot Deck" \
             --arg version "0.7.2" \
-            --arg build "1" \
+            --arg build "2" \
             --arg bundleID "com.krazel.tarotdeck" \
             --arg commit "$GITHUB_SHA" \
             --arg ciRunNumber "$GITHUB_RUN_NUMBER" \

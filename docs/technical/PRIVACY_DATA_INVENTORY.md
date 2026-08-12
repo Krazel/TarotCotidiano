@@ -1,11 +1,11 @@
 # Privacy and data inventory
 
 Updated: 2026-08-12
-Scope: Tarot Deck `0.7.2 (1)` TestFlight Internal Only candidate source before upload, plus the prior signed archive evidence recorded below. The candidate must be rechecked against its signed archive after CI processes the authorized upload.
+Scope: Tarot Deck `0.7.2 (2)` TestFlight Internal Only candidate source before upload, plus the prior signed archive evidence recorded below. Build 2 recompiles the same app code and data behavior after a deterministic test-only correction; the candidate must be rechecked against its signed archive after CI processes the authorized upload.
 
 ## Current declaration
 
-App Store Connect's **Data Not Collected / No se recopilan datos** answer remains accurate for the `0.7.2 (1)` candidate. The app has no account, backend, analytics, advertising, tracking, StoreKit, third-party runtime SDK, network client, or system permission request. It does not transmit readings, custom spread names or labels, favorites, language choices, device identifiers, contact information, or diagnostics to the developer.
+App Store Connect's **Data Not Collected / No se recopilan datos** answer remains accurate for the `0.7.2 (2)` candidate. The app has no account, backend, analytics, advertising, tracking, StoreKit, third-party runtime SDK, network client, or system permission request. It does not transmit readings, custom spread names or labels, favorites, language choices, device identifiers, contact information, or diagnostics to the developer.
 
 The earlier Local-QA IPA SHA-256 is `8D8D9ECCD086D8EF03543FC155A3A0EE0C9CF4484F33DDE5B6053DDB31B9A0CF`. The signed Internal Only IPA has SHA-256 `13CDBC1F398CA4CECBEA5864CD4C89153CAC9879A7E03AC66336FCD8E5E0FA47`; CI verified bundle `com.krazel.tarotdeck`, version `0.2.1 (1)`, iOS 16, arm64, valid distribution signature, `get-task-allow=false`, embedded profile and `PrivacyInfo.xcprivacy` before upload. App Store Connect processed it and made it available only to the existing internal group.
 

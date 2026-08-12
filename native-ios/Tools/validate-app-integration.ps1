@@ -561,7 +561,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
 }
 $projectReleaseContracts = @(
     'MARKETING_VERSION = 0.7.2;',
-    'CURRENT_PROJECT_VERSION = 1;',
+    'CURRENT_PROJECT_VERSION = 2;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
     'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;',
@@ -574,7 +574,7 @@ foreach ($contract in $projectReleaseContracts) {
     }
 }
 if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.7.2;')).Count -ne 2 -or
-    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;')).Count -ne 1 -or
@@ -1552,4 +1552,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.7.2 (1): English/Spanish UI and content, Three Cards first-install default with persisted-selection and restoration priority, exact 2x3 Six Cards selector glyph, seven built-in tutorials plus Create Your Own Spread, cited Six-Card Guidance, local custom spreads, atomic arbitrary slot placement, restoration, accessibility, 78 cards, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.7.2 (2): English/Spanish UI and content, Three Cards first-install default with persisted-selection and restoration priority, exact 2x3 Six Cards selector glyph, seven built-in tutorials plus Create Your Own Spread, cited Six-Card Guidance, local custom spreads, atomic arbitrary slot placement, restoration, accessibility, 78 cards, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

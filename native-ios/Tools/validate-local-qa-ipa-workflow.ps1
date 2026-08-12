@@ -53,7 +53,7 @@ $requiredWorkflowContracts = @(
     '--arg minimumOSVersion "$MINIMUM_OS_VERSION"',
     'minimumOSVersion: $minimumOSVersion',
     '[[ "$VERSION" != "0.7.2" ]]',
-    '[[ "$BUILD_NUMBER" != "1" ]]',
+    '[[ "$BUILD_NUMBER" != "2" ]]',
     "EXECUTABLE_DESCRIPTION",
     "codesign -dv",
     "Payload/TarotDeckInternal.app",
@@ -123,7 +123,7 @@ if ($bodyIndex -lt 0 -or $shellIndex -lt $bodyIndex -or $readIndex -lt $shellInd
 $requiredProjectContracts = @(
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'MARKETING_VERSION = 0.7.2;',
-    'CURRENT_PROJECT_VERSION = 1;',
+    'CURRENT_PROJECT_VERSION = 2;',
     'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
     'TARGETED_DEVICE_FAMILY = 1;',
     'SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";'
@@ -177,4 +177,4 @@ foreach ($contract in $requiredSchemeContracts) {
     }
 }
 
-Write-Host "Validated manual Local-QA IPA workflow: formal 0.7.2 (1), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."
+Write-Host "Validated manual Local-QA IPA workflow: formal 0.7.2 (2), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."

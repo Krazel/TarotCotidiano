@@ -1,6 +1,6 @@
 # Tarot Deck internal SwiftUI implementation inventory
 
-Status: unsigned internal iPhone implementation `0.7.2 (1)` of the approved English/Spanish Read, Learn, Cards and Settings MVP surfaces. It is not a distributable target.
+Status: internal iPhone implementation `0.7.2 (2)` of the approved English/Spanish Read, Learn, Cards and Settings MVP surfaces. Build 2 is a CI-only recompilation of the same app version after making a persistence test fixture deterministic; public distribution remains blocked.
 
 ## Approved visual boundary
 

@@ -118,8 +118,8 @@ jobs:
             echo "::error::Refusing to package an unexpected marketing version: $VERSION"
             exit 1
           fi
-          if [[ "$BUILD_NUMBER" != "1" ]]; then
-            echo "::error::Tarot 0.7.2 local QA must use build 1, not $BUILD_NUMBER."
+          if [[ "$BUILD_NUMBER" != "2" ]]; then
+            echo "::error::Tarot 0.7.2 local QA must use build 2, not $BUILD_NUMBER."
             exit 1
           fi
 
