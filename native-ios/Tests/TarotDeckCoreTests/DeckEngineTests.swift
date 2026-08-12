@@ -107,6 +107,71 @@ final class DeckEngineTests: XCTestCase {
         XCTAssertEqual(session.nextDrawIndex, 3)
     }
 
+    func testDealSupportsEverySpreadSizeFromOneThroughTwelve() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+        for count in 1...12 {
+            var session = try engine.startSession(at: startDate)
+            let dealt = try engine.deal(count: count, from: &session)
+            XCTAssertEqual(dealt.map(\.id), Array(StandardTarotDeck.cardIDs.prefix(count)))
+            XCTAssertEqual(session.drawnCards.count, count)
+            XCTAssertEqual(session.drawnCards.map(\.positionIndex), Array(0..<count))
+            XCTAssertEqual(session.nextDrawIndex, count)
+        }
+    }
+
+    func testCardsCanBePlacedIntoArbitraryOpenPositionsInDeckOrder() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+        var session = try engine.startSession(at: startDate)
+        let requestedPositions = [2, 0, 1]
+
+        for (drawIndex, positionIndex) in requestedPositions.enumerated() {
+            let card = try engine.draw(
+                into: positionIndex,
+                from: &session,
+                at: startDate.addingTimeInterval(TimeInterval(drawIndex + 1))
+            )
+            XCTAssertEqual(card.id, StandardTarotDeck.cardIDs[drawIndex])
+            XCTAssertEqual(card.positionIndex, positionIndex)
+            XCTAssertEqual(session.drawnCard(atPosition: positionIndex), card)
+        }
+
+        XCTAssertEqual(session.drawnCards.map(\.positionIndex), requestedPositions)
+        XCTAssertEqual(session.drawnCards.map(\.id), Array(StandardTarotDeck.cardIDs.prefix(3)))
+    }
+
+    func testOneThroughTwelvePositionsCanBeFilledWithoutDuplicates() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+
+        for count in 1...12 {
+            var session = try engine.startSession(at: startDate)
+            let positions = Array((0..<count).reversed())
+            for positionIndex in positions {
+                _ = try engine.draw(into: positionIndex, from: &session)
+            }
+            XCTAssertEqual(session.drawnCards.map(\.positionIndex), positions)
+            XCTAssertEqual(Set(session.drawnCards.map(\.id)).count, count)
+            XCTAssertNoThrow(try session.validate())
+        }
+    }
+
+    func testInvalidOrOccupiedPositionLeavesSessionUnchanged() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+        var session = try engine.startSession(at: startDate)
+        let original = session
+
+        XCTAssertThrowsError(try engine.draw(into: -1, from: &session)) { error in
+            XCTAssertEqual(error as? DeckEngineError, .invalidPositionIndex(-1))
+        }
+        XCTAssertEqual(session, original)
+
+        _ = try engine.draw(into: 2, from: &session)
+        let placed = session
+        XCTAssertThrowsError(try engine.draw(into: 2, from: &session)) { error in
+            XCTAssertEqual(error as? DeckEngineError, .positionAlreadyOccupied(2))
+        }
+        XCTAssertEqual(session, placed)
+    }
+
     func testInvalidDealLeavesSessionUnchanged() throws {
         let engine = DeckEngine(shuffler: IdentityShuffler())
         var session = try engine.startSession(at: startDate)

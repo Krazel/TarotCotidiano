@@ -75,6 +75,10 @@ struct ReadRootView: View {
             }
             .presentationDragIndicator(.visible)
         }
+        .onChange(of: model.customLibraryRequestCount) { _ in
+            guard model.surface == .home else { return }
+            showsSettings = false
+        }
         .task {
             await model.restoreIfNeeded()
         }
@@ -124,6 +128,9 @@ private struct ReadHomeView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var choiceStage: ReadingChoiceStage?
     @State private var stagedPreset: ReadingPreset?
+    @State private var stagedCustomSelected = false
+    @State private var showsCustomSpreads = false
+    @State private var handledCustomLibraryRequestCount = 0
     @AccessibilityFocusState private var selectorFocused: Bool
 
     var body: some View {
@@ -136,6 +143,7 @@ private struct ReadHomeView: View {
                 ReadingChoiceOverlay(
                     stage: choiceStage,
                     stagedPreset: stagedPreset,
+                    stagedCustomSelected: stagedCustomSelected,
                     chooseCount: chooseCount,
                     chooseStyle: chooseStyle,
                     showCountInformation: showCountInformation,
@@ -171,6 +179,22 @@ private struct ReadHomeView: View {
         .animation(reduceMotion ? CeremonialMotion.reduced : CeremonialMotion.screen, value: choiceStage)
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .toolbar(.hidden, for: .navigationBar)
+        .sheet(isPresented: $showsCustomSpreads) {
+            NavigationStack {
+                CustomSpreadLibraryView(model: model) { definition in
+                    model.selectCustomSpread(definition)
+                    showsCustomSpreads = false
+                    dismissChoicesAndRestoreFocus()
+                }
+            }
+            .presentationDragIndicator(.visible)
+        }
+        .onChange(of: model.customLibraryRequestCount) { _ in
+            presentRequestedCustomLibraryIfNeeded()
+        }
+        .onAppear {
+            presentRequestedCustomLibraryIfNeeded()
+        }
     }
 
     private var emptyHome: some View {
@@ -265,14 +289,16 @@ private struct ReadHomeView: View {
     private func compactSelectorButton(compact: Bool) -> some View {
         Button(action: openChoices) {
             HStack(spacing: 12) {
-                ReadingCountGlyph(
-                    count: model.selectedPreset == .oneCard ? 1 : 3,
+                ReadingKindGlyph(
+                    kindCount: model.selectedCustomSpreadID == nil
+                        ? model.selectedReadingCardCount
+                        : 0,
                     cardWidth: compact ? 20 : 23
                 )
                 .frame(width: compact ? 32 : 38, height: compact ? 34 : 40)
                 .accessibilityHidden(true)
 
-                Text(model.selectedPreset.title)
+                Text(model.selectedReadingTitle)
                     .font(.system(compact ? .body : .title3, design: .serif, weight: .semibold))
                     .lineLimit(1)
                     .minimumScaleFactor(0.68)
@@ -298,7 +324,7 @@ private struct ReadHomeView: View {
         .disabled(model.isBusy || choiceStage != nil)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Reading preset")
-        .accessibilityValue(model.selectedPreset.title)
+        .accessibilityValue(model.selectedReadingTitle)
         .accessibilityHint("Opens visual reading choices")
         .accessibilityFocused($selectorFocused)
     }
@@ -325,7 +351,7 @@ private struct ReadHomeView: View {
         .disabled(model.isBusy || choiceStage != nil)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("Start a Reading")
-        .accessibilityValue(model.selectedPreset.title)
+        .accessibilityValue(model.selectedReadingTitle)
         .accessibilityHint("Complete 78-card tarot deck")
     }
 
@@ -339,7 +365,8 @@ private struct ReadHomeView: View {
 
     private func openChoices() {
         selectorFocused = false
-        stagedPreset = model.selectedPreset
+        stagedCustomSelected = model.selectedCustomSpreadID != nil
+        stagedPreset = stagedCustomSelected ? nil : model.selectedPreset
         present(.count)
     }
 
@@ -347,22 +374,35 @@ private struct ReadHomeView: View {
         if count == 1 {
             model.selectPreset(.oneCard)
             dismissChoicesAndRestoreFocus()
-        } else {
+        } else if count == 3 {
             if stagedPreset == .oneCard { stagedPreset = nil }
+            stagedCustomSelected = false
             present(.style)
+        } else if count == 6 {
+            model.selectPreset(.sixCardGuidance)
+            dismissChoicesAndRestoreFocus()
+        } else {
+            choiceStage = nil
+            stagedCustomSelected = true
+            showsCustomSpreads = true
         }
     }
 
     private func chooseStyle(_ preset: ReadingPreset) {
         guard preset != .oneCard else { return }
         stagedPreset = preset
+        stagedCustomSelected = false
         model.selectPreset(preset)
         dismissChoicesAndRestoreFocus()
     }
 
     private func showCountInformation(_ count: Int) {
         choiceStage = nil
-        openReadingTutorial(count == 1 ? "one-card-focus" : nil)
+        if count == 0 {
+            openReadingTutorial("create-custom-spread")
+        } else {
+            openReadingTutorial(count == 1 ? "one-card-focus" : (count == 6 ? "six-card-guidance" : nil))
+        }
     }
 
     private func showStyleInformation(_ preset: ReadingPreset) {
@@ -371,7 +411,8 @@ private struct ReadHomeView: View {
     }
 
     private func cancelChoices() {
-        stagedPreset = model.selectedPreset
+        stagedCustomSelected = model.selectedCustomSpreadID != nil
+        stagedPreset = stagedCustomSelected ? nil : model.selectedPreset
         dismissChoicesAndRestoreFocus()
     }
 
@@ -380,6 +421,13 @@ private struct ReadHomeView: View {
         Task { @MainActor in
             selectorFocused = true
         }
+    }
+
+    private func presentRequestedCustomLibraryIfNeeded() {
+        guard model.customLibraryRequestCount > handledCustomLibraryRequestCount else { return }
+        handledCustomLibraryRequestCount = model.customLibraryRequestCount
+        choiceStage = nil
+        showsCustomSpreads = true
     }
 
     private func present(_ stage: ReadingChoiceStage) {
@@ -392,6 +440,7 @@ private struct ReadHomeView: View {
 private struct ReadingChoiceOverlay: View {
     let stage: ReadingChoiceStage
     let stagedPreset: ReadingPreset?
+    let stagedCustomSelected: Bool
     let chooseCount: (Int) -> Void
     let chooseStyle: (ReadingPreset) -> Void
     let showCountInformation: (Int) -> Void
@@ -406,11 +455,11 @@ private struct ReadingChoiceOverlay: View {
         GeometryReader { proxy in
             let isLandscape = proxy.size.width > proxy.size.height && !dynamicTypeSize.isAccessibilitySize
             let portraitPanelHeight = max(
-                proxy.size.height * (stage == .count ? 0.54 : 0.82),
+                proxy.size.height * (stage == .count ? 0.68 : 0.82),
                 0
             )
             let landscapePanelHeight = max(
-                min(proxy.size.height - 16, stage == .count ? 310 : 350),
+                min(proxy.size.height - 16, 350),
                 0
             )
 
@@ -518,16 +567,32 @@ private struct ReadingChoiceOverlay: View {
     }
 
     private func countChoices(compact: Bool) -> some View {
-        HStack(spacing: compact ? 12 : 14) {
-            countChoice(count: 1, compact: compact)
-            countChoice(count: 3, compact: compact)
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: compact ? 10 : 12), count: 2),
+            spacing: compact ? 10 : 12
+        ) {
+            ForEach([1, 3, 6, 0], id: \.self) { count in
+                countChoice(count: count, compact: compact)
+            }
         }
     }
 
     private func countChoice(count: Int, compact: Bool) -> some View {
-        let selected = count == 1
-            ? stagedPreset == .oneCard
-            : stagedPreset.map { $0 != .oneCard } ?? false
+        let selected: Bool
+        switch count {
+        case 1: selected = stagedPreset == .oneCard
+        case 3: selected = stagedPreset?.layout == .threeCards
+        case 6: selected = stagedPreset == .sixCardGuidance
+        default: selected = stagedCustomSelected
+        }
+        let title: String = {
+            switch count {
+            case 1: return AppLocalization.text("One Card")
+            case 3: return AppLocalization.text("Three Cards")
+            case 6: return AppLocalization.text("Six Cards")
+            default: return AppLocalization.text("Custom")
+            }
+        }()
 
         return ZStack {
             choiceTileBackground(selected: selected, cornerRadius: 22)
@@ -536,11 +601,11 @@ private struct ReadingChoiceOverlay: View {
                 chooseCount(count)
             } label: {
                 VStack(spacing: compact ? 6 : 12) {
-                    ReadingCountGlyph(count: count, cardWidth: compact ? 52 : 70)
+                    ReadingKindGlyph(kindCount: count, cardWidth: compact ? 38 : 48)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                         .accessibilityHidden(true)
 
-                    Text(AppLocalization.text(count == 1 ? "One Card" : "Three Cards"))
+                    Text(title)
                         .font(.system(compact ? .body : .title3, design: .serif, weight: .semibold))
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
@@ -553,8 +618,8 @@ private struct ReadingChoiceOverlay: View {
             }
             .buttonStyle(.plain)
             .accessibilityElement(children: .ignore)
-            .accessibilityLabel(Text(AppLocalization.text(count == 1 ? "One Card" : "Three Cards")))
-            .accessibilityHint(Text(AppLocalization.text(count == 1 ? "Selects one card" : "Opens five visual three-card styles")))
+            .accessibilityLabel(Text(title))
+            .accessibilityHint(Text(AppLocalization.text(count == 3 ? "Opens five visual three-card styles" : "Selects this reading type")))
             .accessibilityAddTraits(selected ? .isSelected : [])
 
             VStack {
@@ -564,7 +629,7 @@ private struct ReadingChoiceOverlay: View {
                     }
                     .accessibilityLabel(AppLocalization.format(
                         "Learn how to use %@",
-                        AppLocalization.text(count == 1 ? "One Card" : "Three Cards")
+                        title
                     ))
                     Spacer()
                     selectionMark(selected: selected)
@@ -664,26 +729,16 @@ private struct ReadingChoiceOverlay: View {
 
             VStack {
                 HStack {
-                    Spacer()
                     informationButton {
                         showStyleInformation(preset)
                     }
                     .accessibilityLabel(AppLocalization.format("Learn how to use %@", preset.title))
+                    Spacer()
+                    selectionMark(selected: selected)
                 }
                 Spacer()
             }
             .padding(8)
-
-            if selected {
-                VStack {
-                    HStack {
-                        selectionMark(selected: true)
-                        Spacer()
-                    }
-                    Spacer()
-                }
-                .padding(8)
-            }
         }
     }
 
@@ -730,6 +785,595 @@ private struct ReadingChoiceOverlay: View {
     }
 }
 
+private struct CustomSpreadLibraryView: View {
+    @ObservedObject var model: ReadFlowModel
+    let choose: (SpreadDefinition) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @State private var editingDraft: SpreadDefinition?
+    @State private var pendingDeletion: SpreadDefinition?
+
+    var body: some View {
+        ZStack {
+            CeremonialBackdrop()
+            ScrollView {
+                LazyVStack(spacing: 14) {
+                    if let draft = model.recoveredCustomDraft {
+                        Button {
+                            editingDraft = draft
+                        } label: {
+                            Label("Continue Draft", systemImage: "clock.arrow.circlepath")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(16)
+                                .background(tileBackground(selected: false))
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("Returns to the last saved custom spread draft")
+                    }
+
+                    if !model.customLibraryAvailable {
+                        VStack(spacing: 16) {
+                            Image(systemName: "exclamationmark.triangle")
+                                .font(.system(size: 40, weight: .light))
+                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                            Text("Custom spreads unavailable")
+                                .font(.system(.title2, design: .serif, weight: .semibold))
+                            Text("The saved custom spread file couldn't be read. Built-in readings are still available.")
+                                .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                                .multilineTextAlignment(.center)
+                            Button("Try Again") { model.retryCustomSpreadLibrary() }
+                                .buttonStyle(CeremonialPrimaryButtonStyle())
+                        }
+                        .padding(.vertical, 44)
+                    } else if model.customSpreads.isEmpty {
+                        VStack(spacing: 16) {
+                            Image(systemName: "rectangle.stack.badge.plus")
+                                .font(.system(size: 42, weight: .light))
+                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                            Text("No Custom Spreads Yet")
+                                .font(.system(.title2, design: .serif, weight: .semibold))
+                            Text("Create a layout with 1 to 12 cards, your own position labels, and the arrangement you prefer.")
+                                .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                                .multilineTextAlignment(.center)
+                        }
+                        .padding(.vertical, 44)
+                    } else {
+                        ForEach(model.customSpreads) { definition in
+                            customSpreadRow(definition)
+                        }
+                    }
+                }
+                .padding(20)
+            }
+        }
+        .foregroundStyle(CeremonialObsidianTheme.parchment)
+        .navigationTitle("Custom Spreads")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") { dismiss() }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    editingDraft = model.makeCustomDraft()
+                } label: {
+                    Label("New Spread", systemImage: "plus")
+                }
+                .disabled(!model.customLibraryAvailable)
+            }
+        }
+        .sheet(item: $editingDraft) { draft in
+            NavigationStack {
+                CustomSpreadEditorView(model: model, initialDraft: draft) { saved in
+                    editingDraft = nil
+                    choose(saved)
+                }
+            }
+        }
+        .alert(
+            AppLocalization.text("Delete Custom Spread?"),
+            isPresented: Binding(
+                get: { pendingDeletion != nil },
+                set: { if !$0 { pendingDeletion = nil } }
+            ),
+            presenting: pendingDeletion
+        ) { definition in
+            Button("Delete", role: .destructive) {
+                model.deleteCustomSpread(definition.id)
+                pendingDeletion = nil
+            }
+            Button("Cancel", role: .cancel) { pendingDeletion = nil }
+        } message: { definition in
+            Text(AppLocalization.format("Delete %@? This cannot be undone.", definition.name))
+        }
+    }
+
+    private func customSpreadRow(_ definition: SpreadDefinition) -> some View {
+        let selected = model.selectedCustomSpreadID == definition.id
+        return ZStack {
+            tileBackground(selected: selected)
+            Button {
+                choose(definition)
+            } label: {
+                VStack(spacing: 8) {
+                    CustomSpreadMiniMap(positions: definition.positions)
+                        .frame(height: 78)
+                        .accessibilityHidden(true)
+                    Text(definition.name)
+                        .font(.system(.title3, design: .serif, weight: .semibold))
+                    Text(AppLocalization.format("%d cards", definition.cardCount))
+                        .font(.subheadline)
+                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                }
+                .padding(.horizontal, 52)
+                .padding(.vertical, 14)
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.plain)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(definition.name)
+            .accessibilityValue(AppLocalization.format("%d cards", definition.cardCount))
+            .accessibilityAddTraits(selected ? .isSelected : [])
+
+            VStack {
+                HStack {
+                    Menu {
+                        Button("Edit", systemImage: "pencil") {
+                            editingDraft = model.beginEditingCustomSpread(definition.id)
+                        }
+                        Button("Duplicate", systemImage: "plus.square.on.square") {
+                            _ = model.duplicateCustomSpread(definition.id)
+                        }
+                        Button("Delete", systemImage: "trash", role: .destructive) {
+                            pendingDeletion = definition
+                        }
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 13, weight: .semibold))
+                            .frame(width: 28, height: 28)
+                            .overlay(Circle().stroke(CeremonialObsidianTheme.brightGold, lineWidth: 1))
+                            .frame(width: 44, height: 44)
+                    }
+                    .accessibilityLabel(AppLocalization.format("Options for %@", definition.name))
+                    Spacer()
+                    Image(systemName: "checkmark")
+                        .font(.body.bold())
+                        .foregroundStyle(CeremonialObsidianTheme.background)
+                        .frame(width: 34, height: 34)
+                        .background(Circle().fill(CeremonialObsidianTheme.brightGold))
+                        .opacity(selected ? 1 : 0)
+                        .accessibilityHidden(true)
+                }
+                Spacer()
+            }
+            .padding(8)
+        }
+    }
+
+    private func tileBackground(selected: Bool) -> some View {
+        RoundedRectangle(cornerRadius: 22)
+            .fill(CeremonialObsidianTheme.cardSurface.opacity(0.96))
+            .overlay {
+                RoundedRectangle(cornerRadius: 22)
+                    .stroke(selected ? CeremonialObsidianTheme.brightGold : CeremonialObsidianTheme.gold.opacity(0.38), lineWidth: selected ? 1.8 : 1)
+            }
+    }
+}
+
+private struct CustomSpreadEditorView: View {
+    @ObservedObject var model: ReadFlowModel
+    let onSaved: (SpreadDefinition) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var draft: SpreadDefinition
+    @State private var originalDraft: SpreadDefinition
+    @State private var undoStack: [SpreadDefinition] = []
+    @State private var dragBaseline: SpreadDefinition?
+    @State private var showsArrangeSheet = false
+    @State private var confirmsDiscard = false
+
+    init(
+        model: ReadFlowModel,
+        initialDraft: SpreadDefinition,
+        onSaved: @escaping (SpreadDefinition) -> Void
+    ) {
+        self.model = model
+        self.onSaved = onSaved
+        _draft = State(initialValue: initialDraft)
+        _originalDraft = State(initialValue: initialDraft)
+    }
+
+    var body: some View {
+        ZStack {
+            CeremonialBackdrop()
+            ScrollView {
+                VStack(spacing: 18) {
+                    TextField("Spread Name", text: nameBinding)
+                        .font(.system(.title2, design: .serif, weight: .semibold))
+                        .textInputAutocapitalization(.words)
+                        .padding(14)
+                        .background(editorField)
+                        .accessibilityLabel("Spread Name")
+
+                    HStack {
+                        Text("Cards")
+                            .font(.headline)
+                        Spacer()
+                        Button { changeCardCount(by: -1) } label: {
+                            Image(systemName: "minus").frame(width: 44, height: 44)
+                        }
+                        .disabled(draft.cardCount <= SpreadDefinition.minimumCardCount)
+                        Text("\(draft.cardCount)")
+                            .font(.title3.monospacedDigit().bold())
+                            .frame(minWidth: 32)
+                            .accessibilityLabel(AppLocalization.format("%d cards", draft.cardCount))
+                        Button { changeCardCount(by: 1) } label: {
+                            Image(systemName: "plus").frame(width: 44, height: 44)
+                        }
+                        .disabled(draft.cardCount >= SpreadDefinition.maximumCardCount)
+                    }
+
+                    spreadCanvas
+                        .frame(height: 330)
+
+                    HStack {
+                        Button { showsArrangeSheet = true } label: {
+                            Label("Arrange", systemImage: "square.grid.3x3")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(CeremonialObsidianTheme.brightGold)
+
+                        Button {
+                            undo()
+                        } label: {
+                            Label("Undo", systemImage: "arrow.uturn.backward")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .tint(CeremonialObsidianTheme.brightGold)
+                        .disabled(undoStack.isEmpty)
+                    }
+
+                    VStack(spacing: 10) {
+                        ForEach(draft.positions.sorted(by: { $0.order < $1.order })) { position in
+                            if let index = draft.positions.firstIndex(where: { $0.id == position.id }) {
+                                HStack(spacing: 10) {
+                                    Text("\(index + 1)")
+                                        .font(.caption.bold())
+                                        .frame(width: 24, height: 24)
+                                        .background(Circle().fill(CeremonialObsidianTheme.gold.opacity(0.35)))
+                                    TextField("Position label", text: labelBinding(at: index))
+                                        .textInputAutocapitalization(.sentences)
+                                    Button { movePosition(from: index, by: -1) } label: {
+                                        Image(systemName: "chevron.up").frame(width: 44, height: 44)
+                                    }
+                                    .disabled(index == 0)
+                                    .accessibilityLabel("Move Position Earlier")
+                                    Button { movePosition(from: index, by: 1) } label: {
+                                        Image(systemName: "chevron.down").frame(width: 44, height: 44)
+                                    }
+                                    .disabled(index == draft.cardCount - 1)
+                                    .accessibilityLabel("Move Position Later")
+                                }
+                                .padding(12)
+                                .background(editorField)
+                                .accessibilityElement(children: .contain)
+                            }
+                        }
+                    }
+                }
+                .padding(20)
+            }
+        }
+        .foregroundStyle(CeremonialObsidianTheme.parchment)
+        .navigationTitle("Edit Spread")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Close") {
+                    if draft == originalDraft { dismiss() } else { confirmsDiscard = true }
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    normalizeOrder()
+                    if model.saveCustomSpread(draft) { onSaved(draft) }
+                }
+                .disabled(!model.canSaveCustomSpread(draft))
+            }
+        }
+        .sheet(isPresented: $showsArrangeSheet) {
+            ArrangeSpreadSheet(cardCount: draft.cardCount) { columns in
+                arrange(columns: columns)
+                showsArrangeSheet = false
+            }
+            .presentationDetents([.medium])
+            .presentationDragIndicator(.visible)
+        }
+        .alert("Discard Changes?", isPresented: $confirmsDiscard) {
+            Button("Discard", role: .destructive) {
+                model.discardCustomDraft()
+                dismiss()
+            }
+            Button("Keep Editing", role: .cancel) {}
+        } message: {
+            Text("This custom spread has unsaved changes.")
+        }
+    }
+
+    private var spreadCanvas: some View {
+        GeometryReader { proxy in
+            ZStack {
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(Color.black.opacity(0.30))
+                    .overlay(RoundedRectangle(cornerRadius: 24).stroke(CeremonialObsidianTheme.gold.opacity(0.50), lineWidth: 1))
+
+                ForEach(draft.positions) { position in
+                    if let index = draft.positions.firstIndex(where: { $0.id == position.id }) {
+                        VStack(spacing: 3) {
+                            RoundedRectangle(cornerRadius: 5)
+                                .fill(CeremonialObsidianTheme.cardSurface)
+                                .overlay(RoundedRectangle(cornerRadius: 5).stroke(CeremonialObsidianTheme.brightGold, lineWidth: 1))
+                                .frame(width: 44, height: 70)
+                            Text("\(index + 1)")
+                                .font(.caption2.bold())
+                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                        }
+                        .position(
+                            x: CGFloat(position.point.x) * proxy.size.width,
+                            y: CGFloat(position.point.y) * proxy.size.height
+                        )
+                        .gesture(
+                            DragGesture(minimumDistance: 2)
+                                .onChanged { value in
+                                    if dragBaseline == nil {
+                                        dragBaseline = draft
+                                        pushUndo()
+                                    }
+                                    let candidate = SpreadPoint(
+                                        x: min(max(Double(value.location.x / proxy.size.width), 0.08), 0.92),
+                                        y: min(max(Double(value.location.y / proxy.size.height), 0.12), 0.88)
+                                    )
+                                    if pointIsAvailable(candidate, excluding: position.id) {
+                                        draft.positions[index].point = candidate
+                                    }
+                                }
+                                .onEnded { _ in
+                                    dragBaseline = nil
+                                    touchAndPersist()
+                                }
+                        )
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(
+                            AppLocalization.format(
+                                "Position %d, %@",
+                                index + 1,
+                                position.label.isEmpty ? AppLocalization.format("Card %d", index + 1) : position.label
+                            )
+                        )
+                        .accessibilityHint("Drag or use the movement actions to reposition this card")
+                        .accessibilityAction(named: Text("Move Left")) { moveCanvasPosition(id: position.id, dx: -0.05, dy: 0) }
+                        .accessibilityAction(named: Text("Move Right")) { moveCanvasPosition(id: position.id, dx: 0.05, dy: 0) }
+                        .accessibilityAction(named: Text("Move Up")) { moveCanvasPosition(id: position.id, dx: 0, dy: -0.05) }
+                        .accessibilityAction(named: Text("Move Down")) { moveCanvasPosition(id: position.id, dx: 0, dy: 0.05) }
+                    }
+                }
+            }
+        }
+    }
+
+    private var editorField: some View {
+        RoundedRectangle(cornerRadius: 14)
+            .fill(CeremonialObsidianTheme.cardSurface.opacity(0.92))
+            .overlay(RoundedRectangle(cornerRadius: 14).stroke(CeremonialObsidianTheme.gold.opacity(0.36), lineWidth: 1))
+    }
+
+    private var nameBinding: Binding<String> {
+        Binding(
+            get: { draft.name },
+            set: { value in
+                pushUndo()
+                draft.name = String(value.prefix(40))
+                touchAndPersist()
+            }
+        )
+    }
+
+    private func labelBinding(at index: Int) -> Binding<String> {
+        Binding(
+            get: { draft.positions[index].label },
+            set: { value in
+                pushUndo()
+                draft.positions[index].label = String(value.prefix(32))
+                touchAndPersist()
+            }
+        )
+    }
+
+    private func changeCardCount(by delta: Int) {
+        let newCount = min(max(draft.cardCount + delta, 1), 12)
+        guard newCount != draft.cardCount else { return }
+        pushUndo()
+        var ordered = draft.positions.sorted { $0.order < $1.order }
+        if delta > 0 {
+            let point = nextAvailablePoint(for: newCount)
+            ordered.append(SpreadPosition(order: ordered.count, label: "", point: point))
+        } else {
+            ordered.removeLast()
+        }
+        draft.positions = ordered.enumerated().map { index, position in
+            var updated = position
+            updated.order = index
+            return updated
+        }
+        touchAndPersist()
+    }
+
+    private func arrange(columns: Int?) {
+        pushUndo()
+        let ordered = draft.positions.sorted { $0.order < $1.order }
+        let arranged = SpreadDefinition.arrangedPositions(count: draft.cardCount, columns: columns)
+        draft.positions = ordered.enumerated().map { index, position in
+            var updated = position
+            updated.order = index
+            updated.point = arranged[index].point
+            return updated
+        }
+        touchAndPersist()
+    }
+
+    private func movePosition(from index: Int, by offset: Int) {
+        let destination = index + offset
+        guard draft.positions.indices.contains(index), draft.positions.indices.contains(destination) else { return }
+        pushUndo()
+        var ordered = draft.positions.sorted { $0.order < $1.order }
+        ordered.swapAt(index, destination)
+        draft.positions = ordered.enumerated().map { newIndex, position in
+            var updated = position
+            updated.order = newIndex
+            return updated
+        }
+        draft.updatedAt = Date()
+        persistDraft()
+    }
+
+    private func pushUndo() {
+        guard undoStack.last != draft else { return }
+        undoStack.append(draft)
+        if undoStack.count > 30 { undoStack.removeFirst() }
+    }
+
+    private func undo() {
+        guard let previous = undoStack.popLast() else { return }
+        withAnimation(reduceMotion ? CeremonialMotion.reduced : CeremonialMotion.screen) {
+            draft = previous
+        }
+        persistDraft()
+    }
+
+    private func normalizeOrder() {
+        let sorted = draft.positions.sorted { $0.order < $1.order }
+        draft.positions = sorted.enumerated().map { index, position in
+            var updated = position
+            updated.order = index
+            return updated
+        }
+        draft.updatedAt = Date()
+    }
+
+    private func touchAndPersist() {
+        draft.updatedAt = Date()
+        persistDraft()
+    }
+
+    private func persistDraft() {
+        if (try? draft.validate()) != nil { model.updateCustomDraft(draft) }
+    }
+
+    private func pointIsAvailable(_ point: SpreadPoint, excluding id: UUID) -> Bool {
+        draft.positions.filter { $0.id != id }.allSatisfy {
+            hypot($0.point.x - point.x, $0.point.y - point.y) >= SpreadDefinition.minimumPointSeparation
+        }
+    }
+
+    private func nextAvailablePoint(for count: Int) -> SpreadPoint {
+        let preferred = SpreadDefinition.arrangedPositions(count: count).map(\.point)
+        let candidates = preferred + (1...4).flatMap { columns in
+            SpreadDefinition.arrangedPositions(count: 12, columns: columns).map(\.point)
+        }
+        let scan = (1...11).flatMap { row in
+            (1...11).map { column in
+                SpreadPoint(x: Double(column) / 12.0, y: Double(row) / 12.0)
+            }
+        }
+        return (candidates + scan).first { candidate in
+            draft.positions.allSatisfy {
+                hypot($0.point.x - candidate.x, $0.point.y - candidate.y) >= SpreadDefinition.minimumPointSeparation
+            }
+        } ?? SpreadPoint(x: 0.08, y: 0.12)
+    }
+
+    private func moveCanvasPosition(id: UUID, dx: Double, dy: Double) {
+        guard let index = draft.positions.firstIndex(where: { $0.id == id }) else { return }
+        let current = draft.positions[index].point
+        let candidate = SpreadPoint(
+            x: min(max(current.x + dx, 0.08), 0.92),
+            y: min(max(current.y + dy, 0.12), 0.88)
+        )
+        guard pointIsAvailable(candidate, excluding: id) else { return }
+        pushUndo()
+        draft.positions[index].point = candidate
+        touchAndPersist()
+    }
+}
+
+private struct ArrangeSpreadSheet: View {
+    let cardCount: Int
+    let choose: (Int?) -> Void
+
+    private let options: [(String, Int?)] = [
+        ("Automatic", nil), ("One per row", 1), ("Two per row", 2),
+        ("Three per row", 3), ("Four per row", 4)
+    ]
+
+    var body: some View {
+        ZStack {
+            CeremonialBackdrop()
+            VStack(spacing: 18) {
+                Text("Arrange Cards")
+                    .font(.system(.title2, design: .serif, weight: .semibold))
+                    .accessibilityAddTraits(.isHeader)
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    ForEach(Array(options.enumerated()), id: \.offset) { _, option in
+                        Button { choose(option.1) } label: {
+                            VStack(spacing: 10) {
+                                CustomSpreadMiniMap(
+                                    positions: SpreadDefinition.arrangedPositions(
+                                        count: cardCount,
+                                        columns: option.1
+                                    )
+                                )
+                                .frame(height: 70)
+                                Text(AppLocalization.text(option.0))
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                            .frame(maxWidth: .infinity, minHeight: 112)
+                            .padding(10)
+                            .background(RoundedRectangle(cornerRadius: 16).fill(CeremonialObsidianTheme.cardSurface))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+            .padding(20)
+        }
+        .foregroundStyle(CeremonialObsidianTheme.parchment)
+    }
+}
+
+private struct CustomSpreadMiniMap: View {
+    let positions: [SpreadPosition]
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack {
+                ForEach(positions) { position in
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(CeremonialObsidianTheme.cardSurface)
+                        .overlay(RoundedRectangle(cornerRadius: 2).stroke(CeremonialObsidianTheme.gold, lineWidth: 0.8))
+                        .frame(width: 18, height: 30)
+                        .position(
+                            x: CGFloat(position.point.x) * proxy.size.width,
+                            y: CGFloat(position.point.y) * proxy.size.height
+                        )
+                }
+            }
+        }
+    }
+}
+
 private struct ReadingCountGlyph: View {
     let count: Int
     let cardWidth: CGFloat
@@ -742,6 +1386,78 @@ private struct ReadingCountGlyph: View {
                     .rotationEffect(count == 1 ? .zero : .degrees(Double(index - 1) * 9))
             }
         }
+    }
+}
+
+private struct ReadingKindGlyph: View {
+    let kindCount: Int
+    let cardWidth: CGFloat
+
+    @ViewBuilder
+    var body: some View {
+        switch kindCount {
+        case 0:
+            CustomReadingKindGlyph(cardWidth: cardWidth)
+        case 6:
+            SixCardReadingKindGlyph(cardWidth: cardWidth * 0.52)
+        case 1:
+            ReadingCountGlyph(count: 1, cardWidth: cardWidth)
+        default:
+            ReadingCountGlyph(count: 3, cardWidth: cardWidth)
+        }
+    }
+}
+
+private struct SixCardReadingKindGlyph: View {
+    let cardWidth: CGFloat
+
+    var body: some View {
+        VStack(spacing: cardWidth * 0.18) {
+            ForEach(0..<2, id: \.self) { _ in
+                HStack(spacing: cardWidth * 0.20) {
+                    ForEach(0..<3, id: \.self) { _ in
+                        CeremonialCardBack(spokenLabel: "")
+                            .frame(width: cardWidth)
+                    }
+                }
+            }
+        }
+    }
+}
+
+private struct CustomReadingKindGlyph: View {
+    let cardWidth: CGFloat
+
+    var body: some View {
+        let outlineWidth = cardWidth * 0.72
+        let outlineHeight = outlineWidth / CeremonialObsidianTheme.deckAspectRatio
+
+        ZStack {
+            ForEach(0..<5, id: \.self) { index in
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(
+                        CeremonialObsidianTheme.gold.opacity(0.55),
+                        style: StrokeStyle(lineWidth: 1, dash: [3, 3])
+                    )
+                    .frame(width: outlineWidth, height: outlineHeight)
+                    .rotationEffect(.degrees(Double(index - 2) * 10))
+                    .offset(y: index.isMultiple(of: 2) ? cardWidth * 0.12 : 0)
+            }
+
+            RoundedRectangle(cornerRadius: 7)
+                .fill(CeremonialObsidianTheme.cardSurface)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 7)
+                        .stroke(CeremonialObsidianTheme.gold.opacity(0.72), lineWidth: 1)
+                }
+                .frame(width: outlineWidth * 0.88, height: outlineHeight * 0.72)
+                .overlay {
+                    Image(systemName: "plus")
+                        .font(.system(size: max(cardWidth * 0.42, 10), weight: .light))
+                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                }
+        }
+        .frame(width: cardWidth * 2.4, height: outlineHeight * 1.18)
     }
 }
 
@@ -798,12 +1514,13 @@ private struct ReadingTableView: View {
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
     @Environment(\.scenePhase) private var scenePhase
     @State private var shufflePhase = 0
+    @State private var shuffleGeneration = 0
     @State private var visualBaseline: ReadingVisualState?
     @State private var presentationTask: Task<Void, Never>?
     @State private var presentationToken: UUID?
     @State private var presentationLocked = false
-    @State private var dealingPosition: Int?
-    @State private var dealProgress: CGFloat = 0
+    @State private var placingPosition: Int?
+    @State private var placementProgress: CGFloat = 0
     @State private var flippingPosition: Int?
     @State private var flipProgress: CGFloat = 0
     @State private var flipRevealing = true
@@ -811,7 +1528,8 @@ private struct ReadingTableView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            let isLandscape = proxy.size.width > proxy.size.height && !dynamicTypeSize.isAccessibilitySize
+            let isPhysicallyLandscape = proxy.size.width > proxy.size.height
+            let isLandscape = isPhysicallyLandscape && !dynamicTypeSize.isAccessibilitySize
 
             ZStack {
                 CeremonialBackdrop()
@@ -819,12 +1537,15 @@ private struct ReadingTableView: View {
                 if isLandscape {
                     landscapeContent(size: proxy.size)
                 } else {
-                    portraitContent(size: proxy.size)
+                    portraitContent(
+                        size: proxy.size,
+                        showsOrientationHint: !isPhysicallyLandscape
+                    )
                 }
             }
             .overlayPreferenceValue(ReadingMotionAnchorPreferenceKey.self) { anchors in
                 GeometryReader { coordinateProxy in
-                    dealOverlay(anchors: anchors, proxy: coordinateProxy)
+                    placementOverlay(anchors: anchors, proxy: coordinateProxy)
                 }
             }
             .onChange(of: isLandscape) { _ in
@@ -857,28 +1578,29 @@ private struct ReadingTableView: View {
     }
 
     @ViewBuilder
-    private func portraitContent(size: CGSize) -> some View {
+    private func portraitContent(size: CGSize, showsOrientationHint: Bool) -> some View {
         if dynamicTypeSize.isAccessibilitySize {
             ScrollView {
-                portraitLayout
-                    .frame(height: max(size.height, 820))
+                portraitLayout(showsOrientationHint: showsOrientationHint)
+                    .frame(minHeight: max(size.height, 820))
             }
             .scrollIndicators(.hidden)
         } else {
-            portraitLayout
+            portraitLayout(showsOrientationHint: showsOrientationHint)
         }
     }
 
-    private var portraitLayout: some View {
+    private func portraitLayout(showsOrientationHint: Bool) -> some View {
         VStack(spacing: 0) {
             header
-                .frame(height: 72)
+                .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 10 : 4)
+                .frame(minHeight: 72)
 
             readingStage(isLandscape: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            actionArea
-                .frame(height: 96)
+            portraitActionArea(showsOrientationHint: showsOrientationHint)
+                .frame(minHeight: model.activeCardCount > 1 && showsOrientationHint ? 118 : 96)
                 .padding(.horizontal, 26)
         }
         .padding(.top, 4)
@@ -886,49 +1608,80 @@ private struct ReadingTableView: View {
     }
 
     private func landscapeContent(size: CGSize) -> some View {
-        let railWidth = min(max(size.width * 0.22, 154), 200)
+        let deckWidth = min(max(size.width * 0.18, 140), 160)
+        let deckHeight = deckWidth / CeremonialObsidianTheme.deckAspectRatio
+        let deckColumnWidth = deckWidth + 12
+        let cueHeight: CGFloat = 34
 
-        return HStack(spacing: 16) {
-            VStack(spacing: 8) {
-                HStack {
-                    backButton
+        return VStack(spacing: 0) {
+            landscapeHeader
+                .frame(height: 52)
+
+            HStack(spacing: 10) {
+                VStack(spacing: 0) {
+                    readingStage(isLandscape: true)
+
+                    Group {
+                        if shouldShowDeck {
+                            Color.clear
+                        } else {
+                            landscapeCue
+                        }
+                    }
+                    .frame(height: cueHeight)
+                }
+
+                VStack(spacing: 0) {
                     Spacer(minLength: 0)
-                    readingInfoButton
-                    resetButton
+
+                    deckControl
+                        .frame(width: deckWidth, height: deckHeight)
+                        .anchorPreference(
+                            key: ReadingMotionAnchorPreferenceKey.self,
+                            value: .bounds,
+                            transform: { [.deck: $0] }
+                        )
+                        .opacity(shouldShowDeck ? 1 : 0)
+                        .allowsHitTesting(shouldShowDeck)
+                        .accessibilityHidden(!shouldShowDeck)
+
+                    Spacer(minLength: 0)
+
+                    Group {
+                        if shouldShowDeck {
+                            landscapeCue
+                        } else {
+                            Color.clear
+                        }
+                    }
+                    .frame(height: cueHeight)
                 }
-
-                VStack(spacing: 3) {
-                    Text(model.readingTitle)
-                        .font(.system(.title2, design: .serif, weight: .semibold))
-                        .multilineTextAlignment(.center)
-                        .accessibilityAddTraits(.isHeader)
-                    Text(statusText)
-                        .font(.subheadline)
-                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                        .multilineTextAlignment(.center)
-                }
-
-                Spacer(minLength: 0)
-
-                deckControl
-                    .frame(maxWidth: 132, maxHeight: 152)
-                    .anchorPreference(
-                        key: ReadingMotionAnchorPreferenceKey.self,
-                        value: .bounds,
-                        transform: { [.deck: $0] }
-                    )
-                    .opacity(shouldShowDeck ? 1 : 0)
-                    .allowsHitTesting(shouldShowDeck)
-                    .accessibilityHidden(!shouldShowDeck)
-
-                actionArea
+                .frame(width: deckColumnWidth)
             }
-            .frame(width: railWidth)
-
-            readingStage(isLandscape: true)
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, 8)
+        .padding(.vertical, 6)
+    }
+
+    private var landscapeHeader: some View {
+        ZStack {
+            backButton
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            HStack(spacing: 0) {
+                Spacer(minLength: 0)
+                readingInfoButton
+                resetButton
+            }
+
+            Text(model.readingTitle)
+                .font(.system(.title2, design: .serif, weight: .semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.62)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 112)
+                .accessibilityAddTraits(.isHeader)
+        }
     }
 
     private var header: some View {
@@ -993,12 +1746,7 @@ private struct ReadingTableView: View {
 
     private var readingInfoButton: some View {
         Button {
-            guard let layout = model.layout else { return }
-            let articleID = ReadingPreset.resolved(
-                layout: layout,
-                spread: model.spread
-            ).tutorialArticleID
-            openReadingTutorial(articleID)
+            openReadingTutorial(model.activeTutorialArticleID)
         } label: {
             Image(systemName: "info")
                 .font(.system(size: 14, weight: .semibold))
@@ -1022,41 +1770,42 @@ private struct ReadingTableView: View {
 
     @ViewBuilder
     private func readingStage(isLandscape: Bool) -> some View {
-        if let layout = model.layout {
+        if let definition = model.activeDefinition {
             GeometryReader { proxy in
-                let gap: CGFloat = isLandscape ? 16 : 11
-                let count = CGFloat(layout.cardLimit)
-                let availableWidth = max(proxy.size.width - (isLandscape ? 24 : 36), 1)
-                let widthFromRow = (availableWidth - gap * max(count - 1, 0)) / count
-                let heightLimit = isLandscape
-                    ? max(proxy.size.height - 34, 1)
-                    : max(proxy.size.height * (layout == .threeCards ? 0.45 : 0.52), 1)
-                let widthFromHeight = heightLimit * CeremonialObsidianTheme.cardAspectRatio
-                let cardWidth = min(
-                    widthFromRow,
-                    widthFromHeight,
-                    layout == .oneCard ? (isLandscape ? 300 : 250) : (isLandscape ? 230 : 118)
+                let count = definition.cardCount
+                let canvasHeight = isLandscape
+                    ? proxy.size.height
+                    : proxy.size.height * (count <= 3 ? 0.58 : 0.64)
+                let canvasSize = CGSize(width: proxy.size.width, height: canvasHeight)
+                let orderedPositions = definition.positions.sorted { $0.order < $1.order }
+                let metrics = ReadingStageLayoutMetrics.make(
+                    points: orderedPositions.map(\.point),
+                    canvasSize: canvasSize,
+                    maximumCardWidth: maximumCardWidth(count: count, isLandscape: isLandscape),
+                    cardAspectRatio: CeremonialObsidianTheme.cardAspectRatio,
+                    minimumVisibleGap: 14
                 )
-                let cardHeight = cardWidth / CeremonialObsidianTheme.cardAspectRatio
-                let groupWidth = cardWidth * count + gap * max(count - 1, 0)
-                let slotCenterY = isLandscape
-                    ? proxy.size.height / 2
-                    : max(cardHeight / 2 + 28, proxy.size.height * 0.34)
+                let cardWidth = metrics.cardSize.width
+                let cardHeight = metrics.cardSize.height
 
-                HStack(spacing: gap) {
-                    ForEach(0..<layout.cardLimit, id: \.self) { index in
-                        VStack(spacing: layout == .threeCards ? 4 : 0) {
-                            if layout == .threeCards {
-                                Text(positionTitle(at: index))
-                                    .font(.system(.caption, design: .serif, weight: .semibold))
-                                    .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                                    .lineLimit(1)
-                                    .minimumScaleFactor(0.72)
-                                    .frame(height: 20)
-                                    .accessibilityHidden(true)
+                ZStack {
+                    ForEach(Array(orderedPositions.enumerated()), id: \.element.id) { index, slot in
+                        VStack(spacing: 4) {
+                            Text(model.activePositionTitle(at: index))
+                                .font(.system(count > 6 ? .caption2 : .caption, design: .serif, weight: .semibold))
+                                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                                .lineLimit(2)
+                                .minimumScaleFactor(0.62)
+                                .multilineTextAlignment(.center)
+                                .frame(height: count > 6 ? 24 : 30)
+                                .accessibilityHidden(true)
+
+                            ZStack {
+                                Color.clear
+
+                                position(at: index, total: count)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                             }
-
-                            position(at: index, total: layout.cardLimit)
                                 .frame(width: cardWidth, height: cardHeight)
                                 .anchorPreference(
                                     key: ReadingMotionAnchorPreferenceKey.self,
@@ -1064,19 +1813,20 @@ private struct ReadingTableView: View {
                                     transform: { [.slot(index): $0] }
                                 )
                         }
-                        .frame(width: cardWidth, height: cardHeight + (layout == .threeCards ? 24 : 0))
+                        .frame(width: cardWidth, height: cardHeight + 34)
+                        .position(
+                            metrics.stackCenters[index]
+                        )
                     }
                 }
-                .frame(width: groupWidth, height: cardHeight + (layout == .threeCards ? 24 : 0))
-                .position(x: proxy.size.width / 2, y: slotCenterY)
+                .frame(width: proxy.size.width, height: canvasHeight, alignment: .topLeading)
                 .accessibilityElement(children: .contain)
 
                 if !isLandscape {
-                    let slotBottom = slotCenterY + cardHeight / 2
-                    let availableDeckHeight = max(proxy.size.height - slotBottom - 28, 1)
+                    let availableDeckHeight = max(proxy.size.height - canvasHeight - 8, 1)
                     let deckWidth = min(
-                        max(proxy.size.width * 0.46, 120),
-                        220,
+                        max(proxy.size.width * (count > 3 ? 0.28 : 0.40), 88),
+                        count > 3 ? 128 : 200,
                         availableDeckHeight * CeremonialObsidianTheme.deckAspectRatio
                     )
                     let deckHeight = deckWidth / CeremonialObsidianTheme.deckAspectRatio
@@ -1092,24 +1842,32 @@ private struct ReadingTableView: View {
                         .accessibilityHidden(!shouldShowDeck)
                         .position(
                             x: proxy.size.width / 2,
-                            y: min(proxy.size.height - deckHeight / 2 - 8,
-                                   slotBottom + 20 + deckHeight / 2)
+                            y: canvasHeight + availableDeckHeight / 2
                         )
                 }
             }
         }
     }
 
+    private func maximumCardWidth(count: Int, isLandscape: Bool) -> CGFloat {
+        switch count {
+        case 1: return isLandscape ? 270 : 238
+        case 2...3: return isLandscape ? 190 : 112
+        case 4...6: return isLandscape ? 118 : 86
+        case 7...9: return isLandscape ? 94 : 70
+        default: return isLandscape ? 78 : 58
+        }
+    }
+
     private func positionTitle(at index: Int) -> String {
-        model.spread?.positionTitle(at: index)
-            ?? AppLocalization.format("Card %d", index + 1)
+        model.activePositionTitle(at: index)
     }
 
     @ViewBuilder
     private func position(at index: Int, total: Int) -> some View {
-        if let drawnCard = model.session?.drawnCards[safe: index],
+        if let drawnCard = model.placedCard(at: index),
            baselineContainsCard(at: index) {
-            let baselineRevealed = visualBaseline?.revealed[safe: index] ?? drawnCard.isRevealed
+            let baselineRevealed = baselineSlot(at: index)?.isRevealed ?? drawnCard.isRevealed
 
             if flippingPosition == index,
                let card = content.card(withID: drawnCard.id.rawValue),
@@ -1158,7 +1916,9 @@ private struct ReadingTableView: View {
             EmptyReadingPosition(
                 position: index + 1,
                 total: total,
-                positionName: positionTitle(at: index)
+                positionName: positionTitle(at: index),
+                canPlace: model.canPlaceCard(at: index) && !interactionLocked,
+                onPlace: { model.placeNextCard(at: index) }
             )
             .transition(.opacity)
             .id("empty-\(index)")
@@ -1166,50 +1926,54 @@ private struct ReadingTableView: View {
     }
 
     private var shouldShowDeck: Bool {
-        if model.canShuffleDeck { return true }
-        if dealingPosition != nil { return true }
-        return false
+        if model.isReadyToShuffle || model.canShuffleDeck || model.hasEmptyPositions { return true }
+        return placingPosition != nil
     }
 
     private var presentedReadingIsCompleteAndRevealed: Bool {
         guard let layout = model.layout else { return false }
-        let presentedIDs = visualBaseline?.drawnCardIDs
-            ?? model.session?.drawnCards.map { $0.id.rawValue }
-            ?? []
-        let presentedRevealed = visualBaseline?.revealed
-            ?? model.session?.drawnCards.map(\.isRevealed)
-            ?? []
-        return presentedIDs.count == layout.cardLimit
-            && presentedRevealed.count == layout.cardLimit
-            && presentedRevealed.allSatisfy { $0 }
+        let slots = visualBaseline?.slots ?? visualState.slots
+        return slots.count == model.activeCardCount
+            && slots.allSatisfy { $0?.isRevealed == true }
     }
 
     private var canUseDeck: Bool {
         model.canShuffleDeck
     }
 
+    @ViewBuilder
     private var deckControl: some View {
-        return Button {
-            model.shuffleDeck()
-        } label: {
+        if canUseDeck {
+            Button {
+                model.shuffleDeck()
+            } label: {
+                shufflingDeck
+                    .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
+            }
+            .buttonStyle(CeremonialDeckButtonStyle(usesReducedMotion: usesReducedMotion))
+            .disabled(interactionLocked)
+            .accessibilityHint(
+                AppLocalization.text(
+                    model.isReadyToShuffle
+                        ? "Shuffles all 78 cards"
+                        : "Shuffles all 78 cards again"
+                )
+            )
+        } else {
+            shufflingDeck
+                .accessibilityHidden(true)
+        }
+    }
+
+    private var shufflingDeck: some View {
             CeremonialShufflingDeck(
                 phase: shufflePhase,
+                generation: shuffleGeneration,
                 reduceMotion: usesReducedMotion,
                 spokenLabel: model.isReadyToShuffle
                     ? AppLocalization.text("Unshuffled tarot deck")
                     : AppLocalization.text("Shuffled tarot deck")
             )
-            .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
-        }
-        .buttonStyle(CeremonialDeckButtonStyle(usesReducedMotion: usesReducedMotion))
-        .disabled(interactionLocked || !canUseDeck)
-        .accessibilityHint(
-            AppLocalization.text(
-                model.isReadyToShuffle
-                    ? "Shuffles all 78 cards"
-                    : "Shuffles all 78 cards again"
-            )
-        )
     }
 
     private var usesReducedMotion: Bool {
@@ -1221,10 +1985,13 @@ private struct ReadingTableView: View {
     }
 
     private var visualState: ReadingVisualState {
-        ReadingVisualState(
+        let slots = (0..<model.activeCardCount).map { index -> ReadingVisualSlot? in
+            guard let card = model.placedCard(at: index) else { return nil }
+            return ReadingVisualSlot(cardID: card.id.rawValue, isRevealed: card.isRevealed)
+        }
+        return ReadingVisualState(
             sessionID: model.session?.id,
-            drawnCardIDs: model.session?.drawnCards.map { $0.id.rawValue } ?? [],
-            revealed: model.session?.drawnCards.map(\.isRevealed) ?? []
+            slots: slots
         )
     }
 
@@ -1244,28 +2011,29 @@ private struct ReadingTableView: View {
 
         if newState.sessionID != nil,
            baseline.sessionID != newState.sessionID,
-           baseline.drawnCardIDs.isEmpty,
-           newState.drawnCardIDs.isEmpty {
+           baseline.slots.allSatisfy({ $0 == nil }),
+           newState.slots.allSatisfy({ $0 == nil }) {
             visualBaseline = newState
             runShuffleChoreography()
             return
         }
 
-        if newState.drawnCardIDs.count > baseline.drawnCardIDs.count {
-            runDealSequence(
-                from: baseline.drawnCardIDs.count,
-                to: newState.drawnCardIDs.count,
-                target: newState
-            )
+        if let placedPosition = newState.slots.indices.first(where: { index in
+            let previousSlot = baseline.slots.indices.contains(index) ? baseline.slots[index] : nil
+            return previousSlot == nil && newState.slots[index] != nil
+        }) {
+            runPlacementSequence(at: placedPosition, target: newState)
             return
         }
 
-        for index in newState.revealed.indices where baseline.revealed.indices.contains(index) {
-            if !baseline.revealed[index], newState.revealed[index] {
+        for index in newState.slots.indices where baseline.slots.indices.contains(index) {
+            guard let oldSlot = baseline.slots[index], let newSlot = newState.slots[index],
+                  oldSlot.cardID == newSlot.cardID else { continue }
+            if !oldSlot.isRevealed, newSlot.isRevealed {
                 runFlip(at: index, revealing: true, target: newState)
                 return
             }
-            if baseline.revealed[index], !newState.revealed[index] {
+            if oldSlot.isRevealed, !newSlot.isRevealed {
                 runFlip(at: index, revealing: false, target: newState)
                 return
             }
@@ -1286,6 +2054,7 @@ private struct ReadingTableView: View {
     @MainActor
     private func runShuffleChoreography() {
         startPresentation { token in
+            shuffleGeneration += 1
             if usesReducedMotion {
                 withAnimation(.easeOut(duration: 0.075)) {
                     shufflePhase = 1
@@ -1338,44 +2107,40 @@ private struct ReadingTableView: View {
     }
 
     @MainActor
-    private func runDealSequence(from start: Int, to end: Int, target: ReadingVisualState) {
+    private func runPlacementSequence(at position: Int, target: ReadingVisualState) {
         startPresentation { token in
-            for position in start..<end {
-                dealingPosition = position
-                dealProgress = 0
-                await Task.yield()
-                guard presentationIsCurrent(token) else { return }
+            placingPosition = position
+            placementProgress = 0
+            await Task.yield()
+            guard presentationIsCurrent(token) else { return }
 
-                withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.deal) {
-                    dealProgress = 1
-                }
-                try? await Task.sleep(
-                    nanoseconds: usesReducedMotion ? 120_000_000 : 310_000_000
-                )
-                guard presentationIsCurrent(token) else { return }
-
-                visualBaseline = ReadingVisualState(
-                    sessionID: target.sessionID,
-                    drawnCardIDs: Array(target.drawnCardIDs.prefix(position + 1)),
-                    revealed: Array(target.revealed.prefix(position + 1))
-                )
-                CeremonialHaptics.drawn()
+            withAnimation(usesReducedMotion ? CeremonialMotion.reduced : CeremonialMotion.placement) {
+                placementProgress = 1
             }
-            dealingPosition = nil
-            dealProgress = 0
-            visualBaseline = target
+            try? await Task.sleep(
+                nanoseconds: usesReducedMotion ? 120_000_000 : 380_000_000
+            )
+            guard presentationIsCurrent(token) else { return }
+
+            var settleTransaction = Transaction()
+            settleTransaction.animation = nil
+            withTransaction(settleTransaction) {
+                visualBaseline = target
+                placingPosition = nil
+                placementProgress = 0
+            }
             finishPresentation(token)
+            CeremonialHaptics.drawn()
             if voiceOverEnabled {
                 UIAccessibility.post(
                     notification: .announcement,
-                    argument: AppLocalization.text(
-                        end == 1
-                            ? "One card dealt face down"
-                            : "Three cards dealt face down"
+                    argument: AppLocalization.format(
+                        "%@, card placed face down",
+                        positionTitle(at: position)
                     )
                 )
             }
-            moveVoiceOverFocus(to: max(end - 1, 0))
+            moveVoiceOverFocus(to: position)
         }
     }
 
@@ -1440,8 +2205,8 @@ private struct ReadingTableView: View {
         presentationToken = nil
         presentationLocked = false
         shufflePhase = 0
-        dealingPosition = nil
-        dealProgress = 0
+        placingPosition = nil
+        placementProgress = 0
         flippingPosition = nil
         flipProgress = 0
         visualBaseline = baseline
@@ -1460,26 +2225,54 @@ private struct ReadingTableView: View {
                         : CeremonialObsidianTheme.secondaryText
                 )
 
-            if model.isReadyToShuffle || model.isReadyToDeal {
-                Button("Deal") {
-                    model.dealCards()
-                }
-                .buttonStyle(CeremonialPrimaryButtonStyle())
-                .disabled(interactionLocked || !model.isReadyToDeal)
-                .accessibilityHint(
-                    AppLocalization.text(
-                        model.isReadyToDeal
-                            ? (model.layout == .oneCard
-                                ? "Deals one card face down"
-                                : "Deals three cards face down")
-                            : "Shuffle before dealing."
-                    )
-                )
-            }
         }
         .font(.body)
         .multilineTextAlignment(.center)
         .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func portraitActionArea(showsOrientationHint: Bool) -> some View {
+        VStack(spacing: 8) {
+            actionArea
+
+            if showsOrientationHint, model.activeCardCount > 1 {
+                Label(
+                    AppLocalization.text("Turn your iPhone sideways to see the cards better."),
+                    systemImage: "iphone.landscape"
+                )
+                .font(.caption)
+                .foregroundStyle(CeremonialObsidianTheme.secondaryText.opacity(0.88))
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
+                .minimumScaleFactor(0.82)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+    }
+
+    private var landscapeCue: some View {
+        Text(landscapeCueText)
+            .font(.system(.caption, design: .serif, weight: .medium))
+            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+            .lineLimit(2)
+            .minimumScaleFactor(0.76)
+            .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var landscapeCueText: String {
+        if model.isReadyToShuffle {
+            return AppLocalization.text("Tap to shuffle")
+        }
+        guard let session = model.session else { return "" }
+        if session.drawnCards.isEmpty || model.hasEmptyPositions {
+            return AppLocalization.text("Tap a position")
+        }
+        if presentedReadingIsCompleteAndRevealed {
+            return AppLocalization.text("Tap for meaning")
+        }
+        return AppLocalization.text("Tap a card")
     }
 
     private var statusText: String {
@@ -1487,8 +2280,9 @@ private struct ReadingTableView: View {
         guard let session = model.session, let layout = model.layout else { return "" }
         if session.drawnCards.isEmpty { return AppLocalization.text("Deck shuffled") }
         if layout == .oneCard {
-            let presentedRevealed = visualBaseline?.revealed.first
-                ?? session.drawnCards[0].isRevealed
+            let presentedRevealed = visualBaseline.flatMap { $0.slots.first ?? nil }?.isRevealed
+                ?? model.placedCard(at: 0)?.isRevealed
+                ?? false
             return presentedRevealed
                 ? AppLocalization.text("Card revealed")
                 : AppLocalization.text("Card drawn")
@@ -1499,7 +2293,7 @@ private struct ReadingTableView: View {
         return AppLocalization.format(
             "%d of %d drawn",
             session.drawnCards.count,
-            layout.cardLimit
+            model.activeCardCount
         )
     }
 
@@ -1507,13 +2301,16 @@ private struct ReadingTableView: View {
         if model.isReadyToShuffle { return AppLocalization.text("Tap the deck to shuffle.") }
         guard let session = model.session, let layout = model.layout else { return "" }
         if session.drawnCards.isEmpty {
-            return AppLocalization.text("Tap again to shuffle, or deal when ready.")
+            return AppLocalization.text("Tap an empty position to place the next card, or tap the deck to shuffle again.")
         }
         if presentedReadingIsCompleteAndRevealed {
             return ""
         }
         if layout == .oneCard, session.drawnCards.count == 1 {
             return AppLocalization.text("Tap the card to reveal it.")
+        }
+        if model.hasEmptyPositions {
+            return AppLocalization.text("Tap any empty position to place the next card.")
         }
         return AppLocalization.text("Tap a face-down card to turn it over.")
     }
@@ -1527,7 +2324,12 @@ private struct ReadingTableView: View {
     }
 
     private func baselineContainsCard(at index: Int) -> Bool {
-        visualBaseline?.drawnCardIDs.indices.contains(index) == true
+        baselineSlot(at: index) != nil
+    }
+
+    private func baselineSlot(at index: Int) -> ReadingVisualSlot? {
+        guard let visualBaseline, visualBaseline.slots.indices.contains(index) else { return nil }
+        return visualBaseline.slots[index]
     }
 
     private func revealedPosition(
@@ -1544,6 +2346,7 @@ private struct ReadingTableView: View {
             inspectRevealedCard(drawnCard.id)
         } label: {
             artwork
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .buttonStyle(.plain)
         .disabled(interactionLocked)
@@ -1599,15 +2402,16 @@ private struct ReadingTableView: View {
                     )
                 )
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipped()
     }
 
     @ViewBuilder
-    private func dealOverlay(
+    private func placementOverlay(
         anchors: [ReadingMotionAnchor: Anchor<CGRect>],
         proxy: GeometryProxy
     ) -> some View {
-        if let position = dealingPosition,
+        if let position = placingPosition,
            let sourceAnchor = anchors[.deck],
            let destinationAnchor = anchors[.slot(position)] {
             let source = proxy[sourceAnchor]
@@ -1625,13 +2429,12 @@ private struct ReadingTableView: View {
                 spokenLabel: ""
             )
             .frame(width: destination.width, height: destination.height)
-            .scaleEffect(usesReducedMotion ? 1 : 0.94 + 0.06 * dealProgress)
-            .rotationEffect(.degrees(usesReducedMotion ? 0 : 2 * (1 - dealProgress)))
-            .opacity(usesReducedMotion ? dealProgress : 1)
+            .scaleEffect(usesReducedMotion ? 1 : 0.94 + 0.06 * placementProgress)
+            .opacity(usesReducedMotion ? placementProgress : 1)
             .position(motionStart)
             .modifier(
-                CeremonialDealGeometryEffect(
-                    progress: dealProgress,
+                CeremonialPlacementGeometryEffect(
+                    progress: placementProgress,
                     start: motionStart,
                     end: end,
                     arcHeight: usesReducedMotion ? 0 : min(42, distance * 0.12)
@@ -1661,8 +2464,208 @@ private struct ReadingMotionAnchorPreferenceKey: PreferenceKey {
 
 private struct ReadingVisualState: Equatable {
     let sessionID: UUID?
-    let drawnCardIDs: [String]
-    let revealed: [Bool]
+    let slots: [ReadingVisualSlot?]
+}
+
+private struct ReadingVisualSlot: Equatable {
+    let cardID: String
+    let isRevealed: Bool
+}
+
+/// One deterministic geometry contract for every reading-card presentation state.
+/// Empty slots, backs, faces, flips and the placement overlay all consume these exact rects.
+private struct ReadingStageLayoutMetrics {
+    static let labelAreaHeight: CGFloat = 34
+    static let minimumCardWidth: CGFloat = 16
+
+    let cardSize: CGSize
+    let stackCenters: [CGPoint]
+
+    static func make(
+        points: [SpreadPoint],
+        canvasSize: CGSize,
+        maximumCardWidth: CGFloat,
+        cardAspectRatio: CGFloat,
+        minimumVisibleGap: CGFloat
+    ) -> Self {
+        guard !points.isEmpty, canvasSize.width > 0, canvasSize.height > 0 else {
+            return Self(cardSize: .zero, stackCenters: [])
+        }
+
+        let widthInsideCanvas = max(canvasSize.width - 8, minimumCardWidth)
+        let heightInsideCanvas = max(canvasSize.height - labelAreaHeight - 2, 1)
+        var cardWidth = min(
+            maximumCardWidth,
+            widthInsideCanvas,
+            heightInsideCanvas * cardAspectRatio
+        )
+        cardWidth = max(cardWidth, minimumCardWidth)
+
+        // Point coordinates may be custom and are clamped at the edges. Re-evaluate the actual
+        // post-clamp rects instead of assuming evenly spaced rows or columns.
+        while true {
+            let candidate = layout(
+                points: points,
+                canvasSize: canvasSize,
+                cardWidth: cardWidth,
+                cardAspectRatio: cardAspectRatio
+            )
+            if hasMinimumGap(
+                centers: candidate.centers,
+                cardSize: candidate.cardSize,
+                minimumVisibleGap: minimumVisibleGap
+            ) {
+                return Self(cardSize: candidate.cardSize, stackCenters: candidate.centers)
+            }
+            guard cardWidth > minimumCardWidth else { break }
+            cardWidth = max(cardWidth - 0.5, minimumCardWidth)
+        }
+
+        // Custom points can be valid yet too close for any legible card width. Keep the stored
+        // definition untouched and use one deterministic compact presentation grid as a visual
+        // fail-safe. Its stack rectangles fit inside the canvas and its card rectangles retain
+        // the same minimum gap contract as authored layouts.
+        let compact = compactGridLayout(
+            count: points.count,
+            canvasSize: canvasSize,
+            maximumCardWidth: maximumCardWidth,
+            cardAspectRatio: cardAspectRatio,
+            minimumVisibleGap: minimumVisibleGap
+        )
+        assert(
+            hasMinimumGap(
+                centers: compact.centers,
+                cardSize: compact.cardSize,
+                minimumVisibleGap: minimumVisibleGap
+            ),
+            "Compact reading geometry must preserve the visible card gap."
+        )
+        return Self(cardSize: compact.cardSize, stackCenters: compact.centers)
+    }
+
+    private static func compactGridLayout(
+        count: Int,
+        canvasSize: CGSize,
+        maximumCardWidth: CGFloat,
+        cardAspectRatio: CGFloat,
+        minimumVisibleGap: CGFloat
+    ) -> (cardSize: CGSize, centers: [CGPoint]) {
+        let safeCount = max(count, 1)
+        let outerInset: CGFloat = 4
+        let resolvedGap = minimumVisibleGap + 0.5
+        var bestColumns = 1
+        var bestRows = safeCount
+        var bestCardWidth: CGFloat = 0
+
+        // Evaluate every stable row-major grid and keep the one with the largest cards.
+        // Ascending columns provide a deterministic tie-break without consulting mutable state.
+        for columns in 1...safeCount {
+            let rows = Int(ceil(Double(safeCount) / Double(columns)))
+            let horizontalGaps = CGFloat(max(columns - 1, 0)) * resolvedGap
+            let verticalGaps = CGFloat(max(rows - 1, 0)) * resolvedGap
+            let horizontalFit = (
+                canvasSize.width - outerInset * 2 - horizontalGaps
+            ) / CGFloat(columns)
+            let verticalCardFit = (
+                canvasSize.height
+                    - 2
+                    - CGFloat(rows) * labelAreaHeight
+                    - verticalGaps
+            ) / CGFloat(rows)
+            let verticalFit = verticalCardFit * cardAspectRatio
+            let candidateWidth = min(maximumCardWidth, horizontalFit, verticalFit)
+
+            if candidateWidth > bestCardWidth {
+                bestColumns = columns
+                bestRows = rows
+                bestCardWidth = candidateWidth
+            }
+        }
+
+        // Valid app canvases always produce positive space. This lower bound keeps the function
+        // total for transient zero-adjacent GeometryReader measurements without an infinite loop.
+        let cardWidth = max(min(bestCardWidth, maximumCardWidth), 1)
+        let cardHeight = cardWidth / cardAspectRatio
+        let stackHeight = cardHeight + labelAreaHeight
+        let totalHeight = CGFloat(bestRows) * stackHeight
+            + CGFloat(max(bestRows - 1, 0)) * resolvedGap
+        let firstY = max((canvasSize.height - totalHeight) / 2, 0) + stackHeight / 2
+        var centers: [CGPoint] = []
+        centers.reserveCapacity(safeCount)
+
+        for row in 0..<bestRows {
+            let firstIndex = row * bestColumns
+            let itemsInRow = min(bestColumns, safeCount - firstIndex)
+            guard itemsInRow > 0 else { continue }
+            let rowWidth = CGFloat(itemsInRow) * cardWidth
+                + CGFloat(max(itemsInRow - 1, 0)) * resolvedGap
+            let firstX = (canvasSize.width - rowWidth) / 2 + cardWidth / 2
+            let y = firstY + CGFloat(row) * (stackHeight + resolvedGap)
+
+            for column in 0..<itemsInRow {
+                centers.append(
+                    CGPoint(
+                        x: firstX + CGFloat(column) * (cardWidth + resolvedGap),
+                        y: y
+                    )
+                )
+            }
+        }
+
+        return (CGSize(width: cardWidth, height: cardHeight), centers)
+    }
+
+    private static func layout(
+        points: [SpreadPoint],
+        canvasSize: CGSize,
+        cardWidth: CGFloat,
+        cardAspectRatio: CGFloat
+    ) -> (cardSize: CGSize, centers: [CGPoint]) {
+        let cardHeight = cardWidth / cardAspectRatio
+        let horizontalMargin = cardWidth / 2 + 4
+        let verticalMargin = cardHeight / 2 + labelAreaHeight / 2 + 1
+        let centers = points.map { point in
+            CGPoint(
+                x: clampedCoordinate(
+                    normalized: point.x,
+                    extent: canvasSize.width,
+                    margin: horizontalMargin
+                ),
+                y: clampedCoordinate(
+                    normalized: point.y,
+                    extent: canvasSize.height,
+                    margin: verticalMargin
+                )
+            )
+        }
+        return (CGSize(width: cardWidth, height: cardHeight), centers)
+    }
+
+    private static func hasMinimumGap(
+        centers: [CGPoint],
+        cardSize: CGSize,
+        minimumVisibleGap: CGFloat
+    ) -> Bool {
+        guard centers.count > 1 else { return true }
+        for firstIndex in centers.indices {
+            for secondIndex in centers.indices where secondIndex > firstIndex {
+                let horizontalGap = abs(centers[firstIndex].x - centers[secondIndex].x) - cardSize.width
+                let verticalGap = abs(centers[firstIndex].y - centers[secondIndex].y) - cardSize.height
+                if horizontalGap < minimumVisibleGap && verticalGap < minimumVisibleGap {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private static func clampedCoordinate(
+        normalized: Double,
+        extent: CGFloat,
+        margin: CGFloat
+    ) -> CGFloat {
+        min(max(CGFloat(normalized) * extent, margin), max(extent - margin, margin))
+    }
 }
 
 private extension Collection {

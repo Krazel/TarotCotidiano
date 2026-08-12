@@ -79,6 +79,17 @@ public actor DeckSessionCoordinator<
         return drawnCard
     }
 
+    @discardableResult
+    public func draw(
+        into positionIndex: Int,
+        at date: Date = Date()
+    ) throws -> DrawnCard {
+        var candidate = try activeSessionCopy()
+        let drawnCard = try engine.draw(into: positionIndex, from: &candidate, at: date)
+        try commit(candidate)
+        return drawnCard
+    }
+
     /// Persists a complete spread with one store write. Presentation may animate
     /// the returned cards sequentially, but restoration never observes a partial deal.
     @discardableResult

@@ -197,7 +197,9 @@ $expectedArticleIDs = @(
     'situation-challenge-guidance',
     'you-other-person-connection',
     'yes-or-no-with-context',
-    'freeform-reading'
+    'freeform-reading',
+    'six-card-guidance',
+    'create-custom-spread'
 )
 $expectedPresetIDs = @(
     $null,
@@ -209,16 +211,18 @@ $expectedPresetIDs = @(
     'situationChallengeAdvice',
     'relationship',
     'open',
-    'freeform'
+    'freeform',
+    'sixCardGuidance',
+    'customSpread'
 )
 $articles = @($guide.articles)
-Assert-True ($articles.Count -eq 10) 'beginner-guide must contain exactly ten articles.'
+Assert-True ($articles.Count -eq 12) 'beginner-guide must contain exactly twelve articles.'
 Assert-Text $guide.title 'beginner-guide.title'
 Assert-Text $guide.introduction 'beginner-guide.introduction'
 $userFacingText.Add([string]$guide.title)
 $userFacingText.Add([string]$guide.introduction)
 
-for ($index = 0; $index -lt 10; $index++) {
+for ($index = 0; $index -lt 12; $index++) {
     $article = $articles[$index]
     Assert-True ([string]$article.id -ceq $expectedArticleIDs[$index]) "Article ID/order mismatch at index $index."
     Assert-True ([int]$article.order -eq ($index + 1)) "Article order mismatch for $($article.id)."
@@ -286,6 +290,10 @@ foreach ($requiredFreeformCopy in @(
     Assert-True ($freeformText.Contains($requiredFreeformCopy)) "Freeform tutorial is missing required context: $requiredFreeformCopy"
 }
 
+$sixCardArticle = $articles | Where-Object { $_.id -eq 'six-card-guidance' }
+Assert-True ([string]$sixCardArticle.sourceCredit -ceq 'Katalin Jett Koda, Reading Tarot Cards: Divining Our Life Path, Llewellyn Worldwide (2015)') 'La atribuciÃ³n del tutorial de seis cartas no coincide con la fuente aprobada.'
+Assert-True ([string]$sixCardArticle.sourceURL -ceq 'https://www.llewellyn.com/journal/article/2506') 'El tutorial de seis cartas debe enlazar el artÃ­culo citado de Llewellyn.'
+
 $tutorialText = @(
     [string]$guide.introduction
     @($articles | ForEach-Object {
@@ -307,4 +315,4 @@ foreach ($value in $userFacingText) {
 Write-Output 'Localization validation passed.'
 Write-Output 'Card copy: 78/78 IDs, names and accessibility labels.'
 Write-Output 'Card meanings: 78/78 records, upright-only, four keywords each.'
-Write-Output 'Foundations: 4/4; practical tutorials: 6/6; six Read presets mapped, documented yes-or-no method included.'
+Write-Output 'Foundations: 4/4; practical tutorials: 8/8; seven built-in Read presets plus custom creation mapped, cited six-card method included.'

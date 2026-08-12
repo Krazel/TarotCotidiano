@@ -9,47 +9,72 @@ struct EmptyReadingPosition: View {
     let position: Int
     let total: Int
     let positionName: String?
+    let canPlace: Bool
+    let onPlace: () -> Void
 
-    init(position: Int, total: Int, positionName: String? = nil) {
+    init(
+        position: Int,
+        total: Int,
+        positionName: String? = nil,
+        canPlace: Bool = false,
+        onPlace: @escaping () -> Void = {}
+    ) {
         self.position = position
         self.total = total
         self.positionName = positionName
+        self.canPlace = canPlace
+        self.onPlace = onPlace
     }
 
     var body: some View {
+        Button(action: onPlace) {
+            emptyCardFrame
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
+        }
+        .buttonStyle(.plain)
+        .disabled(!canPlace)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+            positionName.map {
+                AppLocalization.format("%@, empty card position", $0)
+            } ?? AppLocalization.format("Empty card position %d of %d", position, total)
+        )
+        .accessibilityHint(
+            canPlace
+                ? AppLocalization.text("Places the next card here face down")
+                : AppLocalization.text("Shuffle the deck before placing a card")
+        )
+    }
+
+    private var emptyCardFrame: some View {
         RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius)
-            .fill(
-                LinearGradient(
-                    colors: [
-                        CeremonialObsidianTheme.cardSurface,
-                        Color.black.opacity(0.94)
-                    ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
-                )
+        .fill(
+            LinearGradient(
+                colors: [
+                    CeremonialObsidianTheme.cardSurface,
+                    Color.black.opacity(0.94)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
-            .overlay {
-                RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius)
-                    .stroke(CeremonialObsidianTheme.cardEdge, lineWidth: 3)
-            }
-            .overlay {
-                RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius - 3)
-                    .inset(by: 5)
-                    .stroke(CeremonialObsidianTheme.gold.opacity(0.88), lineWidth: 1)
-            }
-            .overlay {
-                CeremonialCornerMarks()
-                    .stroke(CeremonialObsidianTheme.brightGold.opacity(0.88), lineWidth: 1)
-                    .padding(8)
-            }
-            .shadow(color: .black.opacity(0.72), radius: 9, y: 6)
-            .aspectRatio(CeremonialObsidianTheme.cardAspectRatio, contentMode: .fit)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(
-                positionName.map {
-                    AppLocalization.format("%@, empty card position", $0)
-                } ?? AppLocalization.format("Empty card position %d of %d", position, total)
-            )
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius)
+                .stroke(CeremonialObsidianTheme.cardEdge, lineWidth: 3)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius - 3)
+                .inset(by: 5)
+                .stroke(CeremonialObsidianTheme.gold.opacity(canPlace ? 0.98 : 0.60), lineWidth: 1)
+        }
+        .overlay {
+            CeremonialCornerMarks()
+                .stroke(CeremonialObsidianTheme.brightGold.opacity(canPlace ? 0.98 : 0.60), lineWidth: 1)
+                .padding(8)
+        }
+        .shadow(color: .black.opacity(0.72), radius: 9, y: 6)
+        .aspectRatio(CeremonialObsidianTheme.cardAspectRatio, contentMode: .fit)
     }
 }
 
@@ -84,6 +109,7 @@ struct CeremonialCardBack: View {
             }
         }
         .aspectRatio(presentationAspectRatio, contentMode: .fit)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(spokenLabel)
@@ -120,6 +146,7 @@ struct FaceDownReadingPosition: View {
                     AppLocalization.format("%@, face down", $0)
                 } ?? AppLocalization.format("Card position %d of %d, face down", position, total)
             )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
         }
         .buttonStyle(.plain)

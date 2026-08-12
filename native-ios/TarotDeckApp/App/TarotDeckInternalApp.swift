@@ -29,6 +29,10 @@ struct TarotDeckInternalApp: App {
             .appendingPathComponent("reading-continuity.v1.json", isDirectory: false)
         let favoritesURL = storageDirectoryURL
             .appendingPathComponent("favorites.v1.json", isDirectory: false)
+        let customSpreadsURL = storageDirectoryURL
+            .appendingPathComponent("custom-spreads.v1.json", isDirectory: false)
+        let customSpreadDraftURL = storageDirectoryURL
+            .appendingPathComponent("custom-spread-draft.v1.json", isDirectory: false)
 
         let coordinator = DeckSessionCoordinator(
             shuffler: SystemDeckShuffler(),
@@ -45,7 +49,11 @@ struct TarotDeckInternalApp: App {
             wrappedValue: ReadFlowModel(
                 coordinator: coordinator,
                 knownCardIDs: knownCardIDs,
-                continuityURL: continuityURL
+                continuityURL: continuityURL,
+                customSpreadStore: JSONCustomSpreadStore(
+                    libraryURL: customSpreadsURL,
+                    draftURL: customSpreadDraftURL
+                )
             )
         )
         _favoriteStore = StateObject(
@@ -99,6 +107,10 @@ struct TarotDeckInternalApp: App {
                         languageStore: languageStore,
                         favoriteStore: favoriteStore,
                         startReading: { presetID in
+                            if presetID == "customSpread" {
+                                readModel.requestCustomSpreadCreationFromLearn()
+                                return
+                            }
                             guard let preset = ReadingPreset(rawValue: presetID) else { return }
                             readModel.requestReadingFromLearn(preset)
                         }

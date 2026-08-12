@@ -33,14 +33,34 @@ public struct DeckEngine<Shuffler: DeckShuffling>: Sendable {
         from session: inout DeckSession,
         at date: Date = Date()
     ) throws -> DrawnCard {
+        let occupiedPositions = Set(session.drawnCards.map(\.positionIndex))
+        var nextOpenPosition = 0
+        while occupiedPositions.contains(nextOpenPosition) {
+            nextOpenPosition += 1
+        }
+        return try draw(into: nextOpenPosition, from: &session, at: date)
+    }
+
+    @discardableResult
+    public func draw(
+        into positionIndex: Int,
+        from session: inout DeckSession,
+        at date: Date = Date()
+    ) throws -> DrawnCard {
         try session.validate()
+        guard positionIndex >= 0 else {
+            throw DeckEngineError.invalidPositionIndex(positionIndex)
+        }
+        guard session.drawnCard(atPosition: positionIndex) == nil else {
+            throw DeckEngineError.positionAlreadyOccupied(positionIndex)
+        }
         guard !session.isExhausted else {
             throw DeckEngineError.deckExhausted
         }
 
         var candidate = session
         let cardID = candidate.shuffledCardIDs[candidate.nextDrawIndex]
-        let drawnCard = DrawnCard(id: cardID)
+        let drawnCard = DrawnCard(id: cardID, positionIndex: positionIndex)
         candidate.drawnCards.append(drawnCard)
         candidate.nextDrawIndex += 1
         candidate.updatedAt = normalizedUpdateDate(date, for: candidate)
@@ -166,5 +186,7 @@ public enum DeckEngineError: Error, Equatable, Sendable {
     case deckExhausted
     case invalidDealCount(Int)
     case insufficientCardsForDeal(requested: Int, remaining: Int)
+    case invalidPositionIndex(Int)
+    case positionAlreadyOccupied(Int)
     case cardHasNotBeenDrawn(TarotCardID)
 }

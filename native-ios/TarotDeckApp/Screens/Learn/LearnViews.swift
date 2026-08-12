@@ -156,7 +156,7 @@ private struct TutorialsPortalRow: View {
                 .shadow(color: CeremonialObsidianTheme.brightGold.opacity(0.22), radius: 10)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityHint("Opens six reading tutorials")
+        .accessibilityHint("Opens seven reading tutorials")
     }
 }
 
@@ -257,6 +257,8 @@ private struct TutorialMethodRow: View {
         case "relationship": return "person.2"
         case "open": return "arrow.left.arrow.right"
         case "freeform": return "rectangle.on.rectangle"
+        case "sixCardGuidance": return "rectangle.grid.3x2"
+        case "customSpread": return "rectangle.stack.badge.plus"
         default: return "sparkles"
         }
     }
@@ -287,12 +289,34 @@ struct LearnArticleView: View {
                         articleSection(number: index + 1, section: section)
                     }
 
+                    if let sourceCredit = article.sourceCredit {
+                        Label(sourceCredit, systemImage: "book.closed")
+                            .font(.footnote)
+                            .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                            .multilineTextAlignment(.leading)
+                        .accessibilityLabel(AppLocalization.format("Source: %@", sourceCredit))
+                    }
+
+                    if let sourceURL = article.sourceURL,
+                       let destination = URL(string: sourceURL) {
+                        Link(destination: destination) {
+                            Label("Visit Source", systemImage: "arrow.up.right.square")
+                        }
+                        .font(.footnote.weight(.semibold))
+                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                    }
+
                     if let readingPresetID = article.readingPresetID,
                        returnToReading == nil {
                         Button {
                             startReading(readingPresetID)
                         } label: {
-                            Label("Try This Reading", systemImage: "chevron.right")
+                            Label(
+                                AppLocalization.text(
+                                    readingPresetID == "customSpread" ? "Create a Spread" : "Try This Reading"
+                                ),
+                                systemImage: "chevron.right"
+                            )
                                 .labelStyle(.titleAndIcon)
                         }
                         .buttonStyle(CeremonialPrimaryButtonStyle())
@@ -352,7 +376,10 @@ struct LearnArticleView: View {
     }
 
     private var tutorialNavigation: some View {
-        HStack(spacing: 14) {
+        LazyVGrid(
+            columns: Array(repeating: GridItem(.flexible(), spacing: 14), count: 2),
+            spacing: 14
+        ) {
             tutorialNavigationButton(
                 article: previousTutorial,
                 title: "Previous Tutorial",
@@ -394,7 +421,13 @@ struct LearnArticleView: View {
     }
 
     private func readingIllustration(labels: [String]) -> some View {
-        HStack(spacing: 14) {
+        LazyVGrid(
+            columns: Array(
+                repeating: GridItem(.flexible(), spacing: 14),
+                count: min(labels.count, 3)
+            ),
+            spacing: 14
+        ) {
             ForEach(Array(labels.enumerated()), id: \.offset) { index, label in
                 VStack(spacing: 8) {
                     CeremonialCardBack(
@@ -434,6 +467,12 @@ struct LearnArticleView: View {
             return (0..<3).map { ThreeCardSpread.open.positionTitle(at: $0) }
         case "freeform":
             return (0..<3).map { ThreeCardSpread.freeform.positionTitle(at: $0) }
+        case "sixCardGuidance":
+            return ReadingPreset.sixCardGuidance.builtInSnapshot.positions
+                .sorted { $0.order < $1.order }
+                .map { AppLocalization.text($0.label) }
+        case "customSpread":
+            return (1...6).map { AppLocalization.format("Card %d", $0) }
         default:
             return []
         }

@@ -1,17 +1,17 @@
 # Tarot Deck — Ceremonial Motion Specification
 
-Status: approved automatically under A-021/A-052
+Status: approved automatically under A-021/A-054
 Date: 2026-08-12
 Target: iPhone, iOS 16+
 
 ## Governing reference
 
-- Storyboard: `design/tarot-deck/reading-table-repeatable-shuffle-motion-storyboard-v3-a-ceremonial-obsidian.png`
-- Reference ID: V-089
+- Storyboard: `design/tarot-deck/reading-table-manual-placement-motion-storyboard-v4-a-ceremonial-obsidian.png`
+- Reference ID: V-100
 - Canvas: 1672×941
-- SHA-256: `6E8FB19E641A6747F68696529B0E378C38FFCDB88AFE4281469DBAC7EE902544`
-- Sequence: `rest → press → split/cut → interleave → riffle → square`, followed by explicit Deal and independent flips.
-- V-089 supersedes V-048. V-048 and V-041 remain historical and are not deleted.
+- SHA-256: `9286DB57DAFA170C87376634289BC5F311F108CFC3F9531A5B2164067DEA25B0`
+- Sequence: `rest → press → cut with tracked old top → insert old top under packet → interleave → riffle with incoming top → square/new top`, followed by one placement per empty-slot tap and independent flips.
+- V-100 supersedes V-089. V-089, V-048 and V-041 remain historical and are not deleted.
 
 ## Character
 
@@ -23,15 +23,15 @@ Do not add particles, magical trails, ambient loops, random wobble, elastic over
 
 1. Press feedback may acknowledge contact immediately.
 2. Split, interleave, riffle and square begin only after a fresh 78-card order persists.
-3. Every additional deck tap before Deal commits another complete shuffle and replays the same short choreography.
-4. Deal begins only after the complete one- or three-card layout persists atomically and all destination slots are reserved.
-5. Deal may present those already-persisted cards sequentially, but restoration never observes a partial logical layout.
+3. Every additional deck tap before the first placement commits another complete shuffle and replays the same short choreography.
+4. Tapping an empty position commits exactly the next card plus that position in one atomic session save before presentation begins.
+5. Restoration may observe a valid partial layout and restores each card in its chosen position without replaying presentation.
 6. Flip or conceal begins only after the new face state persists.
 7. Meaning cannot open until reveal persistence succeeds.
 8. A failed durable action produces no success motion or success haptic and leaves the previous durable state intact.
 9. Presentation state never writes, rolls back, reorders, draws or reveals a card.
 
-Restoration establishes the latest durable state as the visual baseline. It never replays shuffle, Deal, flip or haptics.
+Restoration establishes the latest durable state as the visual baseline. It never replays shuffle, placement, flip or haptics.
 
 ## Timing
 
@@ -43,29 +43,29 @@ Restoration establishes the latest durable state as the visual baseline. It neve
 | Interleave | 220 ms ease-in-out toward the common anchor | Omitted |
 | Riffle | 210 ms timing curve `(0.30, 0.00, 0.20, 1.00)` with small opposing rotations | Omitted |
 | Square / settle | 190 ms restrained settle to the exact rest frame | 150 ms opacity pulse |
-| Deal | 310 ms per position along a shallow curved path | 120 ms cross-fade per destination |
+| Place next card | 310 ms to the tapped position along a shallow curved path | 120 ms cross-fade at the destination |
 | Flip / conceal | 320 ms two-surface vertical-axis turn | 150 ms cross-fade |
 | Meaning sheet | Native iOS sheet motion | Native iOS behavior |
 
-There is no pause between shuffle phases. Deal and flip remain separate user actions.
+There is no pause between shuffle phases. Placement and flip remain separate user actions.
 
 ## Controls and layout
 
-- Before the first valid shuffle, the deck is active and `Deal / Repartir` is disabled.
-- After a valid shuffle and while zero cards are dealt, the deck stays active for unlimited reshuffles and Deal becomes enabled.
-- Deal commits exactly the selected layout and then disables both shuffle and Deal immediately.
-- After Deal, the deck remains absent for the rest of that reading. Reset is the only quick restart.
+- Before the first valid shuffle, the deck is active and empty positions do not place cards.
+- After a valid shuffle and while zero cards are placed, the deck stays active for reshuffles and every empty position becomes actionable.
+- The first successful placement disables reshuffle. The remaining deck stays as a static source until the final position is filled.
+- After the final placement, the deck remains absent for the rest of that reading. Reset is the only quick restart.
 - Press and decorative packets live inside the deck’s fixed outer frame and are hidden from accessibility.
-- The deck, every slot and every deal overlay use stable anchors in the same coordinate space.
+- The deck, every slot and every placement overlay use stable anchors in the same coordinate space.
 - Empty, face-down and face-up forms of one slot share identical final bounds and center.
 - Ready, shuffled and complete references V-082–V-087 share the same stable table geometry.
 - Dynamic Type accessibility sizes may use the approved scrollable composition; normal portrait and landscape must not scroll or jump.
 
-## Deal privacy
+## Placement privacy
 
 - The animated object is always a generic card back.
 - It must not load, label, log or expose the card identity before the durable reveal.
-- The destination slot stays reserved at full size during Deal.
+- The tapped destination slot stays reserved at full size during placement.
 - At landing, overlay and destination exchange visibility in one frame without flash or duplicate edge.
 - A source snapshot may remain until the final landing, but removing it cannot collapse or recenter the table.
 
@@ -80,7 +80,7 @@ There is no pause between shuffle phases. Deal and flip remain separate user act
 ## Haptics
 
 - Shuffle: one soft impact after square/settle.
-- Deal: one medium impact after each presented card lands.
+- Placement: one medium impact after the card lands in the chosen position.
 - Reveal: one light impact after the face is fully visible.
 - Conceal: one soft impact after the back is fully visible.
 - Failed, restored, cancelled or background-completed actions produce no success haptic.
@@ -109,13 +109,13 @@ Test One Card and all five Three Cards styles in portrait and landscape on iOS 1
 
 The motion passes only when:
 
-1. Ten consecutive shuffle/reshuffle, Deal and flip sequences finish without hitch, flash, duplicate edge or stranded overlay.
+1. Ten consecutive shuffle/reshuffle, position-placement and flip sequences finish without hitch, flash, duplicate edge or stranded overlay.
 2. Header, labels, unaffected slots and controls remain pixel-stable.
 3. The viewport does not scroll, bounce or change height at normal text sizes.
-4. Deal starts at the visible deck anchor and lands exactly in each reserved slot.
+4. Placement starts at the visible deck anchor and lands exactly in the tapped slot.
 5. Flip never exposes mirrored or premature front artwork.
 6. Success haptics occur exactly once after commit and landing.
 7. Backgrounding and rotation return to the correct committed rest state without replay.
-8. Three repeated shuffles produce valid complete orders and Deal uses the latest.
-9. After Deal, neither visible UI nor VoiceOver exposes a deck or another Deal action.
+8. Three repeated shuffles produce valid complete orders and the first position tap uses the latest.
+9. After the last placement, neither visible UI nor VoiceOver exposes a deck or Deal action.
 10. No behavior depends on network access, ProMotion or a third-party runtime.

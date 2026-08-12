@@ -20,7 +20,7 @@ enum CeremonialMotion {
         1.00,
         duration: shuffleSettleDuration
     )
-    static let deal = Animation.timingCurve(0.20, 0.72, 0.18, 1.00, duration: 0.38)
+    static let placement = Animation.timingCurve(0.20, 0.72, 0.18, 1.00, duration: 0.38)
     static let reveal = Animation.easeInOut(duration: 0.32)
     static let conceal = Animation.easeInOut(duration: 0.32)
     static let reduced = Animation.easeOut(duration: 0.15)
@@ -29,7 +29,7 @@ enum CeremonialMotion {
 /// Interpolates the entire source-to-slot route, including its restrained perpendicular arc.
 /// Computing the route inside `effectValue` ensures SwiftUI samples the curve for every frame
 /// instead of merely interpolating between two precomputed positions.
-struct CeremonialDealGeometryEffect: GeometryEffect {
+struct CeremonialPlacementGeometryEffect: GeometryEffect {
     var progress: CGFloat
     let start: CGPoint
     let end: CGPoint
@@ -155,12 +155,16 @@ enum CeremonialHaptics {
 /// A tactile split, interleave, riffle and square treatment for a face-down deck.
 struct CeremonialShufflingDeck: View {
     let phase: Int
+    let generation: Int
     let reduceMotion: Bool
     let spokenLabel: String
 
     var body: some View {
         ZStack {
             if !reduceMotion {
+                settledStack
+                    .opacity(phase == 0 || phase == 1 || phase == 5 ? 1 : 0)
+
                 ForEach(0..<3, id: \.self) { layer in
                     CeremonialCardBack(spokenLabel: "")
                         .offset(
@@ -180,17 +184,47 @@ struct CeremonialShufflingDeck: View {
                         .opacity(splitOpacity)
                         .accessibilityHidden(true)
                 }
+
+                // The old top card stays visually traceable: it leaves with the
+                // left packet, sinks into the interleave, and never snaps back on top.
+                CeremonialCardBack(spokenLabel: "")
+                    .offset(x: outgoingTopX, y: outgoingTopY)
+                    .rotationEffect(.degrees(outgoingTopRotation))
+                    .opacity(outgoingTopOpacity)
+                    .zIndex(outgoingTopZIndex)
+                    .accessibilityHidden(true)
+
+                // A different layer crosses from the right packet and visibly
+                // finishes above the squared deck.
+                CeremonialCardBack(spokenLabel: "")
+                    .offset(x: incomingTopX, y: incomingTopY)
+                    .rotationEffect(.degrees(incomingTopRotation))
+                    .opacity(incomingTopOpacity)
+                    .zIndex(8)
+                    .accessibilityHidden(true)
             }
 
-            CeremonialCardBack(spokenLabel: "")
-                .scaleEffect(phase == 1 ? 0.965 : (phase == 5 ? 1.012 : 1))
-                .offset(y: phase == 1 ? 3 : 0)
-                .opacity(!reduceMotion && (2...4).contains(phase) ? 0 : 1)
-                .opacity(reduceMotion && phase != 0 ? 0.72 : 1)
-                .accessibilityHidden(true)
+            if reduceMotion {
+                settledStack
+                    .opacity(phase == 0 ? 1 : 0.66)
+                    .id("reduced-top-\(generation)")
+            }
         }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(spokenLabel)
+    }
+
+    private var settledStack: some View {
+        ZStack {
+            ForEach(0..<3, id: \.self) { layer in
+                CeremonialCardBack(spokenLabel: "")
+                    .offset(y: CGFloat(2 - layer) * 1.8)
+                    .accessibilityHidden(true)
+            }
+        }
+        .scaleEffect(phase == 1 ? 0.965 : (phase == 5 ? 1.012 : 1))
+        .offset(y: phase == 1 ? 3 : 0)
+        .id("settled-top-\(generation)")
     }
 
     private var splitOpacity: Double {
@@ -235,5 +269,75 @@ struct CeremonialShufflingDeck: View {
         case 4: return -1.2
         default: return 0
         }
+    }
+
+    private var outgoingTopX: CGFloat {
+        switch phase {
+        case 0, 1: return 0
+        case 2: return -20
+        case 3: return -7
+        case 4: return -1
+        default: return 0
+        }
+    }
+
+    private var outgoingTopY: CGFloat {
+        switch phase {
+        case 1: return 3
+        case 2: return -2
+        case 3: return 7
+        case 4: return 13
+        default: return 0
+        }
+    }
+
+    private var outgoingTopRotation: Double {
+        switch phase {
+        case 2: return -3.2
+        case 3: return 5.4
+        case 4: return 1.8
+        default: return 0
+        }
+    }
+
+    private var outgoingTopOpacity: Double {
+        switch phase {
+        case 0...3: return 1
+        case 4: return 0.18
+        default: return 0
+        }
+    }
+
+    private var outgoingTopZIndex: Double {
+        phase <= 2 ? 7 : 1
+    }
+
+    private var incomingTopX: CGFloat {
+        switch phase {
+        case 3: return 13
+        case 4: return 4
+        default: return 0
+        }
+    }
+
+    private var incomingTopY: CGFloat {
+        switch phase {
+        case 3: return -5
+        case 4: return -2
+        default: return 0
+        }
+    }
+
+    private var incomingTopRotation: Double {
+        switch phase {
+        case 3: return -4.8
+        case 4: return -1.5
+        case 5: return 0.6
+        default: return 0
+        }
+    }
+
+    private var incomingTopOpacity: Double {
+        (3...5).contains(phase) ? 1 : 0
     }
 }

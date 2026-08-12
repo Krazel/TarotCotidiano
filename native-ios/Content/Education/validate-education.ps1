@@ -185,7 +185,9 @@ if ($null -ne $guide) {
         @{ id = 'situation-challenge-guidance'; title = 'Situation, Challenge, Guidance'; preset = 'situationChallengeAdvice' },
         @{ id = 'you-other-person-connection'; title = 'You, Other Person, Connection'; preset = 'relationship' },
         @{ id = 'yes-or-no-with-context'; title = 'For, Against, and Destiny'; preset = 'open' },
-        @{ id = 'freeform-reading'; title = 'Freeform'; preset = 'freeform' }
+        @{ id = 'freeform-reading'; title = 'Freeform'; preset = 'freeform' },
+        @{ id = 'six-card-guidance'; title = 'Six-Card Guidance'; preset = 'sixCardGuidance' },
+        @{ id = 'create-custom-spread'; title = 'Create Your Own Spread'; preset = 'customSpread' }
     )
 
     $rootFields = @($guide.PSObject.Properties.Name)
@@ -203,11 +205,11 @@ if ($null -ne $guide) {
         $article = $guide.articles[$index]
         $expected = $expectedArticles[$index]
         $label = "guide.articles[$index]"
-        $allowedArticleFields = @('id', 'order', 'title', 'summary', 'readingPresetID', 'sections')
+        $allowedArticleFields = @('id', 'order', 'title', 'summary', 'readingPresetID', 'sections', 'sourceCredit', 'sourceURL')
         foreach ($field in @($article.PSObject.Properties.Name)) {
             if ($field -notin $allowedArticleFields) { Add-ValidationError "$label has unexpected field '$field'." }
         }
-        foreach ($field in $allowedArticleFields) {
+        foreach ($field in @('id', 'order', 'title', 'summary', 'readingPresetID', 'sections')) {
             if ($field -notin @($article.PSObject.Properties.Name)) { Add-ValidationError "$label is missing '$field'." }
         }
 
@@ -306,6 +308,20 @@ if ($null -ne $guide) {
             Add-ValidationError "Freeform tutorial is missing required context: $requiredFreeformCopy"
         }
     }
+
+    $sixCardArticle = @($guide.articles | Where-Object id -CEQ 'six-card-guidance')[0]
+    if ($sixCardArticle.sourceCredit -cne 'Katalin Jett Koda, Reading Tarot Cards: Divining Our Life Path, Llewellyn Worldwide (2015)') {
+        Add-ValidationError 'Six-card tutorial source credit is missing or changed.'
+    }
+    if ($sixCardArticle.sourceURL -cne 'https://www.llewellyn.com/journal/article/2506') {
+        Add-ValidationError 'Six-card tutorial must link to the cited Llewellyn article.'
+    }
+    $sixCardText = @($sixCardArticle.sections | ForEach-Object { [string]$_.heading; [string]$_.body }) -join ' '
+    foreach ($requiredSixCardCopy in @('Self', 'Support', 'Issue', 'Deeper Issue', 'Action', 'Possible Outcome')) {
+        if (-not $sixCardText.Contains($requiredSixCardCopy)) {
+            Add-ValidationError "Six-card tutorial is missing position: $requiredSixCardCopy"
+        }
+    }
 }
 
 if ($errors.Count -gt 0) {
@@ -315,5 +331,5 @@ if ($errors.Count -gt 0) {
 
 Write-Output 'Education content validation passed.'
 Write-Output 'Canonical card IDs and names: 78/78 exact and ordered.'
-Write-Output 'Upright meanings and unique artwork descriptions: 78/78; foundations: 4/4; practical tutorials: 6/6; language: en.'
+Write-Output 'Upright meanings and unique artwork descriptions: 78/78; foundations: 4/4; practical tutorials: 8/8; language: en.'
 exit 0

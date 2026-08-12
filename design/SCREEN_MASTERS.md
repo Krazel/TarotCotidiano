@@ -51,6 +51,42 @@ All paths below are repository-relative. Every listed SHA-256 and canvas size wa
 | M-S07-FAVORITES-EMPTY-P | `S07.3 Cards Library` — Favorites empty | V-043, A-021/A-030 | `design/tarot-deck/cards-library-favorites-empty-a-ceremonial-obsidian.png` | 854×1840 | Portrait | English | 2026-08-10 | `62AED89CC28393E7FD2BC9B06F99240D576EA61FC90F39C8511DBDBA11FFCA87` |
 | M-S09-SETTINGS-P | `S09.1 Settings` — language selector | V-045, A-021/A-031 | `design/tarot-deck/settings-language-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-10 | `559D2E73882A723A24C55EBFF038CEEA9452B1CB62BD4A1C9E4ABF8E20518615` |
 
+## A-053 approved masters (implementation pending build comparison)
+
+| Master | Screen / state | Source approval | Path | Canvas | Orientation | Language | Approval date | SHA-256 |
+|---|---|---|---|---:|---|---|---|---|
+| M-S01-KIND4-P | `S01.2` four reading kinds; Three Cards clean-install default; exact Six Cards glyph | V-107, A-021/A-056 | `design/tarot-deck/read-home-reading-kind-selector-three-default-six-corrected-v3-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `439C1AA94EFD6E9501BDD44ABA03178CFA6984DF7FA38240A176917F802DC701` |
+| M-S03-SIX-READY-P | `S03.7` Six-Card Guidance ready | V-091, A-021/A-053 | `design/tarot-deck/reading-table-six-card-guidance-ready-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `043F4821259B78AAD194267A23B4F40418973DC33E08CE10F1A377366AEFD7F1` |
+| M-S01-CUSTOM-LIBRARY-P | `S01.4` custom library populated | V-092, A-021/A-053 | `design/tarot-deck/custom-spreads-library-populated-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `98190E49BF9635DDEA9C78C1E74B7E96CAA6D65C735E631DD2F511844F52ABA3` |
+| M-S01-CUSTOM-EDITOR-P | `S01.5` custom editor with six slots | V-093, A-021/A-053 | `design/tarot-deck/custom-spread-editor-six-cards-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `AA6407E22700752161F833F3B622C64206C24F498F97AD8718A0681F57BE6B5C` |
+| M-S01-CUSTOM-EMPTY-P | `S01.4` custom library empty | V-094, A-021/A-053 | `design/tarot-deck/custom-spreads-library-empty-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `5415923F62C77CE62785D8E4DDFCBA0D6519720FED7BEE44759E844B50FA0FF0` |
+| M-S01-CUSTOM-ARRANGE-P | `S01.5` arrange visual sheet | V-095, A-021/A-053 | `design/tarot-deck/custom-spread-editor-arrange-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `67B73CF00C8B4C2501AD798129462570D31316AF4CCE743639237846628DD248` |
+| M-S03-CUSTOM7-READY-L | `S03.8` custom seven-card table ready | V-096, A-021/A-053 | `design/tarot-deck/reading-table-custom-seven-card-landscape-v1-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-12 | `7B5626E2FCB80452010FC31B4875FB31F0185B25D731CF524473F5DCDBE76238` |
+
+## A-054 approved masters (implementation authorized)
+
+| Master ID | Screen/state | Approval | Path | Canvas | Orientation | Language | Date | SHA-256 |
+|---|---|---|---|---:|---|---|---|---|
+| M-S03-THREE-SHUFFLED-TAP-P | `S03` Three Cards shuffled, empty positions actionable | V-097, A-021/A-054 | `design/tarot-deck/reading-table-three-cards-shuffled-tap-position-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `1CEB2D510ABB6652EF60BEC0B9984E843F3DB8B632C088430E78167D9B3FDF0B` |
+| M-S03-THREE-PARTIAL-P | `S03` Three Cards partial, center chosen first | V-098, A-021/A-054 | `design/tarot-deck/reading-table-three-cards-partial-middle-first-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `A7F3B0604708E7858AD7864D2912B0436BFC0D5211436D22F35CB63A333D1481` |
+| M-S03-THREE-PARTIAL-L | `S03` Three Cards partial, center chosen first | V-099, A-021/A-054 | `design/tarot-deck/reading-table-three-cards-partial-middle-first-landscape-v1-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-12 | `73BFC33AEC64E89D60932E5D4A30B59CDAFFBAD953380A56C970E7A6EADECF26` |
+| M-MOTION-MANUAL-DEAL-V4 | Shuffle top-card continuity and tap-position placement | V-100, A-021/A-054 | `design/tarot-deck/reading-table-manual-placement-motion-storyboard-v4-a-ceremonial-obsidian.png` | 1672×941 | Landscape storyboard | English motion labels | 2026-08-12 | `9286DB57DAFA170C87376634289BC5F311F108CFC3F9531A5B2164067DEA25B0` |
+| M-S03-SIX-PARTIAL-P | `S03` Six-Card Guidance partial, Action chosen first | V-101, A-021/A-054 | `design/tarot-deck/reading-table-six-card-partial-action-first-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `EE3D40472A08DD8878C403AE022C233879F1740C626230216337F7BB11B203D5` |
+| M-S03-CUSTOM7-PARTIAL-L | `S03` Custom seven-card partial | V-102, A-021/A-054 | `design/tarot-deck/reading-table-custom-seven-partial-v1-landscape-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-12 | `805ED5688AEF2E5C5841DEEF8539C4FBF8D59226E6BC3825F2224EFAFDA9878E` |
+
+For A-054, V-097–V-102 govern shuffled and partial placement states. Earlier Deal-based V-084/V-085/V-089/V-091/V-096 remain historical and are not implementation sources. Complete no-deck masters V-086/V-087 remain current.
+
+## A-055 approved masters (implementation authorized)
+
+| Master ID | Screen/state | Approval | Path | Canvas | Orientation | Language | Date | SHA-256 |
+|---|---|---|---|---:|---|---|---|---|
+| M-S03-THREE-SHUFFLED-COMPACT-L | Three Cards shuffled, compact landscape | V-103, A-021/A-055 | `design/tarot-deck/reading-table-three-card-shuffled-compact-landscape-v1-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-12 | `0F8A809716E64A3B2EF6F177CE2FAFD676A8413F903C8EAF9F01F4960B69EB20` |
+| M-S03-THREE-PARTIAL-COMPACT-L | Three Cards partial, shared geometry | V-104, A-021/A-055 | `design/tarot-deck/reading-table-three-card-partial-compact-landscape-v1-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-12 | `245B43A48017D8DDBC7D1F2CEECF1FF6EC94F3B0D0058FF3AF3C99E4F79929D5` |
+| M-S03-THREE-COMPLETE-COMPACT-L | Three Cards complete face down, shared geometry | V-105, A-021/A-055 | `design/tarot-deck/reading-table-three-card-complete-compact-landscape-v1-spanish-a-ceremonial-obsidian.png` | 1844×853 | Landscape | Spanish; layout also governs English | 2026-08-12 | `8551828AD92F4661C73011147F66080596B818A2DF0EEFB334260B33363F05B8` |
+| M-S03-MULTI-ORIENTATION-HINT-P | Multi-card portrait orientation recommendation | V-106, A-021/A-055 | `design/tarot-deck/reading-table-three-card-portrait-orientation-hint-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout also governs English | 2026-08-12 | `1C3286E78D7E55FEDC6ADE3F9917B9793589739A33B3AAE9A2AC99FA4DB0C47A` |
+
+V-103–V-106 govern the compact landscape and portrait-hint corrections. All empty, face-down, face-up, flip and placement surfaces must fill one shared slot rectangle; three-card visible gaps remain at least 14 points throughout motion.
+
 ## Approved but not active in the current build
 
 | Reference | Planned screen / state | Status | Path | Canvas | Orientation | Language | Approval date | SHA-256 |
@@ -61,7 +97,7 @@ All paths below are repository-relative. Every listed SHA-256 and canvas size wa
 
 | Reference | Purpose | Status | Path | Canvas | Date | SHA-256 |
 |---|---|---|---|---:|---|---|
-| V-089 | Reading Table repeatable-shuffle storyboard and keyframes | `CURRENT SUPPORTING SPEC`; governs repeatable pre-deal motion with `design/tarot-deck/MOTION_SPEC.md`, but is not a complete app screen or store capture | `design/tarot-deck/reading-table-repeatable-shuffle-motion-storyboard-v3-a-ceremonial-obsidian.png` | 1672×941 | 2026-08-12 | `6E8FB19E641A6747F68696529B0E378C38FFCDB88AFE4281469DBAC7EE902544` |
+| V-100 | Reading Table tracked-top shuffle and tap-position storyboard | `CURRENT SUPPORTING SPEC`; governs shuffle continuity and one-card placement, but is not a complete app screen or store capture | `design/tarot-deck/reading-table-manual-placement-motion-storyboard-v4-a-ceremonial-obsidian.png` | 1672×941 | 2026-08-12 | `9286DB57DAFA170C87376634289BC5F311F108CFC3F9531A5B2164067DEA25B0` |
 
 ## Replacement ledger
 
@@ -80,10 +116,10 @@ The files below remain preserved, but none is current. A replacement can govern 
 | V-025 | Settings | Replaced by current V-045 with the internal language selector. |
 | V-026 | Support the App | Replaced by V-027; V-027 remains approved but inactive. |
 | V-028 | Active-reading Home | Retired by A-033; restoration returns directly to the table and Home uses V-058–V-063. |
-| V-029–V-038 | Earlier One Card ready, shuffled, face-down and revealed states | Their card scale remains reference where applicable, but A-052 replaces draw/reappearing-deck behavior with shuffle/Deal/reset. |
+| V-029–V-038 | Earlier One Card ready, shuffled, face-down and revealed states | Their card scale remains reference where applicable, but A-054 replaces draw/Deal behavior with shuffle, tap-position placement and reset. |
 | V-039 | Separate Three Cards spread choice | Retired by A-033; preset selection now uses current V-058–V-063. |
-| V-040, V-052/V-053, V-056/V-057, V-068/V-069 | Complete tables with quick-restart deck | Replaced behaviorally by V-086/V-087 and A-052: after Deal the deck never reappears; reset is the only quick restart. |
-| V-041, V-048 | Earlier Reading Table motion storyboards | Replaced by current V-089 and `design/tarot-deck/MOTION_SPEC.md`. |
+| V-040, V-052/V-053, V-056/V-057, V-068/V-069 | Complete tables with quick-restart deck | Replaced behaviorally by V-086/V-087 and A-054: after the final placement the deck never reappears; reset is the only quick restart. |
+| V-041, V-048, V-089 | Earlier Reading Table motion storyboards | Replaced by current V-100 and `design/tarot-deck/MOTION_SPEC.md`. |
 | V-044 | Read Home compact deck CTA | Replaced by V-054 and then current V-058/V-061. |
 | V-049, V-050 | Home dropdown, portrait closed/open | Rejected as a vertical text selector; later V-054 was also replaced by current V-058–V-060. |
 | V-051 | Home dropdown, landscape | Replaced by V-055 and then current V-061–V-063. |

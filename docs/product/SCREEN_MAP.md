@@ -31,7 +31,7 @@ App launch
         │   │   └── Tap hero deck → selected Reading Table, ready to shuffle
         │   ├── Reading Table
         │       ├── Tap deck to shuffle
-        │       ├── Deal the complete layout face down
+        │       ├── Tap any empty position to place the next card
         │       ├── Reveal independently
         │       ├── Revealed card → Card Meaning → exact table state
         │       ├── Small reset → same preset, ready to shuffle
@@ -109,15 +109,15 @@ Selector options:
 
 The Situation/Challenge/Advice tile and tutorial explain the question answered: what is happening now, what challenge must be faced, and what response the cards advise next. Spanish: `Qué está pasando, qué reto debes afrontar y qué te aconsejan las cartas después.`
 
-The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where two illustrated choices select `One Card` or `Three Cards`. Choosing `Three Cards` opens `S01.3`, where five illustrated tiles select timeline, situation/challenge/advice, relationship, yes/no, or Freeform. Selecting a tile changes and locally persists the prospective Home preset, then closes the chooser; tapping the hero deck creates that reading and opens `S03.1` directly. A separate information button opens the matching tutorial without selecting, persisting, or starting that preset. The saved preset returns after relaunch when no active session exists.
+The presets do not occupy Home permanently. Tapping the compact selector opens `S01.2`, where four illustrated choices appear in the stable order One Card, Three Cards, Six Cards, and Custom. Choosing Three Cards opens `S01.3`, where five illustrated tiles select timeline, situation/challenge/advice, relationship, yes/no, or Freeform. A clean installation highlights Three Cards/Past·Present·Possible Direction while leaving Three Cards second in the visual order. Selecting any built-in or custom choice locally persists it; that choice returns after relaunch whenever no active session exists. A restored active reading takes precedence. A separate information button opens the matching tutorial without selecting, persisting, or starting that preset.
 
 Composition invariants from V-058/V-061: the first viewport does not scroll; title, small selector, dominant hero deck, cue, and tab bar fit without a long explanatory block; the gear is a true overlay and reserves no height; and no separate primary button duplicates the deck action. Opening or closing the chooser overlays Home and does not move the underlying deck.
 
 Not present: card of the day, date, zodiac sign, generated interpretation, lesson promotion, account prompt, support promotion, notification prompt, or feed.
 
-### S01.2 — Reading count selector
+### S01.2 — Reading kind selector
 
-An image-led panel presents exactly two direct choices: `One Card` and `Three Cards`. The current family receives the gold selected treatment. Choosing `One Card` commits that prospective preset and closes the panel. Choosing `Three Cards` opens `S01.3`. Each family has a separate 44-point information action: One Card opens its tutorial; Three Cards opens the Tutorials index. Information never commits a selection. Close or outside dismissal preserves the prior preset. V-074 portrait and V-075 landscape govern the state.
+An image-led panel presents exactly four direct choices in this order: `One Card`, `Three Cards`, `Six Cards`, and `Custom`. The current family receives the gold selected treatment; on first launch only, Three Cards is current by default. Choosing One Card or Six Cards commits that preset and closes the panel; choosing Three Cards opens `S01.3`; choosing Custom opens the local library. Each family has a separate 44-point information action. Information never commits a selection. Close or outside dismissal preserves the prior preset. V-107 governs portrait: its Six Cards glyph contains exactly six miniatures in a 2×3 arrangement and replaces the erroneous seven-card V-090.
 
 ### S01.3 — Three-card style selector
 
@@ -131,14 +131,14 @@ The former active-reading Home, `Start a new reading?` confirmation, `Layout Cho
 
 ### Goal
 
-Represent `shuffle/reshuffle → deal complete layout → turn over → inspect → read → reset or leave` without generating a conclusion.
+Represent `shuffle/reshuffle → tap positions to place cards → turn over → inspect → read → reset or leave` without generating a conclusion.
 
 ### Shared elements
 
 - Layout identity: `One Card` or `Three Cards`.
 - One neutral position, or three stable positions labelled from the selected spread. The Yes or No spread uses `For`, `Against`, and `Destiny`; the third shows what Destiny holds for the question.
-- Face-down deck only before Deal. It remains tappable to reshuffle while zero cards are dealt, then disappears for the rest of the reading.
-- Localized state copy explains the deck action; `Deal / Repartir` is the separate explicit transition from shuffling to the complete face-down layout.
+- Face-down deck remains visible while positions are empty. It is tappable to reshuffle only while zero cards are placed, becomes a static physical source after the first placement, and disappears when every position is filled.
+- Localized state copy explains that the deck shuffles and each empty position places the next card. There is no `Deal / Repartir` action.
 - A persistent information action opens the active preset tutorial without mutating the reading.
 - A small reset action with a 44-point accessible hit target, visually secondary to the deck.
 - Revealed card name; meaning remains behind an intentional tap.
@@ -147,30 +147,30 @@ Represent `shuffle/reshuffle → deal complete layout → turn over → inspect 
 ### S03.1 — Ready to shuffle
 
 - All positions are empty.
-- The deck is present as the primary shuffle control. `Deal / Repartir` is visible but disabled.
+- The deck is present as the primary shuffle control. Empty positions are visible but do not place cards until a valid shuffle exists.
 - Visible cue: **Tap the deck to shuffle** / **Toca el mazo para barajar**.
 - Accessible action name: **Shuffle Deck** / **Barajar mazo**.
 - There is no separate shuffle button.
 
-Transition: tap the deck → V-089 press, split/cut, interleave, riffle, and square sequence → durable shuffled state → `S03.2`.
+Transition: tap the deck → V-100 tracked-top press, cut, insertion, interleave, riffle, and square sequence → durable shuffled state → `S03.2`.
 
 Motion and haptics cannot become a blocking ritual. Reduce Motion receives an equivalent state change without ornamental movement.
 
-### S03.2 — Shuffled, ready to deal
+### S03.2 — Shuffled, positions ready
 
 - The deck is face down and ready.
 - Empty position count matches the chosen layout.
 - The same deck remains tappable to reshuffle all 78 cards as often as desired while zero cards are dealt.
-- Visible cue: **Tap again to shuffle, or deal when ready** / **Toca de nuevo para volver a barajar o reparte cuando quieras**.
-- `Deal / Repartir` is enabled and commits the complete layout face down.
+- Visible cue: **Tap the deck to shuffle again, or tap an empty position to place the next card** / **Toca el mazo para volver a barajar o toca una posición vacía para colocar la siguiente carta**.
+- Every empty position is a button. Tapping it atomically assigns the next card to that exact position.
 
-Transition: activate `Deal / Repartir` → complete layout persisted atomically → sequential deal presentation → complete face-down table.
+Transition: tap an empty position → card and position persisted together → one-card placement presentation → partial or complete face-down table.
 
-### S03.3 — Complete layout face down
+### S03.3 — Partial or complete layout face down
 
-- The next unique card occupies the next position and remains face down.
+- The next unique card occupies the position the user tapped and remains face down.
 - Tapping that card turns it over.
-- All selected positions are already occupied because Deal commits the complete layout atomically.
+- Other positions may remain empty and actionable; their visual order does not force deal order.
 - Previously drawn cards keep their independent face state.
 
 Transitions:
@@ -211,19 +211,19 @@ Transitions:
 - A face-down card's identity never appears in visible copy, VoiceOver, logs intended for the user, resume status, or navigation state.
 - Shuffle order remains stable after app restoration.
 - The user cannot reshuffle midway. Reset clears the current session and creates the same preset ready to shuffle; it never preserves prior drawn IDs.
-- The deck accepts one action only before dealing: shuffle or reshuffle. `Deal / Repartir` is disabled until the first valid shuffle and commits the complete layout. After Deal, neither the deck nor Deal remains actionable.
+- The deck shuffles or reshuffles only while zero cards are placed. After the first placement it remains a non-actionable visual source until the last slot is filled. No `Deal / Repartir` control exists.
 - Back clears the active reading without a confirmation. If durable clear fails, the user remains on the exact table state with recoverable error feedback.
 - Tapping a face-down card reveals it; tapping a revealed card opens its meaning. Both actions have explicit VoiceOver alternatives.
 - Leaving `Read` for Learn or Cards preserves logical state without replaying motion.
 
 ### Reading viewport and motion contract
 
-- V-082/V-083 govern the ready portrait/landscape states; V-084/V-085 govern shuffled/Deal. V-047 preserves the horizontal group and vertical slot anchor in the complete face-down state. V-086/V-087 govern the complete no-deck state, and V-089 supersedes V-048 for principal motion.
+- V-082/V-083 continue to inform the ready state without their obsolete Deal control. V-097 governs shuffled portrait; V-098/V-099 govern arbitrary partial placement; V-101 and V-102 prove six/custom density. V-047 preserves the complete group anchor, V-086/V-087 govern complete no-deck, and V-100 governs principal motion.
 - The outer viewport, header corridor, position frames, deck frame while present, and persistent actions stay fixed during press, cut, interleave, deal, and flip. Helper copy may crossfade in place; it must not insert or remove layout height.
-- Shuffle follows the current sequence `rest → press → split/cut → interleave → riffle → square/ready` and repeats on every pre-deal deck tap. Deal presents the already committed cards sequentially from the stable deck frame. Reveal uses a contained card flip without exposing identity before the logical reveal commits.
+- Shuffle follows `rest → press → cut with tracked old top → insert old top under packet → interleave → riffle with incoming top → square/new top` and repeats before the first placement. Tapping one empty slot presents one already committed card from the stable deck frame. Reveal uses a contained card flip without exposing identity before the logical reveal commits.
 - One input produces one state transition. Additional taps are ignored while the current transition is in flight.
 - Persistence commits the resulting logical state once; success haptics occur only after that durable commit. Backgrounding, restoration, tab switching, or rotation presents the stable result and never replays motion or haptics.
-- Reduce Motion replaces cut, interleave, deal, and flip with short in-place opacity/state changes while preserving the same order, privacy, and controls. VoiceOver receives the same logical actions and post-commit announcements without requiring a gesture-only path.
+- Reduce Motion replaces shuffle, placement, and flip with short in-place opacity/state changes while preserving the same order, privacy, and controls. VoiceOver receives the same logical actions and post-commit announcements without requiring a gesture-only path.
 
 ## S04 — Card Meaning from Reading
 
@@ -657,9 +657,9 @@ Result: Settings changes immediately to Spanish, the exact spread, order, drawn 
 
 ### M. Deck-led table motion without viewport jumps
 
-`Read empty` → choose a three-card preset inline → tap hero deck → tap table deck to shuffle or reshuffle → tap Deal once → reveal cards independently → reset when another reading is wanted
+`Read empty` → choose a three-card preset inline → tap hero deck → tap table deck to shuffle or reshuffle → tap empty positions in the desired order → reveal cards independently → reset when another reading is wanted
 
-Result: shuffle and Deal remain distinct; Deal creates one durable complete layout; motion stays inside fixed bounds; all three cards are centered with equal gaps; backgrounding or Reduce Motion yields the same logical state without replay.
+Result: shuffle and placement remain distinct; each tap creates one durable card-to-position assignment; motion stays inside fixed bounds; all three cards are centered with equal gaps; backgrounding or Reduce Motion yields the same logical state without replay.
 
 ## Visual-first implementation inventory
 
@@ -692,7 +692,7 @@ Additional registered references under A-021:
 22. `S03.6 One Card / The Hermit revealed` — V-035 portrait and V-036 landscape.
 23. `S02.2 Three-card spread choice / Spanish` — V-039, historical and superseded by V-049–V-051 under A-033.
 24. `S03 Three Cards / Past · Present · Future / large landscape / Spanish` — V-040, which supersedes the previous landscape proportions for the three-card table.
-25. `S03 Reading Table / repeatable physical shuffle storyboard V3` — V-089, which supersedes V-048 with press, split/cut, interleave, riffle, square, Deal, and flip inside a stable viewport.
+25. `S03 Reading Table / tracked-top shuffle and manual placement storyboard V4` — V-100, which supersedes V-089 with explicit old-top burial, a new top layer, and tap-position placement inside a stable viewport.
 26. `S08.2 Card Detail / favorite saved` — V-042.
 27. `S07.3 Cards / Favorites empty` — V-043.
 28. `S03.1 Three Cards / ready / deck tap`, portrait Spanish — V-046, which supersedes V-015 for portrait interaction; English uses the same composition.
@@ -700,7 +700,7 @@ Additional registered references under A-021:
 30. `S03.6 Three Cards / all revealed / no deck / contextual info`, portrait Spanish — V-086.
 31. `S03.6 Three Cards / all revealed / no deck / contextual info`, landscape Spanish — V-087.
 32. `S03 active reading / contextual tutorial`, portrait Spanish — V-088.
-33. `S03 Reading Table / repeatable physical shuffle motion V3` — V-089.
+33. `S03 Reading Table / repeatable physical shuffle motion V3` — V-089, historical and superseded by V-100.
 
 Still requiring a complete reference before final implementation: the remaining `S10` supporter/restore/unavailable variants and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement the approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized.
 
@@ -708,8 +708,47 @@ A shared card-reference component may serve S04 and S08 only after both navigati
 
 ## MVP completion gate
 
-The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/tutorial interaction conforms to V-080–V-089, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the foundation lessons and six reading tutorials are bundled with exact bilingual parity and six-preset mappings, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
+The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/Table/tutorial interaction conforms to V-080–V-102, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the foundation lessons and eight reading tutorials are bundled with exact bilingual parity, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
 
 Settings and support are complete at product-design level when S09/S10 references and states are registered, free access is invariant across every purchase state, equivalent levels and supporter acknowledgement are represented, Restore Purchases and renewal/cancellation disclosures are present, and Privacy, Terms, and Rate the App remain distinct destinations. Live StoreKit products, prices, contracts, tax/banking setup, builds, and purchase review require separate authority and do not block core completion.
 
 Publishing remains separately unauthorized.
+
+## A-053 screen extension — Six cards and Custom Spreads
+
+### S01.2 Reading kind selector
+
+- Four visual tiles, no text-only menu: One Card, Three Cards, Six Cards, Custom.
+- Every tile places information top-left and selection top-right. Three Cards still opens its style selector; Six Cards selects the built-in documented method; Custom opens the saved-spread library.
+- The tile order is stable, but a clean installation marks Three Cards. Subsequent launches mark the saved selection; an active restored reading remains authoritative.
+- The Six Cards tile must depict exactly six cards, never a generic three-card glyph or a seven-card fan.
+
+### S01.4 Custom spread library
+
+- Empty: explanation and Create New Spread.
+- Populated: saved spreads with miniature layout, name, card count, open action, and overflow actions Edit, Duplicate, Delete.
+- Maximum 50 saved spreads. Delete is confirmed. Duplicate receives a unique suggested name.
+
+### S01.5 Custom spread editor
+
+- Required name (1–40 graphemes), 1–12 slots, optional slot label (up to 32 graphemes), add/remove, drag, order controls, Undo, Arrange, Cancel, Save.
+- Arrange is a visual grid chooser: Automatic, One per row, Two per row, Three per row, Four per row. Incomplete final rows are centered.
+- Dragging is not the only control: VoiceOver offers move directions and move earlier/later. Save validates and commits once; failure preserves the draft.
+- Draft restoration is local. Cancel with unsaved changes uses a native confirmation.
+
+### S03.7 Six-Card Guidance table
+
+- Same shuffle/reshuffle, per-position placement, reveal, Meaning, info, reset and Back contract as existing readings.
+- Six cards are placed one at a time into user-chosen positions in a centered 2×3 layout. Positions: Self, Support, The issue, Deeper issue, Action, Possible outcome.
+- After the sixth placement the deck disappears. Reset prepares the same six-card method.
+
+### S03.8 Custom reading table
+
+- Uses the immutable snapshot captured when the reading starts: name, order, labels, and normalized portrait/landscape positions.
+- The table scales all slots to fit; 7–12 cards prefer landscape but remain usable in portrait. Each slot tap commits exactly one card and its chosen position atomically.
+- Editing or deleting the saved definition does not affect the active table. Info shows its position list and links to Create Your Own Spread; it never invents a method-specific tutorial.
+
+### S05/S06 tutorial additions
+
+- Six-Card Guidance: credited source, purpose, six positions, placement and reading sequence.
+- Create Your Own Spread: how to define a focused role per slot, choose order, arrange the board, and test the saved spread.

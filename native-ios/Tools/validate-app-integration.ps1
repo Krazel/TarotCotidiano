@@ -87,15 +87,15 @@ $spanishGuide = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "Localizat
 
 if ($deck.cards.Count -ne 78) { throw "Deck must contain 78 cards." }
 if ($meanings.cards.Count -ne 78) { throw "Meanings must contain 78 cards." }
-if ($guide.articles.Count -ne 10) { throw "Guide must contain 4 foundations and 6 reading tutorials." }
+if ($guide.articles.Count -ne 12) { throw "Guide must contain 4 foundations and 8 reading tutorials." }
 if ($spanishCopy.language -cne "es" -or $spanishCopy.cards.Count -ne 78) {
     throw "Spanish card copy must contain exactly 78 records."
 }
 if ($spanishMeanings.language -cne "es" -or $spanishMeanings.cards.Count -ne 78) {
     throw "Spanish meanings must contain exactly 78 records."
 }
-if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 10) {
-    throw "Spanish guide must contain exactly 4 foundations and 6 reading tutorials."
+if ($spanishGuide.language -cne "es" -or $spanishGuide.articles.Count -ne 12) {
+    throw "Spanish guide must contain exactly 4 foundations and 8 reading tutorials."
 }
 $expectedGuideIDs = @(
     "how-to-read-tarot",
@@ -107,7 +107,9 @@ $expectedGuideIDs = @(
     "situation-challenge-guidance",
     "you-other-person-connection",
     "yes-or-no-with-context",
-    "freeform-reading"
+    "freeform-reading",
+    "six-card-guidance",
+    "create-custom-spread"
 )
 if (@(Compare-Object $expectedGuideIDs @($guide.articles.id)).Count -gt 0 -or
     @(Compare-Object @($guide.articles.id) @($spanishGuide.articles.id)).Count -gt 0 -or
@@ -469,9 +471,16 @@ $requiredRecoveryContracts = @(
     "func resetReading()",
     "canPrepareAnotherReading",
     "canShuffleDeck",
-    "isReadyToDeal",
-    "func dealCards()",
-    "coordinator.deal(count: layout.cardLimit)"
+    "func canPlaceCard(at slotIndex: Int)",
+    "func placeNextCard(at slotIndex: Int)",
+    "coordinator.draw(into: slotIndex)",
+    "drawnCard(atPosition: slotIndex)",
+    "case sixCards",
+    "case customCards",
+    "activeDefinition: SpreadDefinitionSnapshot?",
+    "JSONCustomSpreadStore",
+    "selectedCustomSpreadID",
+    "activeCardCount"
 )
 foreach ($contract in $requiredRecoveryContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
@@ -480,26 +489,46 @@ foreach ($contract in $requiredRecoveryContracts) {
 }
 $deckEngineSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckEngine.swift")
 $coordinatorSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckSessionCoordinator.swift")
-$atomicDealContracts = @(
-    'public func deal(',
-    'guard count > 0',
-    'guard count <= session.remainingCardCount',
+$deckSessionSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckSession.swift")
+$atomicPlacementContracts = @(
+    'currentSchemaVersion = 2',
+    'positionIndex: Int',
+    'storedSchemaVersion == 1',
+    'restoredCards[index].positionIndex = index',
+    'public func draw(',
+    'into positionIndex: Int',
+    'positionAlreadyOccupied',
     'var candidate = session',
-    'session = candidate',
-    'let dealtCards = try engine.deal(count: count, from: &candidate, at: date)',
+    'let drawnCard = try engine.draw(into: positionIndex, from: &candidate, at: date)',
     'try commit(candidate)'
 )
-foreach ($contract in $atomicDealContracts) {
-    if ("$deckEngineSource`n$coordinatorSource" -cnotmatch [regex]::Escape($contract)) {
-        throw "Atomic complete Deal contract is missing: $contract"
+foreach ($contract in $atomicPlacementContracts) {
+    if ("$deckSessionSource`n$deckEngineSource`n$coordinatorSource" -cnotmatch [regex]::Escape($contract)) {
+        throw "Atomic slot-placement contract is missing: $contract"
+    }
+}
+$engineTestsSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tests/TarotDeckCoreTests/DeckEngineTests.swift")
+$coordinatorTestsSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tests/TarotDeckCoreTests/DeckSessionCoordinatorTests.swift")
+$storeTestsSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tests/TarotDeckCoreTests/DeckSessionStoreTests.swift")
+$placementTestContracts = @(
+    'let requestedPositions = [2, 0, 1]',
+    'for count in 1...12',
+    'testConcurrentPlacementIntoSamePositionCommitsExactlyOnce',
+    'testConcurrentPlacementIntoDistinctPositionsSerializesDeckOrder',
+    'testFailedPlacementSavePreservesPreviousMemoryAndStorage',
+    'testSchemaOneSessionMigratesSequentialPositionsWithoutChangingCards'
+)
+foreach ($contract in $placementTestContracts) {
+    if ("$engineTestsSource`n$coordinatorTestsSource`n$storeTestsSource" -cnotmatch [regex]::Escape($contract)) {
+        throw "A-054 Core test contract is missing: $contract"
     }
 }
 if ($activeReadSource -match [regex]::Escape('stagedPreset != .oneCard') -or
-    $activeReadSource -cnotmatch [regex]::Escape('stagedPreset.map { $0 != .oneCard } ?? false') -or
+    $activeReadSource -cnotmatch [regex]::Escape('stagedPreset?.layout == .threeCards') -or
     $activeReadSource -cnotmatch [regex]::Escape('if stagedPreset == .oneCard { stagedPreset = nil }')) {
     throw "Entering Three Cards from One Card must leave all five styles visually unselected."
 }
-$readyWrite = $readModelSource.IndexOf("try self.continuityStore.save(.ready(layout, spread: self.spread))")
+$readyWrite = $readModelSource.IndexOf(".ready(layout, spread: self.spread, definition: self.activeDefinition)")
 $sessionWrite = $readModelSource.IndexOf("self.coordinator.startSession()")
 if ($readyWrite -lt 0 -or $sessionWrite -lt 0 -or $readyWrite -gt $sessionWrite) {
     throw "The ready continuity record must be persisted before startSession."
@@ -516,7 +545,7 @@ if ($leaveStart -lt 0 -or $leaveSessionClear -lt 0 -or $leaveContinuityClear -lt
 $resetStart = $readModelSource.IndexOf("func resetReading()")
 $resetIntent = $readModelSource.IndexOf(".resetting(", $resetStart)
 $resetSessionClear = $readModelSource.IndexOf("try await self.coordinator.clearSession()", $resetIntent)
-$resetReady = $readModelSource.IndexOf("try self.continuityStore.save(.ready(layout, spread: currentSpread))", $resetSessionClear)
+$resetReady = $readModelSource.IndexOf(".ready(layout, spread: currentSpread, definition: currentDefinition)", $resetSessionClear)
 $resetPublish = $readModelSource.IndexOf("self.session = nil", $resetReady)
 if ($resetStart -lt 0 -or $resetIntent -lt 0 -or $resetSessionClear -lt 0 -or
     $resetReady -lt 0 -or $resetPublish -lt 0 -or $resetIntent -gt $resetSessionClear -or
@@ -531,7 +560,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.5;',
+    'MARKETING_VERSION = 0.7.2;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -544,7 +573,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.5;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.7.2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -570,6 +599,7 @@ if ($readModelSource -cnotmatch [regex]::Escape("options: .atomic") -or
 $presetPreferenceContracts = @(
     'private static let presetPreferenceKey = "tarot.readingPreset.v1"',
     'private static let fallbackPreset: ReadingPreset = .pastPresentFuture',
+    '@Published private(set) var selectedPreset: ReadingPreset = .pastPresentFuture',
     'private let preferences: UserDefaults',
     'private var homePresetPreference: ReadingPreset',
     'preferences: UserDefaults = .standard',
@@ -585,6 +615,20 @@ foreach ($contract in $presetPreferenceContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
         throw "A-043 saved Home preset contract is missing: $contract"
     }
+}
+$loadPresetPreferenceStart = $readModelSource.IndexOf('private static func loadHomePresetPreference')
+$loadCustomPreferenceStart = $readModelSource.IndexOf('private static func loadCustomSelectionPreference', $loadPresetPreferenceStart)
+if ($loadPresetPreferenceStart -lt 0 -or $loadCustomPreferenceStart -le $loadPresetPreferenceStart) {
+    throw "A-056 Home default preference source boundaries could not be validated."
+}
+$loadPresetPreferenceSource = $readModelSource.Substring(
+    $loadPresetPreferenceStart,
+    $loadCustomPreferenceStart - $loadPresetPreferenceStart
+)
+if ($loadPresetPreferenceSource -cnotmatch [regex]::Escape('guard let storedValue = preferences.object(forKey: presetPreferenceKey) else {') -or
+    ([regex]::Matches($loadPresetPreferenceSource, [regex]::Escape('return fallbackPreset'))).Count -ne 2 -or
+    $loadPresetPreferenceSource -match 'preferences\.set\(') {
+    throw "A-056 must default a fresh install to Past/Present/Possible Direction without writing over an explicit saved preference."
 }
 $selectPresetStart = $readModelSource.IndexOf('func selectPreset(_ preset: ReadingPreset)')
 $startSelectedPresetStart = $readModelSource.IndexOf('func startSelectedPreset()', $selectPresetStart)
@@ -641,14 +685,17 @@ if ($readModelSource -match 'case\s+(layoutChoice|spreadChoice)\b|pendingReplace
     throw "A-033 retired setup, replacement, active-Home, or End Reading behavior is still user-facing."
 }
 if ($activeReadSource -cnotmatch [regex]::Escape("ReadingChoiceOverlay") -or
-    $activeReadSource -cnotmatch [regex]::Escape("let railWidth = min(max(size.width * 0.22, 154), 200)") -or
-    $activeReadSource -cnotmatch [regex]::Escape("let groupWidth = cardWidth * count + gap * max(count - 1, 0)")) {
-    throw "The progressive visual reading selector or the approved large landscape table is missing."
+    $activeReadSource -cnotmatch [regex]::Escape("let definition = model.activeDefinition") -or
+    $activeReadSource -cnotmatch [regex]::Escape("ReadingStageLayoutMetrics.make(") -or
+    $activeReadSource -cnotmatch [regex]::Escape("minimumVisibleGap: 14") -or
+    $activeReadSource -cnotmatch [regex]::Escape("private var landscapeHeader") -or
+    $activeReadSource -cnotmatch [regex]::Escape("let deckWidth = min(max(size.width * 0.18, 140), 160)")) {
+    throw "The progressive visual reading selector or normalized portrait/landscape table is missing."
 }
 
 $motionSourcePath = Join-Path $appRoot "Design/CeremonialMotion.swift"
 $motionSpecPath = Join-Path $native.Path "../design/tarot-deck/MOTION_SPEC.md"
-$motionStoryboardPath = Join-Path $native.Path "../design/tarot-deck/reading-table-repeatable-shuffle-motion-storyboard-v3-a-ceremonial-obsidian.png"
+$motionStoryboardPath = Join-Path $native.Path "../design/tarot-deck/reading-table-manual-placement-motion-storyboard-v4-a-ceremonial-obsidian.png"
 if (-not (Test-Path -LiteralPath $motionSourcePath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $motionSpecPath -PathType Leaf) -or
     -not (Test-Path -LiteralPath $motionStoryboardPath -PathType Leaf)) {
@@ -658,11 +705,13 @@ $motionSource = Get-Content -Raw -LiteralPath $motionSourcePath
 $motionContracts = @(
     "CeremonialShufflingDeck",
     "CeremonialDeckButtonStyle",
-    "CeremonialDealGeometryEffect: GeometryEffect",
+    "CeremonialPlacementGeometryEffect: GeometryEffect",
     "CeremonialFlipFaceModifier: AnimatableModifier",
     "var animatableData: CGFloat",
     "static let riffle",
     "shuffleSettleDuration: TimeInterval = 0.20",
+    "outgoingTopZIndex",
+    "incomingTopOpacity",
     "UIImpactFeedbackGenerator",
     "Animation.timingCurve(0.20, 0.72, 0.18, 1.00, duration: 0.38)",
     "static let reduced"
@@ -683,7 +732,7 @@ if ($readSource -cnotmatch [regex]::Escape("accessibilityReduceMotion") -or
 if ($motionSource -match '\brepeatForever\b|\bPhaseAnimator\b|\bKeyframeAnimator\b|\bsensoryFeedback\b|shuffleSettle\s*=\s*Animation\.spring') {
     throw "Motion source contains looping or iOS 17-only animation APIs."
 }
-$expectedMotionStoryboardSHA256 = "6E8FB19E641A6747F68696529B0E378C38FFCDB88AFE4281469DBAC7EE902544"
+$expectedMotionStoryboardSHA256 = "9286DB57DAFA170C87376634289BC5F311F108CFC3F9531A5B2164067DEA25B0"
 $actualMotionStoryboardSHA256 = (Get-FileHash -LiteralPath $motionStoryboardPath -Algorithm SHA256).Hash
 if ($actualMotionStoryboardSHA256 -cne $expectedMotionStoryboardSHA256) {
     throw "The approved motion storyboard hash changed."
@@ -699,6 +748,34 @@ foreach ($entry in $a031VisualReferences.GetEnumerator()) {
     if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
         (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
         throw "An approved A-031 visual reference is absent or changed: $($entry.Key)"
+    }
+}
+
+$a054VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-shuffled-tap-position-v1-spanish-a-ceremonial-obsidian.png") = "1CEB2D510ABB6652EF60BEC0B9984E843F3DB8B632C088430E78167D9B3FDF0B"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-partial-middle-first-v1-spanish-a-ceremonial-obsidian.png") = "A7F3B0604708E7858AD7864D2912B0436BFC0D5211436D22F35CB63A333D1481"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-cards-partial-middle-first-landscape-v1-spanish-a-ceremonial-obsidian.png") = "73BFC33AEC64E89D60932E5D4A30B59CDAFFBAD953380A56C970E7A6EADECF26"
+    $motionStoryboardPath = $expectedMotionStoryboardSHA256
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-six-card-partial-action-first-v1-spanish-a-ceremonial-obsidian.png") = "EE3D40472A08DD8878C403AE022C233879F1740C626230216337F7BB11B203D5"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-custom-seven-partial-v1-landscape-spanish-a-ceremonial-obsidian.png") = "805ED5688AEF2E5C5841DEEF8539C4FBF8D59226E6BC3825F2224EFAFDA9878E"
+}
+foreach ($entry in $a054VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "A-054 approved visual reference is missing or changed: $($entry.Key)"
+    }
+}
+
+$a055VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-card-shuffled-compact-landscape-v1-spanish-a-ceremonial-obsidian.png") = "0F8A809716E64A3B2EF6F177CE2FAFD676A8413F903C8EAF9F01F4960B69EB20"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-card-partial-compact-landscape-v1-spanish-a-ceremonial-obsidian.png") = "245B43A48017D8DDBC7D1F2CEECF1FF6EC94F3B0D0058FF3AF3C99E4F79929D5"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-card-complete-compact-landscape-v1-spanish-a-ceremonial-obsidian.png") = "8551828AD92F4661C73011147F66080596B818A2DF0EEFB334260B33363F05B8"
+    (Join-Path $native.Path "../design/tarot-deck/reading-table-three-card-portrait-orientation-hint-v1-spanish-a-ceremonial-obsidian.png") = "1C3286E78D7E55FEDC6ADE3F9917B9793589739A33B3AAE9A2AC99FA4DB0C47A"
+}
+foreach ($entry in $a055VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "A-055 approved visual reference is missing or changed: $($entry.Key)"
     }
 }
 
@@ -794,9 +871,9 @@ foreach ($entry in $a052VisualReferences.GetEnumerator()) {
 
 $yesNoModelContracts = @(
     'case open',
-    'return AppLocalization.text("Yes or No")',
+    'case .open: return "Yes or No"',
     'return AppLocalization.text("For, against, and destiny.")',
-    'titles = ["For", "Against", "Destiny"]',
+    'return ["For", "Against", "Destiny"]',
     'case .open: return ThreeCardSpread.open.summary'
 )
 foreach ($contract in $yesNoModelContracts) {
@@ -813,9 +890,9 @@ if ($readModelSource -cmatch '(?i)For, against, and the likely outcome|\["For", 
 
 $freeformModelContracts = @(
     'case freeform',
-    'return AppLocalization.text("Freeform")',
+    'case .freeform: return "Freeform"',
     'return AppLocalization.text("Three cards without assigned positions.")',
-    'titles = ["Card 1", "Card 2", "Card 3"]',
+    'return ["Card 1", "Card 2", "Card 3"]',
     'case .freeform: return .freeform',
     'case .open: return .open'
 )
@@ -824,7 +901,7 @@ foreach ($contract in $freeformModelContracts) {
         throw "A-048 Freeform migration contract is missing: $contract"
     }
 }
-if ([regex]::Matches($readModelSource, [regex]::Escape('spread ?? .freeform')).Count -ne 2 -or
+if ([regex]::Matches($readModelSource, [regex]::Escape('spread ?? .freeform')).Count -lt 2 -or
     $readModelSource -cmatch [regex]::Escape('spread ?? .open')) {
     throw "A-048 continuity migration must resolve exactly two missing three-card spreads to Freeform while preserving explicit open."
 }
@@ -832,7 +909,7 @@ if ([regex]::Matches($readModelSource, [regex]::Escape('spread ?? .freeform')).C
 $guideRuntimeContracts = @(
     'private static let expectedGuidePresetIDs: [String?]',
     'ordered.map(\.readingPresetID) == expectedGuidePresetIDs',
-    'Set(ordered.compactMap(\.readingPresetID)).count == 6'
+    'Set(ordered.compactMap(\.readingPresetID)).count == 8'
 )
 foreach ($contract in $guideRuntimeContracts) {
     if ($contentSource -cnotmatch [regex]::Escape($contract)) {
@@ -940,11 +1017,19 @@ if ($emptyStart -lt 0 -or
     $homeSource -cnotmatch [regex]::Escape('dynamicTypeSize.isAccessibilitySize ? 860 : 640') -or
     $homeSource -cnotmatch [regex]::Escape('ReadingChoiceOverlay') -or
     $homeSource -cnotmatch [regex]::Escape('ReadingCountGlyph') -or
+    $homeSource -cnotmatch [regex]::Escape('ReadingKindGlyph') -or
+    $homeSource -cnotmatch [regex]::Escape('ForEach([1, 3, 6, 0], id: \.self)') -or
+    $homeSource -cnotmatch [regex]::Escape('ReadingKindGlyph(kindCount: count, cardWidth: compact ? 38 : 48)') -or
+    $homeSource -cnotmatch [regex]::Escape('private struct SixCardReadingKindGlyph') -or
+    $homeSource -cnotmatch [regex]::Escape('ForEach(0..<2, id: \.self)') -or
+    $homeSource -cnotmatch [regex]::Escape('ForEach(0..<3, id: \.self)') -or
+    $homeSource -cnotmatch [regex]::Escape('private struct CustomReadingKindGlyph') -or
     $homeSource -cnotmatch [regex]::Escape('ThreeCardStyleGlyph') -or
     $homeSource -cnotmatch [regex]::Escape('compactSelectorButton') -or
     $homeSource -cnotmatch [regex]::Escape('private func chooseCount') -or
     $homeSource -cnotmatch [regex]::Escape('private func chooseStyle') -or
-    $homeSource -cnotmatch [regex]::Escape('stagedPreset = model.selectedPreset') -or
+    $homeSource -cnotmatch [regex]::Escape('stagedCustomSelected = model.selectedCustomSpreadID != nil') -or
+    $homeSource -cnotmatch [regex]::Escape('default: selected = stagedCustomSelected') -or
     $homeSource -cnotmatch [regex]::Escape('frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)') -or
     $homeSource -cnotmatch [regex]::Escape('ScrollView') -or
     $homeSource -cnotmatch [regex]::Escape('.accessibilityAddTraits(selected ? .isSelected : [])') -or
@@ -966,9 +1051,10 @@ if ($emptyStart -lt 0 -or
     $homeSource -match [regex]::Escape('.accessibilityLabel("Complete 78-card tarot deck")')) {
     throw "The current progressive Home selector must keep its top-aligned hero deck, accessibility, overlaid gear, and one deck CTA."
 }
-if ($homeSource -match '\bMenu\s*\{|\bList\s*\{|ReadingPresetCarousel|pageIndicator|homeControlClearance|DragGesture\s*\(' -or
+if ($homeSource -match '\bList\s*\{|ReadingPresetCarousel|pageIndicator|homeControlClearance' -or
     $homeSource -match 'ScrollView\s*\(\s*\.vertical' -or
-    $homeSource -match 'max\(size\.width\s*-.*?,\s*236\)|max\(size\.width\s*\*\s*0\.20,\s*176\)|stage\s*==\s*\.count\s*\?\s*300\s*:\s*390') {
+    $homeSource -match 'max\(size\.width\s*-.*?,\s*236\)|max\(size\.width\s*\*\s*0\.20,\s*176\)|stage\s*==\s*\.count\s*\?\s*300\s*:\s*390' -or
+    $homeSource -match 'min\(count,\s*3\)') {
     throw "A-042 Home must not retain the carousel, pagination, reserved gear clearance, dropdown, or vertical preset list."
 }
 $hiddenHomeAndGearCount = [regex]::Matches(
@@ -993,23 +1079,36 @@ $readingContracts = @(
     "ReadingMotionAnchorPreferenceKey",
     "anchorPreference",
     "runShuffleChoreography",
-    "private func runDealSequence",
+    "private func runPlacementSequence",
     "runFlip(at:",
-    "dealOverlay(anchors:",
-    "CeremonialDealGeometryEffect(",
+    "placementOverlay(anchors:",
+    "CeremonialPlacementGeometryEffect(",
     "CeremonialFlipFaceModifier(",
     "presentationLocked",
     "scenePhase == .active",
     "CeremonialHaptics.drawn()",
     "visualBaseline = target",
-    "if dealingPosition != nil { return true }",
-    "Array(target.drawnCardIDs.prefix(position + 1))",
-    ".disabled(interactionLocked || !canUseDeck)",
-    "proxy.size.height * 0.34",
+    "model.placeNextCard(at: index)",
+    "model.placedCard(at: index)",
+    "ReadingVisualSlot(cardID:",
+    ".disabled(interactionLocked)",
+    "ReadingStageLayoutMetrics.make(",
+    "minimumVisibleGap: 14",
+    ".padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 10 : 4)",
+    ".frame(minHeight: 72)",
+    "withTransaction(settleTransaction)",
+    "private var landscapeCue",
+    "Turn your iPhone sideways to see the cards better.",
     "Tap the deck to shuffle.",
-    "Tap again to shuffle, or deal when ready.",
+    "Tap an empty position to place the next card, or tap the deck to shuffle again.",
+    "Tap any empty position to place the next card.",
+    "Tap a card",
+    "Tap a position",
+    "Tap for meaning",
+    "Tap to shuffle",
+    "Turn your iPhone sideways to see the cards better.",
     "model.canShuffleDeck",
-    "model.dealCards()",
+    "model.hasEmptyPositions",
     ".accessibilityHidden(!shouldShowDeck)",
     "cancelTransientMotion(establishing: visualState)",
     ".frame(width: 44, height: 44)",
@@ -1017,14 +1116,125 @@ $readingContracts = @(
 )
 foreach ($contract in $readingContracts) {
     if ($readingTableSource -cnotmatch [regex]::Escape($contract)) {
-        throw "A-052 reading-table contract is missing: $contract"
+        throw "A-054 reading-table contract is missing: $contract"
     }
 }
-if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("End Reading"|requestEndReading|model\.drawCard\(\)|Tap the deck for another reading') {
+if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("Deal"|Button\("End Reading"|requestEndReading|model\.drawCard\(\)|model\.dealCards\(\)|Tap the deck for another reading') {
     throw "The reading table still contains a duplicate primary shuffle/draw CTA."
 }
-if ($readingTableSource -match 'sin\(\.pi \* dealProgress\)|let firstHalf = min\(progress \* 2') {
-    throw "Deal and two-sided flip progress must interpolate inside animatable effects."
+$landscapeStart = $readingTableSource.IndexOf("private func landscapeContent")
+$landscapeEnd = $readingTableSource.IndexOf("private var landscapeHeader", $landscapeStart)
+if ($landscapeStart -lt 0 -or $landscapeEnd -le $landscapeStart) {
+    throw "The compact A-055 landscape composition is missing."
+}
+$landscapeSource = $readingTableSource.Substring($landscapeStart, $landscapeEnd - $landscapeStart)
+if ($landscapeSource -match '\brailWidth\b|\bstatusText\b|\bactionArea\b|Text\(model\.readingTitle\)' -or
+    $landscapeSource -cnotmatch [regex]::Escape(".frame(width: deckWidth, height: deckHeight)")) {
+    throw "Landscape must keep only the compact header, shared stage, explicit large deck and short cue."
+}
+if ($readingTableSource -match 'rotationEffect\(\.degrees\([^\r\n]*placementProgress') {
+    throw "Placement rotation may not consume the A-055 minimum visible slot gap."
+}
+if ($readingTableSource -match [regex]::Escape('.frame(height: 72)')) {
+    throw "The portrait reading header must grow for accessibility Dynamic Type instead of using a fixed height."
+}
+if ($activeReadSource -cnotmatch [regex]::Escape('private static func compactGridLayout(') -or
+    $activeReadSource -cnotmatch [regex]::Escape('let resolvedGap = minimumVisibleGap + 0.5') -or
+    $activeReadSource -cnotmatch [regex]::Escape('Compact reading geometry must preserve the visible card gap.')) {
+    throw "The deterministic A-055 compact collision fallback is missing."
+}
+
+# Exercise the deterministic A-055 fail-safe with the reported near-collision case. At the
+# smallest authored-layout card width, x=.50/.55 still cannot provide 14 points, so the compact
+# row-major presentation must take over without mutating either stored point.
+function Get-A055CompactGridTestGeometry {
+    param(
+        [Parameter(Mandatory = $true)][int]$Count,
+        [Parameter(Mandatory = $true)][double]$CanvasWidth,
+        [Parameter(Mandatory = $true)][double]$CanvasHeight,
+        [Parameter(Mandatory = $true)][double]$MaximumCardWidth,
+        [Parameter(Mandatory = $true)][double]$CardAspectRatio,
+        [Parameter(Mandatory = $true)][double]$MinimumVisibleGap
+    )
+
+    $labelAreaHeight = 34.0
+    $resolvedGap = $MinimumVisibleGap + 0.5
+    $bestColumns = 1
+    $bestRows = $Count
+    $bestCardWidth = 0.0
+    for ($columns = 1; $columns -le $Count; $columns += 1) {
+        $rows = [int][Math]::Ceiling($Count / [double]$columns)
+        $horizontalFit = ($CanvasWidth - 8.0 - ([Math]::Max($columns - 1, 0) * $resolvedGap)) / $columns
+        $verticalCardFit = (
+            $CanvasHeight - 2.0 - ($rows * $labelAreaHeight) -
+            ([Math]::Max($rows - 1, 0) * $resolvedGap)
+        ) / $rows
+        $candidateWidth = [Math]::Min(
+            $MaximumCardWidth,
+            [Math]::Min($horizontalFit, $verticalCardFit * $CardAspectRatio)
+        )
+        if ($candidateWidth -gt $bestCardWidth) {
+            $bestColumns = $columns
+            $bestRows = $rows
+            $bestCardWidth = $candidateWidth
+        }
+    }
+
+    $centers = @()
+    $cardHeight = $bestCardWidth / $CardAspectRatio
+    $stackHeight = $cardHeight + $labelAreaHeight
+    $totalHeight = ($bestRows * $stackHeight) + ([Math]::Max($bestRows - 1, 0) * $resolvedGap)
+    $firstY = [Math]::Max(($CanvasHeight - $totalHeight) / 2.0, 0.0) + ($stackHeight / 2.0)
+    for ($row = 0; $row -lt $bestRows; $row += 1) {
+        $firstIndex = $row * $bestColumns
+        $itemsInRow = [Math]::Min($bestColumns, $Count - $firstIndex)
+        if ($itemsInRow -le 0) { continue }
+        $rowWidth = ($itemsInRow * $bestCardWidth) + ([Math]::Max($itemsInRow - 1, 0) * $resolvedGap)
+        $firstX = (($CanvasWidth - $rowWidth) / 2.0) + ($bestCardWidth / 2.0)
+        for ($column = 0; $column -lt $itemsInRow; $column += 1) {
+            $centers += [PSCustomObject]@{
+                X = $firstX + ($column * ($bestCardWidth + $resolvedGap))
+                Y = $firstY + ($row * ($stackHeight + $resolvedGap))
+            }
+        }
+    }
+
+    [PSCustomObject]@{
+        CardWidth = $bestCardWidth
+        CardHeight = $cardHeight
+        Centers = $centers
+    }
+}
+
+$a055NearPoints = @(0.50, 0.55)
+$a055TestCanvasWidth = 481.0
+$a055AuthoredMinimumWidth = 16.0
+$a055AuthoredGap = (($a055NearPoints[1] - $a055NearPoints[0]) * $a055TestCanvasWidth) - $a055AuthoredMinimumWidth
+if ($a055AuthoredGap -ge 14.0) {
+    throw "The A-055 x=.50/.55 fixture no longer exercises the compact collision fallback."
+}
+$a055Compact = Get-A055CompactGridTestGeometry `
+    -Count 2 `
+    -CanvasWidth $a055TestCanvasWidth `
+    -CanvasHeight 277.0 `
+    -MaximumCardWidth 190.0 `
+    -CardAspectRatio (2.0 / 3.0) `
+    -MinimumVisibleGap 14.0
+if ($a055Compact.Centers.Count -ne 2) {
+    throw "The A-055 compact collision fixture did not preserve both custom positions."
+}
+$a055ResolvedHorizontalGap = [Math]::Abs(
+    $a055Compact.Centers[1].X - $a055Compact.Centers[0].X
+) - $a055Compact.CardWidth
+$a055ResolvedVerticalGap = [Math]::Abs(
+    $a055Compact.Centers[1].Y - $a055Compact.Centers[0].Y
+) - $a055Compact.CardHeight
+if ($a055ResolvedHorizontalGap -lt (14.0 - 0.001) -and
+    $a055ResolvedVerticalGap -lt (14.0 - 0.001)) {
+    throw "The A-055 compact collision fixture overlaps or provides less than 14 points of visible gap."
+}
+if ($readingTableSource -match 'sin\(\.pi \* placementProgress\)|let firstHalf = min\(progress \* 2') {
+    throw "Placement and two-sided flip progress must interpolate inside animatable effects."
 }
 $normalShuffleStart = $readingTableSource.IndexOf("withAnimation(CeremonialMotion.cut)")
 $shuffleSettle = $readingTableSource.IndexOf("withAnimation(CeremonialMotion.shuffleSettle)", $normalShuffleStart)
@@ -1036,9 +1246,14 @@ if ($normalShuffleStart -lt 0 -or $shuffleSettle -lt 0 -or $shuffleSettleWait -l
     throw "Shuffle haptics must follow the complete fixed-duration settle phase."
 }
 $hapticDraw = $readingTableSource.IndexOf("CeremonialHaptics.drawn()")
-$dealLanding = $readingTableSource.IndexOf("Array(target.drawnCardIDs.prefix(position + 1))", $readingTableSource.IndexOf("private func runDealSequence"))
-if ($dealLanding -lt 0 -or $hapticDraw -lt 0 -or $hapticDraw -lt $dealLanding) {
-    throw "Draw haptics must occur only after the committed deal lands."
+$placementLanding = $readingTableSource.IndexOf("visualBaseline = target", $readingTableSource.IndexOf("private func runPlacementSequence"))
+if ($placementLanding -lt 0 -or $hapticDraw -lt 0 -or $hapticDraw -lt $placementLanding) {
+    throw "Draw haptics must occur only after the committed placement lands."
+}
+if ($readSource -cnotmatch [regex]::Escape('model.surface == .table || model.surface == .restoring ? .hidden : .visible') -or
+    $shellSource -cnotmatch [regex]::Escape('selectedDestination = .learn') -or
+    $shellSource -cnotmatch [regex]::Escape('selectedDestination = .read')) {
+    throw "The contextual tab bar must remain hidden on the table, visible in Learn, and hidden again on return."
 }
 
 $cardsSourceForMeaning = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Cards/CardsViews.swift")
@@ -1064,9 +1279,10 @@ $requiredA031CatalogKeys = @(
     "The complete language content couldn't be loaded. Nothing was changed.",
     "Tap the deck to begin",
     "Tap the deck to shuffle.",
-    "Tap again to shuffle, or deal when ready.",
+    "Tap an empty position to place the next card, or tap the deck to shuffle again.",
+    "Tap any empty position to place the next card.",
     "Shuffles all 78 cards again",
-    "Deal",
+    "Places the next card here face down",
     "Meaning"
     "Start a Reading"
 )
@@ -1159,7 +1375,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.5"'
+    'fallbackVersion = "0.7.2"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1220,8 +1436,8 @@ if ($shellSource -cnotmatch [regex]::Escape('tutorialReturnsToReading = activeRe
     $shellSource -cnotmatch [regex]::Escape('previousTutorial: previousTutorial') -or
     $shellSource -cnotmatch [regex]::Escape('nextTutorial: nextTutorial') -or
     $shellSource -cnotmatch [regex]::Escape('selectedDestination = .read') -or
-    $readingTableSource -cnotmatch [regex]::Escape('ReadingPreset.resolved(') -or
-    $readingTableSource -cnotmatch [regex]::Escape('openReadingTutorial(articleID)')) {
+    $readingTableSource -cnotmatch [regex]::Escape('model.activeTutorialArticleID') -or
+    $readingTableSource -cnotmatch [regex]::Escape('openReadingTutorial(model.activeTutorialArticleID)')) {
     throw "Active Reading tutorial navigation must preserve the session, browse all methods, and return directly to Read."
 }
 if ($learnSource -match 'Try a Three-Card Reading|article\.id\s*==\s*"read-three-cards"|\bisFirst\b' -or
@@ -1242,7 +1458,7 @@ $requiredReadCopy = @(
     "Opens visual reading choices",
     "Closes reading choices without changing the selection",
     "Returns to one or three card choices",
-    "Selects one card",
+    "Selects this reading type",
     "Opens five visual three-card styles",
     "Learn how to use %@",
     "Opens the matching reading tutorial without changing your selection",
@@ -1336,4 +1552,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.5 (1): owner-selected opaque sRGB AppIcon D, atomic English/Spanish selection, complete localized UI/content and printf parity, Learn/tutorial/info/Freeform implementation, stable translucent tab bar, documented For/Against/Destiny yes-or-no spread with preserved raw value open, distinct freeform raw value, exact table restoration, repeated pre-deal shuffle, atomic complete deal, transactional Back/reset, centered portrait and landscape tables, post-commit motion/accessibility contracts, local atomic favorites, 78 cards, 4 foundations and 6 practical tutorials per language, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.7.2 (1): English/Spanish UI and content, Three Cards first-install default with persisted-selection and restoration priority, exact 2x3 Six Cards selector glyph, seven built-in tutorials plus Create Your Own Spread, cited Six-Card Guidance, local custom spreads, atomic arbitrary slot placement, restoration, accessibility, 78 cards, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

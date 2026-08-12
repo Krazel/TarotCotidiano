@@ -52,6 +52,35 @@ final class DeckSessionStoreTests: XCTestCase {
         XCTAssertNoThrow(try store.clear())
     }
 
+    func testSchemaOneSessionMigratesSequentialPositionsWithoutChangingCards() throws {
+        let date = Date(timeIntervalSince1970: 1_700_000_000)
+        let engine = DeckEngine(shuffler: StoreIdentityShuffler())
+        var session = try engine.startSession(at: date)
+        _ = try engine.draw(into: 0, from: &session, at: date.addingTimeInterval(1))
+        let second = try engine.draw(into: 1, from: &session, at: date.addingTimeInterval(2))
+        _ = try engine.reveal(cardID: second.id, in: &session, at: date.addingTimeInterval(3))
+
+        let encoder = JSONEncoder()
+        let encoded = try encoder.encode(session)
+        var object = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        object["schemaVersion"] = 1
+        var legacyCards = try XCTUnwrap(object["drawnCards"] as? [[String: Any]])
+        for index in legacyCards.indices {
+            legacyCards[index].removeValue(forKey: "positionIndex")
+        }
+        object["drawnCards"] = legacyCards
+        let legacyData = try JSONSerialization.data(withJSONObject: object)
+
+        let restored = try JSONDecoder().decode(DeckSession.self, from: legacyData)
+        try restored.validate()
+
+        XCTAssertEqual(restored.schemaVersion, DeckSession.currentSchemaVersion)
+        XCTAssertEqual(restored.drawnCards.map(\.id), session.drawnCards.map(\.id))
+        XCTAssertEqual(restored.drawnCards.map(\.isRevealed), session.drawnCards.map(\.isRevealed))
+        XCTAssertEqual(restored.drawnCards.map(\.positionIndex), [0, 1])
+        XCTAssertEqual(restored.shuffledCardIDs, session.shuffledCardIDs)
+    }
+
     func testStoreRejectsCorruptJSON() throws {
         let directoryURL = makeTemporaryDirectoryURL()
         defer { try? FileManager.default.removeItem(at: directoryURL) }

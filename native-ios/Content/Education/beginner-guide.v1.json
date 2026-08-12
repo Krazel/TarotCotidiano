@@ -124,6 +124,32 @@
         { "heading": "Draw Three Cards", "body": "Shuffle and draw Card 1, Card 2, and Card 3 from left to right." },
         { "heading": "Read the Whole", "body": "Read each card in order, then connect repeated images, contrasts, and movement across all three." }
       ]
+    },
+    {
+      "id": "six-card-guidance",
+      "order": 11,
+      "title": "Six-Card Guidance",
+      "summary": "Explore yourself, the forces around an issue, and a practical way forward in six positions.",
+      "readingPresetID": "sixCardGuidance",
+      "sourceCredit": "Katalin Jett Koda, Reading Tarot Cards: Divining Our Life Path, Llewellyn Worldwide (2015)",
+      "sourceURL": "https://www.llewellyn.com/journal/article/2506",
+      "sections": [
+        { "heading": "Cards 1-2: Self and Support", "body": "Card 1 shows where you are now. Card 2 shows the visible or hidden forces supporting the issue or situation." },
+        { "heading": "Cards 3-4: Issue and Deeper Issue", "body": "Card 3 names the issue at hand. Card 4 points to what lies beneath it and may need deeper attention." },
+        { "heading": "Cards 5-6: Action and Possible Outcome", "body": "Card 5 suggests an outward action to take. Card 6 shows the possible direction in which the situation is unfolding." }
+      ]
+    },
+    {
+      "id": "create-custom-spread",
+      "order": 12,
+      "title": "Create Your Own Spread",
+      "summary": "Build and save a reusable card layout with your own positions.",
+      "readingPresetID": "customSpread",
+      "sections": [
+        { "heading": "Choose the Roles", "body": "Choose 1 to 12 cards and give each position a short role, or leave a label blank to use its card number." },
+        { "heading": "Arrange the Board", "body": "Drag positions freely or use an automatic one-, two-, three-, or four-column arrangement, then set the order in which cards are dealt." },
+        { "heading": "Save and Read", "body": "Name and save the spread. Starting a reading keeps a snapshot of its layout, even if you edit the saved spread later." }
+      ]
     }
   ]
 }

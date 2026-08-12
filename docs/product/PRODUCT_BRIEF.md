@@ -72,7 +72,7 @@ The MVP proves that promise through:
 9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
 10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
 11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
-12. **The deck starts the ritual.** Home keeps the deck large and exposes only one small selector button before it is touched. That button opens a progressive visual chooser: one or three cards first, then the five illustrated three-card styles only when needed. Each choice has a separate information action that opens its tutorial without selecting or starting it. The chooser is never a dropdown, permanent carousel, or vertical text list. On the table, tapping the deck shuffles all 78 cards and may be repeated freely until the user chooses `Deal / Repartir`.
+12. **The deck starts the ritual.** Home keeps the deck large and exposes only one small selector button before it is touched. That button opens a progressive visual chooser. Each choice has a separate information action that opens its tutorial without selecting or starting it. The chooser is never a dropdown, permanent carousel, or vertical text list. On the table, tapping the deck shuffles all 78 cards and may be repeated until the first card is placed. The user then taps any empty position to place the next card there.
 13. **The viewport does not jump.** Persistent controls, the deck frame, reading positions, and visible tab bar keep stable geometry while labels and logical states change; motion happens inside those bounds.
 
 ## Three product loops
@@ -82,7 +82,7 @@ The MVP proves that promise through:
 1. Open `Read`; keep the current preset or use the small visual selector to choose `One Card` or one of the five three-card presets.
 2. Tap the prominent deck to open that reading directly, with no layout or spread-choice screen.
 3. Tap the table deck to shuffle the complete deck.
-4. Tap the deck again as often as desired, then choose `Deal / Repartir` to place the complete one- or three-card layout face down as one durable action.
+4. Tap the deck again as often as desired, then tap any empty position to place the next card there. Continue until the chosen layout is complete.
 5. Turn cards over manually in any order.
 6. Tap a revealed card when a meaning is helpful, then return to the exact table state.
 7. Back ends the reading and returns Home without a confirmation. A small reset control restarts the same preset. Once cards are dealt, the deck does not reappear.
@@ -126,12 +126,12 @@ Exact visual presentation remains governed by the registered screen images.
 ### Included
 
 1. **Read**
-   - Compact Deck Home with one small selector. Its first visual level chooses `One Card` or `Three Cards`; the second level appears only for `Three Cards` and offers five visual styles: timeline, situation/challenge/advice, relationship, Yes or No, and Freeform. The dominant deck starts the selected preset directly.
+   - Compact Deck Home with one small selector. Its first visual level offers `One Card`, `Three Cards`, `Six Cards`, and `Custom`; the second level appears only for `Three Cards` and offers five visual styles: timeline, situation/challenge/advice, relationship, Yes or No, and Freeform. On a clean installation, `Three Cards · Past / Present / Possible Direction` is selected even though Three Cards remains the second visual option. After any explicit choice, that saved choice remains authoritative. The dominant deck starts the selected preset directly.
    - Every concrete choice exposes a separate information button. Information navigates to the matching tutorial and never changes the saved selection or starts a reading.
    - No `Layout Choice`, `Spread Choice`, active-reading replacement prompt, or visible `End Reading` action.
-   - Tap the table deck to shuffle or reshuffle before any card is dealt. `Deal / Repartir` commits the complete layout face down; the deck then disappears and never becomes a second restart control.
-   - Atomic complete dealing, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional repeated-shuffle motion.
-   - A persistent information action opens the active preset's tutorial. Previous/Next moves among all six tutorials; `Back to Reading / Volver a la tirada` returns to the exact unchanged table.
+   - Tap the table deck to shuffle or reshuffle before any card is placed. Every empty position is then a direct control that atomically receives the next card. The deck disappears when the layout is complete and never becomes a second restart control.
+   - Atomic per-position placement, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered completed layouts, and professional repeated-shuffle motion with visible top-card replacement.
+   - A persistent information action opens the active preset's tutorial. Previous/Next moves among all eight tutorials; `Back to Reading / Volver a la tirada` returns to the exact unchanged table.
    - Meaning available only after tapping a revealed card.
 
 2. **Learn**
@@ -292,7 +292,7 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - Reading positions, the deck frame, and persistent chrome do not jump during press, cut, interleave, deal, reveal, restoration, or orientation changes; the three-card composition remains mathematically centered horizontally and retains one fixed vertical slot anchor throughout the reading.
 - An interrupted reading resumes with the same order, cards, and face states.
 - Tapping a revealed card opens the correct meaning and returning leaves the table unchanged.
-- A learner can find the foundations and finish any of the six reading tutorials without creating progress state; information links never change the preset, while `Try This Reading` explicitly opens its matching mode.
+- A learner can find the foundations and finish any of the eight reading tutorials without creating progress state; information links never change the preset, while an explicit CTA opens the matching mode or custom editor.
 - The library displays exactly 78 cards; filters resolve to 22 Major and four groups of 14.
 - Previous and next move only within the active library filter and stop or wrap consistently as defined in the screen map.
 - Every card detail uses the same localized name and reference content as reading context.
@@ -317,7 +317,7 @@ The expanded MVP is release-candidate ready when:
 8. Every visible string and all 78 card references are complete in English and Spanish; the internal selector changes the complete validated language bundle immediately, persists its explicit choice, and preserves all language-neutral IDs and reading state. Core flows work offline, and no account, analytics, notification, or personal-data collection exists.
 9. Settings is accessible from the overlaid Read gear and contains language, support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
 10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
-11. Home selects the preset inline and uses the deck to start it directly. Reading Table uses the deck only to shuffle or reshuffle before Deal, provides a separate `Deal / Repartir` transition and only a small reset secondary action after dealing, ends transactionally through Back without confirmation, keeps viewport geometry stable, centers the completed three-card layout, and implements the approved split/interleave/riffle/square, deal, and flip sequences with an equivalent Reduce Motion path.
+11. Home selects the preset inline and uses the deck to start it directly. Reading Table uses the deck to shuffle or reshuffle until the first placement, makes every empty position the destination for the next card, and keeps only a small reset secondary action after placement begins. It ends transactionally through Back, hides the tab bar while active, keeps viewport geometry stable, and implements the approved tracked-top shuffle, position-placement, and flip sequences with an equivalent Reduce Motion path.
 12. `Meaning` / `Significado` renders as a semantic heading. `In a reading` / `En una tirada` explains how that general meaning can be applied to the question and the card's assigned position.
 13. Final implementation captures have been compared with the registered references at matching sizes.
 
@@ -331,3 +331,25 @@ StoreKit product creation, pricing, contracts, tax/banking configuration, live p
 - Existing Daily Tarot images remain aesthetic exploration, not functional approval for this product.
 - The SwiftUI restart, pure deck engine, local persistence, tests, and the already approved S03.2–S03.5 reading states remain valid foundations.
 - The old exclusion of meanings and a card browser is superseded by A-020. A-030 adds local favorite card IDs. A-022 adds optional monthly support planning, but the exclusions of automated interpretation, Zodiac, accounts, remote tarot content, notes, history, and cloud user content remain in force.
+
+## A-053 — Six cards and custom spreads
+
+- The Read selector offers four destinations: One Card, Three Cards, Six Cards, and Custom Spreads.
+- The visual order stays One/Three/Six/Custom. A clean installation starts with Three Cards selected; a saved selection or restored active reading always takes precedence afterward.
+- `Six-Card Guidance / Orientación en seis cartas` is a documented six-position method credited in Learn to Katalin Jett Koda and Llewellyn (2015). Its positions are Self, Support, The issue, Deeper issue, Action, and Possible outcome. The 2×3 geometry is an app adaptation, not a historical claim.
+- Custom Spreads are created and stored only on device. A spread has a required name and 1–12 ordered slots. Each slot may have a label and a normalized position; order of dealing is independent from visual placement.
+- The editor supports add, remove, drag, accessible directional movement, label editing, order changes, undo, and automatic arrangements for one, two, three, or four cards per row. It does not support rotation, per-card resizing, overlap, free text, cloud sync, export, or sharing in this version.
+- Saving is atomic. Editing or deleting a saved spread never mutates an active reading, which keeps an immutable snapshot. A missing or corrupt custom library never blocks built-in readings.
+- The selector convention is global: the information action is top-left and the selection check is top-right.
+- Learn adds a concise Six-Card Guidance tutorial and a generic Create Your Own Spread tutorial. Custom labels are user content and are not translated.
+- This scope is a significant feature increment after 0.5 and therefore targets `0.6 (1)`.
+
+## A-054 — Manual placement and immersive table
+
+- `Deal / Repartir` is removed. After a valid shuffle, tapping any empty slot places the next card from the shuffled order into that exact slot.
+- The chosen slot is saved in the same atomic session record as the card. Existing sequential sessions migrate without losing order or reveal state.
+- Shuffle may repeat while no card has been placed. After the first placement, the remaining deck stays as a visual source but is not reshuffled. It disappears after the last slot is filled.
+- Shuffle V4 visibly carries the old top card into the packets and leaves a different top layer after squaring; identical static copies may not fake the change.
+- The main tab bar is hidden for every active Reading Table state. Contextual Learn shows it; returning to Read restores the exact table and hides it again.
+- The same interaction applies to One Card, every Three Cards method, Six-Card Guidance, and Custom Spreads from 1–12 cards.
+- This is a new behavior increment after 0.6 and targets `0.7 (1)`.

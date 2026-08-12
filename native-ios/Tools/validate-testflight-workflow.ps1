@@ -52,7 +52,7 @@ $requiredContracts = @(
     'DEVELOPMENT_TEAM="$APPLE_TEAM_ID"',
     'CODE_SIGN_STYLE=Automatic',
     'CURRENT_PROJECT_VERSION=1',
-    'MARKETING_VERSION=0.5',
+    'MARKETING_VERSION=0.7.2',
     'Add :method string app-store-connect',
     'Add :destination string export',
     'Add :destination string upload',
@@ -146,7 +146,7 @@ if ($unexpectedActions.Count -gt 0) {
 }
 
 $projectContracts = @(
-    'MARKETING_VERSION = 0.5;',
+    'MARKETING_VERSION = 0.7.2;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
@@ -161,7 +161,7 @@ foreach ($contract in $projectContracts) {
     }
 }
 if ($project -match '(?m)^\s*DEVELOPMENT_TEAM\s*=' -or
-    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.5;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.7.2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2) {
     throw "Team must be workflow-parametrized and version/build must be exact in both configurations."
 }
@@ -190,4 +190,4 @@ if ($localQAWorkflow -match '(?i)TestFlight|App Store Connect|\bsecrets\.|-expor
     throw "Local-QA workflow must remain unsigned and incapable of TestFlight upload."
 }
 
-Write-Host "Validated manual protected TestFlight INTERNAL-ONLY workflow for Tarot Deck 0.5 (1): main-only cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."
+Write-Host "Validated manual protected TestFlight INTERNAL-ONLY workflow for Tarot Deck 0.7.2 (1): main-only cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."

@@ -124,6 +124,32 @@
         { "heading": "Saca tres cartas", "body": "Baraja y saca la Carta 1, la Carta 2 y la Carta 3 de izquierda a derecha." },
         { "heading": "Lee el conjunto", "body": "Lee cada carta en orden y relaciona imágenes repetidas, contrastes y movimiento entre las tres." }
       ]
+    },
+    {
+      "id": "six-card-guidance",
+      "order": 11,
+      "title": "Orientación en seis cartas",
+      "summary": "Explora tu posición, las fuerzas que rodean un asunto y una forma práctica de avanzar en seis posiciones.",
+      "readingPresetID": "sixCardGuidance",
+      "sourceCredit": "Katalin Jett Koda, Reading Tarot Cards: Divining Our Life Path, Llewellyn Worldwide (2015)",
+      "sourceURL": "https://www.llewellyn.com/journal/article/2506",
+      "sections": [
+        { "heading": "Cartas 1-2: Tú y apoyo", "body": "La carta 1 muestra dónde estás ahora. La carta 2 muestra las fuerzas visibles u ocultas que apoyan el asunto o la situación." },
+        { "heading": "Cartas 3-4: Asunto y asunto profundo", "body": "La carta 3 nombra el asunto que afrontas. La carta 4 señala lo que hay debajo y puede necesitar más atención." },
+        { "heading": "Cartas 5-6: Acción y posible resultado", "body": "La carta 5 sugiere una acción externa. La carta 6 muestra la posible dirección en la que se desarrolla la situación." }
+      ]
+    },
+    {
+      "id": "create-custom-spread",
+      "order": 12,
+      "title": "Crea tu propia tirada",
+      "summary": "Crea y guarda una disposición reutilizable con tus propias posiciones.",
+      "readingPresetID": "customSpread",
+      "sections": [
+        { "heading": "Elige las funciones", "body": "Elige entre 1 y 12 cartas y da una función breve a cada posición, o deja una etiqueta vacía para usar su número de carta." },
+        { "heading": "Organiza el tablero", "body": "Arrastra las posiciones libremente o usa una disposición automática de una, dos, tres o cuatro columnas, y define el orden de reparto." },
+        { "heading": "Guarda y lee", "body": "Pon nombre y guarda la tirada. Al empezar una lectura se conserva una copia de su diseño aunque después edites la tirada guardada." }
+      ]
     }
   ]
 }

@@ -102,6 +102,8 @@ struct TarotGuideArticle: Decodable, Identifiable, Hashable {
     let title: String
     let summary: String
     let readingPresetID: String?
+    let sourceCredit: String?
+    let sourceURL: String?
     let sections: [Section]
 }
 
@@ -156,7 +158,7 @@ enum TarotContentLoadError: LocalizedError {
         case .missingArtworkDescriptions:
             return AppLocalization.text("Every card meaning requires an artwork description.")
         case .invalidGuideCount(let count):
-            return AppLocalization.format("Expected 10 guide articles, found %d.", count)
+            return AppLocalization.format("Expected 12 guide articles, found %d.", count)
         case .mismatchedCardIDs:
             return AppLocalization.text("The deck and meaning card identifiers do not match.")
         case .invalidLocalizedContent:
@@ -176,7 +178,9 @@ enum TarotContentLoader {
         "situation-challenge-guidance",
         "you-other-person-connection",
         "yes-or-no-with-context",
-        "freeform-reading"
+        "freeform-reading",
+        "six-card-guidance",
+        "create-custom-spread"
     ]
     private static let expectedGuidePresetIDs: [String?] = [
         nil,
@@ -188,7 +192,9 @@ enum TarotContentLoader {
         "situationChallengeAdvice",
         "relationship",
         "open",
-        "freeform"
+        "freeform",
+        "sixCardGuidance",
+        "customSpread"
     ]
     private static let allowedReadingPresetIDs: Set<String> = [
         "oneCard",
@@ -196,7 +202,9 @@ enum TarotContentLoader {
         "situationChallengeAdvice",
         "relationship",
         "open",
-        "freeform"
+        "freeform",
+        "sixCardGuidance",
+        "customSpread"
     ]
 
     private struct DeckDocument: Decodable {
@@ -355,7 +363,7 @@ enum TarotContentLoader {
               ordered.map(\.order) == Array(1...expectedGuideIDs.count),
               Set(ordered.map(\.id)).count == expectedGuideIDs.count,
               ordered.map(\.readingPresetID) == expectedGuidePresetIDs,
-              Set(ordered.compactMap(\.readingPresetID)).count == 6 else {
+              Set(ordered.compactMap(\.readingPresetID)).count == 8 else {
             return false
         }
 
@@ -366,6 +374,9 @@ enum TarotContentLoader {
                         && !$0.body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                 }
                 && article.readingPresetID.map(allowedReadingPresetIDs.contains) != false
+                && (article.id != "six-card-guidance"
+                    || (article.sourceCredit?.contains("Katalin Jett Koda") == true
+                        && article.sourceURL?.isEmpty == false))
         }
     }
 }

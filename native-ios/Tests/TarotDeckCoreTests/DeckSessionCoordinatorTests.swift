@@ -139,6 +139,21 @@ final class DeckSessionCoordinatorTests: XCTestCase {
         XCTAssertEqual(store.saveCount, 2) // start plus one complete deal
     }
 
+    func testOneThroughTwelveCardDealsEachUseOneCommit() async throws {
+        for count in 1...12 {
+            let store = ControlledSessionStore()
+            let coordinator = DeckSessionCoordinator(
+                shuffler: CoordinatorIdentityShuffler(),
+                store: store
+            )
+            try await coordinator.startSession(at: startDate)
+            let dealt = try await coordinator.deal(count: count)
+            XCTAssertEqual(dealt.count, count)
+            XCTAssertEqual(dealt.map(\.positionIndex), Array(0..<count))
+            XCTAssertEqual(store.saveCount, 2)
+        }
+    }
+
     func testFailedDealSavePreservesPreviousMemoryAndStorage() async throws {
         let store = ControlledSessionStore()
         let coordinator = DeckSessionCoordinator(
@@ -154,6 +169,80 @@ final class DeckSessionCoordinatorTests: XCTestCase {
                 at: startDate.addingTimeInterval(1)
             )
             XCTFail("Expected the injected deal save failure")
+        } catch {
+            XCTAssertEqual(error as? ControlledStoreError, .saveFailed)
+        }
+
+        let current = await coordinator.currentSession()
+        XCTAssertEqual(current, original)
+        XCTAssertEqual(store.storedSession, original)
+        XCTAssertEqual(store.saveCount, 1)
+    }
+
+    func testConcurrentPlacementIntoSamePositionCommitsExactlyOnce() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorIdentityShuffler(),
+            store: store
+        )
+        try await coordinator.startSession(at: startDate)
+
+        let successes = await withTaskGroup(of: Bool.self) { group in
+            for _ in 0..<20 {
+                group.addTask {
+                    (try? await coordinator.draw(into: 4)) != nil
+                }
+            }
+            var values: [Bool] = []
+            for await value in group { values.append(value) }
+            return values
+        }
+
+        let currentValue = await coordinator.currentSession()
+        let current = try XCTUnwrap(currentValue)
+        XCTAssertEqual(successes.filter { $0 }.count, 1)
+        XCTAssertEqual(current.drawnCards.count, 1)
+        XCTAssertEqual(current.drawnCards.first?.positionIndex, 4)
+        XCTAssertEqual(store.saveCount, 2)
+    }
+
+    func testConcurrentPlacementIntoDistinctPositionsSerializesDeckOrder() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorIdentityShuffler(),
+            store: store
+        )
+        try await coordinator.startSession(at: startDate)
+
+        let positions = Array(0..<12)
+        await withTaskGroup(of: Void.self) { group in
+            for position in positions {
+                group.addTask {
+                    _ = try? await coordinator.draw(into: position)
+                }
+            }
+        }
+
+        let currentValue = await coordinator.currentSession()
+        let current = try XCTUnwrap(currentValue)
+        XCTAssertEqual(current.drawnCards.count, 12)
+        XCTAssertEqual(Set(current.drawnCards.map(\.positionIndex)), Set(positions))
+        XCTAssertEqual(current.drawnCards.map(\.id), Array(StandardTarotDeck.cardIDs.prefix(12)))
+        XCTAssertEqual(store.saveCount, 13)
+    }
+
+    func testFailedPlacementSavePreservesPreviousMemoryAndStorage() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorIdentityShuffler(),
+            store: store
+        )
+        let original = try await coordinator.startSession(at: startDate)
+        store.failNextSave()
+
+        do {
+            _ = try await coordinator.draw(into: 7)
+            XCTFail("Expected the injected placement save failure")
         } catch {
             XCTAssertEqual(error as? ControlledStoreError, .saveFailed)
         }

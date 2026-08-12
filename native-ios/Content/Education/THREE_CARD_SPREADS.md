@@ -6,7 +6,7 @@ Tarot began as a card game; divinatory reading developed later. There is no sing
 2. **Widespread modern practice:** One Card and flexible three-position spreads; card meaning is combined with position, question, imagery, and the other cards.
 3. **Editorial adaptation:** upright-only reference, conditional language, privacy boundaries, and no automatic interpretation or verdict.
 
-The four foundations and six reading tutorials use the following source base without copying source text:
+The three-card tutorials use the following source base without copying source text. The documented six-card method and custom-spread tutorial are tracked separately in their content records:
 
 - Arthur Edward Waite, *The Pictorial Key to the Tarot*, Part III, for documented historical procedures and the variety of methods.
 - Joan Bunning, lessons on spreads, writing a question, and combining sources of meaning, for recognizable modern teaching practice.

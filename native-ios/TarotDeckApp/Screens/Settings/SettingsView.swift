@@ -51,7 +51,7 @@ struct SettingsView: View {
         let bundleVersion = Bundle.main.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
         ) as? String
-        let fallbackVersion = "0.5"
+        let fallbackVersion = "0.7.2"
         guard let bundleVersion, !bundleVersion.isEmpty else { return fallbackVersion }
         return bundleVersion
     }
