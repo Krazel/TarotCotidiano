@@ -1,0 +1,157 @@
+name: Tarot TestFlight internal status
+
+on:
+  workflow_dispatch:
+    inputs:
+      internal_only_confirmation:
+        description: Type TESTFLIGHT_INTERNAL_ONLY to verify and assign the current internal build
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tarot-testflight-internal-status
+  cancel-in-progress: false
+
+jobs:
+  verify-internal-build:
+    name: Verify TestFlight INTERNAL ONLY - 0.7.2 (2)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY' }}
+    runs-on: macos-latest
+    timeout-minutes: 20
+    environment: app-store-production
+
+    steps:
+      - name: Check out repository without retained credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Validate internal status workflow boundaries
+        shell: pwsh
+        run: ./native-ios/Tools/validate-testflight-status-workflow.ps1
+
+      - name: Wait for processing and ensure internal Testers access
+        id: status
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        run: |
+          set -euo pipefail
+          set +x
+          : "${APP_STORE_CONNECT_API_KEY_ID:?missing protected API key id}"
+          : "${APP_STORE_CONNECT_ISSUER_ID:?missing protected issuer id}"
+          : "${APP_STORE_CONNECT_API_KEY_BASE64:?missing protected API key}"
+
+          APP_ID="6800144105"
+          MARKETING_VERSION="0.7.2"
+          BUILD_NUMBER="2"
+          API_ROOT="https://api.appstoreconnect.apple.com/v1"
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          STATUS_PATH="$RUNNER_TEMP/tarot-testflight-status.json"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+
+          TOKEN="$(KEY_PATH="$KEY_PATH" ruby -ropenssl -rbase64 -rjson -e '
+            def b64(value)
+              Base64.urlsafe_encode64(value).delete("=")
+            end
+            now = Time.now.to_i
+            header = b64({alg: "ES256", kid: ENV.fetch("APP_STORE_CONNECT_API_KEY_ID"), typ: "JWT"}.to_json)
+            payload = b64({iss: ENV.fetch("APP_STORE_CONNECT_ISSUER_ID"), iat: now - 20, exp: now + 900, aud: "appstoreconnect-v1"}.to_json)
+            input = "#{header}.#{payload}"
+            key = OpenSSL::PKey.read(File.read(ENV.fetch("KEY_PATH")))
+            decoded = OpenSSL::ASN1.decode(key.dsa_sign_asn1(OpenSSL::Digest::SHA256.digest(input)))
+            raw = decoded.value.map { |item| item.value.to_s(2).rjust(32, "\0") }.join
+            print "#{input}.#{b64(raw)}"
+          ')"
+
+          auth=(-H "Authorization: Bearer $TOKEN")
+          build_id=""
+          processing_state=""
+          audience=""
+          uploaded_date=""
+
+          for attempt in $(seq 1 40); do
+            response="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
+              --data-urlencode 'fields[builds]=version,uploadedDate,processingState,buildAudienceType,preReleaseVersion,minOsVersion' \
+              --data-urlencode 'include=preReleaseVersion' \
+              --data-urlencode 'limit=200' \
+              "$API_ROOT/apps/$APP_ID/builds")"
+            build_id="$(jq -r --arg version "$MARKETING_VERSION" --arg build "$BUILD_NUMBER" '
+              . as $root
+              | [.data[]
+                  | select(.attributes.version == $build)
+                  | . as $buildResource
+                  | ($buildResource.relationships.preReleaseVersion.data.id // "") as $preID
+                  | select(any($root.included[]?; .type == "preReleaseVersions" and .id == $preID and .attributes.version == $version))
+                ][0].id // ""
+            ' <<<"$response")"
+            if [[ -n "$build_id" ]]; then
+              processing_state="$(jq -r --arg id "$build_id" '.data[] | select(.id == $id) | .attributes.processingState' <<<"$response")"
+              audience="$(jq -r --arg id "$build_id" '.data[] | select(.id == $id) | .attributes.buildAudienceType' <<<"$response")"
+              uploaded_date="$(jq -r --arg id "$build_id" '.data[] | select(.id == $id) | .attributes.uploadedDate' <<<"$response")"
+              [[ "$audience" == "INTERNAL_ONLY" ]] || { echo "::error::Unexpected build audience: $audience"; exit 1; }
+              if [[ "$processing_state" == "VALID" ]]; then
+                break
+              fi
+              [[ "$processing_state" != "FAILED" && "$processing_state" != "INVALID" ]] || { echo "::error::Apple rejected build processing: $processing_state"; exit 1; }
+            fi
+            sleep 15
+          done
+
+          [[ -n "$build_id" && "$processing_state" == "VALID" ]] || { echo "::error::Build 0.7.2 (2) did not finish processing in time."; exit 1; }
+
+          groups="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
+            --data-urlencode 'fields[betaGroups]=name,isInternalGroup,hasAccessToAllBuilds' \
+            --data-urlencode 'limit=200' \
+            "$API_ROOT/apps/$APP_ID/betaGroups")"
+          group_id="$(jq -r '[.data[] | select(.attributes.name == "Testers" and .attributes.isInternalGroup == true)][0].id // ""' <<<"$groups")"
+          [[ -n "$group_id" ]] || { echo "::error::Existing internal Testers group not found."; exit 1; }
+
+          group_builds="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
+            --data-urlencode 'fields[builds]=version,processingState,buildAudienceType' \
+            --data-urlencode 'limit=200' \
+            "$API_ROOT/betaGroups/$group_id/builds")"
+          if ! jq -e --arg id "$build_id" 'any(.data[]; .id == $id)' <<<"$group_builds" >/dev/null; then
+            payload="$(jq -n --arg id "$build_id" '{data: [{type: "builds", id: $id}]}')"
+            curl --fail-with-body --silent --show-error \
+              -X POST "${auth[@]}" \
+              -H 'Content-Type: application/json' \
+              --data "$payload" \
+              "$API_ROOT/betaGroups/$group_id/relationships/builds"
+          fi
+
+          verified="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
+            --data-urlencode 'fields[builds]=version,processingState,buildAudienceType' \
+            --data-urlencode 'limit=200' \
+            "$API_ROOT/betaGroups/$group_id/builds")"
+          jq -e --arg id "$build_id" 'any(.data[]; .id == $id and .attributes.processingState == "VALID" and .attributes.buildAudienceType == "INTERNAL_ONLY")' <<<"$verified" >/dev/null
+
+          jq -n \
+            --arg app "Tarot Deck" \
+            --arg version "$MARKETING_VERSION" \
+            --arg build "$BUILD_NUMBER" \
+            --arg buildID "$build_id" \
+            --arg processingState "$processing_state" \
+            --arg audience "$audience" \
+            --arg uploadedDate "$uploaded_date" \
+            --arg group "Testers" \
+            --arg commit "$GITHUB_SHA" \
+            --arg ciRunID "$GITHUB_RUN_ID" \
+            '{schemaVersion: 1, app: $app, version: $version, build: $build, buildID: $buildID, processingState: $processingState, buildAudienceType: $audience, uploadedDate: $uploadedDate, internalGroup: $group, groupAccessVerified: true, commit: $commit, ciRunID: $ciRunID, externalTestingEnabled: false, appStoreSubmitted: false}' > "$STATUS_PATH"
+          rm -f "$KEY_PATH"
+          echo "status_path=$STATUS_PATH" >> "$GITHUB_OUTPUT"
+
+      - name: Preserve non-binary processing evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: TarotDeck-0.7.2-2-TestFlight-Internal-Status
+          path: ${{ steps.status.outputs.status_path }}
+          if-no-files-found: error
+          retention-days: 7
