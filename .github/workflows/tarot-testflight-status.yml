@@ -20,7 +20,7 @@ jobs:
     name: Verify TestFlight INTERNAL ONLY - 0.7.2 (2)
     if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY' }}
     runs-on: macos-latest
-    timeout-minutes: 20
+    timeout-minutes: 40
     environment: app-store-production
 
     steps:
@@ -76,23 +76,25 @@ jobs:
           processing_state=""
           audience=""
           uploaded_date=""
+          upload_id=""
+          upload_state=""
+          last_reported_state=""
 
-          for attempt in $(seq 1 40); do
+          for attempt in $(seq 1 120); do
             response="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
-              --data-urlencode 'fields[builds]=version,uploadedDate,processingState,buildAudienceType,preReleaseVersion,minOsVersion' \
-              --data-urlencode 'fields[preReleaseVersions]=version,platform' \
-              --data-urlencode "filter[app]=$APP_ID" \
-              --data-urlencode "filter[version]=$MARKETING_VERSION" \
-              --data-urlencode "filter[builds.version]=$BUILD_NUMBER" \
-              --data-urlencode 'filter[builds.buildAudienceType]=INTERNAL_ONLY' \
-              --data-urlencode 'include=builds' \
+              --data-urlencode 'fields[buildUploads]=cfBundleShortVersionString,cfBundleVersion,createdDate,state,platform,uploadedDate,build' \
+              --data-urlencode 'fields[builds]=version,uploadedDate,processingState,buildAudienceType,minOsVersion' \
+              --data-urlencode "filter[cfBundleShortVersionString]=$MARKETING_VERSION" \
+              --data-urlencode "filter[cfBundleVersion]=$BUILD_NUMBER" \
+              --data-urlencode 'filter[platform]=IOS' \
+              --data-urlencode 'include=build' \
               --data-urlencode 'limit=200' \
-              --data-urlencode 'limit[builds]=50' \
-              "$API_ROOT/preReleaseVersions")"
-            build_id="$(jq -r --arg version "$MARKETING_VERSION" --arg build "$BUILD_NUMBER" '
-              select(any(.data[]; .attributes.version == $version and .attributes.platform == "IOS"))
-              | [.included[]? | select(.type == "builds" and .attributes.version == $build)][0].id // ""
+              "$API_ROOT/apps/$APP_ID/buildUploads")"
+            upload_id="$(jq -r --arg version "$MARKETING_VERSION" --arg build "$BUILD_NUMBER" '
+              [.data[] | select(.attributes.cfBundleShortVersionString == $version and .attributes.cfBundleVersion == $build and .attributes.platform == "IOS")][0].id // ""
             ' <<<"$response")"
+            upload_state="$(jq -r --arg id "$upload_id" '.data[]? | select(.id == $id) | .attributes.state // ""' <<<"$response")"
+            build_id="$(jq -r '[.included[]? | select(.type == "builds")][0].id // ""' <<<"$response")"
             if [[ -n "$build_id" ]]; then
               processing_state="$(jq -r --arg id "$build_id" '.included[] | select(.id == $id) | .attributes.processingState' <<<"$response")"
               audience="$(jq -r --arg id "$build_id" '.included[] | select(.id == $id) | .attributes.buildAudienceType' <<<"$response")"
@@ -103,10 +105,16 @@ jobs:
               fi
               [[ "$processing_state" != "FAILED" && "$processing_state" != "INVALID" ]] || { echo "::error::Apple rejected build processing: $processing_state"; exit 1; }
             fi
+            [[ "$upload_state" != "FAILED" ]] || { echo "::error::Apple rejected build upload processing: $upload_state"; exit 1; }
+            current_state="upload=${upload_state:-NOT_VISIBLE}; build=${processing_state:-NOT_VISIBLE}"
+            if [[ "$current_state" != "$last_reported_state" ]]; then
+              echo "Apple processing state: $current_state"
+              last_reported_state="$current_state"
+            fi
             sleep 15
           done
 
-          [[ -n "$build_id" && "$processing_state" == "VALID" ]] || { echo "::error::Build 0.7.2 (2) did not finish processing in time."; exit 1; }
+          [[ -n "$build_id" && "$processing_state" == "VALID" ]] || { echo "::error::Build 0.7.2 (2) did not finish processing in time (upload=${upload_state:-NOT_VISIBLE}; build=${processing_state:-NOT_VISIBLE})."; exit 1; }
 
           groups="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
             --data-urlencode 'fields[betaGroups]=name,isInternalGroup,hasAccessToAllBuilds' \
@@ -138,6 +146,8 @@ jobs:
             --arg app "Tarot Deck" \
             --arg version "$MARKETING_VERSION" \
             --arg build "$BUILD_NUMBER" \
+            --arg uploadID "$upload_id" \
+            --arg uploadState "$upload_state" \
             --arg buildID "$build_id" \
             --arg processingState "$processing_state" \
             --arg audience "$audience" \
@@ -145,7 +155,7 @@ jobs:
             --arg group "Testers" \
             --arg commit "$GITHUB_SHA" \
             --arg ciRunID "$GITHUB_RUN_ID" \
-            '{schemaVersion: 1, app: $app, version: $version, build: $build, buildID: $buildID, processingState: $processingState, buildAudienceType: $audience, uploadedDate: $uploadedDate, internalGroup: $group, groupAccessVerified: true, commit: $commit, ciRunID: $ciRunID, externalTestingEnabled: false, appStoreSubmitted: false}' > "$STATUS_PATH"
+            '{schemaVersion: 1, app: $app, version: $version, build: $build, uploadID: $uploadID, uploadState: $uploadState, buildID: $buildID, processingState: $processingState, buildAudienceType: $audience, uploadedDate: $uploadedDate, internalGroup: $group, groupAccessVerified: true, commit: $commit, ciRunID: $ciRunID, externalTestingEnabled: false, appStoreSubmitted: false}' > "$STATUS_PATH"
           rm -f "$KEY_PATH"
           echo "status_path=$STATUS_PATH" >> "$GITHUB_OUTPUT"
 
