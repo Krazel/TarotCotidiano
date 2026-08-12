@@ -1,10 +1,10 @@
 # App Store record — Tarot Deck: Read & Learn
 
-Actualizado: 2026-08-11
+Actualizado: 2026-08-12
 
 ## Propósito y estado
 
-Esta ficha registra los datos verificados de App Store Connect para **Tarot Deck: Read & Learn**. `0.2.1 (1)` está subida y disponible exclusivamente como **TestFlight Internal Only**. No autoriza contratos, StoreKit, testers externos, App Review o publicación.
+Esta ficha registra los datos verificados de App Store Connect para **Tarot Deck: Read & Learn**. `0.7.2 (2)` está subida, procesada y disponible exclusivamente como **TestFlight Internal Only** en el grupo `Testers`. No autoriza contratos, StoreKit, testers externos, App Review o publicación.
 
 Estado de preparación: **registro externo y metadata bilingüe guardados; privacidad, edad, accesibilidad conservadora y precio gratuito configurados; derechos y distribución pendientes**.
 
@@ -22,10 +22,10 @@ Bloqueo de distribución: la obra histórica Rider–Waite–Smith está fuera d
 | Idioma principal | English (U.S.) | Fallback de la ficha. |
 | Localización adicional | Spanish (Spain) | Añadida; nombre y subtítulo básicos guardados. La app ya contempla inglés y castellano. |
 | Acceso | Full Access | Configurado. |
-| Versión visible | `0.2.1` | Corrección de la composición Release posterior a la entrega `0.2`; no equivale a versión pública. |
-| Build | `1` | Subida, procesada y `En pruebas` en el grupo interno `Testers`. |
+| Versión visible | `0.7.2` | Build interna vigente; no equivale a versión pública. |
+| Build | `2` | Subida, procesada como `VALID` y asignada al grupo interno `Testers`. |
 | App Store Connect Apple ID | `6800144105` | Generado y verificado en App Store Connect el 2026-08-11. |
-| Tren público inicial | `1.0` | Permanece en preparación y sin build seleccionada. TestFlight `0.2.1 (1)` no sustituye ni publica ese tren. |
+| Tren público inicial | `1.0` | Permanece en preparación y sin build seleccionada. TestFlight `0.7.2 (2)` no sustituye ni publica ese tren. |
 | Publicación | Manual | Configurada para impedir una publicación automática tras una futura aprobación. |
 | Inicio de sesión para review | No requerido | La app no tiene cuentas ni login. |
 | Precio | Gratis (`0,00 €`) | España (EUR) es la región base; precios equivalentes gratuitos en las 175 regiones. |
@@ -169,7 +169,7 @@ El código no implementa cifrado propio ni integra SDK criptográfico o de red. 
 ### Review y disponibilidad — pendientes
 
 - No hay build seleccionada para el tren público `1.0`; la ficha verificada usa Apple ID `6800144105`.
-- TestFlight contiene `0.2.1 (1)` como build Internal Only, estado `En pruebas`, asignada al grupo interno `Testers` con un tester. Las instrucciones de QA están guardadas en English (U.S.).
+- TestFlight contiene `0.7.2 (2)` como build `VALID`, audiencia `INTERNAL_ONLY`, asignada al grupo interno `Testers`. La fuente exacta es `f3b96cf78f30a345405819fdc99b0534dd686b7e`; upload run `31613533265` y verificación de App Store Connect `31616629228`. Las instrucciones de QA están guardadas en English (U.S.).
 - Nombre, subtítulo, descripción y keywords están guardados en English (U.S.) y Español (España); la publicación está configurada como manual.
 - Screenshots y app previews deben esperar a una build visualmente cerrada y no se preparan en esta ficha.
 - Review contact y notes están guardados contra la funcionalidad actual; son privados para App Review, sus valores no se reproducen en el repositorio ni en páginas públicas y deben revalidarse con la build candidata.
