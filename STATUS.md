@@ -1,12 +1,12 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-08-12
+Actualizado: 2026-08-13
 
 ## Estado ejecutivo
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **`0.7.2 (2)` está procesada, válida y asignada al grupo interno `Testers` en TestFlight**. Incluye A-053–A-056: tirada documentada de seis cartas, tiradas personalizadas de 1–12 cartas, colocación manual en cualquier hueco, barajado visual V4, mesa horizontal compacta y Three Cards como selección inicial de una instalación nueva.
+Fase actual: **`0.8 (1)` está procesada, válida y asignada al grupo interno `Testers` en TestFlight**. Incluye A-053–A-060: tirada documentada de seis cartas, tiradas personalizadas de 1–12 cartas, auto-shuffle y barajado repetible del mazo restante, reparto por mazo o hueco, mazo persistente, selectores refinados y filtros de Cartas inequívocamente desplazables.
 
 La regla global A-022 añade planificación de Settings, apoyo mensual voluntario y reseña separada sin bloquear el uso gratuito ni autorizar todavía productos StoreKit, precios, contratos o review.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **ninguna**. `/root/a060_implementation` cerró su ámbito; la revisión A-060 es de solo lectura antes del commit y TestFlight autorizados.
+Propietaria activa de implementación: **ninguna**. A-060, su revisión independiente y la entrega interna de `0.8 (1)` están cerradas.
 
 A-053 está implementada localmente como `0.6 (1)`: selector coherente con información izquierda/tick derecha, `Six-Card Guidance / Orientación en seis cartas`, tutorial citado, biblioteca y editor de tiradas personalizadas de 1–12 cartas, borrador local, layouts visuales automáticos, movimiento accesible, snapshots inmutables y tutorial `Create Your Own Spread`. V-107 sustituye la maestra errónea V-090; V-091–V-096 permanecen aprobadas bajo A-021. Falta obligatoriamente compilar/testear con Xcode en macOS y comparar la build real con las maestras antes de autorizar TestFlight; no existe autorización de subida en este encargo.
 
@@ -26,9 +26,9 @@ A-056 está cerrada localmente como `0.7.2 (1)`: una instalación limpia selecci
 
 A-057/A-058 están cerradas. Los runs `31612704651` y `31613200717` detectaron y detuvieron dos problemas pre-upload sin producir archive. El run `31613533265` compiló y firmó la fuente exacta `f3b96cf78f30a345405819fdc99b0534dd686b7e`, ejecutó 44 pruebas, exportó y subió `0.7.2 (2)` como TestFlight Internal Only. Apple confirmó carga `COMPLETE`, procesamiento `VALID`, audiencia `INTERNAL_ONLY` y acceso verificado al grupo `Testers` mediante el run protegido `31616629228`. No se habilitó testing externo, Beta App Review, App Review ni publicación.
 
-A-059 está implementada localmente como `0.8 (1)`: auto-shuffle único en nueva/reset, reshuffle transaccional del sufijo no repartido, recuperación `.reshuffling`, evento visual post-commit, cola máxima de una repetición, reparto por mazo o hueco, mazo siempre visible, Shuffle independiente, hint temporal `phone / teléfono`, cabecera landscape compacta y ausencia de dimming/Deal. La revisión independiente cerró sin P0/P1; su fallo de pista consumida en landscape quedó corregido mediante comprobación de orientación física, cancelación al girar y una sola oferta por entrada. Content, Education, Localization, Integration y los contratos de Local-QA/TestFlight/Status pasan en Windows. Las pruebas Core cubren primer hueco, invariantes del sufijo y rollback; todavía falta una prueba ejecutable del modelo SwiftUI para recovery/cola/no-replay. Windows no dispone de Swift/Xcode, por lo que `swift test`, build, esa cobertura de integración y la comparación de runtime siguen pendientes en macOS. No hay autorización de commit, push, workflow ni TestFlight en este encargo.
+A-059 está integrada en `0.8 (1)`: auto-shuffle único en nueva/reset, reshuffle transaccional del sufijo no repartido, recuperación `.reshuffling`, evento visual post-commit, cola máxima de una repetición, reparto por mazo o hueco, mazo siempre visible, Shuffle independiente, hint temporal `phone / teléfono`, cabecera landscape compacta y ausencia de dimming/Deal. La revisión independiente cerró sin P0/P1; su fallo de pista consumida en landscape quedó corregido mediante comprobación de orientación física, cancelación al girar y una sola oferta por entrada. Las pruebas Core de macOS y el archive Release firmado pasaron en el workflow de entrega. Sigue pendiente una prueba ejecutable específica del modelo SwiftUI para recovery/cola/no-replay y la comparación visual manual en iPhone.
 
-A-060 está implementada y autorizada para TestFlight Internal Only. V-120/V-121 reducen únicamente la `i` visible a 22 pt conservando 44×44 pt de toque; V-122 hace evidente el desplazamiento de las siete categorías de Cards mediante siguiente chip parcial, indicador horizontal nativo y fade/chevrón condicional, con hint VoiceOver EN/ES. La revisión independiente cerró sin P0/P1; el único P2 de borde semántico en RTL se corrigió mapeando explícitamente los bordes físicos izquierdo/derecho. Los ocho validadores locales pasan. La candidata integrada sigue siendo la primera entrega `0.8 (1)`. El propietario autoriza commit, push, workflow protegido, subida y asignación al grupo interno `Testers`; no autoriza testing externo, Beta App Review, App Review ni publicación.
+A-060 está cerrada en TestFlight Internal Only. V-120/V-121 reducen únicamente la `i` visible a 22 pt conservando 44×44 pt de toque; V-122 hace evidente el desplazamiento de las siete categorías de Cards mediante siguiente chip parcial, indicador horizontal nativo y fade/chevrón condicional, con hint VoiceOver EN/ES. La revisión independiente cerró sin P0/P1; el único P2 de borde semántico en RTL se corrigió mapeando explícitamente los bordes físicos izquierdo/derecho. La fuente exacta `52ac2aefb0cc1f116e3eebb253eb8504d9f26264` compiló, se firmó y se subió como `0.8 (1)` en el run `31695399569`. Apple confirmó carga `COMPLETE`, procesamiento `VALID`, audiencia `INTERNAL_ONLY` y acceso al grupo `Testers` mediante el run protegido `31695778956`. No se habilitó testing externo, Beta App Review, App Review ni publicación.
 
 A-031 fue ordenada explícitamente por el propietario el 2026-08-10. Su Home compacto, Settings bilingüe y geometría centrada siguen incorporados. A-054 sustituye la interacción de mesa de A-052: V-097–V-102 definen barajado físico V4, colocación manual por posición y mesa inmersiva; V-086/V-087 y V-088 siguen gobernando mesa completa y tutorial contextual.
 
@@ -51,7 +51,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 ## Hechos verificados
 
 - Repositorio local: `C:\Users\dmkra\Documents\Codex Apps\TarotCotidianoNative`.
-- Rama: `main`; `5c3abb138212bebf07eefdc63d8c364309b03b0d` es la fuente exacta de TestFlight `0.5 (1)`. `a7b8c68f6be38b99ab283c9b261367e9a554ff3f` permanece como fuente de `0.4.1 (1)`, `8e4f908cad8e032719e5c85e7758a39941552554` de `0.4 (1)`, `c4273f71729f3507ac8745cfea5cf4d81dc10bda` de `0.3 (1)` y las builds anteriores permanecen en el historial.
+- Rama: `main`; `52ac2aefb0cc1f116e3eebb253eb8504d9f26264` es la fuente exacta de TestFlight `0.8 (1)`. `f3b96cf78f30a345405819fdc99b0534dd686b7e` permanece como fuente de `0.7.2 (2)`, `5c3abb138212bebf07eefdc63d8c364309b03b0d` de `0.5 (1)` y las builds anteriores permanecen en el historial.
 - Remoto público por A-026: `https://github.com/Krazel/TarotCotidiano.git`.
 - Acceso GitHub central verificado mediante el comprobador común: `status=OK`, login global `Krazel` desde el llavero de Windows, repo público, `origin` correcto y los workflows activos. Actions se opera solo con `gh`; no se usa Chrome para lanzar workflows ni autenticación por proyecto.
 - El prototipo preservado sigue siendo Expo 53 / React Native 0.79.6 / React 19.
@@ -98,6 +98,7 @@ La pausa global terminó el 2026-08-10. Antes de reanudar se verificó que el ar
 - A-050 produjo `0.4.1 (1)` en el run `31531477904`, CI `7`, sobre `a7b8c68f6be38b99ab283c9b261367e9a554ff3f`. Terminó verde en 4m03s el 2026-08-11: Apple procesó la build, la muestra `En pruebas` y la asignó al grupo interno `Testers`. Evidencia no binaria: artifact `9117103671`, `TarotDeck-0.4.1-1-ci7-a7b8c68f6be3-TestFlight-Internal`; SHA-256 de la IPA efímera `65f91532d1d71bf3fb5d7f40ccfcdd5b89f1ff4fced84286ee46698e87bad57e`.
 - A-052 produjo `0.5 (1)` en el run `31543987465`, CI `8`, sobre `5c3abb138212bebf07eefdc63d8c364309b03b0d`. Terminó verde en 3m27s el 2026-08-12: pruebas Swift, archive Release, firma, identidad, export y subida pasaron; App Store Connect muestra la build `En pruebas` en el grupo interno `Testers`. Evidencia no binaria: artifact `9121812378`, `TarotDeck-0.5-1-ci8-5c3abb138212-TestFlight-Internal`; SHA-256 de la IPA efímera `b7d9a2a764e1d6ad76505416ded6921d079db501547a764dd64b31fbede19585`.
 - A-057/A-058 produjeron `0.7.2 (2)` en el run `31613533265`, CI `11`, sobre `f3b96cf78f30a345405819fdc99b0534dd686b7e`. Terminó verde en 4m30s el 2026-08-12: 44 pruebas, archive Release, firma, privacidad, iOS 16, export y upload pasaron. La IPA efímera tuvo SHA-256 `271f819c2b3810c8f369f514df57463f01f10ffc646dd279c031b5fa076a27e6`; evidencia no binaria artifact `9148320746`, `TarotDeck-0.7.2-2-ci11-f3b96cf78f30-TestFlight-Internal`. El run protegido `31616629228` verificó después `processingState=VALID`, `buildAudienceType=INTERNAL_ONLY` y acceso al grupo `Testers`; evidencia artifact `9149506767`.
+- A-059/A-060 produjeron `0.8 (1)` en el run `31695399569` sobre `52ac2aefb0cc1f116e3eebb253eb8504d9f26264`. Terminó verde en 4m34s el 2026-08-13: validadores, pruebas Swift, archive Release, firma, privacidad, iOS 16, export y upload pasaron. El run protegido `31695778956` verificó después `uploadState=COMPLETE`, `processingState=VALID`, `buildAudienceType=INTERNAL_ONLY` y acceso al grupo `Testers`; evidencia no binaria artifact `9179316317`, `TarotDeck-0.8-1-TestFlight-Internal-Status`. No se habilitó testing externo ni se envió a revisión.
 - `docs/technical/LOCAL_QA_IPA.md`: guía verificada para descargar, comprobar y volver a firmar el IPA con Sideloadly o AltStore en Windows. El paquete permanece `INTERNAL ONLY` por el arte RWS provisional.
 - Validación local en Windows superada: manifiesto 78/22/56, cuatro palos, evidencia 78/78, IDs Swift/JSON idénticos, núcleo sin UI/red y prototipo Expo intacto.
 - Verificación macOS iOS 16 superada: 24 pruebas Swift, build Debug para iPhone físico, ejecutable arm64, `MinimumOSVersion=16.0`, ausencia de firma y paquete IPA `Payload` exacto.
@@ -155,6 +156,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: actualizar a `0.7.2 (2)` en TestFlight, probarla en el iPhone y recoger únicamente incidencias reproducibles. No habilitar testers externos, App Review ni publicación sin una nueva autorización expresa.
+Siguiente punto exacto: probar `0.8 (1)` en el iPhone y recoger únicamente incidencias reproducibles. No habilitar testers externos, App Review ni publicación sin una nueva autorización expresa.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.
