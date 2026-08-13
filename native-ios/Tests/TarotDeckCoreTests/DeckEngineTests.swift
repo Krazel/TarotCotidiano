@@ -223,6 +223,65 @@ final class DeckEngineTests: XCTestCase {
         XCTAssertTrue(session.drawnCards.isEmpty)
         XCTAssertEqual(session.remainingCardCount, 78)
     }
+
+    func testDefaultDrawUsesFirstCanonicalEmptyPosition() throws {
+        let engine = DeckEngine(shuffler: IdentityShuffler())
+        var session = try engine.startSession(at: startDate)
+        _ = try engine.draw(into: 2, from: &session, at: startDate.addingTimeInterval(1))
+
+        let firstGap = try engine.draw(from: &session, at: startDate.addingTimeInterval(2))
+        let secondGap = try engine.draw(from: &session, at: startDate.addingTimeInterval(3))
+
+        XCTAssertEqual(firstGap.positionIndex, 0)
+        XCTAssertEqual(secondGap.positionIndex, 1)
+        XCTAssertEqual(session.drawnCards.map(\.positionIndex), [2, 0, 1])
+    }
+
+    func testReshuffleRemainingPreservesDrawnPrefixPositionsRevealAndSessionIdentity() throws {
+        let engine = DeckEngine(shuffler: ReverseShuffler())
+        var session = try engine.startSession(at: startDate)
+        _ = try engine.draw(into: 2, from: &session, at: startDate.addingTimeInterval(1))
+        let second = try engine.draw(into: 0, from: &session, at: startDate.addingTimeInterval(2))
+        _ = try engine.reveal(
+            cardID: second.id,
+            in: &session,
+            at: startDate.addingTimeInterval(3)
+        )
+        let before = session
+
+        try engine.reshuffleRemaining(
+            in: &session,
+            at: startDate.addingTimeInterval(4)
+        )
+
+        XCTAssertEqual(session.id, before.id)
+        XCTAssertEqual(session.createdAt, before.createdAt)
+        XCTAssertEqual(session.nextDrawIndex, before.nextDrawIndex)
+        XCTAssertEqual(session.drawnCards, before.drawnCards)
+        XCTAssertEqual(
+            Array(session.shuffledCardIDs.prefix(before.nextDrawIndex)),
+            Array(before.shuffledCardIDs.prefix(before.nextDrawIndex))
+        )
+        XCTAssertEqual(
+            Array(session.shuffledCardIDs.dropFirst(before.nextDrawIndex)),
+            Array(before.shuffledCardIDs.dropFirst(before.nextDrawIndex).reversed())
+        )
+        XCTAssertNoThrow(try session.validate())
+    }
+
+    func testInvalidRemainingShuffleLeavesSessionUnchanged() throws {
+        let engine = DeckEngine(shuffler: DroppingShuffler())
+        var session = DeckSession(
+            shuffledCardIDs: StandardTarotDeck.cardIDs,
+            createdAt: startDate
+        )
+        let original = session
+
+        XCTAssertThrowsError(try engine.reshuffleRemaining(in: &session)) { error in
+            XCTAssertEqual(error as? DeckEngineError, .invalidShuffleOutput)
+        }
+        XCTAssertEqual(session, original)
+    }
 }
 
 private struct IdentityShuffler: DeckShuffling {

@@ -282,6 +282,61 @@ final class DeckSessionCoordinatorTests: XCTestCase {
         XCTAssertEqual(store.saveCount, 3) // start, draw and reveal only
     }
 
+    func testReshuffleRemainingCommitsSuffixOnceAndPreservesPlacedCards() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorReverseShuffler(),
+            store: store
+        )
+        try await coordinator.startSession(at: startDate)
+        _ = try await coordinator.draw(into: 3, at: startDate.addingTimeInterval(1))
+        let second = try await coordinator.draw(into: 1, at: startDate.addingTimeInterval(2))
+        _ = try await coordinator.reveal(
+            cardID: second.id,
+            at: startDate.addingTimeInterval(3)
+        )
+        let beforeValue = await coordinator.currentSession()
+        let before = try XCTUnwrap(beforeValue)
+
+        let reshuffled = try await coordinator.reshuffleRemaining(
+            at: startDate.addingTimeInterval(4)
+        )
+
+        XCTAssertEqual(reshuffled.id, before.id)
+        XCTAssertEqual(reshuffled.drawnCards, before.drawnCards)
+        XCTAssertEqual(
+            Array(reshuffled.shuffledCardIDs.prefix(before.nextDrawIndex)),
+            Array(before.shuffledCardIDs.prefix(before.nextDrawIndex))
+        )
+        XCTAssertEqual(store.storedSession, reshuffled)
+        XCTAssertEqual(store.saveCount, 5) // start, two draws, reveal, reshuffle
+    }
+
+    func testFailedReshuffleSavePreservesPreviousMemoryAndStorage() async throws {
+        let store = ControlledSessionStore()
+        let coordinator = DeckSessionCoordinator(
+            shuffler: CoordinatorReverseShuffler(),
+            store: store
+        )
+        try await coordinator.startSession(at: startDate)
+        _ = try await coordinator.draw(into: 2)
+        let beforeValue = await coordinator.currentSession()
+        let before = try XCTUnwrap(beforeValue)
+        store.failNextSave()
+
+        do {
+            _ = try await coordinator.reshuffleRemaining()
+            XCTFail("Expected the injected reshuffle save failure")
+        } catch {
+            XCTAssertEqual(error as? ControlledStoreError, .saveFailed)
+        }
+
+        let current = await coordinator.currentSession()
+        XCTAssertEqual(current, before)
+        XCTAssertEqual(store.storedSession, before)
+        XCTAssertEqual(store.saveCount, 2)
+    }
+
     func testFailedClearDoesNotPublishEmptyMemoryState() async throws {
         let store = ControlledSessionStore()
         let coordinator = DeckSessionCoordinator(
@@ -522,5 +577,11 @@ private final class ControlledSessionStore: DeckSessionStoring, @unchecked Senda
 private struct CoordinatorIdentityShuffler: DeckShuffling {
     func shuffled(_ cardIDs: [TarotCardID]) -> [TarotCardID] {
         cardIDs
+    }
+}
+
+private struct CoordinatorReverseShuffler: DeckShuffling {
+    func shuffled(_ cardIDs: [TarotCardID]) -> [TarotCardID] {
+        Array(cardIDs.reversed())
     }
 }

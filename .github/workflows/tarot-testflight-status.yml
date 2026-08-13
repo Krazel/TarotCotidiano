@@ -17,7 +17,7 @@ concurrency:
 
 jobs:
   verify-internal-build:
-    name: Verify TestFlight INTERNAL ONLY - 0.7.2 (2)
+    name: Verify TestFlight INTERNAL ONLY - 0.8 (1)
     if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY' }}
     runs-on: macos-latest
     timeout-minutes: 40
@@ -49,8 +49,8 @@ jobs:
           : "${APP_STORE_CONNECT_API_KEY_BASE64:?missing protected API key}"
 
           APP_ID="6800144105"
-          MARKETING_VERSION="0.7.2"
-          BUILD_NUMBER="2"
+          MARKETING_VERSION="0.8"
+          BUILD_NUMBER="1"
           API_ROOT="https://api.appstoreconnect.apple.com/v1"
           KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
           STATUS_PATH="$RUNNER_TEMP/tarot-testflight-status.json"
@@ -117,7 +117,7 @@ jobs:
             sleep 15
           done
 
-          [[ -n "$build_id" && "$processing_state" == "VALID" ]] || { echo "::error::Build 0.7.2 (2) did not finish processing in time (upload=${upload_state:-NOT_VISIBLE}; build=${processing_state:-NOT_VISIBLE})."; exit 1; }
+          [[ -n "$build_id" && "$processing_state" == "VALID" ]] || { echo "::error::Build 0.8 (1) did not finish processing in time (upload=${upload_state:-NOT_VISIBLE}; build=${processing_state:-NOT_VISIBLE})."; exit 1; }
 
           groups="$(curl --fail-with-body --silent --show-error --get "${auth[@]}" \
             --data-urlencode 'fields[betaGroups]=name,isInternalGroup,hasAccessToAllBuilds' \
@@ -165,7 +165,7 @@ jobs:
       - name: Preserve non-binary processing evidence
         uses: actions/upload-artifact@v4
         with:
-          name: TarotDeck-0.7.2-2-TestFlight-Internal-Status
+          name: TarotDeck-0.8-1-TestFlight-Internal-Status
           path: ${{ steps.status.outputs.status_path }}
           if-no-files-found: error
           retention-days: 7

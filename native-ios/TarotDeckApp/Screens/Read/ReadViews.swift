@@ -745,13 +745,13 @@ private struct ReadingChoiceOverlay: View {
     private func informationButton(action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: "info")
-                .font(.system(size: 13, weight: .semibold))
-                .frame(width: 28, height: 28)
+                .font(.system(size: 11, weight: .semibold))
+                .frame(width: 22, height: 22)
                 .background {
                     Circle()
                         .fill(Color.black.opacity(0.28))
                         .overlay {
-                            Circle().stroke(CeremonialObsidianTheme.brightGold, lineWidth: 1)
+                            Circle().stroke(CeremonialObsidianTheme.brightGold, lineWidth: 0.9)
                         }
                 }
                 .frame(width: 44, height: 44)
@@ -1519,11 +1519,16 @@ private struct ReadingTableView: View {
     @State private var presentationTask: Task<Void, Never>?
     @State private var presentationToken: UUID?
     @State private var presentationLocked = false
+    @State private var pendingShufflePresentation = false
+    @State private var shuffleCommitQueued = false
     @State private var placingPosition: Int?
     @State private var placementProgress: CGFloat = 0
     @State private var flippingPosition: Int?
     @State private var flipProgress: CGFloat = 0
     @State private var flipRevealing = true
+    @State private var showsOrientationHint = false
+    @State private var orientationHintWasOffered = false
+    @State private var orientationHintTask: Task<Void, Never>?
     @AccessibilityFocusState private var focusedReadingPosition: Int?
 
     var body: some View {
@@ -1551,15 +1556,40 @@ private struct ReadingTableView: View {
             .onChange(of: isLandscape) { _ in
                 cancelTransientMotion(establishing: visualState)
             }
+            .onAppear {
+                scheduleOrientationHintIfNeeded(isPortrait: !isPhysicallyLandscape)
+            }
+            .onChange(of: isPhysicallyLandscape) { isLandscapeNow in
+                if isLandscapeNow {
+                    cancelOrientationHint()
+                } else {
+                    scheduleOrientationHintIfNeeded(isPortrait: true)
+                }
+            }
         }
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             // Restoration and rotation establish a baseline without replaying motion or haptics.
             visualBaseline = visualState
+            model.beginAutomaticShuffleIfNeeded()
         }
         .onChange(of: visualState) { newState in
             respondToDurableStateChange(newState)
+        }
+        .onChange(of: model.isReadyToShuffle) { isReady in
+            if isReady { model.beginAutomaticShuffleIfNeeded() }
+        }
+        .onChange(of: model.shufflePresentationGeneration) { _ in
+            shuffleCommitQueued = false
+            requestShufflePresentation()
+        }
+        .onChange(of: model.isBusy) { isBusy in
+            // A failed queued shuffle produces no generation event. Release the
+            // request latch once its transaction finishes so retry remains possible.
+            if !isBusy, !pendingShufflePresentation {
+                shuffleCommitQueued = false
+            }
         }
         .onChange(of: scenePhase) { newPhase in
             if newPhase != .active {
@@ -1573,6 +1603,8 @@ private struct ReadingTableView: View {
             cancelTransientMotion(establishing: visualState)
         }
         .onDisappear {
+            orientationHintTask?.cancel()
+            orientationHintTask = nil
             cancelTransientMotion(establishing: visualState)
         }
     }
@@ -1599,8 +1631,8 @@ private struct ReadingTableView: View {
             readingStage(isLandscape: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            portraitActionArea(showsOrientationHint: showsOrientationHint)
-                .frame(minHeight: model.activeCardCount > 1 && showsOrientationHint ? 118 : 96)
+            portraitActionArea(showsOrientationHint: self.showsOrientationHint && showsOrientationHint)
+                .frame(minHeight: 96)
                 .padding(.horizontal, 26)
         }
         .padding(.top, 4)
@@ -1611,11 +1643,11 @@ private struct ReadingTableView: View {
         let deckWidth = min(max(size.width * 0.18, 140), 160)
         let deckHeight = deckWidth / CeremonialObsidianTheme.deckAspectRatio
         let deckColumnWidth = deckWidth + 12
-        let cueHeight: CGFloat = 34
+        let cueHeight: CGFloat = 28
 
         return VStack(spacing: 0) {
             landscapeHeader
-                .frame(height: 52)
+                .frame(height: 44)
 
             HStack(spacing: 10) {
                 VStack(spacing: 0) {
@@ -1641,20 +1673,11 @@ private struct ReadingTableView: View {
                             value: .bounds,
                             transform: { [.deck: $0] }
                         )
-                        .opacity(shouldShowDeck ? 1 : 0)
-                        .allowsHitTesting(shouldShowDeck)
-                        .accessibilityHidden(!shouldShowDeck)
+                    shuffleButton
+                        .padding(.top, 4)
 
-                    Spacer(minLength: 0)
-
-                    Group {
-                        if shouldShowDeck {
-                            landscapeCue
-                        } else {
-                            Color.clear
-                        }
-                    }
-                    .frame(height: cueHeight)
+                    landscapeCue
+                        .frame(height: cueHeight)
                 }
                 .frame(width: deckColumnWidth)
             }
@@ -1675,7 +1698,7 @@ private struct ReadingTableView: View {
             }
 
             Text(model.readingTitle)
-                .font(.system(.title2, design: .serif, weight: .semibold))
+                .font(.system(.headline, design: .serif, weight: .semibold))
                 .lineLimit(1)
                 .minimumScaleFactor(0.62)
                 .multilineTextAlignment(.center)
@@ -1723,7 +1746,7 @@ private struct ReadingTableView: View {
                 .frame(width: 44, height: 44)
         }
         .buttonStyle(.plain)
-        .disabled(model.isBusy)
+        .allowsHitTesting(!model.isBusy)
         .accessibilityLabel("Back")
         .accessibilityHint("Ends this reading and returns to Read home")
     }
@@ -1739,7 +1762,7 @@ private struct ReadingTableView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(model.isBusy)
+        .allowsHitTesting(!model.isBusy)
         .accessibilityLabel("Reset Reading")
         .accessibilityHint("Clears the cards and keeps this reading preset")
     }
@@ -1758,7 +1781,7 @@ private struct ReadingTableView: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(interactionLocked)
+        .allowsHitTesting(!interactionLocked)
         .accessibilityLabel("About This Reading")
         .accessibilityHint(
             AppLocalization.format(
@@ -1837,9 +1860,6 @@ private struct ReadingTableView: View {
                             value: .bounds,
                             transform: { [.deck: $0] }
                         )
-                        .opacity(shouldShowDeck ? 1 : 0)
-                        .allowsHitTesting(shouldShowDeck)
-                        .accessibilityHidden(!shouldShowDeck)
                         .position(
                             x: proxy.size.width / 2,
                             y: canvasHeight + availableDeckHeight / 2
@@ -1908,7 +1928,7 @@ private struct ReadingTableView: View {
                     positionName: positionTitle(at: index),
                     onReveal: { model.reveal(drawnCard.id) }
                 )
-                .disabled(interactionLocked)
+                .allowsHitTesting(!interactionLocked)
                 .id("face-down-\(drawnCard.id.rawValue)")
                 .accessibilityFocused($focusedReadingPosition, equals: index)
             }
@@ -1917,17 +1937,17 @@ private struct ReadingTableView: View {
                 position: index + 1,
                 total: total,
                 positionName: positionTitle(at: index),
-                canPlace: model.canPlaceCard(at: index) && !interactionLocked,
+                canPlace: model.canPlaceCard(at: index),
                 onPlace: { model.placeNextCard(at: index) }
             )
+            .allowsHitTesting(!interactionLocked)
             .transition(.opacity)
             .id("empty-\(index)")
         }
     }
 
     private var shouldShowDeck: Bool {
-        if model.isReadyToShuffle || model.canShuffleDeck || model.hasEmptyPositions { return true }
-        return placingPosition != nil
+        model.surface == .table
     }
 
     private var presentedReadingIsCompleteAndRevealed: Bool {
@@ -1937,43 +1957,65 @@ private struct ReadingTableView: View {
             && slots.allSatisfy { $0?.isRevealed == true }
     }
 
-    private var canUseDeck: Bool {
-        model.canShuffleDeck
-    }
-
-    @ViewBuilder
     private var deckControl: some View {
-        if canUseDeck {
-            Button {
-                model.shuffleDeck()
-            } label: {
-                shufflingDeck
-                    .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
-            }
-            .buttonStyle(CeremonialDeckButtonStyle(usesReducedMotion: usesReducedMotion))
-            .disabled(interactionLocked)
-            .accessibilityHint(
-                AppLocalization.text(
-                    model.isReadyToShuffle
-                        ? "Shuffles all 78 cards"
-                        : "Shuffles all 78 cards again"
+        Group {
+            if model.hasEmptyPositions, model.session != nil {
+                Button {
+                    model.placeNextCardInOrder()
+                } label: {
+                    shufflingDeck
+                        .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
+                }
+                .buttonStyle(CeremonialDeckButtonStyle(usesReducedMotion: usesReducedMotion))
+                .allowsHitTesting(!interactionLocked)
+                .accessibilityLabel(Text(AppLocalization.text("Tarot Deck")))
+                .accessibilityHint(
+                    AppLocalization.text("Places the next card in the first empty position")
                 )
-            )
-        } else {
-            shufflingDeck
-                .accessibilityHidden(true)
+            } else {
+                shufflingDeck
+                    .accessibilityLabel(
+                        AppLocalization.text(
+                            model.hasEmptyPositions ? "Tarot Deck" : "Tarot deck, layout complete"
+                        )
+                    )
+            }
         }
     }
 
+    private var shuffleButton: some View {
+        Button {
+            requestShuffleFromUser()
+        } label: {
+            Label {
+                Text(AppLocalization.text("Shuffle"))
+            } icon: {
+                Image(systemName: "arrow.triangle.2.circlepath")
+            }
+                .font(.system(.caption, design: .rounded, weight: .semibold))
+                .padding(.horizontal, 12)
+                .frame(minWidth: 44, minHeight: 44)
+                .background(
+                    Capsule()
+                        .fill(CeremonialObsidianTheme.cardSurface)
+                        .overlay(Capsule().stroke(CeremonialObsidianTheme.gold.opacity(0.72), lineWidth: 1))
+                )
+        }
+        .buttonStyle(.plain)
+        .allowsHitTesting(model.canShuffleDeck && !model.isBusy)
+        .accessibilityLabel(Text(AppLocalization.text("Shuffle Deck")))
+        .accessibilityHint(Text(AppLocalization.text("Shuffles only cards that remain in the deck")))
+    }
+
     private var shufflingDeck: some View {
-            CeremonialShufflingDeck(
-                phase: shufflePhase,
-                generation: shuffleGeneration,
-                reduceMotion: usesReducedMotion,
-                spokenLabel: model.isReadyToShuffle
-                    ? AppLocalization.text("Unshuffled tarot deck")
-                    : AppLocalization.text("Shuffled tarot deck")
-            )
+        CeremonialShufflingDeck(
+            phase: shufflePhase,
+            generation: shuffleGeneration,
+            reduceMotion: usesReducedMotion,
+            spokenLabel: model.isReadyToShuffle
+                ? AppLocalization.text("Unshuffled tarot deck")
+                : AppLocalization.text("Tarot Deck")
+        )
     }
 
     private var usesReducedMotion: Bool {
@@ -2006,15 +2048,6 @@ private struct ReadingTableView: View {
         // presentation or haptics when the user returns.
         guard scenePhase == .active else {
             visualBaseline = newState
-            return
-        }
-
-        if newState.sessionID != nil,
-           baseline.sessionID != newState.sessionID,
-           baseline.slots.allSatisfy({ $0 == nil }),
-           newState.slots.allSatisfy({ $0 == nil }) {
-            visualBaseline = newState
-            runShuffleChoreography()
             return
         }
 
@@ -2052,6 +2085,26 @@ private struct ReadingTableView: View {
     }
 
     @MainActor
+    private func requestShuffleFromUser() {
+        guard model.canShuffleDeck, !model.isBusy else { return }
+        if presentationLocked {
+            guard !pendingShufflePresentation, !shuffleCommitQueued else { return }
+            shuffleCommitQueued = true
+        }
+        model.shuffleDeck()
+    }
+
+    @MainActor
+    private func requestShufflePresentation() {
+        guard scenePhase == .active else { return }
+        if presentationLocked {
+            pendingShufflePresentation = true
+        } else {
+            runShuffleChoreography()
+        }
+    }
+
+    @MainActor
     private func runShuffleChoreography() {
         startPresentation { token in
             shuffleGeneration += 1
@@ -2067,6 +2120,7 @@ private struct ReadingTableView: View {
                 try? await Task.sleep(nanoseconds: 75_000_000)
                 guard presentationIsCurrent(token) else { return }
                 finishPresentation(token)
+                announceShuffleCompletionIfNeeded()
                 CeremonialHaptics.shuffled()
                 return
             }
@@ -2102,8 +2156,18 @@ private struct ReadingTableView: View {
             guard presentationIsCurrent(token) else { return }
             shufflePhase = 0
             finishPresentation(token)
+            announceShuffleCompletionIfNeeded()
             CeremonialHaptics.shuffled()
         }
+    }
+
+    @MainActor
+    private func announceShuffleCompletionIfNeeded() {
+        guard voiceOverEnabled else { return }
+        UIAccessibility.post(
+            notification: .announcement,
+            argument: AppLocalization.text("Deck shuffled. Ready to deal.")
+        )
     }
 
     @MainActor
@@ -2196,6 +2260,14 @@ private struct ReadingTableView: View {
         presentationToken = nil
         presentationTask = nil
         presentationLocked = false
+        if pendingShufflePresentation {
+            pendingShufflePresentation = false
+            Task { @MainActor in
+                await Task.yield()
+                guard scenePhase == .active else { return }
+                runShuffleChoreography()
+            }
+        }
     }
 
     @MainActor
@@ -2204,12 +2276,43 @@ private struct ReadingTableView: View {
         presentationTask = nil
         presentationToken = nil
         presentationLocked = false
+        pendingShufflePresentation = false
+        shuffleCommitQueued = false
         shufflePhase = 0
         placingPosition = nil
         placementProgress = 0
         flippingPosition = nil
         flipProgress = 0
         visualBaseline = baseline
+    }
+
+    @MainActor
+    private func scheduleOrientationHintIfNeeded(isPortrait: Bool) {
+        guard isPortrait, model.activeCardCount > 1, !orientationHintWasOffered else { return }
+        orientationHintWasOffered = true
+        orientationHintTask?.cancel()
+        showsOrientationHint = true
+        if voiceOverEnabled {
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: AppLocalization.text("Rotate your phone for larger cards")
+            )
+        }
+        orientationHintTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 3_000_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(usesReducedMotion ? nil : .easeOut(duration: 0.18)) {
+                showsOrientationHint = false
+            }
+            orientationHintTask = nil
+        }
+    }
+
+    @MainActor
+    private func cancelOrientationHint() {
+        orientationHintTask?.cancel()
+        orientationHintTask = nil
+        showsOrientationHint = false
     }
 
     private var actionArea: some View {
@@ -2232,13 +2335,16 @@ private struct ReadingTableView: View {
     }
 
     private func portraitActionArea(showsOrientationHint: Bool) -> some View {
-        VStack(spacing: 8) {
-            actionArea
-
+        ZStack(alignment: .bottom) {
+            HStack(spacing: 12) {
+                shuffleButton
+                actionArea
+                    .frame(maxWidth: .infinity)
+            }
             if showsOrientationHint, model.activeCardCount > 1 {
                 Label(
-                    AppLocalization.text("Turn your iPhone sideways to see the cards better."),
-                    systemImage: "iphone.landscape"
+                    AppLocalization.text("Rotate your phone for larger cards"),
+                    systemImage: "rectangle.landscape.rotate"
                 )
                 .font(.caption)
                 .foregroundStyle(CeremonialObsidianTheme.secondaryText.opacity(0.88))
@@ -2246,6 +2352,10 @@ private struct ReadingTableView: View {
                 .minimumScaleFactor(0.82)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(.ultraThinMaterial, in: Capsule())
+                .transition(.opacity)
             }
         }
     }
@@ -2262,12 +2372,10 @@ private struct ReadingTableView: View {
     }
 
     private var landscapeCueText: String {
-        if model.isReadyToShuffle {
-            return AppLocalization.text("Tap to shuffle")
-        }
+        if model.isReadyToShuffle { return AppLocalization.text("Shuffling") }
         guard let session = model.session else { return "" }
         if session.drawnCards.isEmpty || model.hasEmptyPositions {
-            return AppLocalization.text("Tap a position")
+            return AppLocalization.text("Tap deck or position")
         }
         if presentedReadingIsCompleteAndRevealed {
             return AppLocalization.text("Tap for meaning")
@@ -2276,9 +2384,9 @@ private struct ReadingTableView: View {
     }
 
     private var statusText: String {
-        if model.isReadyToShuffle { return AppLocalization.text("Ready to shuffle") }
+        if model.isReadyToShuffle { return AppLocalization.text("Shuffling deck") }
         guard let session = model.session, let layout = model.layout else { return "" }
-        if session.drawnCards.isEmpty { return AppLocalization.text("Deck shuffled") }
+        if session.drawnCards.isEmpty { return AppLocalization.text("Ready to deal") }
         if layout == .oneCard {
             let presentedRevealed = visualBaseline.flatMap { $0.slots.first ?? nil }?.isRevealed
                 ?? model.placedCard(at: 0)?.isRevealed
@@ -2298,10 +2406,10 @@ private struct ReadingTableView: View {
     }
 
     private var instructionText: String {
-        if model.isReadyToShuffle { return AppLocalization.text("Tap the deck to shuffle.") }
+        if model.isReadyToShuffle { return AppLocalization.text("Shuffling the deck") }
         guard let session = model.session, let layout = model.layout else { return "" }
         if session.drawnCards.isEmpty {
-            return AppLocalization.text("Tap an empty position to place the next card, or tap the deck to shuffle again.")
+            return AppLocalization.text("Tap the deck to deal in order, or choose a position")
         }
         if presentedReadingIsCompleteAndRevealed {
             return ""
@@ -2310,7 +2418,7 @@ private struct ReadingTableView: View {
             return AppLocalization.text("Tap the card to reveal it.")
         }
         if model.hasEmptyPositions {
-            return AppLocalization.text("Tap any empty position to place the next card.")
+            return AppLocalization.text("Tap the deck or choose an empty position")
         }
         return AppLocalization.text("Tap a face-down card to turn it over.")
     }
@@ -2349,7 +2457,7 @@ private struct ReadingTableView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .buttonStyle(.plain)
-        .disabled(interactionLocked)
+        .allowsHitTesting(!interactionLocked)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             AppLocalization.format(

@@ -16,8 +16,8 @@ $required = @(
     "APP_STORE_CONNECT_API_KEY_ID",
     "APP_STORE_CONNECT_ISSUER_ID",
     "APP_STORE_CONNECT_API_KEY_BASE64",
-    'MARKETING_VERSION="0.7.2"',
-    'BUILD_NUMBER="2"',
+    'MARKETING_VERSION="0.8"',
+    'BUILD_NUMBER="1"',
     'APP_ID="6800144105"',
     'apps/$APP_ID/buildUploads',
     'filter[cfBundleShortVersionString]',
@@ -55,4 +55,4 @@ foreach ($pattern in $forbidden) {
     }
 }
 
-Write-Host "Validated protected processing check for Tarot Deck 0.7.2 (2): Internal Only, existing Testers group only, no external testing, review, or App Store submission."
+Write-Host "Validated protected processing check for Tarot Deck 0.8 (1): Internal Only, existing Testers group only, no external testing, review, or App Store submission."

@@ -465,15 +465,21 @@ $requiredRecoveryContracts = @(
     "enum ReadingPreset",
     "case resetting",
     "case shuffling",
+    "case reshuffling",
     "selectedPreset: ReadingPreset = .pastPresentFuture",
     "startSelectedPreset",
     "func leaveTable()",
     "func resetReading()",
     "canPrepareAnotherReading",
     "canShuffleDeck",
+    "shufflePresentationGeneration",
+    "func beginAutomaticShuffleIfNeeded()",
+    "func placeNextCardInOrder()",
     "func canPlaceCard(at slotIndex: Int)",
     "func placeNextCard(at slotIndex: Int)",
     "coordinator.draw(into: slotIndex)",
+    "coordinator.draw()",
+    "coordinator.reshuffleRemaining()",
     "drawnCard(atPosition: slotIndex)",
     "case sixCards",
     "case customCards",
@@ -486,6 +492,12 @@ foreach ($contract in $requiredRecoveryContracts) {
     if ($readModelSource -cnotmatch [regex]::Escape($contract)) {
         throw "Read recovery contract is missing: $contract"
     }
+}
+if ([regex]::Matches($readModelSource, [regex]::Escape('self.shufflePresentationGeneration += 1')).Count -ne 2 -or
+    $readModelSource -cnotmatch [regex]::Escape('guard isReadyToShuffle else { return }') -or
+    $readModelSource -cnotmatch [regex]::Escape('record.phase == .reshuffling') -or
+    $readModelSource -cnotmatch [regex]::Escape('record.sessionID == restored.id')) {
+    throw "A-059 shuffle recovery must emit only post-commit events, auto-start only a ready table, and reconcile reshuffling by session identity."
 }
 $deckEngineSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckEngine.swift")
 $coordinatorSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckSessionCoordinator.swift")
@@ -507,6 +519,19 @@ foreach ($contract in $atomicPlacementContracts) {
         throw "Atomic slot-placement contract is missing: $contract"
     }
 }
+$remainingShuffleContracts = @(
+    'public func reshuffleRemaining(',
+    'session.shuffledCardIDs.prefix(session.nextDrawIndex)',
+    'session.shuffledCardIDs.dropFirst(session.nextDrawIndex)',
+    'candidate.shuffledCardIDs = prefix + shuffledRemaining',
+    'try engine.reshuffleRemaining(in: &candidate, at: date)',
+    'try commit(candidate)'
+)
+foreach ($contract in $remainingShuffleContracts) {
+    if ("$deckEngineSource`n$coordinatorSource" -cnotmatch [regex]::Escape($contract)) {
+        throw "A-059 remaining-deck shuffle contract is missing: $contract"
+    }
+}
 $engineTestsSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tests/TarotDeckCoreTests/DeckEngineTests.swift")
 $coordinatorTestsSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tests/TarotDeckCoreTests/DeckSessionCoordinatorTests.swift")
 $storeTestsSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tests/TarotDeckCoreTests/DeckSessionStoreTests.swift")
@@ -516,7 +541,12 @@ $placementTestContracts = @(
     'testConcurrentPlacementIntoSamePositionCommitsExactlyOnce',
     'testConcurrentPlacementIntoDistinctPositionsSerializesDeckOrder',
     'testFailedPlacementSavePreservesPreviousMemoryAndStorage',
-    'testSchemaOneSessionMigratesSequentialPositionsWithoutChangingCards'
+    'testSchemaOneSessionMigratesSequentialPositionsWithoutChangingCards',
+    'testDefaultDrawUsesFirstCanonicalEmptyPosition',
+    'testReshuffleRemainingPreservesDrawnPrefixPositionsRevealAndSessionIdentity',
+    'testInvalidRemainingShuffleLeavesSessionUnchanged',
+    'testReshuffleRemainingCommitsSuffixOnceAndPreservesPlacedCards',
+    'testFailedReshuffleSavePreservesPreviousMemoryAndStorage'
 )
 foreach ($contract in $placementTestContracts) {
     if ("$engineTestsSource`n$coordinatorTestsSource`n$storeTestsSource" -cnotmatch [regex]::Escape($contract)) {
@@ -560,8 +590,8 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.7.2;',
-    'CURRENT_PROJECT_VERSION = 2;',
+    'MARKETING_VERSION = 0.8;',
+    'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
     'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;',
@@ -573,8 +603,8 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.7.2;')).Count -ne 2 -or
-    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 2;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.8;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;')).Count -ne 1 -or
@@ -869,6 +899,18 @@ foreach ($entry in $a052VisualReferences.GetEnumerator()) {
     }
 }
 
+$a060VisualReferences = @{
+    (Join-Path $native.Path "../design/tarot-deck/read-home-reading-kind-selector-info-extra-small-v4-spanish-a-ceremonial-obsidian.png") = "4856C7C92510D702195472E0D8E147E38AC6C9338C59C82F93FA433F83E07E60"
+    (Join-Path $native.Path "../design/tarot-deck/read-home-three-card-style-selector-info-extra-small-v5-spanish-a-ceremonial-obsidian.png") = "1981978F24B52E61B5F9F0D5FC958AEA50BD4781FFF9F31E4C7A4C0B1B25BDEC"
+    (Join-Path $native.Path "../design/tarot-deck/cards-library-filter-scroll-affordance-v1-spanish-a-ceremonial-obsidian.png") = "92FEF9B73F8A4AC4DBBF86993F4A0A253A381047042A1027249F14628CF24D4A"
+}
+foreach ($entry in $a060VisualReferences.GetEnumerator()) {
+    if (-not (Test-Path -LiteralPath $entry.Key -PathType Leaf) -or
+        (Get-FileHash -LiteralPath $entry.Key -Algorithm SHA256).Hash -cne $entry.Value) {
+        throw "An approved A-060 visual reference is absent or changed: $($entry.Key)"
+    }
+}
+
 $yesNoModelContracts = @(
     'case open',
     'case .open: return "Yes or No"',
@@ -1089,37 +1131,52 @@ $readingContracts = @(
     "CeremonialHaptics.drawn()",
     "visualBaseline = target",
     "model.placeNextCard(at: index)",
+    "model.placeNextCardInOrder()",
+    "model.beginAutomaticShuffleIfNeeded()",
+    "model.shufflePresentationGeneration",
     "model.placedCard(at: index)",
     "ReadingVisualSlot(cardID:",
-    ".disabled(interactionLocked)",
+    ".allowsHitTesting(!interactionLocked)",
     "ReadingStageLayoutMetrics.make(",
     "minimumVisibleGap: 14",
     ".padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 10 : 4)",
     ".frame(minHeight: 72)",
     "withTransaction(settleTransaction)",
     "private var landscapeCue",
-    "Turn your iPhone sideways to see the cards better.",
-    "Tap the deck to shuffle.",
-    "Tap an empty position to place the next card, or tap the deck to shuffle again.",
-    "Tap any empty position to place the next card.",
+    "Rotate your phone for larger cards",
+    "3_000_000_000",
+    "scheduleOrientationHintIfNeeded(isPortrait: !isPhysicallyLandscape)",
+    "guard isPortrait, model.activeCardCount > 1, !orientationHintWasOffered else { return }",
+    "orientationHintWasOffered = true",
+    "cancelOrientationHint()",
+    "Tap the deck to deal in order, or choose a position",
+    "Tap the deck or choose an empty position",
+    "Places the next card in the first empty position",
+    "Shuffles only cards that remain in the deck",
+    "private var shuffleButton",
+    "pendingShufflePresentation",
+    "shuffleCommitQueued",
+    "requestShufflePresentation()",
+    "requestShuffleFromUser()",
+    "Deck shuffled. Ready to deal.",
     "Tap a card",
-    "Tap a position",
     "Tap for meaning",
-    "Tap to shuffle",
-    "Turn your iPhone sideways to see the cards better.",
     "model.canShuffleDeck",
     "model.hasEmptyPositions",
-    ".accessibilityHidden(!shouldShowDeck)",
+    "private var shouldShowDeck",
     "cancelTransientMotion(establishing: visualState)",
     ".frame(width: 44, height: 44)",
     "Reset Reading"
 )
 foreach ($contract in $readingContracts) {
     if ($readingTableSource -cnotmatch [regex]::Escape($contract)) {
-        throw "A-054 reading-table contract is missing: $contract"
+        throw "A-059 reading-table contract is missing: $contract"
     }
 }
-if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("Deal"|Button\("End Reading"|requestEndReading|model\.drawCard\(\)|model\.dealCards\(\)|Tap the deck for another reading') {
+if ($readingTableSource -cmatch [regex]::Escape('scheduleOrientationHintIfNeeded()')) {
+    throw "The temporary rotation hint must never be scheduled without checking physical portrait orientation."
+}
+if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("Deal"|Button\("End Reading"|requestEndReading|model\.drawCard\(\)|model\.dealCards\(\)|Tap the deck for another reading|Turn your iPhone sideways|\.accessibilityHidden\(!shouldShowDeck\)|\.opacity\(shouldShowDeck \? 1 : 0\)|\.disabled\(interactionLocked\)') {
     throw "The reading table still contains a duplicate primary shuffle/draw CTA."
 }
 $landscapeStart = $readingTableSource.IndexOf("private func landscapeContent")
@@ -1129,7 +1186,8 @@ if ($landscapeStart -lt 0 -or $landscapeEnd -le $landscapeStart) {
 }
 $landscapeSource = $readingTableSource.Substring($landscapeStart, $landscapeEnd - $landscapeStart)
 if ($landscapeSource -match '\brailWidth\b|\bstatusText\b|\bactionArea\b|Text\(model\.readingTitle\)' -or
-    $landscapeSource -cnotmatch [regex]::Escape(".frame(width: deckWidth, height: deckHeight)")) {
+    $landscapeSource -cnotmatch [regex]::Escape(".frame(width: deckWidth, height: deckHeight)") -or
+    $landscapeSource -cnotmatch [regex]::Escape(".frame(height: 44)")) {
     throw "Landscape must keep only the compact header, shared stage, explicit large deck and short cue."
 }
 if ($readingTableSource -match 'rotationEffect\(\.degrees\([^\r\n]*placementProgress') {
@@ -1137,6 +1195,12 @@ if ($readingTableSource -match 'rotationEffect\(\.degrees\([^\r\n]*placementProg
 }
 if ($readingTableSource -match [regex]::Escape('.frame(height: 72)')) {
     throw "The portrait reading header must grow for accessibility Dynamic Type instead of using a fixed height."
+}
+$cardComponentSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Components/CeremonialCardViews.swift")
+if ($cardComponentSource -cnotmatch [regex]::Escape('.allowsHitTesting(canPlace)') -or
+    $cardComponentSource -match [regex]::Escape('.disabled(!canPlace)') -or
+    $cardComponentSource -match 'opacity\(canPlace\s*\?') {
+    throw "A-059 empty positions must lock duplicate input without visual dimming."
 }
 if ($activeReadSource -cnotmatch [regex]::Escape('private static func compactGridLayout(') -or
     $activeReadSource -cnotmatch [regex]::Escape('let resolvedGap = minimumVisibleGap + 0.5') -or
@@ -1278,9 +1342,12 @@ $requiredA031CatalogKeys = @(
     "Language Couldn't Be Changed",
     "The complete language content couldn't be loaded. Nothing was changed.",
     "Tap the deck to begin",
-    "Tap the deck to shuffle.",
-    "Tap an empty position to place the next card, or tap the deck to shuffle again.",
-    "Tap any empty position to place the next card.",
+    "Shuffle",
+    "Shuffles only cards that remain in the deck",
+    "Places the next card in the first empty position",
+    "Rotate your phone for larger cards",
+    "Tap the deck to deal in order, or choose a position",
+    "Tap the deck or choose an empty position",
     "Shuffles all 78 cards again",
     "Places the next card here face down",
     "Meaning"
@@ -1337,6 +1404,56 @@ if (([regex]::Matches($shellSource, "favoriteStore: favoriteStore")).Count -lt 2
 if ("$favoritesSource`n$cardsSource" -match '\bContentUnavailableView\b|@Observable\b|\.symbolEffect\b') {
     throw "Favorites contains an API unavailable on iOS 16."
 }
+$informationButtonStart = $activeReadSource.IndexOf('private func informationButton')
+$informationButtonEnd = $activeReadSource.IndexOf('private func choiceTileBackground', $informationButtonStart)
+if ($informationButtonStart -lt 0 -or $informationButtonEnd -le $informationButtonStart) {
+    throw "A-060 selector information button source boundaries could not be validated."
+}
+$informationButtonSource = $activeReadSource.Substring(
+    $informationButtonStart,
+    $informationButtonEnd - $informationButtonStart
+)
+$a060InformationContracts = @(
+    '.font(.system(size: 11, weight: .semibold))',
+    '.frame(width: 22, height: 22)',
+    'lineWidth: 0.9',
+    '.frame(width: 44, height: 44)',
+    '.contentShape(Rectangle())'
+)
+foreach ($contract in $a060InformationContracts) {
+    if ($informationButtonSource -cnotmatch [regex]::Escape($contract)) {
+        throw "A-060 selector information control is missing: $contract"
+    }
+}
+$a060FilterContracts = @(
+    'ScrollView(.horizontal, showsIndicators: true)',
+    '.scrollIndicators(.hidden, axes: .vertical)',
+    'ForEach(TarotCardFilter.allCases, id: \.self)',
+    '.frame(minHeight: 44)',
+    '.padding(.trailing, 18)',
+    'CardFilterContentFramePreferenceKey',
+    'CardFilterViewportWidthPreferenceKey',
+    'proxy.frame(in: .named(CardFilterScrollCoordinateSpace.name))',
+    'hasPhysicalLeftOverflow',
+    'hasPhysicalRightOverflow',
+    'cardFilterOverflowAffordance(edge: .left)',
+    'cardFilterOverflowAffordance(edge: .right)',
+    'layoutDirection == .leftToRight ? .leading : .trailing',
+    'layoutDirection == .leftToRight ? .trailing : .leading',
+    '.environment(\.layoutDirection, .leftToRight)',
+    '.allowsHitTesting(false)',
+    '.accessibilityHidden(true)',
+    '.accessibilityElement(children: .contain)',
+    'Swipe horizontally to explore all card categories'
+)
+foreach ($contract in $a060FilterContracts) {
+    if ($cardsSource -cnotmatch [regex]::Escape($contract)) {
+        throw "A-060 Cards filter affordance is missing: $contract"
+    }
+}
+if ($cardsSource -match '\.scrollPosition\b|\.scrollTargetLayout\b|\.contentMargins\b') {
+    throw "A-060 Cards filters must remain compatible with iOS 16."
+}
 $favoriteVisualHashes = @{
     $favoriteDetailReference = "5794D4C345BAF1BB52F783DE9C3D49D7D64DAA31BDA4083770AF3E2B8A957389"
     $favoritesEmptyReference = "62AED89CC28393E7FD2BC9B06F99240D576EA61FC90F39C8511DBDBA11FFCA87"
@@ -1357,6 +1474,7 @@ $requiredFavoriteCatalogKeys = @(
     "Favorites Unavailable",
     "Favorites couldn't be updated. Nothing was changed.",
     "Selected filter",
+    "Swipe horizontally to explore all card categories",
     "Your cards are still available. Add a favorite to start a new list."
 )
 foreach ($key in $requiredFavoriteCatalogKeys) {
@@ -1375,7 +1493,7 @@ $requiredSettingsCopy = @(
     "Support isn't available right now. You can keep using the full app.",
     "Restore Unavailable",
     "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.7.2"'
+    'fallbackVersion = "0.8"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1552,4 +1670,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.7.2 (2): English/Spanish UI and content, Three Cards first-install default with persisted-selection and restoration priority, exact 2x3 Six Cards selector glyph, seven built-in tutorials plus Create Your Own Spread, cited Six-Card Guidance, local custom spreads, atomic arbitrary slot placement, restoration, accessibility, 78 cards, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated internal app snapshot 0.8 (1): English/Spanish UI and content, automatic new-table shuffle, repeatable undealt-suffix shuffle, tap-deck first-empty and tap-slot placement, persistent deck, recovery, accessibility, 78 cards, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."

@@ -33,7 +33,7 @@ struct EmptyReadingPosition: View {
                 .contentShape(RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius))
         }
         .buttonStyle(.plain)
-        .disabled(!canPlace)
+        .allowsHitTesting(canPlace)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(
             positionName.map {
@@ -43,7 +43,7 @@ struct EmptyReadingPosition: View {
         .accessibilityHint(
             canPlace
                 ? AppLocalization.text("Places the next card here face down")
-                : AppLocalization.text("Shuffle the deck before placing a card")
+                : AppLocalization.text("Wait for the deck to finish shuffling")
         )
     }
 
@@ -66,11 +66,11 @@ struct EmptyReadingPosition: View {
         .overlay {
             RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius - 3)
                 .inset(by: 5)
-                .stroke(CeremonialObsidianTheme.gold.opacity(canPlace ? 0.98 : 0.60), lineWidth: 1)
+                .stroke(CeremonialObsidianTheme.gold.opacity(0.98), lineWidth: 1)
         }
         .overlay {
             CeremonialCornerMarks()
-                .stroke(CeremonialObsidianTheme.brightGold.opacity(canPlace ? 0.98 : 0.60), lineWidth: 1)
+                .stroke(CeremonialObsidianTheme.brightGold.opacity(0.98), lineWidth: 1)
                 .padding(8)
         }
         .shadow(color: .black.opacity(0.72), radius: 9, y: 6)

@@ -52,8 +52,8 @@ $requiredWorkflowContracts = @(
     '[[ "$MINIMUM_OS_VERSION" != "16.0" ]]',
     '--arg minimumOSVersion "$MINIMUM_OS_VERSION"',
     'minimumOSVersion: $minimumOSVersion',
-    '[[ "$VERSION" != "0.7.2" ]]',
-    '[[ "$BUILD_NUMBER" != "2" ]]',
+    '[[ "$VERSION" != "0.8" ]]',
+    '[[ "$BUILD_NUMBER" != "1" ]]',
     "EXECUTABLE_DESCRIPTION",
     "codesign -dv",
     "Payload/TarotDeckInternal.app",
@@ -122,8 +122,8 @@ if ($bodyIndex -lt 0 -or $shellIndex -lt $bodyIndex -or $readIndex -lt $shellInd
 
 $requiredProjectContracts = @(
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
-    'MARKETING_VERSION = 0.7.2;',
-    'CURRENT_PROJECT_VERSION = 2;',
+    'MARKETING_VERSION = 0.8;',
+    'CURRENT_PROJECT_VERSION = 1;',
     'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
     'TARGETED_DEVICE_FAMILY = 1;',
     'SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";'
@@ -148,8 +148,8 @@ if ($workflow -cmatch 'BUILD_NUMBER="\$GITHUB_RUN_NUMBER"' -or
 
 $marketingVersions = @([regex]::Matches($project, 'MARKETING_VERSION = (?<value>\d+\.\d+(?:\.\d+)?);') |
     ForEach-Object { $_.Groups['value'].Value } | Select-Object -Unique)
-if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '0.7.2') {
-    throw "The Xcode project must have exactly one formal marketing version: 0.7.2."
+if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '0.8') {
+    throw "The Xcode project must have exactly one formal marketing version: 0.8."
 }
 
 $projectBuildNumbers = @([regex]::Matches($project, 'CURRENT_PROJECT_VERSION = (?<value>\d+);') |
@@ -177,4 +177,4 @@ foreach ($contract in $requiredSchemeContracts) {
     }
 }
 
-Write-Host "Validated manual Local-QA IPA workflow: formal 0.7.2 (2), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."
+Write-Host "Validated manual Local-QA IPA workflow: formal 0.8 (1), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."

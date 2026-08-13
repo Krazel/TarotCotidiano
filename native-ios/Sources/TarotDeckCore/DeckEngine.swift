@@ -133,6 +133,29 @@ public struct DeckEngine<Shuffler: DeckShuffling>: Sendable {
         session = replacement
     }
 
+    /// Shuffles only cards that have not been drawn yet. The durable prefix,
+    /// placed positions, reveal states and session identity remain unchanged.
+    public func reshuffleRemaining(
+        in session: inout DeckSession,
+        at date: Date = Date()
+    ) throws {
+        try session.validate()
+
+        let prefix = Array(session.shuffledCardIDs.prefix(session.nextDrawIndex))
+        let remaining = Array(session.shuffledCardIDs.dropFirst(session.nextDrawIndex))
+        let shuffledRemaining = shuffler.shuffled(remaining)
+        guard shuffledRemaining.count == remaining.count,
+              Set(shuffledRemaining) == Set(remaining) else {
+            throw DeckEngineError.invalidShuffleOutput
+        }
+
+        var candidate = session
+        candidate.shuffledCardIDs = prefix + shuffledRemaining
+        candidate.updatedAt = normalizedUpdateDate(date, for: candidate)
+        try candidate.validate()
+        session = candidate
+    }
+
     private func setRevealState(
         _ isRevealed: Bool,
         cardID: TarotCardID,

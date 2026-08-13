@@ -1,17 +1,17 @@
 # Tarot Deck — Ceremonial Motion Specification
 
-Status: approved automatically under A-021/A-054
-Date: 2026-08-12
+Status: approved automatically under A-021/A-059
+Date: 2026-08-13
 Target: iPhone, iOS 16+
 
 ## Governing reference
 
-- Storyboard: `design/tarot-deck/reading-table-manual-placement-motion-storyboard-v4-a-ceremonial-obsidian.png`
-- Reference ID: V-100
+- Storyboard: `design/tarot-deck/reading-table-auto-shuffle-persistent-deck-motion-storyboard-v5-a-ceremonial-obsidian.png`
+- Reference ID: V-119
 - Canvas: 1672×941
-- SHA-256: `9286DB57DAFA170C87376634289BC5F311F108CFC3F9531A5B2164067DEA25B0`
-- Sequence: `rest → press → cut with tracked old top → insert old top under packet → interleave → riffle with incoming top → square/new top`, followed by one placement per empty-slot tap and independent flips.
-- V-100 supersedes V-089. V-089, V-048 and V-041 remain historical and are not deleted.
+- SHA-256: `F5BCE2191D0188CD171BCD2B8915517B8A67ABA9D5348FAAD2B35A721243DF31`
+- Sequence: automatic entry shuffle, then `press → cut with tracked old top → insert old top under packet → interleave → riffle with incoming top → square/new top`; Shuffle may repeat at any stable point, deck taps place into the first empty authored position, slot taps place there directly, and flips remain independent.
+- V-119 supersedes V-100 and V-089. V-100, V-089, V-048 and V-041 remain historical and are not deleted.
 
 ## Character
 
@@ -22,8 +22,8 @@ Do not add particles, magical trails, ambient loops, random wobble, elastic over
 ## Durable-state contract
 
 1. Press feedback may acknowledge contact immediately.
-2. Split, interleave, riffle and square begin only after a fresh 78-card order persists.
-3. Every additional deck tap before the first placement commits another complete shuffle and replays the same short choreography.
+2. Split, interleave, riffle and square begin only after a valid shuffle persists. The first table entry and reset request exactly one automatic shuffle; restoring an active reading never replays it.
+3. Every Shuffle button tap commits another order and replays the same short choreography. Once cards are placed, only the undealt suffix is shuffled; the committed prefix, positions and reveal states remain unchanged.
 4. Tapping an empty position commits exactly the next card plus that position in one atomic session save before presentation begins.
 5. Restoration may observe a valid partial layout and restores each card in its chosen position without replaying presentation.
 6. Flip or conceal begins only after the new face state persists.
@@ -51,10 +51,11 @@ There is no pause between shuffle phases. Placement and flip remain separate use
 
 ## Controls and layout
 
-- Before the first valid shuffle, the deck is active and empty positions do not place cards.
-- After a valid shuffle and while zero cards are placed, the deck stays active for reshuffles and every empty position becomes actionable.
-- The first successful placement disables reshuffle. The remaining deck stays as a static source until the final position is filled.
-- After the final placement, the deck remains absent for the rest of that reading. Reset is the only quick restart.
+- New and reset readings auto-shuffle once. The deck remains visible throughout the reading.
+- The small independent Shuffle control stays available at every stable point; it shuffles only cards that remain in the deck and never moves cards already placed.
+- Tapping the deck places the next card into the first empty authored position. Tapping an empty position places the same next card directly there.
+- Once every position is filled, the deck remains visible but no longer places another card. Shuffle may still reorder the undealt remainder without changing the completed layout; reset remains the way to start that layout again.
+- Interaction locks prevent duplicate commits without reducing opacity, contrast or glow. The table must not appear disabled while motion is running.
 - Press and decorative packets live inside the deck’s fixed outer frame and are hidden from accessibility.
 - The deck, every slot and every placement overlay use stable anchors in the same coordinate space.
 - Empty, face-down and face-up forms of one slot share identical final bounds and center.
@@ -116,6 +117,6 @@ The motion passes only when:
 5. Flip never exposes mirrored or premature front artwork.
 6. Success haptics occur exactly once after commit and landing.
 7. Backgrounding and rotation return to the correct committed rest state without replay.
-8. Three repeated shuffles produce valid complete orders and the first position tap uses the latest.
-9. After the last placement, neither visible UI nor VoiceOver exposes a deck or Deal action.
+8. Three repeated shuffles produce valid orders; after partial placement they preserve the exact prefix and the next deck/slot tap uses the latest suffix.
+9. After the last placement the deck remains visible, announces that the layout is complete, and cannot place an additional card; no Deal action exists.
 10. No behavior depends on network access, ProMotion or a third-party runtime.

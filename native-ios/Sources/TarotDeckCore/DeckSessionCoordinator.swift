@@ -138,6 +138,16 @@ public actor DeckSessionCoordinator<
         return candidate
     }
 
+    /// Commits a new order for the undealt suffix without replacing the
+    /// session or changing any card already placed on the table.
+    @discardableResult
+    public func reshuffleRemaining(at date: Date = Date()) throws -> DeckSession {
+        var candidate = try activeSessionCopy()
+        try engine.reshuffleRemaining(in: &candidate, at: date)
+        try commit(candidate)
+        return candidate
+    }
+
     public func clearSession() throws {
         try store.clear()
         activeSession = nil

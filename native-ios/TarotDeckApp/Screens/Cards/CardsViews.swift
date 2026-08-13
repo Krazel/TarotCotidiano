@@ -31,7 +31,10 @@ struct CardsLibraryView: View {
     @ObservedObject var favoriteStore: FavoriteCardsStore
 
     @State private var selectedFilter: TarotCardFilter = .all
+    @State private var filterContentFrame: CGRect = .zero
+    @State private var filterViewportWidth: CGFloat = 0
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.layoutDirection) private var layoutDirection
 
     private var columns: [GridItem] {
         let count = dynamicTypeSize.isAccessibilitySize ? 1 : 2
@@ -86,7 +89,7 @@ struct CardsLibraryView: View {
                 .padding(.top, 22)
                 .padding(.bottom, 30)
             }
-            .scrollIndicators(.hidden)
+            .scrollIndicators(.hidden, axes: .vertical)
         }
         .foregroundStyle(CeremonialObsidianTheme.parchment)
         .toolbar(.hidden, for: .navigationBar)
@@ -128,7 +131,7 @@ struct CardsLibraryView: View {
     }
 
     private var filters: some View {
-        ScrollView(.horizontal) {
+        ScrollView(.horizontal, showsIndicators: true) {
             HStack(spacing: 9) {
                 ForEach(TarotCardFilter.allCases, id: \.self) { filter in
                     Button {
@@ -172,9 +175,83 @@ struct CardsLibraryView: View {
                 }
             }
             .padding(.horizontal, 1)
+            .padding(.trailing, 18)
+            .background {
+                GeometryReader { proxy in
+                    Color.clear.preference(
+                        key: CardFilterContentFramePreferenceKey.self,
+                        value: proxy.frame(in: .named(CardFilterScrollCoordinateSpace.name))
+                    )
+                }
+            }
         }
-        .scrollIndicators(.hidden)
-        .accessibilityLabel("Card filters")
+        .coordinateSpace(name: CardFilterScrollCoordinateSpace.name)
+        .background {
+            GeometryReader { proxy in
+                Color.clear.preference(
+                    key: CardFilterViewportWidthPreferenceKey.self,
+                    value: proxy.size.width
+                )
+            }
+        }
+        .overlay(alignment: physicalLeftAlignment) {
+            if hasPhysicalLeftOverflow {
+                cardFilterOverflowAffordance(edge: .left)
+            }
+        }
+        .overlay(alignment: physicalRightAlignment) {
+            if hasPhysicalRightOverflow {
+                cardFilterOverflowAffordance(edge: .right)
+            }
+        }
+        .onPreferenceChange(CardFilterContentFramePreferenceKey.self) {
+            filterContentFrame = $0
+        }
+        .onPreferenceChange(CardFilterViewportWidthPreferenceKey.self) {
+            filterViewportWidth = $0
+        }
+        .frame(minHeight: 52)
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(Text(AppLocalization.text("Card filters")))
+        .accessibilityHint(Text(AppLocalization.text("Swipe horizontally to explore all card categories")))
+    }
+
+    private var hasPhysicalLeftOverflow: Bool {
+        filterContentFrame != .zero && filterContentFrame.minX < -1
+    }
+
+    private var hasPhysicalRightOverflow: Bool {
+        filterContentFrame != .zero && filterContentFrame.maxX > filterViewportWidth + 1
+    }
+
+    private var physicalLeftAlignment: Alignment {
+        layoutDirection == .leftToRight ? .leading : .trailing
+    }
+
+    private var physicalRightAlignment: Alignment {
+        layoutDirection == .leftToRight ? .trailing : .leading
+    }
+
+    private func cardFilterOverflowAffordance(edge: PhysicalHorizontalEdge) -> some View {
+        let isLeft = edge == .left
+        return ZStack(alignment: isLeft ? .leading : .trailing) {
+            LinearGradient(
+                colors: isLeft
+                    ? [CeremonialObsidianTheme.background, CeremonialObsidianTheme.background.opacity(0)]
+                    : [CeremonialObsidianTheme.background.opacity(0), CeremonialObsidianTheme.background],
+                startPoint: UnitPoint(x: 0, y: 0.5),
+                endPoint: UnitPoint(x: 1, y: 0.5)
+            )
+
+            Image(systemName: isLeft ? "chevron.left" : "chevron.right")
+                .font(.system(size: 11, weight: .bold))
+                .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                .padding(isLeft ? .leading : .trailing, 5)
+        }
+        .frame(width: 36)
+        .environment(\.layoutDirection, .leftToRight)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
     }
 
     private func libraryCard(_ card: TarotCardRecord, position: Int, total: Int) -> some View {
@@ -213,6 +290,31 @@ struct CardsLibraryView: View {
         )
         .accessibilityValue(artwork.accessibilitySummary)
         .accessibilityHint("Opens the upright meaning")
+    }
+}
+
+private enum CardFilterScrollCoordinateSpace {
+    static let name = "cards-filter-scroll"
+}
+
+private enum PhysicalHorizontalEdge {
+    case left
+    case right
+}
+
+private struct CardFilterContentFramePreferenceKey: PreferenceKey {
+    static var defaultValue: CGRect = .zero
+
+    static func reduce(value: inout CGRect, nextValue: () -> CGRect) {
+        value = nextValue()
+    }
+}
+
+private struct CardFilterViewportWidthPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }
 

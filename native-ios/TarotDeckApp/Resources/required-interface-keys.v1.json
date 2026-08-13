@@ -213,6 +213,7 @@
     "Reading preset",
     "Selects this reading preset",
     "Swipe up or down to choose the previous or next preset",
+    "Swipe horizontally to explore all card categories",
     "Reset Reading",
     "Clears the cards and keeps this reading preset",
     "Ends this reading and returns to Read home",
@@ -345,6 +346,24 @@
     "This custom spread has unsaved changes.",
     "Three per row",
     "Two per row",
-    "Visit Source"
+    "Visit Source",
+    "Shuffle",
+    "Shuffles only cards that remain in the deck",
+    "Places the next card in the first empty position",
+    "Tarot deck, layout complete",
+    "Rotate your phone for larger cards",
+    "Shuffling",
+    "Tap deck or position",
+    "Shuffling deck",
+    "Ready to deal",
+    "Shuffling the deck",
+    "Tap the deck to deal in order, or choose a position",
+    "Tap the deck or choose an empty position",
+    "Wait for the deck to finish shuffling",
+    "The incomplete shuffle was cleared without changing a reading.",
+    "The incomplete shuffle marker couldn't be cleared yet.",
+    "The latest shuffled order was restored safely.",
+    "We found the shuffled reading but couldn't finish restoring it.",
+    "Deck shuffled. Ready to deal."
   ]
 }
