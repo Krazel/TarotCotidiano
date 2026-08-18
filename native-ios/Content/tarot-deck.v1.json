@@ -18,7 +18,7 @@
       "rank": null,
       "majorNumber": 0,
       "artworkAsset": "tarot_major_00_the_fool",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 0, The Fool.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -31,7 +31,7 @@
       "rank": null,
       "majorNumber": 1,
       "artworkAsset": "tarot_major_01_the_magician",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 1, The Magician.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -44,7 +44,7 @@
       "rank": null,
       "majorNumber": 2,
       "artworkAsset": "tarot_major_02_the_high_priestess",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 2, The High Priestess.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -57,7 +57,7 @@
       "rank": null,
       "majorNumber": 3,
       "artworkAsset": "tarot_major_03_the_empress",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 3, The Empress.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -70,7 +70,7 @@
       "rank": null,
       "majorNumber": 4,
       "artworkAsset": "tarot_major_04_the_emperor",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 4, The Emperor.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -83,7 +83,7 @@
       "rank": null,
       "majorNumber": 5,
       "artworkAsset": "tarot_major_05_the_hierophant",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 5, The Hierophant.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -96,7 +96,7 @@
       "rank": null,
       "majorNumber": 6,
       "artworkAsset": "tarot_major_06_the_lovers",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 6, The Lovers.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -109,7 +109,7 @@
       "rank": null,
       "majorNumber": 7,
       "artworkAsset": "tarot_major_07_the_chariot",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 7, The Chariot.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -122,7 +122,7 @@
       "rank": null,
       "majorNumber": 8,
       "artworkAsset": "tarot_major_08_strength",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 8, Strength.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -135,7 +135,7 @@
       "rank": null,
       "majorNumber": 9,
       "artworkAsset": "tarot_major_09_the_hermit",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 9, The Hermit.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -148,7 +148,7 @@
       "rank": null,
       "majorNumber": 10,
       "artworkAsset": "tarot_major_10_wheel_of_fortune",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 10, Wheel of Fortune.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -161,7 +161,7 @@
       "rank": null,
       "majorNumber": 11,
       "artworkAsset": "tarot_major_11_justice",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 11, Justice.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -174,7 +174,7 @@
       "rank": null,
       "majorNumber": 12,
       "artworkAsset": "tarot_major_12_the_hanged_man",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 12, The Hanged Man.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -187,7 +187,7 @@
       "rank": null,
       "majorNumber": 13,
       "artworkAsset": "tarot_major_13_death",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 13, Death.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -200,7 +200,7 @@
       "rank": null,
       "majorNumber": 14,
       "artworkAsset": "tarot_major_14_temperance",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 14, Temperance.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -213,7 +213,7 @@
       "rank": null,
       "majorNumber": 15,
       "artworkAsset": "tarot_major_15_the_devil",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 15, The Devil.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -226,7 +226,7 @@
       "rank": null,
       "majorNumber": 16,
       "artworkAsset": "tarot_major_16_the_tower",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 16, The Tower.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -239,7 +239,7 @@
       "rank": null,
       "majorNumber": 17,
       "artworkAsset": "tarot_major_17_the_star",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 17, The Star.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -252,7 +252,7 @@
       "rank": null,
       "majorNumber": 18,
       "artworkAsset": "tarot_major_18_the_moon",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 18, The Moon.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -265,7 +265,7 @@
       "rank": null,
       "majorNumber": 19,
       "artworkAsset": "tarot_major_19_the_sun",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 19, The Sun.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -278,7 +278,7 @@
       "rank": null,
       "majorNumber": 20,
       "artworkAsset": "tarot_major_20_judgement",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 20, Judgement.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -291,7 +291,7 @@
       "rank": null,
       "majorNumber": 21,
       "artworkAsset": "tarot_major_21_the_world",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Major Arcana 21, The World.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -304,7 +304,7 @@
       "rank": "ace",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_ace",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ace of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -317,7 +317,7 @@
       "rank": "two",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_two",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Two of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -330,7 +330,7 @@
       "rank": "three",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_three",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Three of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -343,7 +343,7 @@
       "rank": "four",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_four",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Four of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -356,7 +356,7 @@
       "rank": "five",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_five",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Five of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -369,7 +369,7 @@
       "rank": "six",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_six",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Six of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -382,7 +382,7 @@
       "rank": "seven",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_seven",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Seven of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -395,7 +395,7 @@
       "rank": "eight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_eight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Eight of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -408,7 +408,7 @@
       "rank": "nine",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_nine",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Nine of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -421,7 +421,7 @@
       "rank": "ten",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_ten",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ten of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -434,7 +434,7 @@
       "rank": "page",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_page",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Page of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -447,7 +447,7 @@
       "rank": "knight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_knight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Knight of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -460,7 +460,7 @@
       "rank": "queen",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_queen",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Queen of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -473,7 +473,7 @@
       "rank": "king",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_wands_king",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, King of Wands.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -486,7 +486,7 @@
       "rank": "ace",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_ace",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ace of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -499,7 +499,7 @@
       "rank": "two",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_two",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Two of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -512,7 +512,7 @@
       "rank": "three",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_three",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Three of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -525,7 +525,7 @@
       "rank": "four",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_four",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Four of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -538,7 +538,7 @@
       "rank": "five",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_five",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Five of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -551,7 +551,7 @@
       "rank": "six",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_six",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Six of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -564,7 +564,7 @@
       "rank": "seven",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_seven",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Seven of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -577,7 +577,7 @@
       "rank": "eight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_eight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Eight of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -590,7 +590,7 @@
       "rank": "nine",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_nine",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Nine of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -603,7 +603,7 @@
       "rank": "ten",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_ten",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ten of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -616,7 +616,7 @@
       "rank": "page",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_page",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Page of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -629,7 +629,7 @@
       "rank": "knight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_knight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Knight of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -642,7 +642,7 @@
       "rank": "queen",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_queen",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Queen of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -655,7 +655,7 @@
       "rank": "king",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_cups_king",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, King of Cups.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -668,7 +668,7 @@
       "rank": "ace",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_ace",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ace of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -681,7 +681,7 @@
       "rank": "two",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_two",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Two of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -694,7 +694,7 @@
       "rank": "three",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_three",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Three of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -707,7 +707,7 @@
       "rank": "four",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_four",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Four of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -720,7 +720,7 @@
       "rank": "five",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_five",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Five of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -733,7 +733,7 @@
       "rank": "six",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_six",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Six of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -746,7 +746,7 @@
       "rank": "seven",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_seven",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Seven of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -759,7 +759,7 @@
       "rank": "eight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_eight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Eight of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -772,7 +772,7 @@
       "rank": "nine",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_nine",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Nine of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -785,7 +785,7 @@
       "rank": "ten",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_ten",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ten of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -798,7 +798,7 @@
       "rank": "page",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_page",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Page of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -811,7 +811,7 @@
       "rank": "knight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_knight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Knight of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -824,7 +824,7 @@
       "rank": "queen",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_queen",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Queen of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -837,7 +837,7 @@
       "rank": "king",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_swords_king",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, King of Swords.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -850,7 +850,7 @@
       "rank": "ace",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_ace",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ace of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -863,7 +863,7 @@
       "rank": "two",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_two",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Two of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -876,7 +876,7 @@
       "rank": "three",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_three",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Three of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -889,7 +889,7 @@
       "rank": "four",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_four",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Four of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -902,7 +902,7 @@
       "rank": "five",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_five",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Five of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -915,7 +915,7 @@
       "rank": "six",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_six",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Six of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -928,7 +928,7 @@
       "rank": "seven",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_seven",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Seven of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -941,7 +941,7 @@
       "rank": "eight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_eight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Eight of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -954,7 +954,7 @@
       "rank": "nine",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_nine",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Nine of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -967,7 +967,7 @@
       "rank": "ten",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_ten",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Ten of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -980,7 +980,7 @@
       "rank": "page",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_page",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Page of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -993,7 +993,7 @@
       "rank": "knight",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_knight",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Knight of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -1006,7 +1006,7 @@
       "rank": "queen",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_queen",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, Queen of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     },
@@ -1019,7 +1019,7 @@
       "rank": "king",
       "majorNumber": null,
       "artworkAsset": "tarot_minor_pentacles_king",
-      "artworkStatus": "provisional",
+      "artworkStatus": "final",
       "accessibilityLabel": "Minor Arcana, King of Pentacles.",
       "provenanceID": "rws-1909-original-artwork-candidate"
     }

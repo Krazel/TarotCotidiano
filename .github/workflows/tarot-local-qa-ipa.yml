@@ -100,6 +100,8 @@ jobs:
           VERSION="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")"
           BUILD_NUMBER="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")"
           BUNDLE_ID="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")"
+          DISPLAY_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")"
+          SPANISH_INFO_STRINGS="$APP_PATH/es.lproj/InfoPlist.strings"
           SHORT_COMMIT="${GITHUB_SHA:0:12}"
 
           if [[ -z "$EXECUTABLE_NAME" || ! -f "$EXECUTABLE_PATH" ]]; then
@@ -114,12 +116,21 @@ jobs:
             echo "::error::Refusing to package an app whose MinimumOSVersion is not 16.0: $MINIMUM_OS_VERSION"
             exit 1
           fi
-          if [[ "$VERSION" != "0.8" ]]; then
+          if [[ "$VERSION" != "1.0" ]]; then
             echo "::error::Refusing to package an unexpected marketing version: $VERSION"
             exit 1
           fi
           if [[ "$BUILD_NUMBER" != "1" ]]; then
-            echo "::error::Tarot 0.8 local QA must use build 1, not $BUILD_NUMBER."
+            echo "::error::Tarot 1.0 local QA must use build 1, not $BUILD_NUMBER."
+            exit 1
+          fi
+          if [[ "$DISPLAY_NAME" != "Tarot Deck" ]]; then
+            echo "::error::Built app is missing the exact English display name."
+            exit 1
+          fi
+          if [[ ! -f "$SPANISH_INFO_STRINGS" ]] || \
+             [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$SPANISH_INFO_STRINGS")" != "Mazo de tarot" ]]; then
+            echo "::error::Built app is missing the exact Spanish display name."
             exit 1
           fi
 
@@ -183,7 +194,7 @@ jobs:
             --arg ciRunAttempt "$GITHUB_RUN_ATTEMPT" \
             --arg ciRunID "$GITHUB_RUN_ID" \
             --arg generatedAtUTC "$GENERATED_AT" \
-            --arg notice "INTERNAL ONLY - provisional RWS artwork - not for redistribution" \
+            --arg notice "INTERNAL QA - final RWS faces approved only for US/GB/ES storefront release; no worldwide clearance" \
             '{
               schemaVersion: 1,
               app: $app,
@@ -209,7 +220,7 @@ jobs:
 
           test "$(find "$OUTPUT_DIR" -maxdepth 1 -type f | wc -l | tr -d ' ')" = "3"
           echo "artifact_name=$BASE_NAME" >> "$GITHUB_OUTPUT"
-          echo "INTERNAL ONLY - provisional RWS artwork - not for redistribution"
+          echo "INTERNAL QA - final RWS faces approved only for US/GB/ES storefront release; no worldwide clearance"
 
       - name: Upload local QA artifact
         uses: actions/upload-artifact@v4

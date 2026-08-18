@@ -366,6 +366,7 @@ final class ReadFlowModel: ObservableObject {
     @Published private(set) var customLibraryRequestCount = 0
     @Published private(set) var isBusy = false
     @Published private(set) var shufflePresentationGeneration = 0
+    @Published private(set) var orientationHintRequestGeneration = 0
     @Published var showsIssueAlert = false
 
     private let coordinator: DeckSessionCoordinator<SystemDeckShuffler, JSONDeckSessionStore>
@@ -378,6 +379,7 @@ final class ReadFlowModel: ObservableObject {
     private var homeCustomSpreadPreference: UUID?
     private var issue: Issue?
     private var hasRestored = false
+    private var hasPendingOrientationHintRequest = false
 
     init(
         coordinator: DeckSessionCoordinator<SystemDeckShuffler, JSONDeckSessionStore>,
@@ -539,6 +541,17 @@ final class ReadFlowModel: ObservableObject {
     var selectedCustomSpread: SpreadDefinition? {
         guard let selectedCustomSpreadID else { return nil }
         return customSpreads.first { $0.id == selectedCustomSpreadID }
+    }
+
+    func consumeOrientationHintRequest() -> Bool {
+        guard hasPendingOrientationHintRequest else { return false }
+        hasPendingOrientationHintRequest = false
+        return true
+    }
+
+    private func requestOrientationHintForNewReading() {
+        hasPendingOrientationHintRequest = true
+        orientationHintRequestGeneration &+= 1
     }
 
     var activeCardCount: Int {
@@ -709,8 +722,16 @@ final class ReadFlowModel: ObservableObject {
         var copyNumber = 1
         var duplicateName = ""
         repeat {
-            let suffix = copyNumber == 1 ? " copy" : " copy \(copyNumber)"
-            duplicateName = String(source.name.prefix(max(40 - suffix.count, 1))) + suffix
+            let template = copyNumber == 1 ? "Copy of %@" : "Copy of %@ (%d)"
+            var sourceName = source.name.trimmingCharacters(in: .whitespacesAndNewlines)
+            repeat {
+                duplicateName = copyNumber == 1
+                    ? AppLocalization.format(template, sourceName)
+                    : AppLocalization.format(template, sourceName, copyNumber)
+                if duplicateName.count > 40, !sourceName.isEmpty {
+                    sourceName.removeLast()
+                }
+            } while duplicateName.count > 40
             copyNumber += 1
         } while existingNames.contains(duplicateName.lowercased())
         let duplicate = SpreadDefinition(
@@ -790,6 +811,7 @@ final class ReadFlowModel: ObservableObject {
             self.spread = preset.spread
             self.activeDefinition = definition
             self.session = nil
+            self.requestOrientationHintForNewReading()
             self.surface = .table
         }
     }
@@ -808,6 +830,7 @@ final class ReadFlowModel: ObservableObject {
             self.layout = .customCards
             self.spread = nil
             self.session = nil
+            self.requestOrientationHintForNewReading()
             self.surface = .table
         }
     }
@@ -891,6 +914,7 @@ final class ReadFlowModel: ObservableObject {
             if layout != .customCards {
                 self.selectedPreset = ReadingPreset.resolved(layout: layout, spread: currentSpread)
             }
+            self.requestOrientationHintForNewReading()
             self.surface = .table
         }
     }
@@ -911,6 +935,7 @@ final class ReadFlowModel: ObservableObject {
             self.spread = preset.spread
             self.activeDefinition = definition
             self.session = nil
+            self.requestOrientationHintForNewReading()
             self.surface = .table
         }
     }

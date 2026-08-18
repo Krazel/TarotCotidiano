@@ -88,6 +88,22 @@ function Invoke-ExactDownload {
 
 $provenance = Get-Content -LiteralPath $provenancePath -Raw | ConvertFrom-Json
 $evidence = @($provenance.assetEvidence)
+$releaseDecision = $provenance.projectReleaseDecision
+$releaseSourceSet = @($provenance.sourceSets | Where-Object { $_.id -ceq 'wikimedia-commons-taionwc-pam-a-78' })
+
+if ($null -eq $releaseDecision -or
+    $releaseDecision.visualFinalApprovedByOwner -ne $true -or
+    $releaseDecision.finalAsset -ne $true -or
+    $releaseDecision.distributionApprovedForDeclaredTerritories -ne $true -or
+    $releaseDecision.worldwideDistributionApproved -ne $false -or
+    (@($releaseDecision.approvedTerritories) -join ',') -cne 'US,GB,ES' -or
+    $releaseSourceSet.Count -ne 1 -or
+    $releaseSourceSet[0].distributionApproved -ne $false -or
+    $releaseSourceSet[0].distributionApprovedForDeclaredTerritories -ne $true -or
+    $releaseSourceSet[0].worldwideDistributionApproved -ne $false -or
+    (@($releaseSourceSet[0].approvedTerritories) -join ',') -cne 'US,GB,ES') {
+    throw 'Refusing to regenerate evidence without the exact owner-approved final US/GB/ES-only decision and worldwide=false safeguard.'
+}
 
 if ($evidence.Count -ne 78) {
     throw "Expected 78 provenance records, found $($evidence.Count)."
@@ -221,11 +237,12 @@ foreach ($source in $evidence) {
             verifiedLocalSHA1 = $actualSHA1
             sha1MatchesSource = $true
             localSHA256 = $actualSHA256
-            artworkStatus = 'provisional'
-            pixelReviewStatus = 'source-file-integrity-verified-final-art-review-pending'
-            territorialRightsReviewStatus = 'pending'
-            finalAsset = $false
+            artworkStatus = 'final'
+            pixelReviewStatus = 'source-file-integrity-verified-owner-approved-visual-final'
+            territorialRightsReviewStatus = 'approved-for-declared-territories'
+            finalAsset = $true
             distributionApproved = $false
+            distributionApprovedForDeclaredTerritories = $true
         })
     }
     catch {
@@ -248,29 +265,32 @@ if (Test-Path -LiteralPath $temporaryDirectory) {
 }
 
 $orderedRecords = @($records | Sort-Object { [array]::IndexOf($evidence.cardID, $_.cardID) })
-$status = if ($orderedRecords.Count -eq 78 -and $failures.Count -eq 0) {
-    'candidate-integrity-verified-78-of-78-not-production'
-}
-else {
-    'candidate-incomplete-or-blocked-not-production'
+if ($orderedRecords.Count -ne 78 -or $failures.Count -gt 0) {
+    Write-Host "Verified source files: $($orderedRecords.Count)/78"
+    Write-Host "Failures: $($failures.Count)"
+    $failures | Format-Table cardID, reason, detail -AutoSize
+    throw 'Evidence regeneration is incomplete; the existing final v2 manifest was not overwritten.'
 }
 
 $localManifest = [PSCustomObject][ordered]@{
     schemaVersion = 2
     manifestVersion = '2.0.0'
-    status = $status
+    status = 'integrity-verified-78-of-78-visual-final-territory-limited'
     sourceProvenanceManifest = '../provenance.v2.json'
     generatedAtUTC = [DateTime]::UtcNow.ToString('o')
     sourceSetID = 'wikimedia-commons-taionwc-pam-a-78'
     requestedCardCount = 78
     verifiedCardCount = $orderedRecords.Count
     failureCount = $failures.Count
-    artworkStatus = 'provisional'
-    candidateOnly = $true
-    finalAsset = $false
-    territorialRightsReviewStatus = 'pending'
+    artworkStatus = 'final'
+    candidateOnly = $false
+    finalAsset = $true
+    territorialRightsReviewStatus = 'approved-for-declared-territories'
     distributionApproved = $false
-    legalReviewStatement = 'No final legal or territorial distribution review is declared by this manifest.'
+    distributionApprovedForDeclaredTerritories = $true
+    approvedTerritories = @('US', 'GB', 'ES')
+    worldwideDistributionApproved = $false
+    legalReviewStatement = 'Owner-approved final visuals. Public distribution is approved only for the declared US, GB, and ES storefront allowlist; worldwide clearance is not declared.'
     records = $orderedRecords
     failures = @($failures)
 }

@@ -12,13 +12,32 @@ $evidence = Get-Content -Raw -LiteralPath $evidenceFile.Path | ConvertFrom-Json
 if ([int]$evidence.schemaVersion -ne 2) {
     throw "Candidate synchronization requires local-evidence.v2.json schema version 2."
 }
+if ([string]$evidence.status -cne "integrity-verified-78-of-78-visual-final-territory-limited" -or
+    [string]$evidence.artworkStatus -cne "final" -or
+    $evidence.candidateOnly -ne $false -or
+    $evidence.finalAsset -ne $true -or
+    $evidence.distributionApproved -ne $false -or
+    $evidence.distributionApprovedForDeclaredTerritories -ne $true -or
+    $evidence.worldwideDistributionApproved -ne $false -or
+    (@($evidence.approvedTerritories) -join ',') -cne 'US,GB,ES' -or
+    [int]$evidence.verifiedCardCount -ne 78 -or
+    [int]$evidence.failureCount -ne 0 -or
+    @($evidence.records).Count -ne 78) {
+    throw "Asset synchronization requires the complete final snapshot cleared only for US/GB/ES and never worldwide."
+}
 
 $synced = 0
 foreach ($record in $evidence.records) {
-    if (-not $record.sha1MatchesSource -or
+    if ([string]$record.artworkStatus -cne "final" -or
+        [string]$record.pixelReviewStatus -cne "source-file-integrity-verified-owner-approved-visual-final" -or
+        [string]$record.territorialRightsReviewStatus -cne "approved-for-declared-territories" -or
+        $record.finalAsset -ne $true -or
+        $record.distributionApproved -ne $false -or
+        $record.distributionApprovedForDeclaredTerritories -ne $true -or
+        -not $record.sha1MatchesSource -or
         -not $record.byteSizeMatchesSource -or
         -not $record.dimensionMatchesSource) {
-        continue
+        throw "Record $($record.cardID) does not preserve the final US/GB/ES-only release state."
     }
     if ([string]$record.artworkAsset -cnotmatch '^[a-z0-9_]+$') {
         throw "Unsafe artwork asset name for $($record.cardID)."
@@ -70,4 +89,4 @@ if ($synced -ne $evidence.verifiedCardCount) {
     throw "Synced $synced assets, but evidence declares $($evidence.verifiedCardCount)."
 }
 
-Write-Host "Synced $synced source-integrity-verified provisional candidate assets."
+Write-Host "Synced $synced source-integrity-verified final faces for the US/GB/ES-only release snapshot; worldwide clearance remains false."

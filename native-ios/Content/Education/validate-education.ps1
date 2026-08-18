@@ -257,6 +257,9 @@ if ($null -ne $guide) {
     if ($tutorialText -match '(?i)\b(official|certainty|science|evidence|privacy|consent|professional|qualified|high-stakes|health|legal|financial|safety|predict|immutable fate)\b') {
         Add-ValidationError 'Tutorial copy contains an editorial disclaimer or tangent instead of only the practical method.'
     }
+    if ($tutorialText -match '(?i)\bupright meaning\b') {
+        Add-ValidationError 'Tutorial copy must use the visible heading Meaning, not upright meaning.'
+    }
 
     $yesNoArticle = @($guide.articles | Where-Object id -CEQ 'yes-or-no-with-context')[0]
     $actualYesNoHeadings = @($yesNoArticle.sections | ForEach-Object {

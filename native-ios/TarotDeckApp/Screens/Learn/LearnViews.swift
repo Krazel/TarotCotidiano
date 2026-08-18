@@ -156,7 +156,7 @@ private struct TutorialsPortalRow: View {
                 .shadow(color: CeremonialObsidianTheme.brightGold.opacity(0.22), radius: 10)
         }
         .accessibilityElement(children: .combine)
-        .accessibilityHint("Opens seven reading tutorials")
+        .accessibilityHint("Opens reading tutorials")
     }
 }
 

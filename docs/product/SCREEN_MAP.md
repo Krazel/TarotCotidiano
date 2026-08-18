@@ -40,10 +40,9 @@ App launch
         │       └── Back → end reading and return Home
         │   └── Settings gear
         │       ├── English / Español
-        │       ├── Support the App → monthly support states
-        │       ├── Restore Purchases
-        │       ├── Privacy / Terms
-        │       └── Rate the App
+        │       ├── Rate the App
+        │       ├── Privacy
+        │       └── Support
         ├── Learn
         │   ├── Foundations Index → Foundation Article
         │   └── Reading Tutorials → Tutorial Article → optional Try This Reading
@@ -152,7 +151,7 @@ Represent `automatic opening shuffle → optional repeat shuffle → tap deck in
 - A newly created or reset table immediately commits a valid shuffled order and presents the approved shuffle motion. A restored active session keeps its saved order and enters its exact stable state without another automatic shuffle.
 - The small dedicated control is named **Shuffle Deck** / **Barajar mazo**. It remains visually available rather than being represented by disabled darkened content.
 - During the brief opening transition, placement waits for the committed order. VoiceOver announces **Deck shuffled. Ready to deal.** / **Mazo barajado. Listo para repartir.** when the table becomes actionable.
-- On a multi-card table in portrait, show **Rotate your phone for larger cards** / **Gira el teléfono para ver las cartas más grandes** for about three seconds after entry. It fades without a dismissal action or permanent layout space, and never says `iPhone`.
+- On a new or reset multi-card table in portrait, the normal instruction corridor temporarily shows **Rotate your phone for larger cards** / **Gira el teléfono para ver las cartas más grandes** for about three seconds, then returns to the current reading cue. It is never a toast, capsule, banner or overlay, has no dismissal, and never says `iPhone`. Restoring or revisiting the same reading does not show it again.
 
 Transition: durable automatic shuffle → approved tracked-top press, cut, insertion, interleave, riffle, and square presentation → `S03.2`.
 
@@ -411,7 +410,7 @@ S04 and S08 use the same canonical identity and upright reference data, but they
 
 ### Goal
 
-Keep the persistent app-language choice, voluntary support, purchase recovery, legal information, and rating available without competing with `Read / Learn / Cards`.
+Keep the persistent app-language choice, public privacy/support destinations and rating available without competing with `Read / Learn / Cards`.
 
 ### S09.1 — Settings index
 
@@ -420,29 +419,28 @@ Entry: the discreet gear in `Read`.
 Required rows:
 
 - **App Language / Idioma de la app** — an internal two-option selector containing only `English` and `Español`.
-- **Support the App** — opens `S10`; when active, the row shows a concise supporter state and thank-you without advertising a functional advantage.
-- **Restore Purchases** — starts the same restore flow defined in `S10.4` without requiring the user to begin a new purchase.
 - **Privacy / Privacidad** — opens the privacy document matching the active app language.
-- **Terms / Términos** — opens the terms document matching the active app language.
+- **Support / Soporte** — opens the public support destination.
 - **Rate the App** — performs a separate, direct user-initiated App Store rating action.
 
 Rules:
 
 - On first installation, Spanish iOS chooses `Español`; every other device language chooses `English`. An explicit selection then persists and takes priority on later launches.
 - Selecting a language first loads and validates the complete bundled interface, card, and guide package, then changes all visible app-owned copy immediately and atomically. No mixed-language intermediate state is shown.
-- Language switching preserves stable card IDs, favorites, selected spread, shuffled order, drawn cards, face states, navigation context, and supporter state. It never starts, ends, reshuffles, draws, reveals, or replaces a reading.
+- Language switching preserves stable card IDs, favorites, selected spread, shuffled order, drawn cards, face states and navigation context. It never starts, ends, reshuffles, draws, reveals, or replaces a reading.
 - English is the complete fallback if a localized key cannot be resolved; a partial production bundle is a release-blocking content-integrity failure rather than permission to mix copy silently.
 - Settings is not a fourth tab and does not become the launch destination.
 - The full deck, Learn, all 78 Cards, and all meanings remain available with no supporter entitlement.
 - There is no advertisement, paywall, locked content, supporter feed, account, login, or purchase-based ranking.
+- `Support the App`, Restore Purchases and subscription terms remain a deferred S10 plan and are absent from the public 1.0 binary until real products and review approval exist.
 - `Rate the App` is not inside Support, is not rewarded, and is never required after a purchase or restore.
 - The MVP does not show an unsolicited support prompt. Any later low-frequency reminder would require `Not Now` and `Don't Ask Again`, and could never appear on first use, during a reading, while revealing or inspecting a card, or during another critical task.
 - Dismissal returns to the exact prior `Read` state.
 
-### S09.2 — Privacy or Terms
+### S09.2 — Privacy or Support
 
-- Clear title: **Privacy** or **Terms**.
-- A document or valid system destination matching the active app language. Final English and Spanish legal wording and destinations are release inputs.
+- Clear title: **Privacy** or **Support**.
+- A valid public destination matching the active app language and the exact released behavior.
 - One obvious return action.
 - No consent checkbox, account gate, marketing opt-in, or reading-state mutation.
 
@@ -455,7 +453,7 @@ The final legal destinations and wording are release inputs. Creating or accepti
 - Shows no custom star gate, sentiment survey, reward, purchase prompt, or review requirement.
 - Cancellation or system unavailability returns quietly to Settings and does not affect supporter or reading state.
 
-## S10 — Support the App
+## S10 — Support the App (deferred after 1.0)
 
 ### Goal
 
@@ -563,7 +561,7 @@ Both English and Spanish reference-content key sets must equal the identity-mani
 - A revealed reading card announces position, identity, and available meaning action.
 - Library items announce card name and position in the current filter.
 - Card detail exposes title, the semantic `Meaning` / `Significado` heading, keywords, meaning, reading note, and artwork description in a logical order; the heading has no button trait.
-- The Settings gear has the label **Settings** rather than relying on its symbol; each Settings row exposes its purpose and current supporter state where applicable.
+- The Settings gear has the label **Settings** rather than relying on its symbol; each 1.0 Settings row exposes its purpose without implying unavailable commerce.
 - The language selector announces its group label, both options, and selected state; a switch announces completion in the newly active language without moving focus unexpectedly.
 - Support level controls announce name, live price, monthly period, selected state, and equivalent-access explanation. Purchase and restore status changes are announced without trapping focus.
 - Decorative texture and ornament are hidden from VoiceOver.
@@ -585,7 +583,7 @@ Both English and Spanish reference-content key sets must equal the identity-mani
 | StoreKit products not configured or unavailable | Show `S10.5`; keep the full free app and non-commerce Settings destinations usable. |
 | Purchase cancelled, pending, or failed | Preserve free access and the reading; reflect only the verified Apple state and offer a safe retry when appropriate. |
 | Restore finds nothing or fails | Show the matching `S10.4` result; never create an entitlement or block use. |
-| Privacy, Terms, subscription management, or rating destination unavailable | Return safely to Settings with concise feedback; never substitute an unrelated link. |
+| Privacy, Support, or rating destination unavailable | Return safely to Settings; never substitute an unrelated link or claim success. |
 
 There are no app-account, notification-permission, synchronization, remote tarot-content, or remote learning-content states. Commerce and system-link failures are contained inside Settings and cannot degrade the three core destinations.
 
@@ -641,7 +639,7 @@ Result: 78 identities map one-to-one to complete English and Spanish upright ref
 
 ### I. Inspect support without losing a reading
 
-`Three Cards active` → Settings gear → `Support the App` → compare the three monthly levels → `Back` → dismiss Settings
+Deferred post-1.0: `Three Cards active` → Settings gear → `Support the App` → compare the three monthly levels → `Back` → dismiss Settings
 
 Result: all levels communicate equivalent access, no level is preselected, no purchase is required, and the exact reading returns unchanged.
 
@@ -703,8 +701,8 @@ Additional registered references under A-021:
 13. `S06 Learn Article` — V-071; replaces V-021.
 14. `S07 Cards Library / All with discoverable horizontal filters` — V-122, replacing V-022.
 15. `S08 Card Detail from Library / previous-next` — V-023.
-16. `S09 Settings` — V-045, which supersedes V-025 with the internal `English / Español` selector.
-17. `S10 Support the App / not active` — V-027, which supersedes V-026 with `ios-app-launch` copy; its displayed prices are illustrative and not live product configuration.
+16. `S09 Settings` — V-127 Spanish and V-128 English, replacing V-045 with release-ready language, rating, privacy and support rows.
+17. `S10 Support the App / not active` — V-027 remains a deferred historical plan; it is not part of the 1.0 Settings surface or binary.
 18. `S01.2 Read / Deck Home / active Three Cards reading` — V-028, historical and superseded by direct table restoration under A-033.
 19. `S03.1 One Card / ready to shuffle` — V-029 portrait and V-030 landscape, historical after A-059's automatic opening shuffle.
 20. `S03.2 One Card / shuffled` — V-031 portrait and V-032 landscape.
@@ -722,7 +720,7 @@ Additional registered references under A-021:
 32. `S03 active reading / contextual tutorial`, portrait Spanish — V-088.
 33. `S03 Reading Table / repeatable physical shuffle motion V3` — V-089, historical and superseded by V-100.
 
-Still requiring a complete reference before final implementation: the A-059 Reading Table states in portrait and landscape, the remaining `S10` supporter/restore/unavailable variants, and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement the approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized.
+Still requiring a complete reference before any future implementation: the deferred `S10` supporter/restore/purchase variants and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized and do not block the free 1.0 release.
 
 A shared card-reference component may serve S04 and S08 only after both navigation contexts are represented and registered. Portrait and landscape require separate references whenever the composition changes materially. A-021 removes the need to pause for routine approval but does not remove image creation, registration, fidelity review, or accessibility adaptation.
 
@@ -730,7 +728,7 @@ A shared card-reference component may serve S04 and S08 only after both navigati
 
 The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/tutorial interaction conforms to V-080–V-102, Table interaction conforms to new A-059 portrait/landscape references, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the foundation lessons and eight reading tutorials are bundled with exact bilingual parity, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
 
-Settings and support are complete at product-design level when S09/S10 references and states are registered, free access is invariant across every purchase state, equivalent levels and supporter acknowledgement are represented, Restore Purchases and renewal/cancellation disclosures are present, and Privacy, Terms, and Rate the App remain distinct destinations. Live StoreKit products, prices, contracts, tax/banking setup, builds, and purchase review require separate authority and do not block core completion.
+Settings is complete for the free 1.0 release when language switching is atomic and Rate the App, Privacy and Support are functional, accessible and bilingual, with no inactive commerce rows. S10 remains a future, separately gated StoreKit feature; products, prices, contracts, tax/banking setup and purchase review require separate authority and do not block 1.0.
 
 Publishing remains separately unauthorized.
 
@@ -791,7 +789,7 @@ Publishing remains separately unauthorized.
 
 ### Temporary orientation hint and landscape density
 
-- Multi-card portrait tables show `Rotate your phone for larger cards` / `Gira el teléfono para ver las cartas más grandes` for about three seconds after entry. It is non-blocking, disappears automatically, reserves no lasting space, and is announced once without trapping VoiceOver focus.
+- New or reset multi-card portrait tables replace the normal cue with `Rotate your phone for larger cards` / `Gira el teléfono para ver las cartas más grandes` for about three seconds. It is non-blocking, disappears automatically in the same stable corridor, and is announced once without trapping VoiceOver focus. Restore, rotation and return from contextual Learn do not offer it again.
 - The hint says `phone / teléfono`, never `iPhone`. One Card does not need the hint.
-- Landscape raises and compacts the reading title/header inside the safe area. The released height enlarges the cards while preserving labels, 44-point controls, the persistent deck, equal gaps, and the exact saved slot coordinates.
+- Landscape raises and compacts the reading title/header inside the safe area. The released height enlarges the cards while preserving labels, 44-point controls, equal gaps, and the exact saved slot coordinates; the persistent deck occupies the physical right side.
 - These are materially changed visual states. Complete A-059 portrait and landscape references must be created and registered before final UI implementation; earlier no-deck and ready-to-shuffle images stay preserved as historical references.

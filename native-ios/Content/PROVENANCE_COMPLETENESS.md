@@ -1,7 +1,7 @@
 # TaionWC provenance completeness report
 
-Status: metadata-complete candidate; three integrity-verified source files downloaded; not distribution-cleared
-Checked: 2026-08-09
+Status: 78/78 source metadata complete; owner-approved final visual set; release clearance limited to US/GB/ES
+Checked: 2026-08-18
 
 ## Result
 
@@ -21,28 +21,26 @@ The [Wikimedia Commons TaionWC category](https://commons.wikimedia.org/wiki/Cate
 - Declared license: **Public domain on 78/78 pages**
 - Public-domain categories: **CC-PD-Mark and PD-old-80-expired on 78/78 pages**
 - Dimensions present: **78/78**; widths range from 1090 to 1144 pixels and heights from 1919 to 1920 pixels
-- Candidate source files downloaded: **3** — The Star, The Moon, and The Sun
-- Files added to a production asset catalog: **0**
-- Local SHA-256 values: **3**
-- Source-integrity, dimensions, and JPEG decode reviews: **3**
-- Final-art pixel reviews: **0**
-- Territorial rights approvals: **0**
-- Distribution approvals: **0**
+- Historical v1 source snapshot downloads: **3** — The Star, The Moon, and The Sun
+- Complete v2 local evidence: **78/78** files, hashes, dimensions and JPEG checks
+- Files added to the production asset catalog: **78/78**
+- Visual-final approvals: **78/78**, by explicit owner decision
+- Approved storefront allowlist: **US, GB, ES**
+- Worldwide distribution approval: **false**
 
 The exact metadata query is recorded in `provenance.v2.json`. Wikimedia's page URL, original-file URL, page ID, dimensions, byte size, MIME type, source SHA-1, license metadata, public-domain marks, and review state are preserved for every card.
 
 ## Review boundary
 
-This pass verifies metadata completeness and set coherence only. It does not independently prove that a particular scan is clear in every intended storefront, and it does not treat a Commons label as project legal approval.
+The historical v1 pass verified metadata completeness and three controlled downloads. The current v2 snapshot verifies all 78 exact local files. The project decision does not treat a Commons label as worldwide clearance; it separately approves only the reviewed US/GB/ES storefront allowlist.
 
 The following remain release gates:
 
-1. Download each candidate through a controlled asset task.
-2. Calculate a local SHA-256 and compare the downloaded bytes with the recorded Commons source.
-3. Review every image for the expected card, complete borders, crop consistency, resolution, modern restoration, recoloring, watermarks, added typography, or other derivative material.
-4. Review public-domain and source-file status for the intended App Store territories.
-5. Record any transformations and approve one coherent 78-face set plus a separately cleared card back.
-6. Change `distributionApproved` only through an explicit project decision.
+1. Keep selected App Store territories within US/GB/ES unless a new review expands the allowlist.
+2. Keep `worldwideDistributionApproved=false`.
+3. Re-run the hash, image-set and provenance validators for the exact release candidate.
+4. Validate the separately cleared card back, icon and programmatic visual system through `release-asset-provenance.v1.json`.
+5. Obtain explicit authorization before external Content Rights attestations, territory changes, App Review or publication.
 
 ## Future original artwork
 

@@ -1,16 +1,14 @@
 # Native iOS internal tools
 
-## Sync verified provisional card faces
+## Synchronize the verified final card faces
 
-Run this after `Content/CandidateRWS/local-evidence.v2.json` changes and once more when the candidate download finishes:
+Run after `Content/CandidateRWS/local-evidence.v2.json` is safely regenerated:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File native-ios/Tools/sync-verified-candidate-assets.ps1
 ```
 
-The synchronizer is deterministic and safe to repeat. It reads the v2 evidence snapshot, accepts only records whose source SHA-1, byte size and pixel dimensions are marked as matching, verifies the local SHA-1 again, and then copies those local files into their canonical `artworkAsset.imageset` directories in the existing app asset catalog. It updates only the matching generated image set and never removes another valid asset.
-
-This is an internal bundling step, not a rights approval. It does not edit either provenance manifest and does not change `distributionApproved=false`, candidate status, territorial review status or final-art status.
+The synchronizer requires the complete final state: 78/78 integrity-verified records, `candidateOnly=false`, `finalAsset=true`, approval only for the exact `US/GB/ES` allowlist and `worldwideDistributionApproved=false`. It verifies each local SHA-1 before copying the file to its canonical asset-catalog image set. It does not grant rights, alter the territorial decision or remove other valid assets.
 
 After syncing, validate the current snapshot:
 
@@ -18,12 +16,10 @@ After syncing, validate the current snapshot:
 powershell -NoProfile -ExecutionPolicy Bypass -File native-ios/Tools/validate-app-integration.ps1
 ```
 
-If the downloader updates the evidence between these two commands, rerun the synchronizer and validator. The project root should always rerun both commands after the downloader reaches its final 78-card snapshot.
-
-The default validator deliberately accepts a partial internal artwork snapshot and prints both the provisional candidate count and the explicit placeholder count. It must not be treated as a release-art approval. The separate release gate is:
+The default validator checks code, content, localization and the complete final artwork snapshot. Internal TestFlight remains explicitly internal-only. A territory-aware public preflight must name the intended storefronts:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File native-ios/Tools/validate-app-integration.ps1 -ReleaseGate
+powershell -NoProfile -ExecutionPolicy Bypass -File native-ios/Tools/validate-app-integration.ps1 -ReleaseGate -RequestedTerritories US,GB,ES
 ```
 
-That gate requires 78/78 records, zero evidence failures, final-asset status and distribution approval. It is expected to fail while the historical candidates remain non-production.
+The release gate accepts only storefronts within the recorded allowlist and rejects worldwide or implicit expansion. Passing it is local evidence, not upload, App Review submission or publication authority.

@@ -2,6 +2,17 @@
   "schemaVersion": 2,
   "manifestVersion": "2.0.0",
   "supersedes": "provenance.v1.json",
+  "projectReleaseDecision": {
+    "decidedOn": "2026-08-18",
+    "assetSet": "wikimedia-commons-taionwc-pam-a-78",
+    "visualFinalApprovedByOwner": true,
+    "finalAsset": true,
+    "distributionApprovedForDeclaredTerritories": true,
+    "approvedTerritories": [ "US", "GB", "ES" ],
+    "worldwideDistributionApproved": false,
+    "basis": "Faithful scans of public-domain visual art, limited to the reviewed storefront allowlist. The decision does not cover other territories, modern editions, card backs, icon, packaging, trademarks, or unrelated assets.",
+    "audit": "../../docs/technical/CONTENT_RIGHTS_AUDIT.md"
+  },
   "records": [
     {
       "id": "rws-1909-original-artwork-candidate",
@@ -21,15 +32,18 @@
       ],
       "firstPublicationYear": 1909,
       "sourceArtworkDateDeclaredByCommons": "1910",
-      "status": "metadata-complete-candidate-not-distribution-cleared",
+      "status": "source-evidence-for-territory-limited-final-assets",
       "distributionApproved": false,
+      "distributionApprovedForDeclaredTerritories": true,
+      "approvedTerritories": [ "US", "GB", "ES" ],
+      "worldwideDistributionApproved": false,
       "sourceFilesBundled": false,
       "candidateSourceSetID": "wikimedia-commons-taionwc-pam-a-78",
       "scope": "The 78 TaionWC Pam-A scans mapped below. No card back, packaging, guidebook, modern restoration, recoloring, typography, trademark use, or commercial edition is included.",
       "jurisdictionNotes": {
         "unitedStates": "The U.S. Copyright Office states that works published in the United States before January 1, 1931 are in the public domain as of 2026. This does not independently verify the publication history or separate rights in each source file.",
-        "unitedKingdom": "Official UK guidance gives the usual term for artistic works as 70 years after the author's death. Older works and particular source reproductions can require additional analysis.",
-        "europeanUnion": "Directive 2006/116/EC generally sets life plus 70 years for literary and artistic works. Territory-specific rules and intended App Store storefronts remain subject to review."
+        "unitedKingdom": "The underlying artwork is outside the ordinary term. UK IPO guidance states that a simple faithful digital reproduction is unlikely to meet the originality threshold for a new copyright.",
+        "europeanUnion": "Article 14 of Directive (EU) 2019/790 excludes new copyright and related rights in faithful reproductions of public-domain visual art unless the reproduction is itself an original intellectual creation. Spain transposed that rule in Article 72 of Royal Decree-law 24/2021. This manifest approves Spain only; other EU storefronts remain outside the allowlist."
       },
       "officialReferences": [
         {
@@ -46,9 +60,15 @@
         },
         {
           "authority": "EUR-Lex",
-          "title": "Directive 2006/116/EC on the term of protection of copyright and related rights",
-          "url": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006L0116",
-          "checkedOn": "2026-08-09"
+          "title": "Directive (EU) 2019/790, Article 14",
+          "url": "https://eur-lex.europa.eu/eli/dir/2019/790/oj/eng",
+          "checkedOn": "2026-08-18"
+        },
+        {
+          "authority": "Boletín Oficial del Estado",
+          "title": "Royal Decree-law 24/2021, Article 72",
+          "url": "https://www.boe.es/buscar/act.php?id=BOE-A-2021-17910",
+          "checkedOn": "2026-08-18"
         }
       ],
       "prohibitedAssumptions": [
@@ -91,10 +111,13 @@
       "observedFileCount": 78,
       "mappedCardCount": 78,
       "metadataRetrievedOn": "2026-08-09",
-      "consistencyStatus": "complete-coherent-78-file-candidate",
+      "consistencyStatus": "complete-coherent-78-file-final-for-declared-territories",
       "downloadStatus": "three-candidate-files-downloaded-not-production-bundled",
       "distributionApproved": false,
-      "notes": "Commons describes this category as scans of the Pam-A version uploaded as one image set. All 78 API records declare Pamela Colman Smith, 1910, Public domain, CC-PD-Mark, and PD-old-80-expired. This is source metadata, not the project's final legal clearance."
+      "distributionApprovedForDeclaredTerritories": true,
+      "approvedTerritories": [ "US", "GB", "ES" ],
+      "worldwideDistributionApproved": false,
+      "notes": "Commons describes this category as scans of the Pam-A version uploaded as one image set. All 78 API records declare Pamela Colman Smith, 1910, Public domain, CC-PD-Mark, and PD-old-80-expired. The project decision is limited to US, GB, and ES and does not assert worldwide clearance."
     }
   ],
   "assetEvidence": [

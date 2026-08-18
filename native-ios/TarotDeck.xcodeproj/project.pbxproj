@@ -34,6 +34,7 @@
 		A50000000000000000000005 /* beginner-guide.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000005 /* beginner-guide.es.v1.json */; };
 		A50000000000000000000006 /* required-interface-keys.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000006 /* required-interface-keys.v1.json */; };
 		A50000000000000000000007 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000007 /* PrivacyInfo.xcprivacy */; };
+		A50000000000000000000008 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000008 /* InfoPlist.xcstrings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -67,6 +68,7 @@
 		B50000000000000000000005 /* beginner-guide.es.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = beginner-guide.es.v1.json; sourceTree = "<group>"; };
 		B50000000000000000000006 /* required-interface-keys.v1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = required-interface-keys.v1.json; sourceTree = "<group>"; };
 		B50000000000000000000007 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		B50000000000000000000008 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -246,6 +248,7 @@
 			children = (
 				B10000000000000000000009 /* Assets.xcassets */,
 				B50000000000000000000002 /* Localizable.xcstrings */,
+				B50000000000000000000008 /* InfoPlist.xcstrings */,
 				B50000000000000000000006 /* required-interface-keys.v1.json */,
 				B50000000000000000000007 /* PrivacyInfo.xcprivacy */,
 			);
@@ -337,6 +340,7 @@
 			files = (
 				A10000000000000000000009 /* Assets.xcassets in Resources */,
 				A50000000000000000000002 /* Localizable.xcstrings in Resources */,
+				A50000000000000000000008 /* InfoPlist.xcstrings in Resources */,
 				A20000000000000000000006 /* tarot-deck.v1.json in Resources */,
 				A20000000000000000000007 /* card-meanings.v1.json in Resources */,
 				A20000000000000000000008 /* beginner-guide.v1.json in Resources */,
@@ -429,7 +433,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_LANGUAGE = en;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck Internal";
+				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -437,7 +441,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 0.8;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -466,7 +470,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 0.8;
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

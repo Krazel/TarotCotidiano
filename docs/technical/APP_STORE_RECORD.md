@@ -1,45 +1,36 @@
-# App Store record — Tarot Deck: Read & Learn
+# App Store Connect — Tarot Deck
 
-Actualizado: 2026-08-12
+Actualizado: 2026-08-18
+Estado: candidata pública local `1.0 (1)` aprobada para preparación. Aún no se ha compilado en macOS, subido, seleccionado ni enviado a App Review.
 
-## Propósito y estado
+## Identidad verificada
 
-Esta ficha registra los datos verificados de App Store Connect para **Tarot Deck: Read & Learn**. `0.7.2 (2)` está subida, procesada y disponible exclusivamente como **TestFlight Internal Only** en el grupo `Testers`. No autoriza contratos, StoreKit, testers externos, App Review o publicación.
+| Campo | Valor |
+|---|---|
+| Plataforma | iOS, solo iPhone |
+| App Store name EN | `Tarot Deck: Read & Learn` |
+| App Store name ES | `Tarot Deck: Lee y aprende` |
+| Display name EN | `Tarot Deck` |
+| Display name ES | `Mazo de tarot` |
+| Bundle ID | `com.krazel.tarotdeck` |
+| SKU | `tarot-deck-ios` |
+| Apple ID | `6800144105` |
+| Primary language | English (U.S.) |
+| Additional localization | Spanish (Spain) |
+| Category | Lifestyle; Reference secondary |
+| Price | Free |
+| Release | Manual |
+| Minimum OS | iOS 16.0 |
+| Current source version | `1.0 (1)` |
+| First public train | `1.0`; source RC prepared, no build selected |
+| Latest delivered TestFlight | `0.8 (1)`, `VALID`, `INTERNAL_ONLY`, group `Testers` |
+| Login | None |
+| IAP / subscriptions | None in this release |
+| Advertising / analytics / tracking | None |
 
-Estado de preparación: **registro externo y metadata bilingüe guardados; privacidad, edad, accesibilidad conservadora y precio gratuito configurados; derechos y distribución pendientes**.
+The App Store names remain editable while the record state permits it. Bundle ID, SKU and Apple ID must not be replaced.
 
-Bloqueo de distribución: la obra histórica Rider–Waite–Smith está fuera de copyright en los territorios principales auditados, pero los 78 JPEG TaionWC/Pam-A siguen marcados como candidatos internos y no tienen una cadena suficientemente limpia para distribución mundial. No debe subirse una build ni enviarse la app a revisión hasta sustituirlos por arte propio o un conjunto con licencia/CC0 y cobertura territorial expresa. Evidencia: `docs/technical/CONTENT_RIGHTS_AUDIT.md`.
-
-## Datos del registro
-
-| Campo | Valor preparado | Estado / nota |
-|---|---|---|
-| Plataforma | iOS | Solo iPhone. No añadir Android, iPad, macOS o visionOS. |
-| Nombre provisional EN | `Tarot Deck: Read & Learn` | `Tarot Deck` no estaba disponible. Nombre reservado y editable antes de review. |
-| Nombre provisional ES | `Tarot Deck: Lee y aprende` | Localización Español (España) guardada y editable antes de review. |
-| Bundle ID | `com.krazel.tarotdeck` | App ID explícito registrado y permanente en Apple Developer. La futura configuración de distribución de Xcode debe coincidir exactamente. |
-| SKU | `tarot-deck-ios` | Permanente e interno; nunca se muestra al público. |
-| Idioma principal | English (U.S.) | Fallback de la ficha. |
-| Localización adicional | Spanish (Spain) | Añadida; nombre y subtítulo básicos guardados. La app ya contempla inglés y castellano. |
-| Acceso | Full Access | Configurado. |
-| Versión visible | `0.7.2` | Build interna vigente; no equivale a versión pública. |
-| Build | `2` | Subida, procesada como `VALID` y asignada al grupo interno `Testers`. |
-| App Store Connect Apple ID | `6800144105` | Generado y verificado en App Store Connect el 2026-08-11. |
-| Tren público inicial | `1.0` | Permanece en preparación y sin build seleccionada. TestFlight `0.7.2 (2)` no sustituye ni publica ese tren. |
-| Publicación | Manual | Configurada para impedir una publicación automática tras una futura aprobación. |
-| Inicio de sesión para review | No requerido | La app no tiene cuentas ni login. |
-| Precio | Gratis (`0,00 €`) | España (EUR) es la región base; precios equivalentes gratuitos en las 175 regiones. |
-| Disponibilidad territorial | **Sin configurar** | No seleccionar territorios hasta cerrar Content Rights. |
-| Dispositivos de tienda | iPhone | Mac con Apple silicon y Apple Vision Pro desactivados. |
-
-## Clasificación configurada
-
-- **Categoría primaria: Lifestyle.** La experiencia central es usar un mazo digital como afición personal. Apple define Lifestyle para apps sobre temas o servicios de interés general e incluye hobbies entre sus ejemplos.
-- **Categoría secundaria: Reference.** Learn, los significados y la biblioteca ayudan a recuperar información y seguir métodos; Apple incluye how-tos y material de consulta en Reference.
-
-Esta combinación representa mejor el orden real del producto: primero mazo usable, después referencia de aprendizaje. La categoría primaria configurada en App Store Connect debe coincidir con la de Xcode. Fuente: [Apple — Choosing a category](https://developer.apple.com/app-store/categories/).
-
-## Metadata pública — English (U.S.)
+## Public metadata — English (U.S.)
 
 ### Name
 
@@ -49,158 +40,136 @@ Esta combinación representa mejor el orden real del producto: primero mazo usab
 
 `Your deck, always with you`
 
-### Promotional text — optional
-
-Empty. It is optional and unnecessary for the initial record.
-
 ### Description
 
 ```text
-Carry a complete tarot deck on your iPhone and read the cards at your own pace.
-
-Tarot Deck is designed to feel like having a physical deck with you. Choose a one-card reading or a three-card spread, shuffle, draw, and reveal the cards yourself. The app gives you the structure and reference material; it does not generate an automatic prediction.
+Carry a complete 78-card tarot deck on your iPhone and read at your own pace.
 
 READ YOUR WAY
-• Draw one card or work with three.
-• Choose Past · Present · Possible Direction, Situation · Challenge · Guidance, You · The Other Person · Connection, or an open three-card reading.
-• Tap a revealed card to see its upright meaning and a practical reflection prompt.
-• Restart a reading quickly without losing the rhythm of the table.
+• Choose one card, five three-card styles, or Six-Card Guidance.
+• Create and save your own spreads with 1 to 12 cards.
+• Shuffle, place, and reveal each card yourself.
+• Open any revealed card to see its Meaning and how it can work In a Reading.
 
 LEARN THE METHODS
-Follow step-by-step tutorials for preparing a reading, asking a clear question, understanding each position, combining the cards, and closing the reading.
+Follow eight concise tutorials for the included readings and for building your own spread. Each tutorial explains what every position represents and how to work through the cards.
 
-EXPLORE THE DECK
-Browse all 78 Major and Minor Arcana cards, open them one by one, and save favorites for later reference.
+EXPLORE ALL 78 CARDS
+Browse Major and Minor Arcana, open each card one by one, and save favorites for quick reference.
 
-Available in English and Spanish. Designed for iPhone and usable offline.
-
-Tarot is a reflective practice. The app does not provide medical, legal, financial, or other professional advice.
+Tarot Deck works offline, stores your choices and readings only on your device, and is available in English and Spanish.
 ```
 
 ### Keywords
 
-`cards,spreads,meanings,learn,major arcana,minor arcana,reading,favorites,symbolism`
+`tarot,cards,spreads,meanings,learn,arcana,reading,favorites,offline,custom`
+
+Promotional Text and Marketing URL remain empty.
 
 ## Metadata pública — Spanish (Spain)
 
-### Name
+### Nombre
 
 `Tarot Deck: Lee y aprende`
 
-Ambos nombres siguen siendo provisionales y editables antes de review.
-
-### Subtitle
+### Subtítulo
 
 `Tu mazo, siempre contigo`
 
-### Promotional text — optional
-
-Vacío. Es opcional y no es necesario para la ficha inicial.
-
-### Description
+### Descripción
 
 ```text
-Lleva un mazo de tarot completo en tu iPhone y lee las cartas a tu propio ritmo.
-
-Tarot Deck está diseñada para sentirse como llevar un mazo físico contigo. Elige una lectura de una carta o una tirada de tres, baraja, saca y revela tú mismo las cartas. La app aporta la estructura y el material de consulta; no genera una predicción automática.
+Lleva un mazo de tarot completo de 78 cartas en tu iPhone y lee a tu propio ritmo.
 
 LEE A TU MANERA
-• Saca una carta o trabaja con tres.
-• Elige Pasado · Presente · Posible dirección, Situación · Reto · Orientación, Tú · La otra persona · Vínculo o una tirada abierta de tres cartas.
-• Toca una carta revelada para consultar su significado al derecho y una propuesta práctica de reflexión.
-• Reinicia una lectura rápidamente sin romper el ritmo de la mesa.
+• Elige una carta, cinco estilos de tres cartas u Orientación en seis cartas.
+• Crea y guarda tus propias tiradas de 1 a 12 cartas.
+• Baraja, coloca y revela cada carta tú mismo.
+• Abre cualquier carta revelada para consultar su Significado y cómo puede funcionar En una tirada.
 
 APRENDE LOS MÉTODOS
-Sigue tutoriales paso a paso para preparar una lectura, formular una pregunta clara, comprender cada posición, relacionar las cartas y cerrar la lectura.
+Sigue ocho tutoriales breves para las tiradas incluidas y para crear la tuya. Cada tutorial explica qué representa cada posición y cómo trabajar con las cartas.
 
-EXPLORA EL MAZO
-Recorre las 78 cartas de los Arcanos Mayores y Menores, ábrelas una a una y guarda tus favoritas para consultarlas después.
+EXPLORA LAS 78 CARTAS
+Recorre los Arcanos Mayores y Menores, abre cada carta una a una y guarda favoritas para consultarlas rápidamente.
 
-Disponible en inglés y castellano. Diseñada para iPhone y utilizable sin conexión.
-
-El tarot es una práctica de reflexión. La app no ofrece asesoramiento médico, jurídico, financiero ni de otro tipo profesional.
+Mazo de tarot funciona sin conexión, guarda tus elecciones y lecturas solo en tu dispositivo y está disponible en inglés y castellano.
 ```
 
-### Keywords
+### Palabras clave
 
-`cartas,tiradas,significados,aprender,arcanos mayores,arcanos menores,lectura,favoritas,símbolos`
+`tarot,cartas,tiradas,significados,aprender,arcanos,lectura,favoritas,sin conexión`
 
-## URLs y datos editoriales
+El texto promocional y la URL de marketing permanecen vacíos.
 
-| Campo | Valor preparado | Puerta |
+## URLs y destinos dentro de la app
+
+| Uso | URL / comportamiento | Estado local |
 |---|---|---|
-| Support URL | `https://krazel.github.io/tarot-deck/support/` | Publicada, verificada con HTTP 200 e introducida en la ficha. |
-| Privacy Policy URL | `https://krazel.github.io/tarot-deck/privacy/` | Publicada, verificada con HTTP 200 e introducida para EN-US y ES-ES. |
-| Marketing URL | Vacío | Campo opcional eliminado de EN-US y ES-ES bajo A-039; la página informativa no es necesaria para describir la app. |
-| Copyright | Valor obligatorio configurado de forma privada en App Store Connect | No se duplica el dato legal del titular en el repositorio público. Apple indica que este campo no es visible para clientes. |
-| App icon | D — Three-Card Fan | Integrado en el catálogo y verificado dentro del IPA Local-QA; App Store lo recibirá únicamente desde una futura build de distribución. |
+| Privacy Policy | `https://krazel.github.io/tarot-deck/privacy/` | Respondió HTTP 200 el 2026-08-18. Las tres copias locales ya incluyen todos los estados guardados; el sitio público sigue pendiente de desplegar y revalidar. |
+| Support | `https://krazel.github.io/tarot-deck/support/` | Respondió HTTP 200 el 2026-08-18. Las tres copias locales ya reflejan 1/3/6/custom y eliminan `upright/al derecho` y la tangente editorial; falta desplegar. |
+| Rate the App | `https://apps.apple.com/app/id6800144105?action=write-review` | La fila usa el enlace oficial persistente y no un prompt directo. El destino devolvió 404 el 2026-08-18 mientras la ficha no es pública; revalidarlo cuando la app esté disponible. |
+| Marketing URL | Vacío | Opcional y no necesario. |
+| Terms / EULA | Apple Standard EULA | No hay suscripciones ni una pantalla de términos en la app. |
 
-Apple limita el subtitle a 30 caracteres, promotional text a 170, description a 4.000 y keywords a 100 bytes; Support URL es obligatorio y la descripción/keywords son localizables. Fuentes: [Apple — App information](https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/) y [Apple — Platform version information](https://developer.apple.com/help/app-store-connect/reference/app-information/platform-version-information).
+## App Privacy y datos
 
-## Preguntas de cumplimiento aún pendientes
+`Data Not Collected / No se recopilan datos` continúa siendo la respuesta exacta para la app:
 
-### Content Rights — bloqueante para distribución externa o pública
+- no cuenta, backend, red propia, analítica, anuncios, tracking ni SDK de terceros;
+- no permisos protegidos;
+- idioma, selección de tirada, sesión, continuidad, favoritos, tiradas personalizadas y borrador se guardan solo en el dispositivo;
+- tocar Privacy, Support o Rate abre una URL por decisión del usuario; la app no adjunta ni transmite datos.
 
-No seleccionar todavía una respuesta en App Store Connect. La app muestra arte de cartas y Apple exige disponer de los derechos necesarios sobre contenido de terceros. Antes de responder:
+La política pública debe enumerar todos los datos locales anteriores. Evidencia: `docs/technical/PRIVACY_DATA_INVENTORY.md` y `PrivacyInfo.xcprivacy`.
 
-1. cerrar una de estas rutas: arte propio final o un conjunto con licencia/CC0 expresa del digitalizador y revisión territorial documentada del arte histórico;
-2. reconciliar el manifiesto de las 78 cartas con los assets exactos de la build;
-3. conservar evidencia de fuente, autoría/licencia y territorios autorizados;
-4. decidir disponibilidad territorial coherente con esa evidencia.
+## Rights, territorios y DSA
 
-El estado actual `candidateOnly=true`, `finalAsset=false`, `distributionApproved=false` impide afirmar que los derechos de distribución pública estén resueltos. Public Domain Mark acredita la identificación de Commons, pero no es una licencia, cesión ni garantía mundial. A-040 permite solo QA interna y el binario se exporta con la restricción irreversible `testFlightInternalTestingOnly=true`; no puede pasar a testers externos ni App Store.
+- Las 78 caras son finales y la evidencia local permite preparar solo `US`, `GB` y `ES`.
+- `worldwideDistributionApproved=false`; no seleccionar otros storefronts.
+- Card back, icon and programmatic backgrounds have separate project provenance.
+- Content Rights has not been attested in App Store Connect in this task.
+- Spain is an EU territory. App Store Connect currently identifies the developer as trader; the required DSA information must be confirmed truthfully before enabling `ES`. The private review contact remains separate from public trader information.
 
-### Age Rating — completado
+Evidence: `docs/technical/CONTENT_RIGHTS_AUDIT.md`, `native-ios/Content/provenance.v2.json`, `native-ios/Content/CandidateRWS/local-evidence.v2.json`, and `native-ios/Content/release-asset-provenance.v1.json`.
 
-El cuestionario real fue completado contra las 78 imágenes y el contenido bilingüe. Se declararon como poco frecuentes terror/miedo, temas adultos o sugestivos, desnudez no explícita y violencia fantástica; armas como frecuentes; el resto de capacidades y contenido no aplicable como ausente. Apple calculó **13+** y no se aplicó reemplazo manual. La app no está marcada como Made for Kids. Reauditar si cambia el arte o el contenido: [Apple — Set an app age rating](https://developer.apple.com/help/app-store-connect/manage-app-information/set-an-app-age-rating).
+## Other compliance
 
-### App Privacy — publicada para el estado actual
+- Age rating: current prepared result `13+`; recheck against the exact public RC.
+- Encryption: `ITSAppUsesNonExemptEncryption=NO`; verify in the signed archive.
+- Accessibility: only claim features manually proven on the RC. Dark Interface is the current conservative draft.
+- Copyright and App Review contact: required private values stay in App Store Connect and are not copied to this public repository.
+- Supporter subscriptions: absent. Do not show support purchases, Restore Purchases, product IDs or subscription copy in `1.0` unless a separately authorized complete StoreKit flow exists.
 
-La auditoría del runtime actual confirmó ausencia de analítica, anuncios, tracking, cuentas, backend, red y SDK de terceros. Se publicó **Data Not Collected / No se recopilan datos**. La app conserva localmente idioma, favoritos y lectura; no los transmite. El correo voluntario de soporte ocurre fuera de la app y se documenta por separado en la política pública y en `docs/technical/PRIVACY_DATA_INVENTORY.md`. Reauditar antes de la build final y ante cualquier incorporación de StoreKit, publicidad, analítica, soporte integrado, red o SDK: [Apple — Manage app privacy](https://developer.apple.com/help/app-store-connect/manage-app-information/manage-app-privacy).
+## Review Notes — prepared English draft
 
-### Accessibility — borrador conservador
+```text
+Tarot Deck requires no account or sign-in and is fully usable offline.
 
-App Store Connect contiene un borrador para iPhone con **Dark Interface / Interfaz oscura** como única prestación declarada. VoiceOver, Voice Control, Larger Text, Reduce Motion, contraste y diferenciación sin color requieren QA manual completo en un iPhone antes de declararse. Apple no permite publicar este borrador hasta que exista una versión pública de la app.
+To review the main flow:
+1. Open Read and use the small selector to choose One Card, Three Cards, Six Cards, or Custom.
+2. Tap the deck to start a reading, tap the deck or an empty position to place cards, and tap a face-down card to reveal it.
+3. Tap a revealed card to open its Meaning and In a Reading reference.
+4. Open Learn to browse eight reading tutorials.
+5. Open Cards to browse all 78 cards and save favorites.
+6. Open Settings for language, Rate the App, Privacy, and Support.
 
-### Export compliance / encryption — preparada, pendiente de verificar en archive
+Custom spread names, optional position labels, readings, favorites, and language choice remain only on the device. The app has no purchases, subscriptions, ads, analytics, tracking, third-party SDKs, protected-data permissions, accounts, or cloud sync.
 
-El código no implementa cifrado propio ni integra SDK criptográfico o de red. Release declara `ITSAppUsesNonExemptEncryption=NO`; el workflow debe verificar ese valor en el archive firmado antes de subir. Revalidar el flujo de App Store Connect si cambia el código o aparece criptografía no exenta. Fuente: [Apple — Overview of export compliance](https://developer.apple.com/help/app-store-connect/manage-app-information/overview-of-export-compliance).
+Privacy is available from Settings and at https://krazel.github.io/tarot-deck/privacy/.
+```
 
-### Review y disponibilidad — pendientes
+Review contact details remain private and must be checked in App Store Connect against the exact submission.
 
-- No hay build seleccionada para el tren público `1.0`; la ficha verificada usa Apple ID `6800144105`.
-- TestFlight contiene `0.7.2 (2)` como build `VALID`, audiencia `INTERNAL_ONLY`, asignada al grupo interno `Testers`. La fuente exacta es `f3b96cf78f30a345405819fdc99b0534dd686b7e`; upload run `31613533265` y verificación de App Store Connect `31616629228`. Las instrucciones de QA están guardadas en English (U.S.).
-- Nombre, subtítulo, descripción y keywords están guardados en English (U.S.) y Español (España); la publicación está configurada como manual.
-- Screenshots y app previews deben esperar a una build visualmente cerrada y no se preparan en esta ficha.
-- Review contact y notes están guardados contra la funcionalidad actual; son privados para App Review, sus valores no se reproducen en el repositorio ni en páginas públicas y deben revalidarse con la build candidata.
-- Precio gratuito y publicación manual están configurados. Países/regiones y fecha de lanzamiento permanecen sin configurar por Content Rights.
-- No hay productos StoreKit, contratos nuevos ni datos bancarios configurados.
+## Remaining public-release gates
 
-### DSA / condición de comerciante — decisión material pendiente
+Before `1.0 (1)` can be selected or submitted:
 
-App Store Connect identifica actualmente al desarrollador como **trader / comerciante** para esta app. No se ha cambiado ni eludido ese estado. Antes de habilitar territorios de la Unión Europea, el propietario debe confirmar que la condición sigue siendo veraz y completar únicamente la información que Apple o la ley exijan. Si la app se distribuye como actividad profesional o comercial —incluido un futuro apoyo mensual— la recomendación es conservar la condición de comerciante. Los datos privados de verificación permanecen en App Store Connect y no se copian al repositorio; cualquier dato que deba hacerse público por obligación legal se limita a lo estrictamente requerido.
+1. Commit the complete source candidate and run the public RC workflow on macOS: Swift tests, Release archive, signature, privacy manifest, localization and `US/GB/ES` ReleaseGate must all pass.
+2. Record the processed App Store Connect build ID and verify `1.0 (1)` is `VALID`; do not reuse Internal Only `0.8`.
+3. Capture real `1.0 (1)` build screenshots in EN-US and ES-ES for Home/selector, a three-card reading, six/custom, Learn, and Cards/detail/favorites. Concept masters are art direction only.
+4. Deploy and revalidate the prepared Privacy and Support pages, then make the App Privacy answers match this exact RC.
+5. Complete the truthful DSA trader/non-trader declaration required for Spain; if it is not complete, omit `ES` and do not claim the three-territory release is ready.
+6. Recheck Content Rights, age rating, encryption, accessibility claims, private review contact, metadata, screenshots and Review Notes against the processed binary.
 
-## Qué puede cambiar y qué debe tratarse como permanente
-
-| Dato | Tratamiento | Regla práctica |
-|---|---|---|
-| Name y nombre localizado | Editable | Puede cambiarse antes de enviar a App Review; más adelante, con una versión nueva o cuando el estado permita editarlo. |
-| Subtitle | Editable/localizable según estado | Mantener cada localización dentro de 30 caracteres. |
-| Description y keywords | Editables/localizables según estado | Se preparan por versión; respetar 4.000 caracteres y 100 bytes. |
-| Promotional text | Editable sin nueva versión | Es opcional y no afecta al ranking de búsqueda. |
-| Primary Language | Editable | Apple permite cambiarlo; conservar English (U.S.) como fallback mientras esa sea la decisión del producto. |
-| Categorías | Editables según estado | Lifestyle debe coincidir entre App Store Connect y Xcode. |
-| URLs, privacidad, edad y derechos | Actualizables, siempre veraces | Volver a revisar con cada cambio de datos, SDK, contenido o distribución. |
-| Versión visible / build | Identidad de cada binario | Primera build prevista de esta línea: `0.2.1 (1)`. No reutilizar una combinación ya aceptada. |
-| Bundle ID | Permanente en la práctica | Debe coincidir con Xcode y no puede cambiarse después de subir una build. |
-| SKU | Permanente | Apple no permite cambiarlo después de añadir la app. |
-| Apple ID de App Store Connect | Permanente y generado por Apple | Registrarlo aquí solo cuando exista; nunca inventarlo. |
-
-Fuente de editabilidad y permanencia: [Apple — App information](https://developer.apple.com/help/app-store-connect/reference/app-information/app-information/) y [Apple — Required, localizable, and editable properties](https://developer.apple.com/help/app-store-connect/reference/app-information/required-localizable-and-editable-properties).
-
-## Puerta antes de introducir o enviar datos externos
-
-- El App ID definitivo y la ficha ya están creados. No duplicarlos ni sustituir el SKU o bundle ID.
-- Support y Privacy responden públicamente y están introducidas en la ficha. Marketing URL permanece vacío por ser opcional; actualizar únicamente los destinos necesarios si cambia el producto o las prácticas de datos.
-- Age Rating y App Privacy están completados para el estado actual. No marcar Content Rights para distribución pública hasta cerrar su puerta específica.
-- A-040/A-041 cerraron la subida de `0.2.1 (1)` únicamente a TestFlight Internal Only. No crear StoreKit, aceptar contratos, habilitar testers externos, enviar a revisión o publicar sin autorización expresa separada.
+No upload, build selection, territory mutation, DSA attestation, agreement acceptance, review submission or publication was performed while preparing this record.

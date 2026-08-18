@@ -4,7 +4,6 @@ import UIKit
 struct TarotArtworkView: View {
     let card: TarotCardRecord
     var artworkDescription: String?
-    var showsProvisionalLabel = true
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
@@ -16,7 +15,7 @@ struct TarotArtworkView: View {
                     .scaledToFit()
                     .accessibilityHidden(true)
             } else {
-                provisionalFallback
+                missingApprovedArtworkFallback
             }
         }
         .aspectRatio(CeremonialObsidianTheme.cardAspectRatio, contentMode: .fit)
@@ -31,7 +30,7 @@ struct TarotArtworkView: View {
         .accessibilityValue(accessibilitySummary)
     }
 
-    private var provisionalFallback: some View {
+    private var missingApprovedArtworkFallback: some View {
         ZStack {
             LinearGradient(
                 colors: [CeremonialObsidianTheme.backgroundLifted, .black],
@@ -54,12 +53,10 @@ struct TarotArtworkView: View {
                     .multilineTextAlignment(.center)
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 3)
 
-                if showsProvisionalLabel {
-                    Text("ART PENDING")
-                        .font(.system(size: 8, weight: .bold, design: .rounded))
-                        .tracking(1.1)
-                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                }
+                Text("MISSING APPROVED ASSET")
+                    .font(.system(size: 8, weight: .bold, design: .rounded))
+                    .tracking(1.1)
+                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
             }
             .padding(10)
         }
@@ -68,18 +65,18 @@ struct TarotArtworkView: View {
     var accessibilitySummary: String {
         guard UIImage(named: card.artworkAsset) != nil else {
             return AppLocalization.text(
-                "Provisional artwork placeholder. Final artwork is not yet available."
+                "Approved artwork is missing from this build."
             )
         }
 
         let description = artworkDescription?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         if description.isEmpty {
             return AppLocalization.text(
-                "Verified historical artwork candidate. A detailed artwork description is not yet available."
+                "Historical Rider–Waite–Smith artwork."
             )
         }
         return AppLocalization.format(
-            "Historical artwork candidate. Distribution approval is pending. %@",
+            "Historical Rider–Waite–Smith artwork. %@",
             description
         )
     }

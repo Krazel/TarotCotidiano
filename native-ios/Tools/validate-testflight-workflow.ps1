@@ -31,8 +31,9 @@ if ($workflow -notmatch '(?m)^on:\s*\n\s{2}workflow_dispatch:\s*$' -or
 $requiredContracts = @(
     'permissions:`n  contents: read',
     'internal_only_confirmation:',
-    'default: "TESTFLIGHT_INTERNAL_ONLY"',
-    "if: `${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY' }}",
+    'default: "DO_NOT_UPLOAD"',
+    'TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2',
+    "if: `${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2' }}",
     'environment: app-store-production',
     'uses: actions/checkout@v4',
     'persist-credentials: false',
@@ -51,8 +52,8 @@ $requiredContracts = @(
     '-authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"',
     'DEVELOPMENT_TEAM="$APPLE_TEAM_ID"',
     'CODE_SIGN_STYLE=Automatic',
-    'CURRENT_PROJECT_VERSION=1',
-    'MARKETING_VERSION=0.8',
+    'CURRENT_PROJECT_VERSION=2',
+    'MARKETING_VERSION=1.0',
     'Add :method string app-store-connect',
     'Add :destination string export',
     'Add :destination string upload',
@@ -63,6 +64,8 @@ $requiredContracts = @(
     'com.krazel.tarotdeck',
     'CFBundleDisplayName',
     'Tarot Deck',
+    'es.lproj/InfoPlist.strings',
+    'Mazo de tarot',
     'CFBundleShortVersionString',
     'CFBundleVersion',
     'MinimumOSVersion',
@@ -146,7 +149,7 @@ if ($unexpectedActions.Count -gt 0) {
 }
 
 $projectContracts = @(
-    'MARKETING_VERSION = 0.8;',
+    'MARKETING_VERSION = 1.0;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
@@ -161,7 +164,7 @@ foreach ($contract in $projectContracts) {
     }
 }
 if ($project -match '(?m)^\s*DEVELOPMENT_TEAM\s*=' -or
-    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.8;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.0;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2) {
     throw "Team must be workflow-parametrized and version/build must be exact in both configurations."
 }
@@ -179,8 +182,9 @@ foreach ($contract in $schemeContracts) {
 
 if ($appValidator -cnotmatch [regex]::Escape('[switch]$ReleaseGate') -or
     $appValidator -cnotmatch [regex]::Escape('[switch]$InternalTestFlightGate') -or
-    $appValidator -cnotmatch [regex]::Escape('candidateOnly, finalAsset, distributionApproved, or territorial rights review is still pending.') -or
-    $appValidator -cnotmatch [regex]::Escape('Validated INTERNAL-ONLY TestFlight artwork gate: 78/78 candidates are intact')) {
+    $appValidator -cnotmatch [regex]::Escape('[string[]]$RequestedTerritories') -or
+    $appValidator -cnotmatch [regex]::Escape('storefronts outside the approved US/GB/ES allowlist') -or
+    $appValidator -cnotmatch [regex]::Escape('Validated INTERNAL-ONLY TestFlight artwork gate: 78/78 owner-approved final faces are intact')) {
     throw "Public ReleaseGate and separate internal-only artwork gate must both remain explicit."
 }
 
@@ -190,4 +194,4 @@ if ($localQAWorkflow -match '(?i)TestFlight|App Store Connect|\bsecrets\.|-expor
     throw "Local-QA workflow must remain unsigned and incapable of TestFlight upload."
 }
 
-Write-Host "Validated manual protected TestFlight INTERNAL-ONLY workflow for Tarot Deck 0.8 (1): main-only cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."
+Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.0 (2): default is no upload, build 1 remains reserved for App Review, cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."

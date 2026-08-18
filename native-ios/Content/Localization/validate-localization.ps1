@@ -291,8 +291,8 @@ foreach ($requiredFreeformCopy in @(
 }
 
 $sixCardArticle = $articles | Where-Object { $_.id -eq 'six-card-guidance' }
-Assert-True ([string]$sixCardArticle.sourceCredit -ceq 'Katalin Jett Koda, Reading Tarot Cards: Divining Our Life Path, Llewellyn Worldwide (2015)') 'La atribuciÃ³n del tutorial de seis cartas no coincide con la fuente aprobada.'
-Assert-True ([string]$sixCardArticle.sourceURL -ceq 'https://www.llewellyn.com/journal/article/2506') 'El tutorial de seis cartas debe enlazar el artÃ­culo citado de Llewellyn.'
+Assert-True ([string]$sixCardArticle.sourceCredit -ceq 'Katalin Jett Koda, Reading Tarot Cards: Divining Our Life Path, Llewellyn Worldwide (2015)') 'Six-card tutorial credit does not match the approved source.'
+Assert-True ([string]$sixCardArticle.sourceURL -ceq 'https://www.llewellyn.com/journal/article/2506') 'Six-card tutorial must link to the cited Llewellyn article.'
 
 $tutorialText = @(
     [string]$guide.introduction
@@ -303,6 +303,7 @@ $tutorialText = @(
 ) -join ' '
 $disclaimerPattern = '(?i)\b(oficial|certeza|ciencia|prueba|privacidad|consentimiento|profesional|cualificada|salud|legal|jur[ií]dic[oa]|finanzas|seguridad|predice|inmutable)\b'
 Assert-True ($tutorialText -notmatch $disclaimerPattern) 'Tutorial copy contains an editorial disclaimer or tangent instead of only the practical method.'
+Assert-True ($tutorialText -notmatch '(?i)significado al derecho') 'Tutorial copy must use the visible heading Significado, not significado al derecho.'
 
 $englishPattern = '(?i)\b(the|and|with|card|reading|question|future|present|past|situation|challenge|guidance|relationship|other person|you)\b'
 $predictivePattern = '(?i)\b(ocurrir\u00E1|suceder\u00E1|pasar\u00E1|garantiza|predice|inevitable|inevitablemente)\b|sin duda|certeza absoluta|tienes que'

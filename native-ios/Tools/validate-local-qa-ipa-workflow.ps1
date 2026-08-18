@@ -47,12 +47,16 @@ $requiredWorkflowContracts = @(
     "AD_HOC_CODE_SIGNING_ALLOWED=NO",
     "Debug-iphoneos/TarotDeckInternal.app",
     "CFBundleExecutable",
+    "CFBundleDisplayName",
+    '[[ "$DISPLAY_NAME" != "Tarot Deck" ]]',
+    "es.lproj/InfoPlist.strings",
+    "Mazo de tarot",
     "DTPlatformName",
     "MinimumOSVersion",
     '[[ "$MINIMUM_OS_VERSION" != "16.0" ]]',
     '--arg minimumOSVersion "$MINIMUM_OS_VERSION"',
     'minimumOSVersion: $minimumOSVersion',
-    '[[ "$VERSION" != "0.8" ]]',
+    '[[ "$VERSION" != "1.0" ]]',
     '[[ "$BUILD_NUMBER" != "1" ]]',
     "EXECUTABLE_DESCRIPTION",
     "codesign -dv",
@@ -61,7 +65,7 @@ $requiredWorkflowContracts = @(
     'grep -Fqx "Payload/TarotDeckInternal.app/$EXECUTABLE_NAME"',
     "shasum -a 256",
     ".manifest.json",
-    "INTERNAL ONLY - provisional RWS artwork - not for redistribution",
+    "INTERNAL QA - final RWS faces approved only for US/GB/ES storefront release; no worldwide clearance",
     "uses: actions/upload-artifact@v4",
     'BASE_NAME="TarotDeck-${VERSION}-${BUILD_NUMBER}-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-Local-QA-unsigned"',
     '--arg purpose "Local-QA"',
@@ -122,7 +126,7 @@ if ($bodyIndex -lt 0 -or $shellIndex -lt $bodyIndex -or $readIndex -lt $shellInd
 
 $requiredProjectContracts = @(
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
-    'MARKETING_VERSION = 0.8;',
+    'MARKETING_VERSION = 1.0;',
     'CURRENT_PROJECT_VERSION = 1;',
     'IPHONEOS_DEPLOYMENT_TARGET = 16.0;',
     'TARGETED_DEVICE_FAMILY = 1;',
@@ -148,8 +152,8 @@ if ($workflow -cmatch 'BUILD_NUMBER="\$GITHUB_RUN_NUMBER"' -or
 
 $marketingVersions = @([regex]::Matches($project, 'MARKETING_VERSION = (?<value>\d+\.\d+(?:\.\d+)?);') |
     ForEach-Object { $_.Groups['value'].Value } | Select-Object -Unique)
-if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '0.8') {
-    throw "The Xcode project must have exactly one formal marketing version: 0.8."
+if ($marketingVersions.Count -ne 1 -or $marketingVersions[0] -ne '1.0') {
+    throw "The Xcode project must have exactly one formal marketing version: 1.0."
 }
 
 $projectBuildNumbers = @([regex]::Matches($project, 'CURRENT_PROJECT_VERSION = (?<value>\d+);') |
@@ -177,4 +181,4 @@ foreach ($contract in $requiredSchemeContracts) {
     }
 }
 
-Write-Host "Validated manual Local-QA IPA workflow: formal 0.8 (1), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."
+Write-Host "Validated manual Local-QA IPA workflow: formal 1.0 (1), CI run and commit evidence, unsigned exact Payload, real UI in all configurations, and no release/upload/signing boundary."

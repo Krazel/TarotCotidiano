@@ -289,7 +289,7 @@ struct CardsLibraryView: View {
                 + AppLocalization.text(isFavorite ? "Favorite" : "Not favorite")
         )
         .accessibilityValue(artwork.accessibilitySummary)
-        .accessibilityHint("Opens the upright meaning")
+        .accessibilityHint("Opens the meaning")
     }
 }
 

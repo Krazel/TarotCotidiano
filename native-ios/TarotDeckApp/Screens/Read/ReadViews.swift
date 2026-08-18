@@ -754,7 +754,7 @@ private struct ReadingChoiceOverlay: View {
                             Circle().stroke(CeremonialObsidianTheme.brightGold, lineWidth: 0.9)
                         }
                 }
-                .frame(width: 44, height: 44)
+                .frame(width: 44, height: 44, alignment: .topLeading)
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
@@ -1527,7 +1527,6 @@ private struct ReadingTableView: View {
     @State private var flipProgress: CGFloat = 0
     @State private var flipRevealing = true
     @State private var showsOrientationHint = false
-    @State private var orientationHintWasOffered = false
     @State private var orientationHintTask: Task<Void, Never>?
     @AccessibilityFocusState private var focusedReadingPosition: Int?
 
@@ -1542,10 +1541,7 @@ private struct ReadingTableView: View {
                 if isLandscape {
                     landscapeContent(size: proxy.size)
                 } else {
-                    portraitContent(
-                        size: proxy.size,
-                        showsOrientationHint: !isPhysicallyLandscape
-                    )
+                    portraitContent(size: proxy.size)
                 }
             }
             .overlayPreferenceValue(ReadingMotionAnchorPreferenceKey.self) { anchors in
@@ -1557,14 +1553,15 @@ private struct ReadingTableView: View {
                 cancelTransientMotion(establishing: visualState)
             }
             .onAppear {
-                scheduleOrientationHintIfNeeded(isPortrait: !isPhysicallyLandscape)
+                consumeOrientationHintRequestIfNeeded(isPortrait: !isPhysicallyLandscape)
             }
             .onChange(of: isPhysicallyLandscape) { isLandscapeNow in
                 if isLandscapeNow {
                     cancelOrientationHint()
-                } else {
-                    scheduleOrientationHintIfNeeded(isPortrait: true)
                 }
+            }
+            .onChange(of: model.orientationHintRequestGeneration) { _ in
+                consumeOrientationHintRequestIfNeeded(isPortrait: !isPhysicallyLandscape)
             }
         }
         .foregroundStyle(CeremonialObsidianTheme.parchment)
@@ -1610,19 +1607,19 @@ private struct ReadingTableView: View {
     }
 
     @ViewBuilder
-    private func portraitContent(size: CGSize, showsOrientationHint: Bool) -> some View {
+    private func portraitContent(size: CGSize) -> some View {
         if dynamicTypeSize.isAccessibilitySize {
             ScrollView {
-                portraitLayout(showsOrientationHint: showsOrientationHint)
+                portraitLayout
                     .frame(minHeight: max(size.height, 820))
             }
             .scrollIndicators(.hidden)
         } else {
-            portraitLayout(showsOrientationHint: showsOrientationHint)
+            portraitLayout
         }
     }
 
-    private func portraitLayout(showsOrientationHint: Bool) -> some View {
+    private var portraitLayout: some View {
         VStack(spacing: 0) {
             header
                 .padding(.vertical, dynamicTypeSize.isAccessibilitySize ? 10 : 4)
@@ -1631,7 +1628,7 @@ private struct ReadingTableView: View {
             readingStage(isLandscape: false)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            portraitActionArea(showsOrientationHint: self.showsOrientationHint && showsOrientationHint)
+            portraitActionArea
                 .frame(minHeight: 96)
                 .padding(.horizontal, 26)
         }
@@ -2287,9 +2284,9 @@ private struct ReadingTableView: View {
     }
 
     @MainActor
-    private func scheduleOrientationHintIfNeeded(isPortrait: Bool) {
-        guard isPortrait, model.activeCardCount > 1, !orientationHintWasOffered else { return }
-        orientationHintWasOffered = true
+    private func consumeOrientationHintRequestIfNeeded(isPortrait: Bool) {
+        guard model.consumeOrientationHintRequest() else { return }
+        guard isPortrait, model.activeCardCount > 1 else { return }
         orientationHintTask?.cancel()
         showsOrientationHint = true
         if voiceOverEnabled {
@@ -2315,32 +2312,9 @@ private struct ReadingTableView: View {
         showsOrientationHint = false
     }
 
+    @ViewBuilder
     private var actionArea: some View {
-        VStack(spacing: 5) {
-            if let meaningInstructionText {
-                Text(meaningInstructionText)
-                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-            }
-            Text(instructionText)
-                .foregroundStyle(
-                    presentedReadingIsCompleteAndRevealed
-                        ? CeremonialObsidianTheme.brightGold
-                        : CeremonialObsidianTheme.secondaryText
-                )
-
-        }
-        .font(.body)
-        .multilineTextAlignment(.center)
-        .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private func portraitActionArea(showsOrientationHint: Bool) -> some View {
-        ZStack(alignment: .bottom) {
-            HStack(spacing: 12) {
-                shuffleButton
-                actionArea
-                    .frame(maxWidth: .infinity)
-            }
+        Group {
             if showsOrientationHint, model.activeCardCount > 1 {
                 Label(
                     AppLocalization.text("Rotate your phone for larger cards"),
@@ -2350,13 +2324,32 @@ private struct ReadingTableView: View {
                 .foregroundStyle(CeremonialObsidianTheme.secondaryText.opacity(0.88))
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
                 .minimumScaleFactor(0.82)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 6)
-                .background(.ultraThinMaterial, in: Capsule())
                 .transition(.opacity)
+            } else {
+                VStack(spacing: 5) {
+                    if let meaningInstructionText {
+                        Text(meaningInstructionText)
+                            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                    }
+                    Text(instructionText)
+                        .foregroundStyle(
+                            presentedReadingIsCompleteAndRevealed
+                                ? CeremonialObsidianTheme.brightGold
+                                : CeremonialObsidianTheme.secondaryText
+                        )
+                }
+                .font(.body)
             }
+        }
+        .multilineTextAlignment(.center)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private var portraitActionArea: some View {
+        HStack(spacing: 12) {
+            shuffleButton
+            actionArea
+                .frame(maxWidth: .infinity)
         }
     }
 
@@ -2467,7 +2460,7 @@ private struct ReadingTableView: View {
             )
         )
         .accessibilityValue(artwork.accessibilitySummary)
-        .accessibilityHint("Opens the upright meaning")
+        .accessibilityHint("Opens the meaning")
         .accessibilityAction(named: Text("Turn face down")) {
             model.conceal(drawnCard.id)
         }

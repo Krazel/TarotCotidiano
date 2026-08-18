@@ -1,19 +1,22 @@
 {
     "schemaVersion":  2,
     "manifestVersion":  "2.0.0",
-    "status":  "candidate-integrity-verified-78-of-78-not-production",
+    "status":  "integrity-verified-78-of-78-visual-final-territory-limited",
     "sourceProvenanceManifest":  "../provenance.v2.json",
     "generatedAtUTC":  "2026-08-10T00:01:21.8530778Z",
     "sourceSetID":  "wikimedia-commons-taionwc-pam-a-78",
     "requestedCardCount":  78,
     "verifiedCardCount":  78,
     "failureCount":  0,
-    "artworkStatus":  "provisional",
-    "candidateOnly":  true,
-    "finalAsset":  false,
-    "territorialRightsReviewStatus":  "pending",
+    "artworkStatus":  "final",
+    "candidateOnly":  false,
+    "finalAsset":  true,
+    "territorialRightsReviewStatus":  "approved-for-declared-territories",
     "distributionApproved":  false,
-    "legalReviewStatement":  "No final legal or territorial distribution review is declared by this manifest.",
+    "distributionApprovedForDeclaredTerritories":  true,
+    "approvedTerritories":  [ "US", "GB", "ES" ],
+    "worldwideDistributionApproved":  false,
+    "legalReviewStatement":  "Owner-approved final visuals. Public distribution is approved only for the declared US, GB, and ES storefront allowlist; worldwide clearance is not declared.",
     "records":  [
                     {
                         "candidateID":  "candidate-rws-major-00-the-fool",
@@ -37,11 +40,12 @@
                         "verifiedLocalSHA1":  "a707c0123b59fd2420b05645e9d3d16b74235b42",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "557c6592b73107508eac65ef140d090d2ccd657ac5a2d5d4fe31c6c2ceacbcb5",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-01-the-magician",
@@ -65,11 +69,12 @@
                         "verifiedLocalSHA1":  "d24df085c3c22da8cd7f88c0f2a4256c6ae50fda",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "e0569e468545abfd2987ec0af5d3c51da3a9d478e37077aeaa1d715ddfc9941b",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-02-the-high-priestess",
@@ -93,11 +98,12 @@
                         "verifiedLocalSHA1":  "bb96b30d13035c34a06006ea4aca8ab9a5a98506",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "0e87b5a22187a299334188c2e8fd178125151f9015c122f6946367489cfd252a",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-03-the-empress",
@@ -121,11 +127,12 @@
                         "verifiedLocalSHA1":  "0c04891e42d51937390049994de8ac8867b201a1",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "2f0a9885c4f4e68bbca4cb40d3d5f42d4c7559f914bb5b3765ee429c74c142df",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-04-the-emperor",
@@ -149,11 +156,12 @@
                         "verifiedLocalSHA1":  "3fc0742d9a9199a226641a86b099df9540cfc3a3",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "7a800b57c5b7da7b493e6968da31325327134e98083e95ee75b3db6eaef7e868",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-05-the-hierophant",
@@ -177,11 +185,12 @@
                         "verifiedLocalSHA1":  "1e7b864bcaf4c672d8fdf17e2abf7379326949c4",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "68faba7f016b2d76b2fc2200f834279a0b08b7228767ae744fcdc70f9402699d",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-06-the-lovers",
@@ -205,11 +214,12 @@
                         "verifiedLocalSHA1":  "1c18b372fc4658948f2d1e9770b2aa87a2e4ac02",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "5a24e337a146568ebbbfa9783fa451d22c02bccd3cb7fe518afdb3ff396487fe",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-07-the-chariot",
@@ -233,11 +243,12 @@
                         "verifiedLocalSHA1":  "8a93a2130017d32a7e8f9612d0874b5b1b41f83d",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "3906e01a159d3b7f1696e9094080e0a4ae95b2f4d4ca8b084131aba6ad133dd8",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-08-strength",
@@ -261,11 +272,12 @@
                         "verifiedLocalSHA1":  "16baefeee43cee6b285838d27af690a0cf7e9db6",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "b222f1799b8dc46944d28f6079b1551011691dc439740371126e874fcf0c768f",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-09-the-hermit",
@@ -289,11 +301,12 @@
                         "verifiedLocalSHA1":  "106bf91c47522063c78d60ab412c53064541f617",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "0f86ac4560e598ced039665e21023d329e7a7e58872c46b3e9a9d85bb6cb2a50",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-10-wheel-of-fortune",
@@ -317,11 +330,12 @@
                         "verifiedLocalSHA1":  "0758555fa3b5960fb631cba01879f3be0260a278",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "2979bea7530572f408739757c87200772f6171a5249684cc9ee2a379108b3657",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-11-justice",
@@ -345,11 +359,12 @@
                         "verifiedLocalSHA1":  "16404e646dac8b8f5de4841b9259065059a04f71",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "028645f4ed40a82035c410f4b7b5b00adbdcdf1c21ffd706cddeaf9227e0151d",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-12-the-hanged-man",
@@ -373,11 +388,12 @@
                         "verifiedLocalSHA1":  "41d2398a09087cc2936fcc70fcde7d92552331fd",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "0eacf7afe48e4b51c5405a8354ecb867a4d8868151137434ef84621e4d56359c",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-13-death",
@@ -401,11 +417,12 @@
                         "verifiedLocalSHA1":  "a49bfe7b626af084f33a67dbb22c001718f80a80",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "9e9cdd41a4d975691e79acc2358b45f4f2c58661431c3113a5ccf27477356a66",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-14-temperance",
@@ -429,11 +446,12 @@
                         "verifiedLocalSHA1":  "2d9eb7320f00cbf6d9e7ae334853ff7185a6b769",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "a306b373f8ff18270a2daabe3d89967eadd428e460c39ed717bda7bd38a1f009",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-15-the-devil",
@@ -457,11 +475,12 @@
                         "verifiedLocalSHA1":  "fc1d9242a524d82317fc45b27ef9e93af550b082",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "f8e37102cbf2120270c0ed8c3e193b260d2f79dd5908bc9acbd48e8335083cf8",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-16-the-tower",
@@ -485,11 +504,12 @@
                         "verifiedLocalSHA1":  "c9da59cdde2b85b49c9e0ce67a6a08c7893ca926",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "ab5ce9bf29f32b9cf61720b375fe35f23ce7e116ee1c648a9bf6832e17241163",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-17-the-star",
@@ -513,11 +533,12 @@
                         "verifiedLocalSHA1":  "e220037a9310a12abd5733711810b4497a23ef77",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "20bb3e04c1655cc318031d94a024d84199cfeae2ca55e80d2d341c2d30435ac7",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-18-the-moon",
@@ -541,11 +562,12 @@
                         "verifiedLocalSHA1":  "e85cd51cdb95ef3b46284c0c317f72414b4ef30e",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "866474dc3de02bf3817495fd75d254dac2b9f36470f2f29ecb54de572f9dc70e",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-19-the-sun",
@@ -569,11 +591,12 @@
                         "verifiedLocalSHA1":  "c12879caebe972e194e81743e5925c5b8c5607d8",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "6c21ef99fef3807bafb26cd467464c8efc59e7312a688ae66285968e364c6450",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-20-judgement",
@@ -597,11 +620,12 @@
                         "verifiedLocalSHA1":  "19f6e9aae7c8169c75946e3eeb2b517cb295eb53",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "1d670d30e651554051f1a04708a11c57583a92a2cc370b8c0fc54fb82f2ffbd3",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-major-21-the-world",
@@ -625,11 +649,12 @@
                         "verifiedLocalSHA1":  "5b41b2ebeffac2fea5348b2607479a4ee0fd99b8",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "f866b87a3c4422f96074080024860f46b5b3f456fcad74ca7aefdb5263bf0e69",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-ace",
@@ -653,11 +678,12 @@
                         "verifiedLocalSHA1":  "87dcc6561605687ecd2bcd672f3157ad6b1eaaae",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "c29a4231878072d66be3aa344b348ea77cf12617571db4836a270730ae5a04e0",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-two",
@@ -681,11 +707,12 @@
                         "verifiedLocalSHA1":  "224cd7b4b1512574f77dfbeca6f64ec30eb779e1",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "b715689f6097b32884678d52f946df0fafdd225ed8ead3979307f455a88e8e80",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-three",
@@ -709,11 +736,12 @@
                         "verifiedLocalSHA1":  "8b18d992a00b65f783f1ce95930ea7a6d7771eab",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "1177316634bf3990c95ccb908b7e5a6759ec0356039d896e6ee0bbb8796e958a",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-four",
@@ -737,11 +765,12 @@
                         "verifiedLocalSHA1":  "d938100eabd3e515789eac05dcebb2d7749d57df",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "9850a241100dd084bacab39a8e87baaa13d1de1a590dc0dde013b92aa783af7e",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-five",
@@ -765,11 +794,12 @@
                         "verifiedLocalSHA1":  "480db3a9788df55659a554252e6f305e55f35720",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "6298f82e6ce5e7524041bb608852471b03e29d528f6a5b52b2b44a8ff1f06bba",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-six",
@@ -793,11 +823,12 @@
                         "verifiedLocalSHA1":  "a06a540821876a1693ac1856cbf017bc8b011dbf",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "249a1eaa2de24dc9c1095e953b9577ca613fcda4b4b884dab2a1964c686dad72",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-seven",
@@ -821,11 +852,12 @@
                         "verifiedLocalSHA1":  "d63a45b166eda1dc993268f78a760a86f7c52209",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "0117736a1c9d543960bb94c73d20a587e9ec877dfc2120b7d5ee0255c40dd731",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-eight",
@@ -849,11 +881,12 @@
                         "verifiedLocalSHA1":  "ee83d049b8fa4f4fd378f0f69b58fc4c25b4ab8b",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "fbf01153074154c6b0e130e0690e00320e9293daaf9c84fe4a37804f02145cd6",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-nine",
@@ -877,11 +910,12 @@
                         "verifiedLocalSHA1":  "3715a212b70ecc95737b6b1ea5ee360332624218",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "f0edfe460b1ba3fdd2cb0d0e82786a84bcdcaf97bb2e1a2ffaf4c82ed235b469",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-ten",
@@ -905,11 +939,12 @@
                         "verifiedLocalSHA1":  "7931b8e703b4fe520ffd4bda5da49d8087c1e3ca",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "64c10fe7ba527498547bb3bf85a4a5c5fc687ba2209b8d38ffe5722d25810685",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-page",
@@ -933,11 +968,12 @@
                         "verifiedLocalSHA1":  "0b898179e4d32aed7a57f583083fe9c699c9481e",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "ecb79ab9035c43d322cbef211e8028fc175e220a764db7fcb566c4e44d1842bb",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-knight",
@@ -961,11 +997,12 @@
                         "verifiedLocalSHA1":  "0260e923a92c43ed4943ce475a05eb03f0086cf4",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "00dd859cf067753c5ed009ac0ab8a0673cb8e5bdf5677fb3c7d4b04c93c0e025",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-queen",
@@ -989,11 +1026,12 @@
                         "verifiedLocalSHA1":  "011c387bbdebeca12b308bda5555a7c024705e75",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "f1646c86efe388dfff3d4a1fc8e5a5c7bb60a5605d3e4b67c1157216c773202d",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-wands-king",
@@ -1017,11 +1055,12 @@
                         "verifiedLocalSHA1":  "d181026328ff20bd53162d74806a97a138925822",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "671c7c53329fa99e309f101a2ee093503a5d3bad137cb626a588dc74f4f0506f",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-ace",
@@ -1045,11 +1084,12 @@
                         "verifiedLocalSHA1":  "d9aaeedc3e15d2983cabcf1a63135039070864e7",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "fd157290a61bd075e837879275b811c86c32d3ea2beadb2b24327d133c5fb5f9",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-two",
@@ -1073,11 +1113,12 @@
                         "verifiedLocalSHA1":  "31ff6179cff02fcdb6a292ec4d15e66e4727bd55",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "5d1f09a9b69784e6006a9b662496f0664b26b15740062ac2285e77eadf3b36e4",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-three",
@@ -1101,11 +1142,12 @@
                         "verifiedLocalSHA1":  "8644f8f839d1e7c785ce4cd28c0a7553b40f29ca",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "25bfd4dbc2917a5a33b34c56579facffca464df0f4b4a0b4f00d9c9e96d9be0e",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-four",
@@ -1129,11 +1171,12 @@
                         "verifiedLocalSHA1":  "aced20aeeb9b69215ea5df106bb3ccc9710b2f8a",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "92097fe69d21dd0a0c9d5ece68ed465fa4a53d5107509cde3689840b67ed3f13",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-five",
@@ -1157,11 +1200,12 @@
                         "verifiedLocalSHA1":  "28d89b259fcfccce0336557e2f691244304475ae",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "07d2354d331f8a9397c407cea0b2bcc1544b134eab526b9262ececb3d0a57166",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-six",
@@ -1185,11 +1229,12 @@
                         "verifiedLocalSHA1":  "0c98185dbc9c36f1383b576e20b154e254e02a83",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "bb6fb5b6de8c22811e0c9057a05e46cd0014984e3d43160844bd5c395e8973bf",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-seven",
@@ -1213,11 +1258,12 @@
                         "verifiedLocalSHA1":  "46cddf039c6cdbb73062ec02d9b46305a1c68c7e",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "3c9d1d310ca3f4303a2e4beb872d998f7b45fbd26ee361ee48fadb366cf3b3a7",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-eight",
@@ -1241,11 +1287,12 @@
                         "verifiedLocalSHA1":  "89419f820aa82cb855cd705c97741f439a2ef757",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "727c07c60753aa7925c9421ca3a93e80eaadd0053018e68c819b2ac5e6562312",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-nine",
@@ -1269,11 +1316,12 @@
                         "verifiedLocalSHA1":  "d06b79c496232ae7a12e8c1bd034b37b5580202e",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "5d0704e0dc1de8ab59da38230b609a5aeeceaf61473ca5271f48049976f3cb6f",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-ten",
@@ -1297,11 +1345,12 @@
                         "verifiedLocalSHA1":  "29c49649940bac0a8c0dff6e1cb651f60e1b47af",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "ac33d5a07ac63e10301cd632cedc020aca25a0d8a3e64f58fbd9e221b39fa261",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-page",
@@ -1325,11 +1374,12 @@
                         "verifiedLocalSHA1":  "ef5138a1d6bea70661665547298e79364754ee90",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "c6000e0ec6cf784ec75ac3a9fa8971e9ba56c8072c899cc0d44dece6acafc526",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-knight",
@@ -1353,11 +1403,12 @@
                         "verifiedLocalSHA1":  "bfcbc0b7014f2041b38eb76cb7b7e253d21ad3aa",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "99a7b7c91da744cb03a3741c4bac674ef91adbb5b22aca53404f3467d1ea8e65",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-queen",
@@ -1381,11 +1432,12 @@
                         "verifiedLocalSHA1":  "69b68cee5e7e09e624a53169aed26035ab04143e",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "a1732a137bfc441a68703e3c8c14653f22452a287e790b9d5047035afc374b2a",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-cups-king",
@@ -1409,11 +1461,12 @@
                         "verifiedLocalSHA1":  "a78389417bbcbc09e8fdeddec49332938cf48a86",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "79ae249016aaafb01279007e2da5ad00dffd6dc7d3017526853cfa6efc989372",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-ace",
@@ -1437,11 +1490,12 @@
                         "verifiedLocalSHA1":  "8ec8b145cc670007aeb8020ce7940d9ba0ab40fe",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "32f0f932346a25b6ec3753ff95d3e4a7481cb5c3582205ba76c53356a496f15a",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-two",
@@ -1465,11 +1519,12 @@
                         "verifiedLocalSHA1":  "303a13183017cca280fe5a79ddc513b00277a8b5",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "a44b7e2b454db3dc1ff42f70107fb15750babf659f5750892de4b5be721ec380",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-three",
@@ -1493,11 +1548,12 @@
                         "verifiedLocalSHA1":  "a4490aa4f6e1751adc47a40b2860a41c1fb4c810",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "4fdf7db3e7611561831af32b5c886f9862c7d90a851965cddf71298047da1dee",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-four",
@@ -1521,11 +1577,12 @@
                         "verifiedLocalSHA1":  "0f50aad1a018ab09ea2d3223c5175ff988688128",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "d4f9dad59b25daf3c9e98e50107dd692e9682f058cdc8424ce61fd448e941a78",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-five",
@@ -1549,11 +1606,12 @@
                         "verifiedLocalSHA1":  "b92b4bdb92b8b8262979440366c4d7c37b9ed152",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "e4fc379d7ce3f7675f474ec9b3c2c8e4be7bdc0af2f2186eb2e2de4643b0a0bf",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-six",
@@ -1577,11 +1635,12 @@
                         "verifiedLocalSHA1":  "295ec146bc425729ec5c7be675fd6ce3bd94c628",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "25279d7133301f59748f9ec0c6517a56fc4b8f76477ecfb4495f039adbc9aed5",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-seven",
@@ -1605,11 +1664,12 @@
                         "verifiedLocalSHA1":  "4bb5e8567295b28c2d4956b33a0d26a83d52a2f8",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "6204a31b5949937c95ea47ed47bae0cdd86ba112cb0c933935efbfc294033ea6",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-eight",
@@ -1633,11 +1693,12 @@
                         "verifiedLocalSHA1":  "668676cf4f43fb66c4d13641dc1cbd9bcf692bf0",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "019acbe3faff292c48c2744c42df052d7c7440a896f1cac42930e8c727d983b6",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-nine",
@@ -1661,11 +1722,12 @@
                         "verifiedLocalSHA1":  "eb3289e1366812310982a0d865910599d94154b1",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "b592a2ebe7fca2b648c12d42ec1d5edd4da60d60b0ec7e548e7115c977c485fb",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-ten",
@@ -1689,11 +1751,12 @@
                         "verifiedLocalSHA1":  "589beb4b5e987e11b3e298b7a02a27de9bc424b6",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "10d0b161d115dc340c6c54a274a9f0a21547584b9bd20dbd61fb12e78885043f",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-page",
@@ -1717,11 +1780,12 @@
                         "verifiedLocalSHA1":  "a4aabf1894b6fc513a0e115b63e0b762be391b73",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "ac69cec7c4b763fe229b3bc43214d5c81e573abe0584a13691970ab65be351ad",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-knight",
@@ -1745,11 +1809,12 @@
                         "verifiedLocalSHA1":  "4c0d208cc07285f28587db0d3f89a6a1af62ac5b",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "b38c1618eb6b5eca33d5bfebfddf8739773fb4ec8918a8946b4df2790d95db4e",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-queen",
@@ -1773,11 +1838,12 @@
                         "verifiedLocalSHA1":  "e4b59f06e66bc3643d5b1a2876638af8b046e4f0",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "55854543540d12f9c201197537f4521b22379b84d0955149621755601ce6da90",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-swords-king",
@@ -1801,11 +1867,12 @@
                         "verifiedLocalSHA1":  "69a4d993f44ecef40a8b4c4bfb5452770290130d",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "5307da08322c8ccf2bc748aec5fe919e16849568fda3986225a921bf2cac9cee",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-ace",
@@ -1829,11 +1896,12 @@
                         "verifiedLocalSHA1":  "3d4f8dc21e8892cd5fadbd3c748358c8984856c6",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "fd6ddf90ead3062dd3696856e9771356dd9a2527048dab19417ee7ad79e28464",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-two",
@@ -1857,11 +1925,12 @@
                         "verifiedLocalSHA1":  "4924c94b5553a2aff65a932f066391b47e7db517",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "1ee94470d0a0d53f867b5f6616bfe9e672b5693ba7c1d0a0c29303b2a1c08a88",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-three",
@@ -1885,11 +1954,12 @@
                         "verifiedLocalSHA1":  "ca857869e950b28e912b0a585f597d7f68112fae",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "a8d826b099c0920329be52de5b96c0b2e5ddcfb45b8d109490e9ab74ae6f9eaa",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-four",
@@ -1913,11 +1983,12 @@
                         "verifiedLocalSHA1":  "4d9da9f40f497226ae0777923c9a38796adbe0c1",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "37e44050b8ac86dc7db3c1bb00e80154e97986b028a1499504ab89c5612e5989",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-five",
@@ -1941,11 +2012,12 @@
                         "verifiedLocalSHA1":  "cbe62be71c1a110125dd55887843ce04c3827976",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "5a6705ba00c102c9e66a716b182e195f17c1bcf94a8d1b5163e2ce7195166938",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-six",
@@ -1969,11 +2041,12 @@
                         "verifiedLocalSHA1":  "cdbc8cabea9dbe863673891f6c19cd9a8310b258",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "d9d67638f7f4075b42b03ee80ca9bf3817d2406cda647618504140b85ab3ca6b",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-seven",
@@ -1997,11 +2070,12 @@
                         "verifiedLocalSHA1":  "c9caaba37d822b79b329f31e7db4f13d8fd2fd9b",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "78a9d4965ce497192e5186737a44d73b4e94aa8a4092b49b374879ed22b138ab",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-eight",
@@ -2025,11 +2099,12 @@
                         "verifiedLocalSHA1":  "7ee1f241af3bb05d2bd81c07f2a4cd2291cc60ba",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "13c82cbdec9ce101f157ee502663eb38bbd8117cec5e019b8400474056caebd9",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-nine",
@@ -2053,11 +2128,12 @@
                         "verifiedLocalSHA1":  "2fd48ca167699b1e51985338711e191e23613827",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "e491630d7291a34266f2d227f4085602cb9a000e31346402773a653e07b48f32",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-ten",
@@ -2081,11 +2157,12 @@
                         "verifiedLocalSHA1":  "af975248f5a406aef38a97bc58348468b3292de6",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "e14d5029ff2151a5ef53218c853382828dd0940bfd3a608d72ec59a967f97809",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-page",
@@ -2109,11 +2186,12 @@
                         "verifiedLocalSHA1":  "1f8c81e2972b400c31558dfccfb13c88a0a54dc4",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "d2c3cb2f6a602e62748f873eca72acfab06b64a6de50cf3499e6197d650b6fe9",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-knight",
@@ -2137,11 +2215,12 @@
                         "verifiedLocalSHA1":  "4b71c7b41acda1e05bb507de542e58da16c5b41c",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "6a652fbf447b7d0c78145627749c87806d1c356e96e73ca365d2618d9b255e9f",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-queen",
@@ -2165,11 +2244,12 @@
                         "verifiedLocalSHA1":  "0788c5de3edff7cfb9c94795e7ef96368a636f48",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "051a9a46a806910754969d806b3cf1e1621d30f51225b0a3db9b5474e222a877",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     },
                     {
                         "candidateID":  "candidate-rws-minor-pentacles-king",
@@ -2193,11 +2273,12 @@
                         "verifiedLocalSHA1":  "084fe9710bbd671f793ace7f11fb4c9ec5661900",
                         "sha1MatchesSource":  true,
                         "localSHA256":  "887b31bb3a9213e9f97dd6fd9c0f8b421c24735f3a0efd1d087fadfb600b0020",
-                        "artworkStatus":  "provisional",
-                        "pixelReviewStatus":  "source-file-integrity-verified-final-art-review-pending",
-                        "territorialRightsReviewStatus":  "pending",
-                        "finalAsset":  false,
-                        "distributionApproved":  false
+                        "artworkStatus":  "final",
+                        "pixelReviewStatus":  "source-file-integrity-verified-owner-approved-visual-final",
+                        "territorialRightsReviewStatus":  "approved-for-declared-territories",
+                        "finalAsset":  true,
+                        "distributionApproved":  false,
+                        "distributionApprovedForDeclaredTerritories":  true
                     }
                 ],
     "failures":  [

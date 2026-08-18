@@ -13,6 +13,8 @@ The three-card tutorials use the following source base without copying source te
 - The Metropolitan Museum of Art's tarot history for the distinction between the historical game and later divinatory use.
 - International Tarot Foundation ethics for consent, agency, privacy, uncertainty, and responsible limits.
 
+The `Six-Card Guidance` article cites Katalin Jett Koda/Llewellyn only to identify the factual six-position method. Its headings, summaries, and instructions are original project copy in English and original Spanish translation; no source paragraph, illustration, or expressive passage is reproduced. The citation is provenance, not a claimed license.
+
 ## Existing Read presets
 
 The app keeps exactly six presets:

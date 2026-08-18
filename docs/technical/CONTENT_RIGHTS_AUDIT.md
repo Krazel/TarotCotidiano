@@ -1,68 +1,73 @@
-# Auditoría de derechos del arte Rider–Waite–Smith
+# Auditoría de derechos y procedencia de contenido
 
-Actualizado: 2026-08-11
+Actualizado: 2026-08-18
+Alcance: candidata pública `1.0 (1)`; preparación de lanzamiento, no envío ni publicación.
 
 ## Conclusión operativa
 
-Las ilustraciones históricas originales del mazo Rider–Waite–Smith están fuera de copyright en Estados Unidos y Reino Unido. En la Unión Europea, la obra subyacente también ha agotado el plazo ordinario de protección. Sin embargo, la evidencia actual **no permite certificar los 78 JPEG concretos para una distribución comercial mundial**.
+Las 78 caras actuales son el arte visual definitivo por decisión expresa del propietario. Los archivos exactos están íntegros, enlazados uno a uno y conservan URL, SHA-1, SHA-256, bytes, MIME y dimensiones.
 
-Los archivos actuales siguen siendo candidatos internos:
+La aprobación de distribución es territorial, no mundial:
 
-- `candidateOnly=true`
-- `finalAsset=false`
-- `distributionApproved=false`
-- `territorialRightsReviewStatus=pending`
+- `finalAsset=true`;
+- `approvedTerritories=[US, GB, ES]`;
+- `distributionApprovedForDeclaredTerritories=true`;
+- `worldwideDistributionApproved=false`.
 
-No se debe contestar afirmativamente `Content Rights` para distribución mundial ni abrir todos los territorios de App Store con este conjunto.
+No se puede seleccionar ningún storefront fuera de Estados Unidos, Reino Unido o España sin ampliar primero esta auditoría. El `ReleaseGate` exige que se le pase la lista real de territorios pretendidos y rechaza cualquier código fuera de esa allowlist.
 
-## Conjunto exacto auditado
+## Conjunto exacto de 78 caras
 
-- 78 archivos JPEG del conjunto `TaionWC / Pam-A` de Wikimedia Commons.
-- Los 78 `cardID` coinciden con el manifiesto canónico.
-- URL, SHA-1, SHA-256, bytes, MIME y dimensiones están documentados y verificados en `native-ios/Content/provenance.v2.json` y `native-ios/Content/CandidateRWS/local-evidence.v2.json`.
-- Las páginas de Commons identifican las cartas como reproducciones del mazo de 1909/1910 y las marcan con Public Domain Mark 1.0.
-- No se incorporan restauraciones, recoloreados, dorsos, bordes, tipografía ni packaging de ediciones comerciales modernas.
+- Fuente: conjunto fiel `TaionWC / Pam-A` de Wikimedia Commons, correspondiente a las ilustraciones Rider–Waite–Smith de 1909/1910.
+- Alcance: solo las 78 caras históricas. No incluye dorsos, icono, packaging, marca, tipografía ni una edición moderna.
+- Evidencia fuente: `native-ios/Content/provenance.v2.json`.
+- Evidencia local: `native-ios/Content/CandidateRWS/local-evidence.v2.json`.
+- Integridad: 78/78 archivos, cero fallos, un `cardID` y un asset de runtime por registro.
+- Transformación: los JPEG de runtime son los mismos bytes verificados; no se incorporan recoloreados, restauraciones, marcas de agua ni elementos editoriales modernos.
 
-## Obra histórica subyacente
+## Base territorial revisada
 
-### Estados Unidos
+### Estados Unidos (`US`)
 
-La U.S. Copyright Office confirma que, en 2026, todas las obras publicadas en Estados Unidos antes del 1 de enero de 1931 están en dominio público. El mazo se publicó en 1909/1910. Fuente: [U.S. Copyright Office — What is Copyright?](https://www.copyright.gov/what-is-copyright/).
+La obra publicada en 1909/1910 está en el dominio público. Además, el Compendium de la U.S. Copyright Office §909.3(A) indica que un escaneo o digitalización fiel de una obra de dominio público no contiene autoría nueva registrable. Fuente: [U.S. Copyright Office — Compendium, Chapter 900](https://www.copyright.gov/comp3/chap900/ch900-visual-art.pdf).
 
-### Reino Unido
+### Reino Unido (`GB`)
 
-El plazo ordinario para obras artísticas es la vida del autor más 70 años. Incluso usando la fecha conservadora de Pamela Colman Smith —fallecida en 1951—, el plazo terminó el 31 de diciembre de 2021 y la obra entró en dominio público el 1 de enero de 2022. Fuentes: [GOV.UK — How long copyright lasts](https://www.gov.uk/copyright/how-long-copyright-lasts) y [Copyright Notice: Duration of copyright](https://www.gov.uk/government/publications/copyright-notice-duration-of-copyright-term/copyright-notice-duration-of-copyright-term).
+El plazo ordinario de las ilustraciones terminó después de la muerte de Pamela Colman Smith en 1951. La guía del UK Intellectual Property Office considera improbable que una reproducción digital simple cuyo objetivo sea fidelidad cumpla el umbral de originalidad para un copyright nuevo. Fuentes: [GOV.UK — How long copyright lasts](https://www.gov.uk/copyright/how-long-copyright-lasts) y [UK IPO — Digital images, photographs and the internet](https://www.gov.uk/government/publications/copyright-notice-digital-images-photographs-and-the-internet/copyright-notice-digital-images-photographs-and-the-internet).
 
-### Unión Europea y España
+### España (`ES`)
 
-La Directiva 2006/116/CE establece vida más 70 años y cómputo desde el 1 de enero siguiente; para obras de país tercero también contempla comparación con el plazo del país de origen. Fuente: [Directiva 2006/116/CE](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006L0116).
+La obra histórica está fuera del plazo ordinario. El artículo 14 de la Directiva (UE) 2019/790 excluye derechos nuevos sobre el material resultante de reproducir fielmente arte visual ya en dominio público, salvo que el resultado sea una creación intelectual original. España transpone esa regla en el artículo 72 del Real Decreto-ley 24/2021. Fuentes: [EUR-Lex — Directiva (UE) 2019/790](https://eur-lex.europa.eu/eli/dir/2019/790/oj/spa) y [BOE — RDL 24/2021](https://www.boe.es/buscar/act.php?id=BOE-A-2021-17910).
 
-En España, el artículo 199.4 del texto refundido limita las obras cuyo país de origen conforme a Berna sea un país tercero al plazo del país de origen, sin exceder el español. Esa regla apunta al mismo vencimiento británico de 2021. La disposición transitoria cuarta y el antiguo plazo español de 80 años crean una cautela interpretativa para obras antiguas, pero no justifican por sí solos afirmar que las ilustraciones siguen protegidas hasta 2031. Fuentes: [TRLPI, artículos 26, 30 y 199.4](https://www.boe.es/buscar/act.php?id=BOE-A-1996-8930) y [Ley de 1879, artículo 6](https://www.boe.es/buscar/doc.php?id=BOE-A-1879-40001).
+La Directiva aporta una base armonizada, pero esta auditoría no declara automáticamente aprobados los otros Estados de la UE: no se han revisado aquí sus transposiciones, reglas transitorias y storefronts de forma individual.
 
-## Por qué los JPEG actuales no quedan aprobados mundialmente
+## Activos visuales no históricos
 
-1. **Public Domain Mark no es una licencia ni una garantía.** Creative Commons y Wikimedia indican que la marca describe una creencia sobre el estado de la obra, pero no garantiza que esté libre en todas las jurisdicciones. Wikimedia exige que quien reutiliza verifique el estado por sí mismo. Fuentes: [Creative Commons — Public Domain Mark 1.0](https://creativecommons.org/publicdomain/mark/1.0/) y [Wikimedia Commons — Reusing content](https://commons.wikimedia.org/wiki/Commons:Reusing_content_outside_Wikimedia).
-2. **La autoría histórica aparece descrita de forma inconsistente.** Las páginas identifican a Pamela Colman Smith como creadora, pero calculan la plantilla `PD-old-80-expired` desde la muerte de Arthur Edward Waite, descrito como titular. Ser titular por encargo no demuestra universalmente que su muerte sea la fecha que fija el plazo.
-3. **No existe una licencia o CC0 expresa del digitalizador.** Los archivos actuales son escaneos de mayor calidad subidos por TaionWC en 2024. En EE. UU. y, en general, Reino Unido/UE, una copia digital puramente fiel difícilmente genera un copyright nuevo; aun así, no hay una cesión expresa que resuelva cualquier derecho residual o derecho afín reconocido por todos los países.
-4. **La distribución mundial incluye jurisdicciones no auditadas y plazos distintos.** La propia etiqueta de Commons limita su afirmación a determinados territorios. No existe una matriz completa de todos los storefronts de Apple que permita atestiguar derechos mundiales.
+`native-ios/Content/release-asset-provenance.v1.json` separa y fija:
 
-## Decisión de lanzamiento
+- reverso Ceremonial Obsidian: asset creado para el proyecto y derivado de la dirección visual aprobada, con master y runtime byte-idénticos;
+- icono D — Three-Card Fan: imagen generada para el proyecto, aprobada por el propietario y preparada como PNG iOS opaco de 1024×1024;
+- fondo, rayos, estrellas, materiales y texturas: dibujo programático original en Swift; no existe una textura raster de terceros oculta en el target.
 
-La ruta recomendada es sustituir estos JPEG antes de la distribución pública por una de estas opciones:
+El validador comprueba las rutas y SHA-256 exactas. Un cambio exige actualizar su procedencia antes de otra candidata.
 
-1. arte propio original para las 78 cartas; o
-2. un conjunto cuyo digitalizador esté identificado y conceda CC0 o licencia comercial mundial expresa, acompañado de una revisión territorial de la obra subyacente.
+## Texto, significados y tutorial de seis cartas
 
-Los escaneos actuales pueden permanecer en builds internas de QA. No deben figurar como arte final de producción ni desbloquear `Content Rights`, territorios, TestFlight externo, App Review o publicación.
+- Los 78 significados y su traducción son copy editorial original documentado en `native-ios/Content/Localization/MEANING_METHODOLOGY.md`.
+- Los tutoriales redactan instrucciones propias y breves; no reproducen texto de las fuentes.
+- `Six-Card Guidance` cita a Katalin Jett Koda/Llewellyn para identificar el método factual de seis posiciones. La secuencia de posiciones y el método de una tirada son ideas o procedimientos; la app usa redacción independiente, no copia el artículo ni sus expresiones. Esta independencia consta también en `native-ios/Content/Education/THREE_CARD_SPREADS.md`.
+- Una cita no se trata como licencia. Si el texto llegara a incorporar una reproducción literal o material gráfico de la fuente, esta conclusión dejaría de aplicar y habría que eliminarlo u obtener permiso.
 
-## Crédito de procedencia recomendado
+## Crédito recomendado
 
-Mientras el conjunto siga presente como referencia interna:
+`Original illustrations by Pamela Colman Smith (1909/1910). TaionWC Pam-A scans via Wikimedia Commons.`
 
-`Original illustrations by Pamela Colman Smith (1909/1910). TaionWC Pam-A scans via Wikimedia Commons. Public Domain Mark 1.0.`
+El crédito preserva trazabilidad. No sustituye la allowlist ni implica licencia o clearance mundial.
 
-Este crédito mejora la trazabilidad, pero no sustituye una licencia ni convierte el conjunto en distribuible mundialmente.
+## Puertas externas que siguen cerradas
 
-## Límite de esta auditoría
+Esta auditoría prepara evidencia local; no realiza atestaciones externas. Seleccionar territorios, confirmar Content Rights en App Store Connect, completar DSA trader para España, subir una build pública, enviarla a App Review o publicar requieren autorización separada y deben coincidir exactamente con `US/GB/ES` o un subconjunto.
 
-Esta es una conclusión operativa basada en fuentes oficiales y en la procedencia técnica exacta del repositorio; no es un dictamen jurídico vinculante. Ante una distribución comercial con estos mismos JPEG, la puerta correcta sigue siendo arte propio/licencia expresa o revisión profesional de los territorios seleccionados.
+## Límite
+
+Es una decisión operativa de publicación basada en fuentes oficiales y en los archivos exactos del repositorio; no es asesoramiento jurídico vinculante. No debe extrapolarse a todo el mundo, otras ediciones, otras marcas ni futuros assets.

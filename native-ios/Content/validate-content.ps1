@@ -138,6 +138,9 @@ foreach ($card in $cards) {
         }
     }
 }
+if (@($cards | Where-Object { [string]$_.artworkStatus -cne "final" }).Count -gt 0) {
+    Add-ValidationError "All 78 canonical card records must identify the owner-approved final artwork set."
+}
 
 $provenanceIDs = @($provenanceManifest.records | ForEach-Object { $_.id })
 foreach ($card in $cards) {
@@ -231,11 +234,16 @@ $sourceSet = @($provenanceManifest.sourceSets | Where-Object { $_.id -eq "wikime
 if ($sourceSet.Count -ne 1 -or $sourceSet[0].observedFileCount -ne 78 -or $sourceSet[0].mappedCardCount -ne 78) {
     Add-ValidationError "The TaionWC source set must be present and complete at 78 mapped files."
 }
-if ($sourceSet.Count -eq 1 -and $sourceSet[0].distributionApproved -ne $false) {
-    Add-ValidationError "The TaionWC source set must not be distribution-approved."
+if ($sourceSet.Count -eq 1 -and (
+    $sourceSet[0].distributionApproved -ne $false -or
+    $sourceSet[0].distributionApprovedForDeclaredTerritories -ne $true -or
+    $sourceSet[0].worldwideDistributionApproved -ne $false -or
+    (@($sourceSet[0].approvedTerritories) -join ',') -cne 'US,GB,ES'
+)) {
+    Add-ValidationError "The TaionWC source set must be approved only for the exact US, GB, and ES allowlist, never worldwide."
 }
 if ($sourceSet.Count -eq 1 -and $sourceSet[0].downloadStatus -ne "three-candidate-files-downloaded-not-production-bundled") {
-    Add-ValidationError "The TaionWC source set must report exactly three non-production candidate downloads."
+    Add-ValidationError "The historical provenance source set must preserve its exact three-file download snapshot; the later 78-file local snapshot is validated separately."
 }
 
 $downloadedEvidence = @($evidenceRecords | Where-Object { $_.downloaded -eq $true })
@@ -310,17 +318,21 @@ if (-not (Test-Path -LiteralPath $LocalCandidateManifestPath)) {
     if ($localV2.schemaVersion -ne 2 -or $localV2.manifestVersion -ne "2.0.0") {
         Add-ValidationError "CandidateRWS local evidence v2 must use schemaVersion 2 and manifestVersion 2.0.0."
     }
-    if ($localV2.status -ne "candidate-integrity-verified-78-of-78-not-production") {
-        Add-ValidationError "CandidateRWS local evidence v2 must report the complete 78/78 candidate status."
+    if ($localV2.status -ne "integrity-verified-78-of-78-visual-final-territory-limited") {
+        Add-ValidationError "CandidateRWS local evidence v2 must report the complete 78/78 territory-limited final status."
     }
     if ($localV2.requestedCardCount -ne 78 -or $localV2.verifiedCardCount -ne 78 -or $localV2.failureCount -ne 0 -or $localV2Failures.Count -ne 0) {
         Add-ValidationError "CandidateRWS local evidence v2 must report exactly 78 requested, 78 verified, and zero failures."
     }
-    if ($localV2.artworkStatus -ne "provisional" -or $localV2.candidateOnly -ne $true -or $localV2.finalAsset -ne $false) {
-        Add-ValidationError "CandidateRWS local evidence v2 must remain provisional, candidate-only, and not final."
+    if ($localV2.artworkStatus -ne "final" -or $localV2.candidateOnly -ne $false -or $localV2.finalAsset -ne $true) {
+        Add-ValidationError "CandidateRWS local evidence v2 must record the owner-approved final visual set."
     }
-    if ($localV2.territorialRightsReviewStatus -ne "pending" -or $localV2.distributionApproved -ne $false) {
-        Add-ValidationError "CandidateRWS local evidence v2 must remain territorially pending and not distribution-approved."
+    if ($localV2.territorialRightsReviewStatus -ne "approved-for-declared-territories" -or
+        $localV2.distributionApproved -ne $false -or
+        $localV2.distributionApprovedForDeclaredTerritories -ne $true -or
+        $localV2.worldwideDistributionApproved -ne $false -or
+        (@($localV2.approvedTerritories) -join ',') -cne 'US,GB,ES') {
+        Add-ValidationError "CandidateRWS local evidence v2 must approve exactly US, GB, and ES while rejecting worldwide clearance."
     }
     if ($localV2Records.Count -ne 78 -or @($localV2Records.cardID | Sort-Object -Unique).Count -ne 78) {
         Add-ValidationError "CandidateRWS local evidence v2 must contain exactly 78 unique card records."
@@ -351,12 +363,13 @@ if (-not (Test-Path -LiteralPath $LocalCandidateManifestPath)) {
             $localRecord.sourceURL -ne $sourceEvidence.originalFileURL) {
             Add-ValidationError "CandidateRWS v2 record $($localRecord.cardID) differs from its exact provenance mapping."
         }
-        if ($localRecord.artworkStatus -ne "provisional" -or
-            $localRecord.pixelReviewStatus -ne "source-file-integrity-verified-final-art-review-pending" -or
-            $localRecord.territorialRightsReviewStatus -ne "pending" -or
-            $localRecord.finalAsset -ne $false -or
-            $localRecord.distributionApproved -ne $false) {
-            Add-ValidationError "CandidateRWS v2 record $($localRecord.cardID) has an opened production or review gate."
+        if ($localRecord.artworkStatus -ne "final" -or
+            $localRecord.pixelReviewStatus -ne "source-file-integrity-verified-owner-approved-visual-final" -or
+            $localRecord.territorialRightsReviewStatus -ne "approved-for-declared-territories" -or
+            $localRecord.finalAsset -ne $true -or
+            $localRecord.distributionApproved -ne $false -or
+            $localRecord.distributionApprovedForDeclaredTerritories -ne $true) {
+            Add-ValidationError "CandidateRWS v2 record $($localRecord.cardID) must remain final only for the declared territory allowlist."
         }
         if ($localRecord.sha1MatchesSource -ne $true -or
             $localRecord.byteSizeMatchesSource -ne $true -or
@@ -436,4 +449,4 @@ if ($validationErrors.Count -gt 0) {
     exit 1
 }
 
-Write-Host "Content validation passed: 78 cards, 78 unique TaionWC records, historical v1 evidence preserved, and 78/78 local v2 candidates verified by SHA-1, SHA-256, bytes, JPEG format, and dimensions; distribution remains unapproved."
+Write-Host "Content validation passed: 78 cards, 78 unique TaionWC records, historical v1 evidence preserved, and 78/78 local v2 files verified by SHA-1, SHA-256, bytes, JPEG format, and dimensions; final artwork is cleared only for the explicit US/GB/ES allowlist and remains unapproved worldwide."

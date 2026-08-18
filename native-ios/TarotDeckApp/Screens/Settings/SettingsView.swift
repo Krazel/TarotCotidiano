@@ -4,54 +4,18 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var languageStore: AppLanguageStore
 
-    private enum Feedback: Hashable, Identifiable {
-        case supportUnavailable
-        case restoreUnavailable
-        case ratingUnavailable
-        case privacyUnavailable
-        case termsUnavailable
-
-        var id: Self { self }
-
-        var title: String {
-            switch self {
-            case .supportUnavailable: return AppLocalization.text("Support Unavailable")
-            case .restoreUnavailable: return AppLocalization.text("Restore Unavailable")
-            case .ratingUnavailable, .privacyUnavailable, .termsUnavailable:
-                return AppLocalization.text("Destination Unavailable")
-            }
-        }
-
-        var message: String {
-            switch self {
-            case .supportUnavailable:
-                return AppLocalization.text(
-                    "Support isn't available right now. You can keep using the full app."
-                )
-            case .restoreUnavailable:
-                return AppLocalization.text(
-                    "Restore Purchases isn't available in this internal build. You can keep using the full app."
-                )
-            case .ratingUnavailable:
-                return AppLocalization.text(
-                    "The App Store rating destination isn't available in this internal build."
-                )
-            case .privacyUnavailable:
-                return AppLocalization.text("Privacy is unavailable in this internal build.")
-            case .termsUnavailable:
-                return AppLocalization.text("Terms are unavailable in this internal build.")
-            }
-        }
-    }
-
     @Environment(\.dismiss) private var dismiss
-    @State private var feedback: Feedback?
+    @Environment(\.openURL) private var openURL
+
+    private static let reviewURL = URL(string: "https://apps.apple.com/app/id6800144105?action=write-review")
+    private static let privacyURL = URL(string: "https://krazel.github.io/tarot-deck/privacy/")
+    private static let supportURL = URL(string: "https://krazel.github.io/tarot-deck/support/")
 
     private var appVersion: String {
         let bundleVersion = Bundle.main.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
         ) as? String
-        let fallbackVersion = "0.8"
+        let fallbackVersion = "1.0"
         guard let bundleVersion, !bundleVersion.isEmpty else { return fallbackVersion }
         return bundleVersion
     }
@@ -60,8 +24,9 @@ struct SettingsView: View {
         ZStack {
             CeremonialBackdrop()
 
-            ScrollView {
-                VStack(alignment: .leading, spacing: 24) {
+            GeometryReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 24) {
                     Button {
                         dismiss()
                     } label: {
@@ -120,42 +85,37 @@ struct SettingsView: View {
                         .padding(.vertical, 14)
                     }
 
-                    settingsSection(title: "Support") {
-                        SettingsRow(
-                            title: "Support the App",
-                            subtitle: "Help fund maintenance and updates.",
-                            systemImage: "heart"
-                        ) {
-                            feedback = .supportUnavailable
-                        }
-
-                        settingsDivider
-
-                        SettingsRow(
-                            title: "Restore Purchases",
-                            systemImage: "arrow.counterclockwise"
-                        ) {
-                            feedback = .restoreUnavailable
-                        }
-                    }
-
                     settingsSection(title: "App") {
-                        SettingsRow(title: "Rate the App", systemImage: "star") {
-                            feedback = .ratingUnavailable
+                        SettingsRow(
+                            title: "Rate the App",
+                            systemImage: "star",
+                            accessibilityHint: "Opens the App Store review page"
+                        ) {
+                            if let url = Self.reviewURL { openURL(url) }
                         }
 
                         settingsDivider
 
-                        SettingsRow(title: "Privacy", systemImage: "lock") {
-                            feedback = .privacyUnavailable
+                        SettingsRow(
+                            title: "Privacy",
+                            systemImage: "lock",
+                            accessibilityHint: "Opens the privacy policy in your browser"
+                        ) {
+                            if let url = Self.privacyURL { openURL(url) }
                         }
 
                         settingsDivider
 
-                        SettingsRow(title: "Terms", systemImage: "doc.text") {
-                            feedback = .termsUnavailable
+                        SettingsRow(
+                            title: "Support",
+                            systemImage: "ellipsis.message",
+                            accessibilityHint: "Opens the support page in your browser"
+                        ) {
+                            if let url = Self.supportURL { openURL(url) }
                         }
                     }
+
+                    Spacer(minLength: 24)
 
                     VStack(spacing: 8) {
                         HStack(spacing: 10) {
@@ -182,27 +142,18 @@ struct SettingsView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
                     .accessibilityElement(children: .combine)
+                    }
+                    .frame(maxWidth: 680, minHeight: max(proxy.size.height - 52, 0), alignment: .top)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 16)
+                    .padding(.bottom, 36)
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: 680)
-                .padding(.horizontal, 24)
-                .padding(.top, 16)
-                .padding(.bottom, 36)
-                .frame(maxWidth: .infinity)
+                .scrollIndicators(.hidden)
             }
-            .scrollIndicators(.hidden)
         }
         .toolbar(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
-        .alert(item: $feedback) { item in
-            Alert(
-                title: Text(item.title),
-                message: Text(item.message),
-                dismissButton: .cancel(
-                    Text("OK"),
-                    action: { feedback = nil }
-                )
-            )
-        }
         .alert(
             AppLocalization.text("Language Couldn't Be Changed"),
             isPresented: $languageStore.showsIssueAlert
@@ -264,6 +215,7 @@ private struct SettingsRow: View {
     let title: String
     var subtitle: String?
     let systemImage: String
+    let accessibilityHint: String
     let action: () -> Void
 
     var body: some View {
@@ -305,6 +257,6 @@ private struct SettingsRow: View {
         .buttonStyle(.plain)
         .accessibilityLabel(AppLocalization.text(title))
         .accessibilityValue(subtitle.map(AppLocalization.text) ?? "")
-        .accessibilityHint("Shows availability information")
+        .accessibilityHint(Text(AppLocalization.text(accessibilityHint)))
     }
 }

@@ -11,13 +11,13 @@ $required = @(
     "workflow_dispatch:",
     "permissions:`n  contents: read",
     "github.ref == 'refs/heads/main'",
-    "TESTFLIGHT_INTERNAL_ONLY",
+    "TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2",
     "environment: app-store-production",
     "APP_STORE_CONNECT_API_KEY_ID",
     "APP_STORE_CONNECT_ISSUER_ID",
     "APP_STORE_CONNECT_API_KEY_BASE64",
-    'MARKETING_VERSION="0.8"',
-    'BUILD_NUMBER="1"',
+    'MARKETING_VERSION="1.0"',
+    'BUILD_NUMBER="2"',
     'APP_ID="6800144105"',
     'apps/$APP_ID/buildUploads',
     'filter[cfBundleShortVersionString]',
@@ -55,4 +55,4 @@ foreach ($pattern in $forbidden) {
     }
 }
 
-Write-Host "Validated protected processing check for Tarot Deck 0.8 (1): Internal Only, existing Testers group only, no external testing, review, or App Store submission."
+Write-Host "Validated protected processing check for optional Tarot Deck 1.0 (2): Internal Only, existing Testers group only, no external testing, review, or App Store submission."

@@ -1,28 +1,28 @@
-name: Tarot TestFlight internal only
+name: Tarot App Review RC binary upload
 
 on:
   workflow_dispatch:
     inputs:
-      internal_only_confirmation:
-        description: "Optional QA rebuild only: upload 1.0 build 2 as permanently internal-only; never use it for public submission"
+      public_rc_confirmation:
+        description: "Red action: upload the signed 1.0 (1) binary to App Store Connect; this does not select it or submit it for review"
         required: true
         default: "DO_NOT_UPLOAD"
         type: choice
         options:
           - "DO_NOT_UPLOAD"
-          - "TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2"
+          - "UPLOAD_APP_REVIEW_RC_1_0_1"
 
 permissions:
   contents: read
 
 concurrency:
-  group: tarot-testflight-internal
+  group: tarot-app-review-rc
   cancel-in-progress: false
 
 jobs:
-  archive-export-upload:
-    name: TestFlight INTERNAL ONLY - 1.0 (2)
-    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2' }}
+  archive-verify-upload:
+    name: App Review RC binary - 1.0 (1)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'UPLOAD_APP_REVIEW_RC_1_0_1' }}
     runs-on: macos-latest
     timeout-minutes: 45
     environment: app-store-production
@@ -34,22 +34,20 @@ jobs:
           fetch-depth: 1
           persist-credentials: false
 
-      - name: Validate TestFlight workflow boundaries
+      - name: Validate public RC workflow boundaries
         shell: pwsh
-        run: ./native-ios/Tools/validate-testflight-workflow.ps1
+        run: |
+          ./native-ios/Tools/validate-app-review-workflow.ps1
+          ./native-ios/Tools/validate-app-review-metadata.ps1
 
-      - name: Validate canonical content
+      - name: Validate content, localization, app and approved territories
         shell: pwsh
         run: |
           ./native-ios/Content/validate-content.ps1
           ./native-ios/Content/Education/validate-education.ps1
           ./native-ios/Content/Localization/validate-localization.ps1
-
-      - name: Validate app and internal-only territory-limited artwork gate
-        shell: pwsh
-        run: |
           ./native-ios/Tools/validate-app-integration.ps1
-          ./native-ios/Tools/validate-app-integration.ps1 -InternalTestFlightGate
+          ./native-ios/Tools/validate-app-integration.ps1 -ReleaseGate -RequestedTerritories US,GB,ES
 
       - name: Run structural Swift tests
         shell: bash
@@ -69,13 +67,12 @@ jobs:
           : "${APP_STORE_CONNECT_API_KEY_ID:?APP_STORE_CONNECT_API_KEY_ID is required in app-store-production}"
           : "${APP_STORE_CONNECT_ISSUER_ID:?APP_STORE_CONNECT_ISSUER_ID is required in app-store-production}"
           : "${APP_STORE_CONNECT_API_KEY_BASE64:?APP_STORE_CONNECT_API_KEY_BASE64 is required in app-store-production}"
-
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
           printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > "$API_KEY_PATH"
           chmod 600 "$API_KEY_PATH"
           test -s "$API_KEY_PATH"
 
-      - name: Archive signed Release app with cloud signing
+      - name: Archive signed public Release candidate
         shell: bash
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -84,9 +81,8 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.0-1.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-
           xcodebuild archive \
             -project native-ios/TarotDeck.xcodeproj \
             -scheme TarotDeckInternal \
@@ -100,35 +96,32 @@ jobs:
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            CURRENT_PROJECT_VERSION=2 \
+            CURRENT_PROJECT_VERSION=1 \
             MARKETING_VERSION=1.0 \
             COMPILER_INDEX_STORE_ENABLE=NO
 
-      - name: Verify signed archive and internal release identity
+      - name: Verify archive identity, privacy and distribution signature
         shell: bash
         run: |
           set -euo pipefail
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.0-1.xcarchive"
           APP_PATH="$ARCHIVE_PATH/Products/Applications/TarotDeckInternal.app"
           INFO_PLIST="$APP_PATH/Info.plist"
           EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
-          EXECUTABLE_PATH="$APP_PATH/$EXECUTABLE_NAME"
-          ENTITLEMENTS_PATH="$RUNNER_TEMP/archive-entitlements.plist"
-          PROFILE_PATH="$RUNNER_TEMP/archive-profile.plist"
+          ENTITLEMENTS_PATH="$RUNNER_TEMP/app-review-archive-entitlements.plist"
+          PROFILE_PATH="$RUNNER_TEMP/app-review-profile.plist"
 
-          test -d "$APP_PATH"
-          test -f "$EXECUTABLE_PATH"
+          test -f "$APP_PATH/$EXECUTABLE_NAME"
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
+          test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
-          test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.0" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
-          [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
-
+          [[ "$(lipo -archs "$APP_PATH/$EXECUTABLE_NAME")" == *arm64* ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :get-task-allow' "$ENTITLEMENTS_PATH")" == "false" ]]
@@ -136,7 +129,8 @@ jobs:
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:get-task-allow' "$PROFILE_PATH")" == "false" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$PROFILE_PATH")" == *.com.krazel.tarotdeck ]]
 
-      - name: Export signed INTERNAL-ONLY IPA
+      - name: Export and verify public-capable IPA
+        id: evidence
         shell: bash
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -145,10 +139,13 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.0-1.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-          EXPORT_PATH="$RUNNER_TEMP/tarot-testflight-export"
-          EXPORT_OPTIONS="$RUNNER_TEMP/TestFlightInternalExport.plist"
+          EXPORT_PATH="$RUNNER_TEMP/tarot-app-review-export"
+          EXPORT_OPTIONS="$RUNNER_TEMP/AppReviewExport.plist"
+          EVIDENCE_PATH="$RUNNER_TEMP/tarot-app-review-evidence"
+          SHORT_COMMIT="${GITHUB_SHA:0:12}"
+          BASE_NAME="TarotDeck-1.0-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-App-Review-RC"
 
           /usr/bin/plutil -create xml1 "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :method string app-store-connect' "$EXPORT_OPTIONS"
@@ -156,7 +153,6 @@ jobs:
           /usr/libexec/PlistBuddy -c 'Add :signingStyle string automatic' "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c "Add :teamID string $APPLE_TEAM_ID" "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :manageAppVersionAndBuildNumber bool false' "$EXPORT_OPTIONS"
-          /usr/libexec/PlistBuddy -c 'Add :testFlightInternalTestingOnly bool true' "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :stripSwiftSymbols bool true' "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :uploadSymbols bool true' "$EXPORT_OPTIONS"
 
@@ -169,71 +165,47 @@ jobs:
             -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
 
-      - name: Verify exported IPA and create evidence manifest
-        id: evidence
-        shell: bash
-        run: |
-          set -euo pipefail
-          EXPORT_PATH="$RUNNER_TEMP/tarot-testflight-export"
-          SOURCE_IPA="$(find "$EXPORT_PATH" -maxdepth 1 -type f -name '*.ipa' -print -quit)"
-          VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-testflight-verify.XXXXXX")"
-          OUTPUT_PATH="$RUNNER_TEMP/tarot-testflight-evidence"
-          SHORT_COMMIT="${GITHUB_SHA:0:12}"
-          BASE_NAME="TarotDeck-1.0-2-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
-          IPA_PATH="$SOURCE_IPA"
-          MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
-          SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
-
-          test -n "$SOURCE_IPA"
-          mkdir -p "$OUTPUT_PATH"
+          IPA_PATH="$(find "$EXPORT_PATH" -maxdepth 1 -type f -name '*.ipa' -print -quit)"
+          VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-app-review-verify.XXXXXX")"
+          test -n "$IPA_PATH"
           /usr/bin/ditto -x -k "$IPA_PATH" "$VERIFY_PATH"
           APP_PATH="$(find "$VERIFY_PATH/Payload" -maxdepth 1 -type d -name '*.app' -print -quit)"
           INFO_PLIST="$APP_PATH/Info.plist"
-          EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
-          EXECUTABLE_PATH="$APP_PATH/$EXECUTABLE_NAME"
-          ENTITLEMENTS_PATH="$RUNNER_TEMP/export-entitlements.plist"
-
-          test -d "$APP_PATH"
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
-          test -f "$APP_PATH/es.lproj/InfoPlist.strings"
-          [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.0" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
-          [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
-          codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :get-task-allow' "$ENTITLEMENTS_PATH")" == "false" ]]
 
+          mkdir -p "$EVIDENCE_PATH"
           IPA_SHA256="$(shasum -a 256 "$IPA_PATH" | awk '{print $1}')"
-          printf '%s  %s.ipa\n' "$IPA_SHA256" "$BASE_NAME" > "$SHA_PATH"
+          printf '%s  %s.ipa\n' "$IPA_SHA256" "$BASE_NAME" > "$EVIDENCE_PATH/${BASE_NAME}.sha256"
           jq -n \
             --arg app "Tarot Deck" \
             --arg version "1.0" \
-            --arg build "2" \
+            --arg build "1" \
             --arg bundleID "com.krazel.tarotdeck" \
             --arg commit "$GITHUB_SHA" \
             --arg ciRunNumber "$GITHUB_RUN_NUMBER" \
             --arg ciRunAttempt "$GITHUB_RUN_ATTEMPT" \
             --arg ciRunID "$GITHUB_RUN_ID" \
-            --arg purpose "TestFlight-Internal" \
+            --arg territories "US,GB,ES" \
             --arg artifact "$BASE_NAME" \
             --arg sha256 "$IPA_SHA256" \
-            '{schemaVersion: 1, app: $app, version: $version, build: $build, bundleID: $bundleID, commit: $commit, ciRunNumber: $ciRunNumber, ciRunAttempt: $ciRunAttempt, ciRunID: $ciRunID, purpose: $purpose, internalTestingOnly: true, externalTestingCapable: false, appStoreReleaseCapable: false, artifact: $artifact, sha256: $sha256}' > "$MANIFEST_PATH"
+            '{schemaVersion: 1, app: $app, version: $version, build: $build, bundleID: $bundleID, commit: $commit, ciRunNumber: $ciRunNumber, ciRunAttempt: $ciRunAttempt, ciRunID: $ciRunID, purpose: "App-Review-RC", requestedTerritories: $territories, internalTestingOnly: false, externalTestingCapable: true, appStoreReleaseCapable: true, submittedForReview: false, artifact: $artifact, sha256: $sha256}' > "$EVIDENCE_PATH/${BASE_NAME}.manifest.json"
           echo "artifact_name=$BASE_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Preserve non-binary TestFlight evidence
+      - name: Preserve non-binary RC evidence
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.evidence.outputs.artifact_name }}
-          path: ${{ runner.temp }}/tarot-testflight-evidence/
+          path: ${{ runner.temp }}/tarot-app-review-evidence/
           if-no-files-found: error
-          retention-days: 7
+          retention-days: 14
           compression-level: 0
           include-hidden-files: false
 
-      - name: Upload archive to TestFlight as INTERNAL ONLY
+      - name: Upload binary to App Store Connect without submitting for review
         shell: bash
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -242,24 +214,21 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.0-1.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
-          UPLOAD_OPTIONS="$RUNNER_TEMP/TestFlightInternalUpload.plist"
-
+          UPLOAD_OPTIONS="$RUNNER_TEMP/AppReviewUpload.plist"
           /usr/bin/plutil -create xml1 "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :method string app-store-connect' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :destination string upload' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :signingStyle string automatic' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c "Add :teamID string $APPLE_TEAM_ID" "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :manageAppVersionAndBuildNumber bool false' "$UPLOAD_OPTIONS"
-          /usr/libexec/PlistBuddy -c 'Add :testFlightInternalTestingOnly bool true' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :stripSwiftSymbols bool true' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :uploadSymbols bool true' "$UPLOAD_OPTIONS"
-
           xcodebuild -exportArchive \
             -archivePath "$ARCHIVE_PATH" \
             -exportOptionsPlist "$UPLOAD_OPTIONS" \
-            -exportPath "$RUNNER_TEMP/tarot-testflight-upload" \
+            -exportPath "$RUNNER_TEMP/tarot-app-review-upload" \
             -allowProvisioningUpdates \
             -authenticationKeyPath "$API_KEY_PATH" \
             -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \

@@ -132,7 +132,7 @@ Exact visual presentation remains governed by the registered screen images.
    - A new or reset table shuffles automatically. A small, always-visible `Shuffle / Barajar` control can repeat the action at any point. Before placement it shuffles all 78 cards; after placement it shuffles only the undealt remainder, so every placed card keeps its identity, position, and face state.
    - The deck always remains visible and deals exactly one card per tap into the next empty position in defined spread order. Every empty position is also a direct control that atomically receives the next card when tapped. A completed table keeps the deck as a visual anchor but has no further deal destination.
    - Atomic placement, independent reveal, immediate transactional Back, a small reset control, stable viewport, centered layouts, and professional repeated-shuffle motion with visible top-card replacement. Controls do not dim while shuffle motion runs; repeated input is serialized without stacking conflicting transitions.
-   - A brief non-blocking orientation hint appears near the beginning of a multi-card table, then disappears automatically: `Rotate your phone for larger cards` / `Gira el teléfono para ver las cartas más grandes`. The user never has to dismiss it.
+   - A brief non-blocking orientation hint replaces the normal instruction text when a new or reset multi-card table first appears in portrait, then disappears automatically: `Rotate your phone for larger cards` / `Gira el teléfono para ver las cartas más grandes`. It is not an overlay, toast or capsule, and it does not return until another reading is created or reset.
    - A persistent information action opens the active preset's tutorial. Previous/Next moves among all eight tutorials; `Back to Reading / Volver a la tirada` returns to the exact unchanged table.
    - Meaning available only after tapping a revealed card.
 
@@ -167,10 +167,11 @@ Exact visual presentation remains governed by the registered screen images.
    - VoiceOver, Dynamic Type, sufficient contrast, Reduce Motion compatibility, and 44-point touch targets.
    - Core use works in airplane mode and requests no permission.
 
-7. **Settings and planned voluntary support**
+7. **Release Settings and planned voluntary support**
    - A discreet settings gear in `Read`; no fourth tab.
    - The first Settings control is the persistent internal `English / Español` selector; switching language never resets or mutates a reading.
-   - Separate rows for `Support the App`, `Restore Purchases`, `Privacy`, `Terms`, and `Rate the App`.
+   - The public 1.0 Settings surface contains only functional rows: `Rate the App`, `Privacy`, and `Support`.
+   - `Support the App`, `Restore Purchases`, subscription terms and supporter status are deferred until real StoreKit products, prices, legal copy and review approval exist. They must not appear as unavailable or simulated rows in 1.0.
    - Three provisional monthly levels—`Monthly Supporter`, `Kind Supporter`, and `Generous Supporter`—with equivalent product access and benefits. Exact product identifiers and prices are not defined here.
    - A clear supporter state and thank-you after a verified entitlement.
    - Before any purchase, the live App Store price and monthly duration, automatic-renewal behavior, how to manage or cancel, restoration, Privacy, and Terms must be visible.
@@ -179,7 +180,7 @@ Exact visual presentation remains governed by the registered screen images.
 
 ### Why this remains small
 
-The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains a small fixed foundations index and eight fixed reading tutorials; Cards reuses one meaning model across 78 identities, and Settings keeps optional support and legal links outside the core flow. Custom spread definitions are the only user-authored product content; there is no account, progression, social behavior, or required purchase.
+The MVP has one central job—help the user read a physical-style deck—and two supporting reference surfaces. Learn contains a small fixed foundations index and eight fixed reading tutorials; Cards reuses one meaning model across 78 identities, and Settings keeps language, rating, privacy and support outside the core flow. Custom spread definitions are the only user-authored product content; there is no account, progression, social behavior, or required purchase.
 
 ## Explicit exclusions
 
@@ -302,7 +303,7 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - Settings is reachable from Read without creating a fourth tab, and dismissing it preserves the exact reading state.
 - Switching `English / Español` in Settings updates all visible app-owned copy immediately, persists after relaunch, preserves stable IDs and reading state, and never leaves a mixed-language surface.
 - Every planned support level communicates the same access and recognition; no purchase state changes core functionality.
-- Support clearly discloses monthly auto-renewal and Apple-managed cancellation before purchase, while Restore Purchases, Privacy, Terms, and a separate Rate the App action remain findable.
+- If deferred S10 is implemented later, it must disclose monthly auto-renewal and Apple-managed cancellation before purchase and provide restoration and legal destinations; none of that commerce appears in 1.0.
 - VoiceOver identifies tabs, reading positions and face states, library position, card identity, artwork description, headings, and actions.
 
 ## Definition of done
@@ -317,7 +318,7 @@ The expanded MVP is release-candidate ready when:
 6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.
 7. Functional, content-integrity, persistence, accessibility, orientation, and recovery tests pass on iPhone using macOS/Xcode.
 8. Every visible string and all 78 card references are complete in English and Spanish; the internal selector changes the complete validated language bundle immediately, persists its explicit choice, and preserves all language-neutral IDs and reading state. Core flows work offline, and no account, analytics, notification, or personal-data collection exists.
-9. Settings is accessible from the overlaid Read gear and contains language, support, restore, Privacy, Terms, and rating destinations without adding a fourth tab or interrupting a reading.
+9. Settings is accessible from the overlaid Read gear and contains language, Rate the App, Privacy, and Support destinations without adding a fourth tab or interrupting a reading; it contains no unavailable commerce row.
 10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
 11. Home selects the preset inline and uses the deck to start it directly. A newly created or reset Reading Table shuffles automatically; the persistent deck deals one card per tap in defined order, every empty position can receive the next card directly, and a small dedicated shuffle control can reshuffle only the undealt pool at any point. Placed cards never change silently. The table ends transactionally through Back, hides the tab bar while active, keeps viewport geometry stable, and implements the approved shuffle, position-placement, and flip sequences with an equivalent Reduce Motion path.
 12. `Meaning` / `Significado` renders as a semantic heading. `In a reading` / `En una tirada` explains how that general meaning can be applied to the question and the card's assigned position.
@@ -363,6 +364,6 @@ StoreKit product creation, pricing, contracts, tax/banking configuration, live p
 - A small dedicated `Shuffle / Barajar` control remains visible throughout the reading and may be used repeatedly. Before any placement it shuffles all 78 cards. After one or more cards are placed, it shuffles only the remaining undealt cards. This is the governing meaning of “shuffle at any time”: identities, positions, order among placed cards, and face states already on the table never change silently.
 - The deck remains visible in every table state. Tapping it deals the next card into the next empty position according to the spread's authored order. Tapping a particular empty position deals that same next card there instead. After all positions are occupied, the deck stays as a visual anchor but cannot deal another card; Shuffle can still randomize the unused remainder without altering the completed layout.
 - Shuffle motion never darkens the deck, slots, cards, header, or persistent controls to imply that the table is unavailable. Logical changes remain serialized, and a rapid extra shuffle request may be coalesced into one follow-up shuffle rather than stacking animations.
-- On multi-card tables in portrait, show `Rotate your phone for larger cards` / `Gira el teléfono para ver las cartas más grandes` for about three seconds after entry, then remove it without requiring dismissal or reserving permanent layout height. App copy uses `phone / teléfono`, never `iPhone`, for this hint.
+- On a new or reset multi-card table in portrait, replace the ordinary cue with `Rotate your phone for larger cards` / `Gira el teléfono para ver las cartas más grandes` for about three seconds, then restore the current reading cue in the same corridor. It is never an overlay, toast, capsule or permanent row, and it does not return on restore, rotation, or contextual Learn navigation. App copy uses `phone / teléfono`, never `iPhone`.
 - In landscape, raise and compact the title/header corridor so card slots and dealt cards can use more of the safe-area height. The deck stays visible, and title changes must not move the table geometry.
 - A-059 changes material table states and therefore requires new complete portrait and landscape references, registration, and runtime comparison before final UI implementation. Existing no-deck masters remain historical evidence rather than governing this behavior.

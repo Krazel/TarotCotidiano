@@ -274,6 +274,32 @@ Approved automatically under A-021 after direct owner feedback. Spanish governs 
 
 | Ref | Screen/state | Path | Canvas | Orientation | Language | SHA-256 | Status |
 |---|---|---|---:|---|---|---|---|
-| V-120 | Reading-kind selector; extra-small information glyphs | `design/tarot-deck/read-home-reading-kind-selector-info-extra-small-v4-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout governs English | `4856C7C92510D702195472E0D8E147E38AC6C9338C59C82F93FA433F83E07E60` | APPROVED/CURRENT; replaces V-107 for selector presentation while preserving its exact 2×3 Six Cards glyph and default state. |
-| V-121 | Three-card style selector; extra-small information glyphs | `design/tarot-deck/read-home-three-card-style-selector-info-extra-small-v5-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout governs English | `1981978F24B52E61B5F9F0D5FC958AEA50BD4781FFF9F31E4C7A4C0B1B25BDEC` | APPROVED/CURRENT; replaces V-081 for portrait presentation. |
+| V-120 | Reading-kind selector; extra-small information glyphs | `design/tarot-deck/read-home-reading-kind-selector-info-extra-small-v4-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout governs English | `4856C7C92510D702195472E0D8E147E38AC6C9338C59C82F93FA433F83E07E60` | APPROVED/REPLACED by V-123/V-124; preserves V-107's exact 2×3 Six Cards glyph and default state. |
+| V-121 | Three-card style selector; extra-small information glyphs | `design/tarot-deck/read-home-three-card-style-selector-info-extra-small-v5-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout governs English | `1981978F24B52E61B5F9F0D5FC958AEA50BD4781FFF9F31E4C7A4C0B1B25BDEC` | APPROVED/REPLACED by V-125/V-126. |
 | V-122 | Cards Library; discoverable horizontal filter row | `design/tarot-deck/cards-library-filter-scroll-affordance-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish; layout governs English | `92FEF9B73F8A4AC4DBBF86993F4A0A253A381047042A1027249F14628CF24D4A` | APPROVED/CURRENT; replaces V-022 for S07 All. Partial next chip, edge fade/chevron and native indicator communicate horizontal scrolling. |
+
+## A-061 — Higher information controls and publication preparation (2026-08-18)
+
+Approved automatically under A-021 after the owner's direct correction. These masters move only the visible information control higher and farther left while preserving the 22-point circle, the independent 44×44-point target, the selection mark on the right, the exact Six Cards 2×3 glyph and the existing selector hierarchy. English and Spanish are both canonical localized renders.
+
+| Ref | Screen/state | Path | Canvas | Orientation | Language | SHA-256 | Status |
+|---|---|---|---:|---|---|---|---|
+| V-123 | Reading-kind selector; information control higher at upper-left | `design/tarot-deck/read-home-reading-kind-selector-info-upper-left-v5-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `89D5D65C45DB562ADB20CB9AC1577AB68B21434E2FB8C9AF3FECE0E9FE9B96A9` | APPROVED/CURRENT; replaces V-120 for Spanish selector presentation. |
+| V-124 | Reading-kind selector; information control higher at upper-left | `design/tarot-deck/read-home-reading-kind-selector-info-upper-left-v5-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `F1956DC881E4E3198B9AA33F26C23769BADE3644E4C650E23DE75BBB2861C2F2` | APPROVED/CURRENT; English companion to V-123. |
+| V-125 | Three-card style selector; information control higher at upper-left | `design/tarot-deck/read-home-three-card-style-selector-info-upper-left-v6-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `044A2E387998DAA784BFB61BBD69561DFBD8013C32068BC2C7331A83B2186323` | APPROVED/CURRENT; replaces V-121 for Spanish selector presentation. |
+| V-126 | Three-card style selector; information control higher at upper-left | `design/tarot-deck/read-home-three-card-style-selector-info-upper-left-v6-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `7D04EA78C99C8CFF7F48DDFA82F0645950263598D6C48DA58F12DEEF8CA762D8` | APPROVED/CURRENT; English companion to V-125. |
+| V-127 | Settings; release-ready minimal destinations | `design/tarot-deck/settings-release-ready-minimal-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `BE96308502FC8E76948643A033A9B793182D9FE75C471842322D8A126DB6DC40` | APPROVED/CURRENT; replaces V-045 for Spanish Settings. No commerce or unavailable rows. |
+| V-128 | Settings; release-ready minimal destinations | `design/tarot-deck/settings-release-ready-minimal-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `F8A1E43F20766530746505E1A832A533F4D3B19A273ED8252E3BA901A21A1931` | APPROVED/CURRENT; English companion to V-127. |
+
+V-120/V-121 and V-045 remain preserved as historical references. A-061 changes no selector action, selection persistence, information destination or accessibility target. Settings retains language selection and exposes only functional release destinations: Rate the App, Privacy and Support.
+
+## A-062 — Inline orientation guidance and right-side landscape deck (2026-08-18)
+
+Approved automatically under A-021 after the owner's direct correction. The orientation recommendation is ordinary transient instruction copy, never a toast, capsule, banner or overlay. It is offered once when a new or reset multi-card reading enters portrait, shares the same stable instruction corridor as the reading cues, and is then replaced by the current contextual cue. Restoring or revisiting that reading does not offer it again. Landscape keeps the persistent deck physically on the right.
+
+| Ref | Screen/state | Path | Canvas | Orientation | Language | SHA-256 | Status |
+|---|---|---|---:|---|---|---|---|
+| V-129 | Reading Table entry; inline orientation instruction | `design/tarot-deck/reading-table-orientation-hint-inline-entry-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `BBC7EAE7ED4FD8B0C496D1DC3D73742CAD4DABF70FC0FC1BF8374A12A6CA7D2A` | APPROVED/CURRENT; replaces V-108 only for orientation-hint presentation. |
+| V-130 | Reading Table entry; inline orientation instruction | `design/tarot-deck/reading-table-orientation-hint-inline-entry-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `381286F3BCCFC416AF9091424A16280982F7C050C60820E525BA1FC5EE66B223` | APPROVED/CURRENT; English companion to V-129. |
+
+V-110/V-111 remain current for the same portrait table after the transient instruction disappears. V-116/V-117 remain current for landscape and explicitly govern the physical right-side deck. All earlier masters remain preserved.

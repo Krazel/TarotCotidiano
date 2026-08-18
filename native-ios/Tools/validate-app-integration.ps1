@@ -1,12 +1,16 @@
 param(
     [string]$NativeRoot = (Join-Path $PSScriptRoot ".."),
     [switch]$ReleaseGate,
-    [switch]$InternalTestFlightGate
+    [switch]$InternalTestFlightGate,
+    [string[]]$RequestedTerritories = @()
 )
 
 $ErrorActionPreference = "Stop"
 if ($ReleaseGate -and $InternalTestFlightGate) {
     throw "ReleaseGate and InternalTestFlightGate are mutually exclusive."
+}
+if (-not $ReleaseGate -and $RequestedTerritories.Count -gt 0) {
+    throw "RequestedTerritories is valid only with ReleaseGate."
 }
 $native = Resolve-Path -LiteralPath $NativeRoot
 $projectFile = Join-Path $native.Path "TarotDeck.xcodeproj/project.pbxproj"
@@ -228,6 +232,7 @@ $requiredResources = @(
     "beginner-guide.es.v1.json in Resources"
     "required-interface-keys.v1.json in Resources"
     "PrivacyInfo.xcprivacy in Resources"
+    "InfoPlist.xcstrings in Resources"
 )
 
 foreach ($source in $requiredSources) {
@@ -243,6 +248,19 @@ foreach ($resource in $requiredResources) {
 if ([regex]::Matches($project, [regex]::Escape("PrivacyInfo.xcprivacy in Resources")).Count -ne 2 -or
     [regex]::Matches($project, 'PBXFileReference; lastKnownFileType = text\.xml; path = PrivacyInfo\.xcprivacy;').Count -ne 1) {
     throw "PrivacyInfo.xcprivacy must have one file reference and one target Resources membership."
+}
+$infoPlistCatalogPath = Join-Path $appRoot "Resources/InfoPlist.xcstrings"
+if (-not (Test-Path -LiteralPath $infoPlistCatalogPath -PathType Leaf) -or
+    [regex]::Matches($project, [regex]::Escape("InfoPlist.xcstrings in Resources")).Count -ne 2 -or
+    [regex]::Matches($project, 'PBXFileReference; lastKnownFileType = text\.json\.xcstrings; path = InfoPlist\.xcstrings;').Count -ne 1) {
+    throw "InfoPlist.xcstrings must have one file reference and one target Resources membership."
+}
+$infoPlistCatalog = Get-Content -Raw -LiteralPath $infoPlistCatalogPath | ConvertFrom-Json
+$displayNameEntry = $infoPlistCatalog.strings.CFBundleDisplayName
+if ([string]$infoPlistCatalog.sourceLanguage -cne "en" -or
+    [string]$displayNameEntry.localizations.en.stringUnit.value -cne "Tarot Deck" -or
+    [string]$displayNameEntry.localizations.es.stringUnit.value -cne "Mazo de tarot") {
+    throw "CFBundleDisplayName must bundle exact English and Spanish names."
 }
 if ([regex]::Matches($project, '(?m)^\s*ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;\s*$').Count -ne 2) {
     throw "Debug and Release must both select the AppIcon asset catalog set."
@@ -286,6 +304,30 @@ if ($appIconImages.Count -ne 1 -or
     [int]$appIconContents.info.version -ne 1) {
     throw "AppIcon Contents.json does not define the single universal 1024x1024 iOS rendition."
 }
+$releaseAssetProvenancePath = Join-Path $contentRoot "release-asset-provenance.v1.json"
+$releaseAssetProvenance = Get-Content -Raw -LiteralPath $releaseAssetProvenancePath | ConvertFrom-Json
+if ([int]$releaseAssetProvenance.schemaVersion -ne 1 -or
+    $releaseAssetProvenance.worldwideDistributionApproved -ne $true -or
+    @($releaseAssetProvenance.assets).Count -ne 3 -or
+    @($releaseAssetProvenance.assets | Where-Object { $_.thirdPartyMaterial -ne $false -or $_.distributionApproved -ne $true }).Count -gt 0) {
+    throw "Non-face release asset provenance is incomplete or not distribution-approved."
+}
+$repositoryRoot = (Resolve-Path -LiteralPath (Join-Path $native.Path "..")).Path
+$nonFaceHashContracts = @{
+    "design/assets/ceremonial-card-back-v1.png" = "8F3329F2949B6052B4684B50DB21745FFA3956C4868BB7777F7C3B9735DCC00C"
+    "native-ios/TarotDeckApp/Resources/Assets.xcassets/ceremonial-card-back.imageset/ceremonial-card-back.png" = "8F3329F2949B6052B4684B50DB21745FFA3956C4868BB7777F7C3B9735DCC00C"
+    "design/tarot-deck/app-icon-concepts/app-icon-d-three-card-fan.png" = "7F2DC4CE3A0A70DC9626D1C5FE9CF482CCB336DBD0971B7E8255771167031163"
+    "design/tarot-deck/app-icon-masters/app-icon-d-three-card-fan-1024.png" = "FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E"
+    "native-ios/TarotDeckApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png" = "FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E"
+    "native-ios/TarotDeckApp/Components/CeremonialBackdrop.swift" = "2542DB399A80AE77F46371F04B178D9338BF16138B206C59E64378A28EF69574"
+    "native-ios/TarotDeckApp/Design/CeremonialObsidianTheme.swift" = "5421E5C4864AC574BBBA7E9E9ACB69C3E31DAF8493C19472B6E9DF9398EE0761"
+}
+foreach ($contract in $nonFaceHashContracts.GetEnumerator()) {
+    $assetPath = Join-Path $repositoryRoot $contract.Key
+    if ((Get-FileHash -LiteralPath $assetPath -Algorithm SHA256).Hash -cne $contract.Value) {
+        throw "Non-face release asset changed without a provenance update: $($contract.Key)"
+    }
+}
 if ($project -match [regex]::Escape("ProvisionalApprovedReadingHarness.swift in Sources")) {
     throw "The superseded provisional reading harness remains in the app target."
 }
@@ -296,6 +338,18 @@ if ($project -notmatch '(?s)knownRegions\s*=\s*\([^\)]*\bes\s*,') {
 $catalogPath = Join-Path $appRoot "Resources/Localizable.xcstrings"
 $catalogRaw = Get-Content -Raw -LiteralPath $catalogPath
 $catalog = $catalogRaw | ConvertFrom-Json
+if ($catalogRaw -match '[ÃÂ�]') {
+    throw "The String Catalog contains mojibake or replacement characters."
+}
+foreach ($localizedJSONPath in @(
+    (Join-Path $contentRoot "Localization/card-copy.es.v1.json"),
+    (Join-Path $contentRoot "Localization/card-meanings.es.v1.json"),
+    (Join-Path $contentRoot "Localization/beginner-guide.es.v1.json")
+)) {
+    if ((Get-Content -Raw -LiteralPath $localizedJSONPath) -match '[ÃÂ�]') {
+        throw "Spanish content contains mojibake or replacement characters: $localizedJSONPath"
+    }
+}
 $catalogKeyMatches = [regex]::Matches(
     $catalogRaw,
     '(?m)^\s{4}"((?:[^"\\]|\\.)+)"\s*:\s*\{\s*"localizations"'
@@ -339,6 +393,35 @@ if ([int]$interfaceManifest.schemaVersion -ne 1 -or
     @(Compare-Object $catalogKeys $manifestKeys).Count -gt 0) {
     throw "The runtime interface-key manifest must exactly match every String Catalog key."
 }
+foreach ($obsoleteInterfaceKey in @(
+    'ART PENDING',
+    'PROVISIONAL ASSET',
+    'Historical artwork candidate. Distribution approval is pending. %@',
+    'Opens the upright meaning'
+)) {
+    if ($manifestKeys -ccontains $obsoleteInterfaceKey) {
+        throw "Obsolete provisional or upright-only key remains in the required interface manifest: $obsoleteInterfaceKey"
+    }
+}
+
+$duplicateNameContracts = @(
+    'let template = copyNumber == 1 ? "Copy of %@" : "Copy of %@ (%d)"',
+    'AppLocalization.format(template, sourceName)',
+    'AppLocalization.format(template, sourceName, copyNumber)',
+    'duplicateName.count > 40',
+    'sourceName.removeLast()'
+)
+$duplicateNameSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/ReadFlowModel.swift")
+foreach ($contract in $duplicateNameContracts) {
+    if ($duplicateNameSource -cnotmatch [regex]::Escape($contract)) {
+        throw "Localized custom-spread duplication contract is missing: $contract"
+    }
+}
+if ($duplicateNameSource -match '" copy(?: |")' -or
+    [string]$catalog.strings.'Copy of %@'.localizations.es.stringUnit.value -cne 'Copia de %@' -or
+    [string]$catalog.strings.'Copy of %@ (%d)'.localizations.es.stringUnit.value -cne 'Copia de %1$@ (%2$d)') {
+    throw "Custom-spread duplicate names must be localized in English and Spanish without an English suffix."
+}
 
 $artworkIntegrationChecks = @(
     @{ Path = "Content/TarotContent.swift"; Snippet = "let artworkDescription: String" },
@@ -366,15 +449,17 @@ if ($contentSource -cnotmatch [regex]::Escape("static func load(language: AppLan
 $sourceText = Get-ChildItem -LiteralPath $appRoot -Recurse -File -Filter *.swift |
     Get-Content -Raw
 $allAppSource = $sourceText -join "`n"
+$settingsSourceForDestinationBoundary = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
+$nonSettingsAppSource = $allAppSource.Replace($settingsSourceForDestinationBoundary, "")
 $forbidden = @("StoreKit", "Zodiac", "Android")
 foreach ($term in $forbidden) {
     if ($allAppSource -match [regex]::Escape($term)) {
         throw "Out-of-scope app source term found: $term"
     }
 }
-if ($allAppSource -match '(?m)^\s*import\s+(Network|WebKit|StoreKit|AdSupport|AppTrackingTransparency|UserNotifications|CoreLocation|AVFoundation|Photos|Contacts|EventKit|HealthKit|CoreBluetooth)\b' -or
-    $allAppSource -match '\b(URLSession|URLRequest|NWConnection|NWPathMonitor|WKWebView|openURL|UIApplication\.shared\.open)\b' -or
-    $allAppSource -match 'https?://' -or
+if ($nonSettingsAppSource -match '(?m)^\s*import\s+(Network|WebKit|StoreKit|AdSupport|AppTrackingTransparency|UserNotifications|CoreLocation|AVFoundation|Photos|Contacts|EventKit|HealthKit|CoreBluetooth)\b' -or
+    $nonSettingsAppSource -match '\b(URLSession|URLRequest|NWConnection|NWPathMonitor|WKWebView|openURL|UIApplication\.shared\.open)\b' -or
+    $nonSettingsAppSource -match 'https?://' -or
     $allAppSource -match '\b(requestAuthorization|requestAccess|ATTrackingManager|UNUserNotificationCenter|CLLocationManager|AVCaptureDevice|PHPhotoLibrary|CNContactStore|EKEventStore|HKHealthStore|CBCentralManager)\b' -or
     $allAppSource -match '\b(Firebase|GoogleMobileAds|GADMobileAds|Sentry|Crashlytics|Mixpanel|Amplitude)\b') {
     throw "App source contains unauthorized network, permission, or third-party SDK integration."
@@ -473,6 +558,9 @@ $requiredRecoveryContracts = @(
     "canPrepareAnotherReading",
     "canShuffleDeck",
     "shufflePresentationGeneration",
+    "orientationHintRequestGeneration",
+    "func consumeOrientationHintRequest() -> Bool",
+    "private func requestOrientationHintForNewReading()",
     "func beginAutomaticShuffleIfNeeded()",
     "func placeNextCardInOrder()",
     "func canPlaceCard(at slotIndex: Int)",
@@ -498,6 +586,17 @@ if ([regex]::Matches($readModelSource, [regex]::Escape('self.shufflePresentation
     $readModelSource -cnotmatch [regex]::Escape('record.phase == .reshuffling') -or
     $readModelSource -cnotmatch [regex]::Escape('record.sessionID == restored.id')) {
     throw "A-059 shuffle recovery must emit only post-commit events, auto-start only a ready table, and reconcile reshuffling by session identity."
+}
+$restoreHintAuditStart = $readModelSource.IndexOf('func restoreIfNeeded() async')
+$restoreHintAuditEnd = $readModelSource.IndexOf('private func requestOrientationHintForNewReading()', $restoreHintAuditStart)
+$restoreHintAuditSource = if ($restoreHintAuditStart -ge 0 -and $restoreHintAuditEnd -gt $restoreHintAuditStart) {
+    $readModelSource.Substring($restoreHintAuditStart, $restoreHintAuditEnd - $restoreHintAuditStart)
+} else { '' }
+if ([regex]::Matches($readModelSource, [regex]::Escape('self.requestOrientationHintForNewReading()')).Count -ne 4 -or
+    $readModelSource -cnotmatch [regex]::Escape('hasPendingOrientationHintRequest = false') -or
+    [string]::IsNullOrEmpty($restoreHintAuditSource) -or
+    $restoreHintAuditSource -match 'requestOrientationHintForNewReading') {
+    throw "A-062 must request one transient orientation cue only for new, Learn-started, custom, or reset readings, never restoration."
 }
 $deckEngineSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckEngine.swift")
 $coordinatorSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Sources/TarotDeckCore/DeckSessionCoordinator.swift")
@@ -590,7 +689,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 0.8;',
+    'MARKETING_VERSION = 1.0;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -603,8 +702,9 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 0.8;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.0;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;')).Count -ne 1 -or
@@ -1145,9 +1245,9 @@ $readingContracts = @(
     "private var landscapeCue",
     "Rotate your phone for larger cards",
     "3_000_000_000",
-    "scheduleOrientationHintIfNeeded(isPortrait: !isPhysicallyLandscape)",
-    "guard isPortrait, model.activeCardCount > 1, !orientationHintWasOffered else { return }",
-    "orientationHintWasOffered = true",
+    "consumeOrientationHintRequestIfNeeded(isPortrait: !isPhysicallyLandscape)",
+    "guard model.consumeOrientationHintRequest() else { return }",
+    "guard isPortrait, model.activeCardCount > 1 else { return }",
     "cancelOrientationHint()",
     "Tap the deck to deal in order, or choose a position",
     "Tap the deck or choose an empty position",
@@ -1173,8 +1273,8 @@ foreach ($contract in $readingContracts) {
         throw "A-059 reading-table contract is missing: $contract"
     }
 }
-if ($readingTableSource -cmatch [regex]::Escape('scheduleOrientationHintIfNeeded()')) {
-    throw "The temporary rotation hint must never be scheduled without checking physical portrait orientation."
+if ($readingTableSource -match 'orientationHintWasOffered|scheduleOrientationHintIfNeeded|\.background\(\.ultraThinMaterial, in: Capsule\(\)\)') {
+    throw "A-062 orientation guidance must be a once-per-reading inline cue, never a view-local replay flag or floating capsule."
 }
 if ($readingTableSource -match '\bprimaryTitle\b|Button\("Shuffle Deck"|Button\("Draw Card"|Button\("Deal"|Button\("End Reading"|requestEndReading|model\.drawCard\(\)|model\.dealCards\(\)|Tap the deck for another reading|Turn your iPhone sideways|\.accessibilityHidden\(!shouldShowDeck\)|\.opacity\(shouldShowDeck \? 1 : 0\)|\.disabled\(interactionLocked\)') {
     throw "The reading table still contains a duplicate primary shuffle/draw CTA."
@@ -1189,6 +1289,40 @@ if ($landscapeSource -match '\brailWidth\b|\bstatusText\b|\bactionArea\b|Text\(m
     $landscapeSource -cnotmatch [regex]::Escape(".frame(width: deckWidth, height: deckHeight)") -or
     $landscapeSource -cnotmatch [regex]::Escape(".frame(height: 44)")) {
     throw "Landscape must keep only the compact header, shared stage, explicit large deck and short cue."
+}
+$landscapeStageIndex = $landscapeSource.IndexOf('readingStage(isLandscape: true)')
+$landscapeDeckIndex = $landscapeSource.IndexOf('deckControl', $landscapeStageIndex + 1)
+if ($landscapeStageIndex -lt 0 -or $landscapeDeckIndex -le $landscapeStageIndex) {
+    throw "A-062 landscape must place the reading stage first and the persistent deck in the physical right column."
+}
+$actionAreaStart = $readingTableSource.IndexOf('@ViewBuilder' + [Environment]::NewLine + '    private var actionArea')
+if ($actionAreaStart -lt 0) {
+    $actionAreaStart = $readingTableSource.IndexOf('private var actionArea')
+}
+$actionAreaEnd = $readingTableSource.IndexOf('private var portraitActionArea', $actionAreaStart)
+if ($actionAreaStart -lt 0 -or $actionAreaEnd -le $actionAreaStart) {
+    throw "A-062 inline instruction corridor could not be inspected."
+}
+$actionAreaSource = $readingTableSource.Substring($actionAreaStart, $actionAreaEnd - $actionAreaStart)
+if ($actionAreaSource -cnotmatch [regex]::Escape('AppLocalization.text("Rotate your phone for larger cards")') -or
+    $actionAreaSource -cnotmatch [regex]::Escape('Text(instructionText)') -or
+    $actionAreaSource -match 'Capsule\(\)|ultraThinMaterial|overlay') {
+    throw "A-062 must swap the orientation recommendation and normal reading cue inside one non-floating action area."
+}
+
+$a062Visuals = @{
+    'design/tarot-deck/reading-table-orientation-hint-inline-entry-v1-spanish-a-ceremonial-obsidian.png' = 'BBC7EAE7ED4FD8B0C496D1DC3D73742CAD4DABF70FC0FC1BF8374A12A6CA7D2A'
+    'design/tarot-deck/reading-table-orientation-hint-inline-entry-v1-english-a-ceremonial-obsidian.png' = '381286F3BCCFC416AF9091424A16280982F7C050C60820E525BA1FC5EE66B223'
+}
+foreach ($relativePath in $a062Visuals.Keys) {
+    $visualPath = Join-Path $native.Path "../$relativePath"
+    if (-not (Test-Path -LiteralPath $visualPath -PathType Leaf)) {
+        throw "A-062 approved visual is missing: $relativePath"
+    }
+    $actualHash = (Get-FileHash -LiteralPath $visualPath -Algorithm SHA256).Hash.ToUpperInvariant()
+    if ($actualHash -ne $a062Visuals[$relativePath]) {
+        throw "A-062 approved visual hash changed: $relativePath"
+    }
 }
 if ($readingTableSource -match 'rotationEffect\(\.degrees\([^\r\n]*placementProgress') {
     throw "Placement rotation may not consume the A-055 minimum visible slot gap."
@@ -1417,7 +1551,7 @@ $a060InformationContracts = @(
     '.font(.system(size: 11, weight: .semibold))',
     '.frame(width: 22, height: 22)',
     'lineWidth: 0.9',
-    '.frame(width: 44, height: 44)',
+    '.frame(width: 44, height: 44, alignment: .topLeading)',
     '.contentShape(Rectangle())'
 )
 foreach ($contract in $a060InformationContracts) {
@@ -1485,25 +1619,28 @@ foreach ($key in $requiredFavoriteCatalogKeys) {
 }
 $settingsSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
 $requiredSettingsCopy = @(
-    "Support the App",
-    "Restore Purchases",
     "Rate the App",
     "Privacy",
-    "Terms",
-    "Support isn't available right now. You can keep using the full app.",
-    "Restore Unavailable",
-    "Restore Purchases isn't available in this internal build. You can keep using the full app.",
-    'fallbackVersion = "0.8"'
+    "Support",
+    '@Environment(\.openURL)',
+    'https://apps.apple.com/app/id6800144105?action=write-review',
+    'https://krazel.github.io/tarot-deck/privacy/',
+    'https://krazel.github.io/tarot-deck/support/',
+    "Opens the App Store review page",
+    "Opens the privacy policy in your browser",
+    "Opens the support page in your browser",
+    'fallbackVersion = "1.0"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
         throw "Required Settings contract is missing: $copy"
     }
 }
-if ($settingsSource -match '\b(StoreKit|Product\.products|purchase\s*\(|Transaction\.|AppStore\.)\b' -or
-    $settingsSource -match 'https?://' -or
-    $settingsSource -match '\bURL\s*\(') {
-    throw "Settings contains unauthorized commerce or external destination integration."
+if ($settingsSource -match '\b(StoreKit|Product\.products|purchase\s*\(|Transaction\.|AppStore\.|requestReview)\b' -or
+    $settingsSource -match 'Support the App|Restore Purchases|Terms|Unavailable|internal build' -or
+    [regex]::Matches($settingsSource, 'https?://').Count -ne 3 -or
+    [regex]::Matches($settingsSource, [regex]::Escape('https://apps.apple.com/app/id6800144105?action=write-review')).Count -ne 1) {
+    throw "Settings must contain only the approved public rating, privacy, and support destinations without IAP or internal-build copy."
 }
 if ($settingsSource -match '(?s)Button[^\{]*\{\s*\}' -or
     $settingsSource -match '(?s)Button\([^\)]*\)\s*\{\s*\}') {
@@ -1521,6 +1658,10 @@ $learnSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Learn/
 if ($learnSource -match '\.font\(\.system\(size:\s*52\b' -or
     $learnSource -cnotmatch [regex]::Escape("lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 3)")) {
     throw "Learn Dynamic Type adaptations are missing."
+}
+if ($learnSource -cnotmatch [regex]::Escape('.accessibilityHint("Opens reading tutorials")') -or
+    $learnSource -match 'Opens (six|seven) reading tutorials') {
+    throw "Learn must use the stable localized tutorial-portal accessibility hint."
 }
 $requiredLearnContracts = @(
     'Text("A simple way to read for yourself")',
@@ -1566,6 +1707,70 @@ $artworkSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Components/T
 if ($readSource -match '\.font\(\.system\(size:\s*50\b' -or
     $artworkSource -cnotmatch [regex]::Escape("lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 3)")) {
     throw "Read or artwork Dynamic Type adaptations are missing."
+}
+$requiredFinalArtworkAccessibility = @(
+    'Historical Rider–Waite–Smith artwork. %@',
+    'Historical Rider–Waite–Smith artwork.',
+    'Approved artwork is missing from this build.',
+    'MISSING APPROVED ASSET'
+)
+foreach ($copy in $requiredFinalArtworkAccessibility) {
+    if ($artworkSource -cnotmatch [regex]::Escape($copy)) {
+        throw "Final artwork accessibility contract is missing: $copy"
+    }
+}
+$finalArtworkSpanish = @{
+    'Historical Rider–Waite–Smith artwork. %@' = 'Ilustración histórica Rider–Waite–Smith. %@'
+    'Historical Rider–Waite–Smith artwork.' = 'Ilustración histórica Rider–Waite–Smith.'
+    'Approved artwork is missing from this build.' = 'Falta la ilustración aprobada en esta compilación.'
+    'Opens the meaning' = 'Abre el significado'
+}
+foreach ($contract in $finalArtworkSpanish.GetEnumerator()) {
+    $entry = $catalog.strings.PSObject.Properties[$contract.Key]
+    if ($null -eq $entry -or [string]$entry.Value.localizations.es.stringUnit.value -cne $contract.Value) {
+        throw "Final artwork or meaning Spanish localization is missing or inexact: $($contract.Key)"
+    }
+}
+foreach ($obsoleteKey in @(
+    'Historical artwork candidate. Distribution approval is pending. %@',
+    'Verified historical artwork candidate. A detailed artwork description is not yet available.',
+    'Provisional artwork placeholder. Final artwork is not yet available.',
+    'ART PENDING',
+    'PROVISIONAL ASSET',
+    'Opens the upright meaning'
+)) {
+    if ($null -ne $catalog.strings.PSObject.Properties[$obsoleteKey]) {
+        throw "Obsolete provisional or upright-only localization remains bundled: $obsoleteKey"
+    }
+}
+if ($artworkSource -match 'candidate|Distribution approval|Provisional artwork|ART PENDING|showsProvisionalLabel' -or
+    $cardComponentSource -match 'ProvisionalCeremonialCardBack|PROVISIONAL ASSET' -or
+    $readSource -cnotmatch [regex]::Escape('.accessibilityHint("Opens the meaning")') -or
+    $cardsSource -cnotmatch [regex]::Escape('.accessibilityHint("Opens the meaning")') -or
+    "$readSource`n$cardsSource" -match 'Opens the upright meaning') {
+    throw "Runtime artwork and meaning accessibility copy must describe the final product without provisional or upright-only suffixes."
+}
+$evidenceGeneratorSource = Get-Content -Raw -LiteralPath (Join-Path $contentRoot "CandidateRWS/sync-candidate-rws.ps1")
+$assetSyncSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Tools/sync-verified-candidate-assets.ps1")
+$requiredEvidenceRegenerationContracts = @(
+    "visualFinalApprovedByOwner",
+    "distributionApprovedForDeclaredTerritories",
+    "worldwideDistributionApproved",
+    "(@(`$releaseDecision.approvedTerritories) -join ',') -cne 'US,GB,ES'",
+    "artworkStatus = 'final'",
+    "pixelReviewStatus = 'source-file-integrity-verified-owner-approved-visual-final'",
+    "status = 'integrity-verified-78-of-78-visual-final-territory-limited'",
+    "the existing final v2 manifest was not overwritten"
+)
+foreach ($contract in $requiredEvidenceRegenerationContracts) {
+    if ($evidenceGeneratorSource -cnotmatch [regex]::Escape($contract)) {
+        throw "Evidence regeneration can regress the final territorial state: missing $contract"
+    }
+}
+if ($evidenceGeneratorSource -match "artworkStatus = 'provisional'|candidateOnly = \`$true|territorialRightsReviewStatus = 'pending'|candidate-integrity-verified-78-of-78-not-production" -or
+    $assetSyncSource -cnotmatch [regex]::Escape("(@(`$evidence.approvedTerritories) -join ',') -cne 'US,GB,ES'") -or
+    $assetSyncSource -match 'provisional candidate assets') {
+    throw "Artwork synchronization must preserve the final US/GB/ES-only state and block obsolete provisional regeneration."
 }
 $requiredReadCopy = @(
     "Start a Reading",
@@ -1620,19 +1825,32 @@ if ($ReleaseGate) {
         $details = $runtimeAssetDifference | ForEach-Object { "$($_.SideIndicator) $($_.InputObject)" }
         throw "Release artwork gate blocked: runtime image-set allowlist differs from 78 canonical faces plus ceremonial-card-back. $($details -join '; ')"
     }
-    if ($evidence.candidateOnly -ne $false -or
+    $approvedTerritories = @($evidence.approvedTerritories | ForEach-Object { ([string]$_).ToUpperInvariant() } | Sort-Object -Unique)
+    $requestedTerritorySet = @($RequestedTerritories | ForEach-Object { ([string]$_).Trim().ToUpperInvariant() } | Where-Object { $_ } | Sort-Object -Unique)
+    $territoriesOutsideAllowlist = @($requestedTerritorySet | Where-Object { $_ -notin $approvedTerritories })
+    if ($RequestedTerritories.Count -eq 0 -or $requestedTerritorySet.Count -eq 0) {
+        throw "Release artwork gate blocked: pass the exact intended storefronts via RequestedTerritories."
+    }
+    if ($territoriesOutsideAllowlist.Count -gt 0) {
+        throw "Release artwork gate blocked: storefronts outside the approved US/GB/ES allowlist: $($territoriesOutsideAllowlist -join ', ')."
+    }
+    if ((@($approvedTerritories) -join ',') -cne 'ES,GB,US' -or
+        $evidence.candidateOnly -ne $false -or
         $evidence.finalAsset -ne $true -or
-        $evidence.distributionApproved -ne $true -or
-        [string]$evidence.territorialRightsReviewStatus -cne "approved" -or
+        $evidence.distributionApproved -ne $false -or
+        $evidence.distributionApprovedForDeclaredTerritories -ne $true -or
+        $evidence.worldwideDistributionApproved -ne $false -or
+        [string]$evidence.territorialRightsReviewStatus -cne "approved-for-declared-territories" -or
         @($verifiedRecords | Where-Object {
             $_.finalAsset -ne $true -or
-            $_.distributionApproved -ne $true -or
-            [string]$_.territorialRightsReviewStatus -cne "approved"
+            $_.distributionApproved -ne $false -or
+            $_.distributionApprovedForDeclaredTerritories -ne $true -or
+            [string]$_.territorialRightsReviewStatus -cne "approved-for-declared-territories"
         }).Count -gt 0) {
-        throw "Release artwork gate blocked: candidateOnly, finalAsset, distributionApproved, or territorial rights review is still pending."
+        throw "Release artwork gate blocked: final-art or territory-limited distribution evidence is inconsistent."
     }
 
-    Write-Host "Validated release artwork gate: 78/78 final assets are verified, bundled, and distribution-approved."
+    Write-Host "Validated release artwork gate for $($requestedTerritorySet -join ','): 78/78 final assets are verified, bundled, and within the US/GB/ES allowlist; worldwide clearance remains false."
     exit 0
 }
 
@@ -1653,21 +1871,25 @@ if ($InternalTestFlightGate) {
         $details = $runtimeAssetDifference | ForEach-Object { "$($_.SideIndicator) $($_.InputObject)" }
         throw "Internal TestFlight artwork gate blocked: runtime image-set allowlist differs from 78 canonical faces plus ceremonial-card-back. $($details -join '; ')"
     }
-    if ($evidence.candidateOnly -ne $true -or
-        $evidence.finalAsset -ne $false -or
+    if ($evidence.candidateOnly -ne $false -or
+        $evidence.finalAsset -ne $true -or
         $evidence.distributionApproved -ne $false -or
-        [string]$evidence.territorialRightsReviewStatus -cne "pending" -or
+        $evidence.distributionApprovedForDeclaredTerritories -ne $true -or
+        $evidence.worldwideDistributionApproved -ne $false -or
+        (@($evidence.approvedTerritories) -join ',') -cne 'US,GB,ES' -or
+        [string]$evidence.territorialRightsReviewStatus -cne "approved-for-declared-territories" -or
         @($verifiedRecords | Where-Object {
-            $_.finalAsset -ne $false -or
+            $_.finalAsset -ne $true -or
             $_.distributionApproved -ne $false -or
-            [string]$_.territorialRightsReviewStatus -cne "pending"
+            $_.distributionApprovedForDeclaredTerritories -ne $true -or
+            [string]$_.territorialRightsReviewStatus -cne "approved-for-declared-territories"
         }).Count -gt 0) {
-        throw "Internal TestFlight artwork gate blocked: candidates must remain explicitly non-final, non-distribution-approved, and territorially pending."
+        throw "Internal TestFlight artwork gate blocked: territory-limited final-art evidence is inconsistent."
     }
 
-    Write-Host "Validated INTERNAL-ONLY TestFlight artwork gate: 78/78 candidates are intact and the public ReleaseGate remains intentionally unsatisfied."
+    Write-Host "Validated INTERNAL-ONLY TestFlight artwork gate: 78/78 owner-approved final faces are intact; the binary remains internal-only and worldwide clearance is false."
     exit 0
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated internal app snapshot 0.8 (1): English/Spanish UI and content, automatic new-table shuffle, repeatable undealt-suffix shuffle, tap-deck first-empty and tap-slot placement, persistent deck, recovery, accessibility, 78 cards, approved visual hashes, scope boundaries, $($verifiedRecords.Count)/78 bundled hash-verified provisional artwork candidates, and $placeholderCount explicit placeholders. This snapshot is not release-ready."
+Write-Host "Validated public release candidate 1.0 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."

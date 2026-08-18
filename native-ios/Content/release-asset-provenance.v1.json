@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "updatedOn": "2026-08-18",
+  "scope": "Non-face visual assets shipped by the iOS target",
+  "worldwideDistributionApproved": true,
+  "assets": [
+    {
+      "id": "ceremonial-card-back",
+      "kind": "card-back",
+      "creationMethod": "Project-created derivative asset rebuilt from the approved Ceremonial Obsidian visual direction",
+      "ownerApproval": "A-011/R-010",
+      "sourcePath": "design/assets/ceremonial-card-back-v1.png",
+      "runtimePath": "native-ios/TarotDeckApp/Resources/Assets.xcassets/ceremonial-card-back.imageset/ceremonial-card-back.png",
+      "sha256": "8F3329F2949B6052B4684B50DB21745FFA3956C4868BB7777F7C3B9735DCC00C",
+      "thirdPartyMaterial": false,
+      "distributionApproved": true
+    },
+    {
+      "id": "app-icon-d-three-card-fan",
+      "kind": "app-icon",
+      "creationMethod": "Project-created generated visual prepared as an opaque 1024-square iOS asset",
+      "ownerApproval": "A-035",
+      "generatedSourcePath": "design/tarot-deck/app-icon-concepts/app-icon-d-three-card-fan.png",
+      "generatedSourceSHA256": "7F2DC4CE3A0A70DC9626D1C5FE9CF482CCB336DBD0971B7E8255771167031163",
+      "masterPath": "design/tarot-deck/app-icon-masters/app-icon-d-three-card-fan-1024.png",
+      "runtimePath": "native-ios/TarotDeckApp/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png",
+      "sha256": "FFB38A413D8A99433A7A13E8626143A4FED96AD41AAB774D5D2C520C20BE200E",
+      "thirdPartyMaterial": false,
+      "distributionApproved": true
+    },
+    {
+      "id": "ceremonial-backdrop-and-textures",
+      "kind": "programmatic-visual-system",
+      "creationMethod": "Original Swift shapes, gradients, rays, stars, colors, and materials; no bundled third-party texture image",
+      "sourcePaths": [
+        "native-ios/TarotDeckApp/Components/CeremonialBackdrop.swift",
+        "native-ios/TarotDeckApp/Design/CeremonialObsidianTheme.swift"
+      ],
+      "sourceSHA256": [
+        "2542DB399A80AE77F46371F04B178D9338BF16138B206C59E64378A28EF69574",
+        "5421E5C4864AC574BBBA7E9E9ACB69C3E31DAF8493C19472B6E9DF9398EE0761"
+      ],
+      "thirdPartyMaterial": false,
+      "distributionApproved": true
+    }
+  ]
+}

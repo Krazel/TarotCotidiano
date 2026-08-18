@@ -105,7 +105,7 @@ struct CeremonialCardBack: View {
                     .aspectRatio(contentMode: contentMode)
                     .accessibilityHidden(true)
             } else {
-                ProvisionalCeremonialCardBack()
+                MissingApprovedCardBack()
             }
         }
         .aspectRatio(presentationAspectRatio, contentMode: .fit)
@@ -210,7 +210,7 @@ struct RevealedReadingPosition: View {
     }
 }
 
-private struct ProvisionalCeremonialCardBack: View {
+private struct MissingApprovedCardBack: View {
     var body: some View {
         RoundedRectangle(cornerRadius: CeremonialObsidianTheme.cardCornerRadius)
             .fill(CeremonialObsidianTheme.cardSurface)
@@ -259,7 +259,7 @@ private struct ProvisionalCeremonialCardBack: View {
                     .stroke(CeremonialObsidianTheme.brightGold, lineWidth: 1.2)
             }
             .overlay(alignment: .bottom) {
-                Text("PROVISIONAL ASSET")
+                Text("MISSING APPROVED ASSET")
                     .font(.system(size: 8, weight: .bold, design: .rounded))
                     .tracking(1.3)
                     .foregroundStyle(CeremonialObsidianTheme.parchment.opacity(0.72))
