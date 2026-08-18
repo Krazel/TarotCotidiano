@@ -1,7 +1,7 @@
 # App Store Connect — Tarot Deck
 
 Actualizado: 2026-08-18
-Estado: candidata pública local `1.0 (1)` aprobada para preparación. Aún no se ha compilado en macOS, subido, seleccionado ni enviado a App Review.
+Estado: candidata pública `1.0 (1)` aprobada para preparación. Swift tests y builds iPhone sin firma pasaron en macOS; aún no se ha creado/subido el archive público firmado, seleccionado una build ni enviado a App Review.
 
 ## Identidad verificada
 
@@ -165,7 +165,7 @@ Review contact details remain private and must be checked in App Store Connect a
 
 Before `1.0 (1)` can be selected or submitted:
 
-1. Commit the complete source candidate and run the public RC workflow on macOS: Swift tests, Release archive, signature, privacy manifest, localization and `US/GB/ES` ReleaseGate must all pass.
+1. Run the public RC workflow on macOS after the separate red upload authorization: Release archive, distribution signature, privacy manifest, localization and `US/GB/ES` ReleaseGate must all pass. Core and unsigned iPhone QA already passed for commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386` in runs `32172356174` and `32172373006`.
 2. Record the processed App Store Connect build ID and verify `1.0 (1)` is `VALID`; do not reuse Internal Only `0.8`.
 3. Capture real `1.0 (1)` build screenshots in EN-US and ES-ES for Home/selector, a three-card reading, six/custom, Learn, and Cards/detail/favorites. Concept masters are art direction only.
 4. Deploy and revalidate the prepared Privacy and Support pages, then make the App Privacy answers match this exact RC.

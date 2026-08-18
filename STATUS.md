@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **cerebro local `/root` para A-063**. A-061 y A-062 están integradas en la fuente pública `1.0 (1)`. Existe una ruta manual separada para generar/verificar y, solo con confirmación roja exacta, subir el binario público; no se ha ejecutado Git, Xcode, upload, selección de build ni App Review.
+Propietaria activa de implementación: **ninguna**. A-061/A-062 están integradas y A-063 ha cerrado la preparación técnica local de `1.0 (1)`. Existe una ruta manual separada para generar/verificar y, solo con confirmación roja exacta, subir el binario público. No se ha ejecutado upload a App Store Connect, selección de build ni App Review; capturas, páginas públicas y DSA requieren el siguiente hito.
 
 A-053 está implementada localmente como `0.6 (1)`: selector coherente con información izquierda/tick derecha, `Six-Card Guidance / Orientación en seis cartas`, tutorial citado, biblioteca y editor de tiradas personalizadas de 1–12 cartas, borrador local, layouts visuales automáticos, movimiento accesible, snapshots inmutables y tutorial `Create Your Own Spread`. V-107 sustituye la maestra errónea V-090; V-091–V-096 permanecen aprobadas bajo A-021. Falta obligatoriamente compilar/testear con Xcode en macOS y comparar la build real con las maestras antes de autorizar TestFlight; no existe autorización de subida en este encargo.
 
@@ -34,7 +34,7 @@ A-061 está implementada localmente como `0.8.1 (1)`. El propietario ordenó pre
 
 A-062 queda integrada en `1.0 (1)`: V-129/V-130 sustituyen la cápsula flotante por la misma zona estable que muestra las instrucciones normales. El modelo emite y consume una única petición por tirada nueva o reiniciada; restaurar, rotar o regresar desde Learn no la repite. V-116/V-117 siguen gobernando landscape y el mazo se mantiene como columna física derecha. Xcode/runtime sigue pendiente de macOS.
 
-A-063 fija formalmente la candidata pública `1.0 (1)`, conserva `0.8 (1)` como evidencia interna histórica, prepara la ficha y el preflight bilingüe, y añade un workflow público manual independiente. El workflow puede archivar, firmar, verificar y subir el binario solo con `UPLOAD_APP_REVIEW_RC_1_0_1`; nunca selecciona la build, envía a Review, acepta acuerdos, modifica territorios ni publica. Capturas reales EN/ES, páginas públicas sincronizadas, QA macOS y la declaración DSA veraz para España siguen abiertas.
+A-063 fija formalmente la candidata pública `1.0 (1)`, conserva `0.8 (1)` como evidencia interna histórica, prepara la ficha y el preflight bilingüe, y añade un workflow público manual independiente. El workflow puede archivar, firmar, verificar y subir el binario solo con `UPLOAD_APP_REVIEW_RC_1_0_1`; nunca selecciona la build, envía a Review, acepta acuerdos, modifica territorios ni publica. El commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386` pasó Core/Swift/iPhone build en el run `32172356174` y Local-QA unsigned en `32172373006`. Capturas reales EN/ES, páginas públicas sincronizadas, archive público firmado y la declaración DSA veraz para España siguen abiertas.
 
 Las 78 caras quedan `visualFinal=true` por decisión explícita del propietario. Esto no equivale a clearance mundial. La evidencia oficial permite preparar una allowlist territorial inicial `US`, `GB`, `ES` para reproducciones fieles de la obra histórica fuera de plazo; cualquier otro territorio sigue bloqueado hasta revisión adicional. El reverso, icono, fondos/texturas y la independencia editorial del tutorial de seis cartas requieren evidencia separada en el expediente de derechos. App Review, publicación, selección de territorios, atestaciones y cambios DSA siguen sin autorización en este turno.
 
@@ -164,6 +164,6 @@ La procedencia del arte debe quedar documentada antes de tratar cualquier cara c
 
 ## Siguiente acción automática
 
-Siguiente punto exacto: validar todos los contratos locales de `1.0 (1)`, confirmar el árbol exacto del commit, ejecutar el archive público en macOS solo tras la confirmación roja correspondiente y obtener capturas reales EN/ES de esa misma build. No seleccionar build, completar DSA, aceptar acuerdos, enviar a App Review ni publicar sin autorización expresa de cada acción roja.
+Siguiente punto exacto: recibir el vídeo/capturas de la build `1.0 (1)`, preparar y revisar los sets EN/ES, desplegar las páginas públicas tras autorización y resolver de forma veraz el estado DSA de España. Después, con autorización roja, ejecutar el archive/upload público y verificar el build procesado antes de seleccionar nada. No seleccionar build, completar DSA, aceptar acuerdos, enviar a App Review ni publicar sin autorización expresa de cada acción roja.
 
 No aumentar límites de gasto, añadir métodos de pago, habilitar TestFlight externo, enviar App Review ni publicar sin autorización expresa separada.

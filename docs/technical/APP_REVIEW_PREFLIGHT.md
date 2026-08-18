@@ -20,6 +20,16 @@ Scope: first public iPhone release candidate. This record prepares the submissio
 
 The previous TestFlight `0.8 (1)` is historical internal-only evidence. It is not eligible for the public App Review submission.
 
+MacOS evidence for source commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386`:
+
+- Core, Release package, Swift tests and unsigned iPhone app: run `32172356174`, success.
+- Local-QA unsigned physical-device IPA: run `32172373006`, success.
+- Local-QA artifact: `TarotDeck-1.0-1-ci13-0ed6cca7a31b-Local-QA-unsigned`.
+- IPA SHA-256: `00011a14270f6399643aaa3465f8bc71c13d669a5239eaef8c50d6f5170f5809`.
+- Independently rechecked: ZIP integrity, `1.0 (1)`, iOS 16.0, EN/ES display names, PrivacyInfo, Assets catalog and compiled icons; unsigned/provisional identity confirmed.
+
+This evidence proves source compilation and packaging only. It does not replace the signed public Release archive or App Store Connect processing result.
+
 ## Product and binary facts
 
 - Full 78-card deck, one-card, five three-card methods, one documented six-card method, and saved custom spreads of 1–12 cards.
