@@ -176,7 +176,6 @@ manifest.fetch("products").each do |product_config|
           subscriptionPeriod: group_config.fetch("period"),
           familySharable: false,
           groupLevel: group_config.fetch("groupLevel"),
-          availableInAllTerritories: false,
           reviewNote: "Optional monthly support. All app features remain free; active entitlement only shows supporter status in Settings."
         },
         relationships: { group: { data: { type: "subscriptionGroups", id: group_id } } }
