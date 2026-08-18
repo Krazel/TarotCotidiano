@@ -39,6 +39,7 @@ This evidence proves source compilation and packaging only. It does not replace 
 - `PrivacyInfo.xcprivacy` declares no tracking, no collected data and only the app-owned UserDefaults required-reason API.
 - `ITSAppUsesNonExemptEncryption=NO` is set for Release.
 - The 78 card faces and non-face assets have project provenance. Public distribution is cleared by the project gate only for `US`, `GB` and `ES`; worldwide remains false.
+- The seven monthly support products exist in App Store Connect with EN/ES, `ESP/GBR/USA` and configured prices. All seven currently report `MISSING_METADATA`; they are not submitted or approved and still require a real in-app review screenshot.
 
 ## App Store metadata
 

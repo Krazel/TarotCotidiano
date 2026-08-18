@@ -30,6 +30,16 @@ Estado: candidata pública `1.0 (1)` aprobada para preparación. Swift tests y b
 
 The App Store names remain editable while the record state permits it. Bundle ID, SKU and Apple ID must not be replaced.
 
+## StoreKit production products
+
+- Subscription group: `Tarot Deck Support`; App Store Connect resource `22318147`.
+- Seven `ONE_MONTH` products use the immutable IDs in `store/tarot-subscriptions.v1.json` and one equivalent service level.
+- Base Spain prices: `€0.99`, `€2.99`, `€4.99`, `€9.99`, `€14.99`, `€29.99`, and `€49.99`; Great Britain and United States use Apple's equalized official price points. The app itself displays only `Product.displayPrice`.
+- Availability: `ESP`, `GBR`, `USA`; automatic availability in new territories is off.
+- English (U.S.) and Spanish (Spain) group/product localizations exist.
+- Creation/completion run: `32178955952`. Idempotent verification runs: `32179199039` and `32179410198`; the latter reported zero mutation lines.
+- Current Apple state for every product: `MISSING_METADATA`. This is not approval or review readiness: a real in-app subscription review screenshot and first-version review attachment remain required.
+
 ## Public metadata — English (U.S.)
 
 ### Name
@@ -171,7 +181,7 @@ Before `1.0 (1)` can be selected or submitted:
 2. Record the processed App Store Connect build ID and verify `1.0 (1)` is `VALID`; do not reuse Internal Only `0.8`.
 3. Capture real `1.0 (1)` build screenshots in EN-US and ES-ES for Home/selector, a three-card reading, six/custom, Learn, and Cards/detail/favorites. Concept masters are art direction only.
 4. Complete the truthful DSA trader/non-trader declaration required for Spain; if it is not complete, omit `ES` and do not claim the three-territory release is ready.
-5. Verify all seven monthly products have complete EN/ES localization, availability, live prices, review screenshots and an App Store Connect state eligible to accompany the first app version.
+5. Replace `MISSING_METADATA` for all seven products by adding real in-app review screenshots and any remaining Apple-required first-subscription metadata, then attach them to the authorized first-version review submission.
 6. Recheck Content Rights, age rating, encryption, accessibility claims, private review contact, metadata, screenshots and Review Notes against the processed binary.
 
 No upload, build selection, territory mutation, DSA attestation, agreement acceptance, review submission or publication was performed while preparing this record.
