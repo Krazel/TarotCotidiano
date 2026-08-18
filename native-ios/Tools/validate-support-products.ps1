@@ -144,9 +144,9 @@ foreach ($contract in $workflowContracts) {
 if ($workflow -match '(?i)testflight|xcodebuild|upload-artifact|submit|appReviewSubmission') {
     throw "StoreKit setup workflow must not build, upload, submit, or trigger review."
 }
-if ($configure -cnotmatch [regex]::Escape('(Date.today + 2).iso8601') -or
+if ($configure -match '(?m)^\s*startDate:' -or
     $configure -cnotmatch [regex]::Escape('availableInNewTerritories: false')) {
-    throw "App Store Connect setup must use Apple's future price-start requirement and the fixed territory allowlist."
+    throw "Initial StoreKit prices must omit startDate and keep the fixed territory allowlist."
 }
 
 Write-Host "Validated seven equivalent monthly support products, verified StoreKit entitlements, live prices, disclosures, restoration, and an explicit production-only setup workflow."

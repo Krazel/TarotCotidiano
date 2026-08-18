@@ -2,7 +2,6 @@
 # frozen_string_literal: true
 
 require "base64"
-require "date"
 require "json"
 require "net/http"
 require "openssl"
@@ -283,7 +282,6 @@ manifest.fetch("products").each do |product_config|
       data: {
         type: "subscriptionPrices",
         attributes: {
-          startDate: (Date.today + 2).iso8601,
           preserveCurrentPrice: false
         },
         relationships: {
