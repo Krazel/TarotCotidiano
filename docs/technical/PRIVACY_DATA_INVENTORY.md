@@ -5,13 +5,17 @@ Scope: public source candidate `1.0 (1)`. The last signed evidence remains TestF
 
 ## App Privacy answer
 
-**Data Not Collected / No se recopilan datos** remains accurate for the current source. The app has no account, backend, analytics, advertising, tracking, crash-reporting SDK, StoreKit purchase flow, third-party runtime SDK, or app-initiated network client. It does not transmit readings, custom-spread text, favorites, language choices, device identifiers, contact information, or diagnostics to the developer.
+**Data Not Collected / No se recopilan datos** remains accurate for the developer's App Privacy answer. The app has no account, backend, analytics, advertising, tracking, crash-reporting SDK, third-party runtime SDK, or developer-operated network client. It does not transmit readings, custom-spread text, favorites, language choices, device identifiers, contact information, or diagnostics to the developer.
+
+The optional Support the App flow uses Apple StoreKit. Apple processes the Apple Account, payment method, purchase and subscription management under Apple's terms. The app receives StoreKit product metadata and verified entitlement/transaction status so it can show live prices, complete a purchase, restore support and display active supporter status. The developer does not receive payment-card details, and no tarot content or local reading data is attached to StoreKit requests.
 
 The three Settings destinations open only after a user taps them:
 
 - App Store review page: `https://apps.apple.com/app/id6800144105?action=write-review`;
 - Privacy: `https://krazel.github.io/tarot-deck/privacy/`;
-- Support: `https://krazel.github.io/tarot-deck/support/`.
+- Support: `https://krazel.github.io/tarot-deck/support/`;
+- Apple subscription management: `https://apps.apple.com/account/subscriptions`;
+- Terms: Apple Standard EULA.
 
 The app does not append identifiers or stored content to those URLs. Opening a browser or App Store destination is not app collection, but the destination provider processes the connection under its own terms.
 
@@ -38,6 +42,7 @@ The app-owned Application Support directory is excluded from device backup befor
 - No corresponding `UsageDescription` key.
 - `PrivacyInfo.xcprivacy` declares `NSPrivacyTracking=false`, an empty collected-data array, and only the app-owned UserDefaults required-reason API `CA92.1`.
 - No third-party framework, extension, plug-in or SDK privacy manifest in the target.
+- Apple StoreKit 2 is used only for voluntary monthly support, live product metadata, verified transactions, entitlement refresh and restoration.
 - iOS 16 minimum; no API in this change requires a later OS.
 
 ## Support email outside the app
@@ -56,10 +61,10 @@ Out-of-app support correspondence is separate from the App Store declaration for
 
 ## Synchronization gate
 
-On 2026-08-18 the live Privacy and Support pages both returned HTTP 200. The Privacy page still names only active reading, language and favorites; it must be updated before App Review to cover every local item in this inventory, especially preferred preset/selection, continuity, custom spreads and the recovery draft. The Support page must describe the current one/three/six/custom product, use `Meaning / Significado` rather than the obsolete upright-only label, and remove the tangential generic tarot disclaimer.
+Privacy and Support were republished from Pages commit `90d0752` after this StoreKit change and both returned HTTP 200 on 2026-08-18. Privacy covers every local item in this inventory and distinguishes Apple-managed StoreKit processing from developer collection. Support describes the seven equivalent monthly levels, restoration, Apple-managed cancellation, the fully free app, and the current one/three/six/custom product.
 
 The exact App Store write-review URL returned HTTP 404 on the same date while this app record was not publicly available. Keep the official persistent URL required by the Settings contract, but re-test its destination after the listing becomes public; do not claim a successful live review flow from TestFlight or this source-only audit.
 
 Publishing those page changes is an external action and was not performed here.
 
-Re-run this inventory against the exact signed public RC and whenever StoreKit, ads, analytics, crash reporting, accounts, cloud sync, sharing, permissions, network behavior, support integration, user-entered content, or a third-party SDK changes.
+Re-run this inventory against the exact signed public RC and whenever StoreKit products or benefits, ads, analytics, crash reporting, accounts, cloud sync, sharing, permissions, network behavior, support integration, user-entered content, or a third-party SDK changes.

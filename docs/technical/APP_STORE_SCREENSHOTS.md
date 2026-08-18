@@ -1,7 +1,23 @@
 # App Store screenshots — Tarot Deck 1.0
 
 Updated: 2026-08-18
-Status: shot plan and evidence contract prepared; final captures wait for the real `1.0 (1)` build or a screen recording of that exact build.
+Status: an English candidate set has been extracted from the supplied screen recording; native final captures and the Spanish set remain gated.
+
+## Supplied recording and candidate exports
+
+The private original is preserved outside the public repository under `TarotCotidianoNative-StoreAssets/sources/1.0-1/`.
+
+- source SHA-256: `1b67ee4afd1301587ad19d55762549a7b6997409f32f369c3c314b1f2fe27e3f`;
+- duration: 65.02 seconds;
+- source canvas: `384 × 848` portrait;
+- source condition: WhatsApp-compressed screen recording, English UI;
+- selected evidence: eight lossless raw frames;
+- candidate exports: eight opaque RGB PNGs at the Apple-accepted `1260 × 2736` canvas;
+- evidence manifest: `TarotCotidianoNative-StoreAssets/manifests/app-store-screenshots-1.0.1.json`.
+
+The status/recording bar was removed from the derivatives; the untouched source frames and video remain available for verification. The exports are internally consistent and cover Home, selector, active reading, Meaning, Learn, tutorial detail, Cards and the custom editor. They are candidates, not the final submission set: the source is much smaller than the final canvas, its text has messaging compression, and the video itself does not expose a verifiable `1.0 (1)` build identity.
+
+No Spanish screenshots were synthesized from English frames. A real Spanish session is still required.
 
 ## Can a screen recording be used?
 
@@ -22,7 +38,7 @@ Native screenshots from the device or simulator are preferred because video comp
 
 ## Canonical delivery set
 
-Prepare six portrait screenshots for each localization. Export as opaque PNG or JPEG with no alpha. The canonical 6.9-inch canvas is `1320 × 2868` portrait; if the source device maps better to another currently accepted 6.9-inch size, use one of Apple's accepted exact dimensions consistently for the complete localized set.
+Prepare six to eight portrait screenshots for each localization. Export as opaque PNG or JPEG with no alpha. The current candidate set uses the accepted 6.9-inch canvas `1260 × 2736`; native replacements should keep one accepted exact size consistently for each localized set.
 
 ### English (U.S.)
 

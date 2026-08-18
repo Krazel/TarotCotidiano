@@ -167,12 +167,11 @@ Exact visual presentation remains governed by the registered screen images.
    - VoiceOver, Dynamic Type, sufficient contrast, Reduce Motion compatibility, and 44-point touch targets.
    - Core use works in airplane mode and requests no permission.
 
-7. **Release Settings and planned voluntary support**
+7. **Release Settings and voluntary support**
    - A discreet settings gear in `Read`; no fourth tab.
    - The first Settings control is the persistent internal `English / Español` selector; switching language never resets or mutates a reading.
-   - The public 1.0 Settings surface contains only functional rows: `Rate the App`, `Privacy`, and `Support`.
-   - `Support the App`, `Restore Purchases`, subscription terms and supporter status are deferred until real StoreKit products, prices, legal copy and review approval exist. They must not appear as unavailable or simulated rows in 1.0.
-   - Three provisional monthly levels—`Monthly Supporter`, `Kind Supporter`, and `Generous Supporter`—with equivalent product access and benefits. Exact product identifiers and prices are not defined here.
+   - The public 1.0 Settings surface contains functional rows for `Support the App`, `Rate the App`, `Privacy`, and `Support`.
+   - `Support the App` presents seven monthly levels with equivalent product access and benefits. Exact live prices come from StoreKit; no amount or currency is hard-coded in the app.
    - A clear supporter state and thank-you after a verified entitlement.
    - Before any purchase, the live App Store price and monthly duration, automatic-renewal behavior, how to manage or cancel, restoration, Privacy, and Terms must be visible.
    - Cancellation, failed purchase, unavailable products, or no restored purchase never limits Read, Learn, Cards, or meanings.
@@ -195,9 +194,9 @@ The MVP has one central job—help the user read a physical-style deck—and two
 - Sharing cards or readings.
 - Multiple visual decks, alternate card backs, themes, imports, or downloadable content.
 - Accounts, profiles, login, sync, cloud backup, or cross-device recovery.
-- Required purchase, paywall, locked card, feature entitlement, advertising, or supporter-only content. The only planned commerce is the equivalent monthly voluntary support defined by A-022.
+- Required purchase, paywall, locked card, feature entitlement, advertising, or supporter-only content. The only commerce is the equivalent monthly voluntary support defined by A-022/A-064.
 - One-time tips, consumables, paid deck packs, premium readings, or differing functional benefits between support levels.
-- Network-fetched tarot or learning content, remote content management, analytics, or generative content. Future StoreKit support, restoration, legal links, and App Store rating may use Apple or system services without making core use network-dependent.
+- Network-fetched tarot or learning content, remote content management, analytics, or generative content. StoreKit purchase/restoration, legal links and App Store rating may use Apple or system services without making core use network-dependent.
 - Promotional support prompts in the first-use experience, during a reading, while revealing or inspecting a card, or during another critical task. The MVP keeps support discoverable in Settings instead of interrupting use.
 - Onboarding carousel or mandatory tutorial.
 - Android, iPad, web, Apple Watch, widgets, or languages other than English and Spanish.
@@ -264,7 +263,7 @@ The reading session, favorite card IDs, and explicit app-language choice are the
 
 ### Voluntary support model
 
-- `levelID`: provisional product mapping for `monthlySupporter`, `kindSupporter`, or `generousSupporter`; final App Store product IDs require separate authorization.
+- `levelID`: one of seven immutable product IDs under `com.krazel.tarotdeck.support.monthly.*`, all in one subscription group and at the same service level.
 - `billingPeriod`: monthly auto-renewable for every level.
 - `entitlement`: the same supporter recognition for every level; a higher level expresses greater voluntary support rather than buying more functionality.
 - `status`: unavailable, not supporting, purchase pending, active supporter, restore pending, restore found, restore not found, or recoverable error.
@@ -302,8 +301,8 @@ All 78 faces and the shared back must be coherent, legible at iPhone sizes, and 
 - Core use works in airplane mode and requests no permission.
 - Settings is reachable from Read without creating a fourth tab, and dismissing it preserves the exact reading state.
 - Switching `English / Español` in Settings updates all visible app-owned copy immediately, persists after relaunch, preserves stable IDs and reading state, and never leaves a mixed-language surface.
-- Every planned support level communicates the same access and recognition; no purchase state changes core functionality.
-- If deferred S10 is implemented later, it must disclose monthly auto-renewal and Apple-managed cancellation before purchase and provide restoration and legal destinations; none of that commerce appears in 1.0.
+- Every support level communicates the same access and recognition; no purchase state changes core functionality.
+- S10 discloses monthly auto-renewal and Apple-managed cancellation before purchase and provides restoration, management, Privacy and Terms inside the public 1.0 Settings flow.
 - VoiceOver identifies tabs, reading positions and face states, library position, card identity, artwork description, headings, and actions.
 
 ## Definition of done
@@ -318,15 +317,15 @@ The expanded MVP is release-candidate ready when:
 6. Meaning opened from a reading returns to the exact prior session; Cards browsing never mutates that session.
 7. Functional, content-integrity, persistence, accessibility, orientation, and recovery tests pass on iPhone using macOS/Xcode.
 8. Every visible string and all 78 card references are complete in English and Spanish; the internal selector changes the complete validated language bundle immediately, persists its explicit choice, and preserves all language-neutral IDs and reading state. Core flows work offline, and no account, analytics, notification, or personal-data collection exists.
-9. Settings is accessible from the overlaid Read gear and contains language, Rate the App, Privacy, and Support destinations without adding a fourth tab or interrupting a reading; it contains no unavailable commerce row.
-10. Planned support states prove that free access is unchanged before, during, after, or without a purchase; equivalent levels, thank-you, renewal/cancellation disclosure, and recoverable errors are represented without hard-coded prices.
+9. Settings is accessible from the overlaid Read gear and contains language, Support the App, Rate the App, Privacy, and Support without adding a fourth tab or interrupting a reading.
+10. Support states prove that free access is unchanged before, during, after, or without a purchase; seven equivalent levels, verified entitlement, thank-you, renewal/cancellation disclosure, restoration and recoverable errors are represented without hard-coded prices.
 11. Home selects the preset inline and uses the deck to start it directly. A newly created or reset Reading Table shuffles automatically; the persistent deck deals one card per tap in defined order, every empty position can receive the next card directly, and a small dedicated shuffle control can reshuffle only the undealt pool at any point. Placed cards never change silently. The table ends transactionally through Back, hides the tab bar while active, keeps viewport geometry stable, and implements the approved shuffle, position-placement, and flip sequences with an equivalent Reduce Motion path.
 12. `Meaning` / `Significado` renders as a semantic heading. `In a reading` / `En una tirada` explains how that general meaning can be applied to the question and the card's assigned position.
 13. Final implementation captures have been compared with the registered references at matching sizes.
 
 Commit, push, TestFlight, App Store submission, and publication remain separate actions requiring explicit authorization.
 
-StoreKit product creation, pricing, contracts, tax/banking configuration, live purchase testing, and in-app purchase review are also separate authorized work. They do not block defining or completing `Read`, `Learn`, and `Cards`.
+A-064 authorizes StoreKit product creation and pricing for the seven recorded monthly levels. Contracts, tax/banking changes, live purchase testing with real charges, attaching IAP to a version, in-app purchase review and publication remain separately gated. None can block `Read`, `Learn`, or `Cards`.
 
 ## Preserved work
 

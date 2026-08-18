@@ -135,8 +135,8 @@ On 2026-08-09 the owner approved V-011/V-012 and explicitly authorized subsequen
 | V-023 | Card Detail from library | `design/tarot-deck/card-detail-library-the-moon-a-ceremonial-obsidian.png` | Approved by A-021. |
 | V-024 | Read Home with Settings access | `design/tarot-deck/read-home-empty-settings-a-ceremonial-obsidian.png` | Approved by A-021; supersedes V-013. |
 | V-025 | Settings | `design/tarot-deck/settings-a-ceremonial-obsidian.png` | Approved by A-021. |
-| V-026 | Support the app, not active | `design/tarot-deck/support-the-app-a-ceremonial-obsidian.png` | Approved visually by A-021; prices are illustrative and StoreKit setup remains unauthorized. |
-| V-027 | Support the app, launch-skill copy | `design/tarot-deck/support-the-app-a-ceremonial-obsidian-v2.png` | Approved by A-021; supersedes V-026, while prices remain illustrative and StoreKit setup unauthorized. |
+| V-026 | Support the app, not active | `design/tarot-deck/support-the-app-a-ceremonial-obsidian.png` | Historical; illustrative prices and inactive StoreKit were replaced by V-133/V-134. |
+| V-027 | Support the app, launch-skill copy | `design/tarot-deck/support-the-app-a-ceremonial-obsidian-v2.png` | Historical; replaced by the seven-level live-price V-133/V-134 surface. |
 | V-028 | Read Home, active Three Cards reading | `design/tarot-deck/read-home-active-three-cards-a-ceremonial-obsidian.png` | Approved by A-021. |
 | V-029 | One Card ready, portrait | `design/tarot-deck/reading-table-one-card-ready-to-shuffle-a-ceremonial-obsidian.png` | Approved by A-021. |
 | V-030 | One Card ready, landscape | `design/tarot-deck/reading-table-one-card-ready-to-shuffle-landscape-a-ceremonial-obsidian.png` | Approved by A-021. |
@@ -288,8 +288,8 @@ Approved automatically under A-021 after the owner's direct correction. These ma
 | V-124 | Reading-kind selector; information control higher at upper-left | `design/tarot-deck/read-home-reading-kind-selector-info-upper-left-v5-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `F1956DC881E4E3198B9AA33F26C23769BADE3644E4C650E23DE75BBB2861C2F2` | APPROVED/CURRENT; English companion to V-123. |
 | V-125 | Three-card style selector; information control higher at upper-left | `design/tarot-deck/read-home-three-card-style-selector-info-upper-left-v6-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `044A2E387998DAA784BFB61BBD69561DFBD8013C32068BC2C7331A83B2186323` | APPROVED/CURRENT; replaces V-121 for Spanish selector presentation. |
 | V-126 | Three-card style selector; information control higher at upper-left | `design/tarot-deck/read-home-three-card-style-selector-info-upper-left-v6-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `7D04EA78C99C8CFF7F48DDFA82F0645950263598D6C48DA58F12DEEF8CA762D8` | APPROVED/CURRENT; English companion to V-125. |
-| V-127 | Settings; release-ready minimal destinations | `design/tarot-deck/settings-release-ready-minimal-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `BE96308502FC8E76948643A033A9B793182D9FE75C471842322D8A126DB6DC40` | APPROVED/CURRENT; replaces V-045 for Spanish Settings. No commerce or unavailable rows. |
-| V-128 | Settings; release-ready minimal destinations | `design/tarot-deck/settings-release-ready-minimal-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `F8A1E43F20766530746505E1A832A533F4D3B19A273ED8252E3BA901A21A1931` | APPROVED/CURRENT; English companion to V-127. |
+| V-127 | Settings; release-ready minimal destinations | `design/tarot-deck/settings-release-ready-minimal-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `BE96308502FC8E76948643A033A9B793182D9FE75C471842322D8A126DB6DC40` | APPROVED/REPLACED by V-131 after A-064 activated StoreKit support. |
+| V-128 | Settings; release-ready minimal destinations | `design/tarot-deck/settings-release-ready-minimal-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `F8A1E43F20766530746505E1A832A533F4D3B19A273ED8252E3BA901A21A1931` | APPROVED/REPLACED by V-132 after A-064 activated StoreKit support. |
 
 V-120/V-121 and V-045 remain preserved as historical references. A-061 changes no selector action, selection persistence, information destination or accessibility target. Settings retains language selection and exposes only functional release destinations: Rate the App, Privacy and Support.
 
@@ -303,3 +303,14 @@ Approved automatically under A-021 after the owner's direct correction. The orie
 | V-130 | Reading Table entry; inline orientation instruction | `design/tarot-deck/reading-table-orientation-hint-inline-entry-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `381286F3BCCFC416AF9091424A16280982F7C050C60820E525BA1FC5EE66B223` | APPROVED/CURRENT; English companion to V-129. |
 
 V-110/V-111 remain current for the same portrait table after the transient instruction disappears. V-116/V-117 remain current for landscape and explicitly govern the physical right-side deck. All earlier masters remain preserved.
+
+## A-064 — Seven equivalent monthly supporter levels (2026-08-18)
+
+Approved automatically under A-021 after the owner's direct instruction to implement subscriptions like Voice Recorder. Settings keeps support voluntary and secondary; the Support screen shows seven equivalent monthly StoreKit levels, live localized prices, free-app disclosure, restoration, management, Privacy and Terms. No option is marked as better and no functionality is gated.
+
+| Ref | Screen/state | Path | Canvas | Orientation | Language | SHA-256 | Status |
+|---|---|---|---:|---|---|---|---|
+| V-131 | Settings with active Support the App row | `design/tarot-deck/settings-monthly-support-v2-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `281251C279C6C4D7E0D0F10B88B433E8B7F5C26F41BCF8B1DD29DD0132CAD7C2` | APPROVED/CURRENT; replaces V-127. |
+| V-132 | Settings with active Support the App row | `design/tarot-deck/settings-monthly-support-v2-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `25013A9049221F86F752E56E6047A9EEB5BF504C33F400D478606BCFCC574212` | APPROVED/CURRENT; replaces V-128. |
+| V-133 | Support the App; seven monthly levels, not active | `design/tarot-deck/support-the-app-seven-levels-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | `BE58CB9C7E0BEEA0C87DA61205EAC7284A9E7CBCA86395EA1980010DC6FF29E6` | APPROVED/CURRENT; replaces inactive V-027. |
+| V-134 | Support the App; seven monthly levels, not active | `design/tarot-deck/support-the-app-seven-levels-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | `67B486722A3398631CE7AAC079E5738EF77C5A512DA23DDF62A6A88C29DA3024` | APPROVED/CURRENT; English companion to V-133. |

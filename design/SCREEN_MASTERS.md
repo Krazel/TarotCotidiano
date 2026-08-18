@@ -120,16 +120,18 @@ V-122 remains the current Cards Library master. V-120/V-121 are historical selec
 | M-S01-KIND4-P-EN | `S01.2` four reading kinds; information control higher at upper-left | V-124, A-021/A-061 | `design/tarot-deck/read-home-reading-kind-selector-info-upper-left-v5-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | 2026-08-18 | `F1956DC881E4E3198B9AA33F26C23769BADE3644E4C650E23DE75BBB2861C2F2` |
 | M-S01-STYLE-P-ES | `S01.3` five styles; information control higher at upper-left | V-125, A-021/A-061 | `design/tarot-deck/read-home-three-card-style-selector-info-upper-left-v6-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | 2026-08-18 | `044A2E387998DAA784BFB61BBD69561DFBD8013C32068BC2C7331A83B2186323` |
 | M-S01-STYLE-P-EN | `S01.3` five styles; information control higher at upper-left | V-126, A-021/A-061 | `design/tarot-deck/read-home-three-card-style-selector-info-upper-left-v6-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | 2026-08-18 | `7D04EA78C99C8CFF7F48DDFA82F0645950263598D6C48DA58F12DEEF8CA762D8` |
-| M-S09-SETTINGS-P-ES | `S09.1` release-ready Settings; no commerce or unavailable rows | V-127, A-021/A-061 | `design/tarot-deck/settings-release-ready-minimal-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | 2026-08-18 | `BE96308502FC8E76948643A033A9B793182D9FE75C471842322D8A126DB6DC40` |
-| M-S09-SETTINGS-P-EN | `S09.1` release-ready Settings; no commerce or unavailable rows | V-128, A-021/A-061 | `design/tarot-deck/settings-release-ready-minimal-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | 2026-08-18 | `F8A1E43F20766530746505E1A832A533F4D3B19A273ED8252E3BA901A21A1931` |
+| M-S09-SETTINGS-P-ES | `S09.1` Settings with active voluntary-support destination | V-131, A-021/A-064 | `design/tarot-deck/settings-monthly-support-v2-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | 2026-08-18 | `281251C279C6C4D7E0D0F10B88B433E8B7F5C26F41BCF8B1DD29DD0132CAD7C2` |
+| M-S09-SETTINGS-P-EN | `S09.1` Settings with active voluntary-support destination | V-132, A-021/A-064 | `design/tarot-deck/settings-monthly-support-v2-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | 2026-08-18 | `25013A9049221F86F752E56E6047A9EEB5BF504C33F400D478606BCFCC574212` |
+| M-S10-SUPPORT-P-ES | `S10.1` seven equivalent monthly levels; not supporting | V-133, A-021/A-064 | `design/tarot-deck/support-the-app-seven-levels-v1-spanish-a-ceremonial-obsidian.png` | 853×1844 | Portrait | Spanish | 2026-08-18 | `BE58CB9C7E0BEEA0C87DA61205EAC7284A9E7CBCA86395EA1980010DC6FF29E6` |
+| M-S10-SUPPORT-P-EN | `S10.1` seven equivalent monthly levels; not supporting | V-134, A-021/A-064 | `design/tarot-deck/support-the-app-seven-levels-v1-english-a-ceremonial-obsidian.png` | 853×1844 | Portrait | English | 2026-08-18 | `67B486722A3398631CE7AAC079E5738EF77C5A512DA23DDF62A6A88C29DA3024` |
 
-V-123–V-126 are the current complete selector masters. They replace only the selector presentation governed by V-120/V-121 and preserve the selected-state semantics, reading-kind order and independent information actions. V-127/V-128 replace V-045 for Settings and remove every inactive commerce/internal-build destination while preserving the language selector.
+V-123–V-126 are the current complete selector masters. They replace only the selector presentation governed by V-120/V-121 and preserve the selected-state semantics, reading-kind order and independent information actions. V-131/V-132 replace V-127/V-128 for Settings; V-133/V-134 activate S10 with the seven equivalent StoreKit levels.
 
-## Approved but not active in the current build
+## Historical approved support concept
 
 | Reference | Planned screen / state | Status | Path | Canvas | Orientation | Language | Approval date | SHA-256 |
 |---|---|---|---|---:|---|---|---|---|
-| V-027 | `S10.1 Support the App` — not active | `APPROVED, NOT ACTIVE`; StoreKit products, live prices, contracts and purchase flow remain unauthorized | `design/tarot-deck/support-the-app-a-ceremonial-obsidian-v2.png` | 853×1844 | Portrait | English | 2026-08-09 | `12411E9486B44B619F438669CEA04143EDDBCC0967F85758C0D5277E5ACD6C7A` |
+| V-027 | Historical `S10.1 Support the App` concept | `REPLACED by V-133/V-134`; preserved for history | `design/tarot-deck/support-the-app-a-ceremonial-obsidian-v2.png` | 853×1844 | Portrait | English | 2026-08-09 | `12411E9486B44B619F438669CEA04143EDDBCC0967F85758C0D5277E5ACD6C7A` |
 
 ## A-062 current Reading Table instruction masters
 

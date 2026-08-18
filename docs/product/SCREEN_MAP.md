@@ -40,6 +40,7 @@ App launch
         │       └── Back → end reading and return Home
         │   └── Settings gear
         │       ├── English / Español
+        │       ├── Support the App → seven equivalent monthly levels
         │       ├── Rate the App
         │       ├── Privacy
         │       └── Support
@@ -419,6 +420,7 @@ Entry: the discreet gear in `Read`.
 Required rows:
 
 - **App Language / Idioma de la app** — an internal two-option selector containing only `English` and `Español`.
+- **Support the App / Apoya la app** — opens `S10`, shows verified supporter state and never gates a core feature.
 - **Privacy / Privacidad** — opens the privacy document matching the active app language.
 - **Support / Soporte** — opens the public support destination.
 - **Rate the App** — performs a separate, direct user-initiated App Store rating action.
@@ -432,7 +434,7 @@ Rules:
 - Settings is not a fourth tab and does not become the launch destination.
 - The full deck, Learn, all 78 Cards, and all meanings remain available with no supporter entitlement.
 - There is no advertisement, paywall, locked content, supporter feed, account, login, or purchase-based ranking.
-- `Support the App`, Restore Purchases and subscription terms remain a deferred S10 plan and are absent from the public 1.0 binary until real products and review approval exist.
+- `Support the App` uses real StoreKit products and live localized prices. No unavailable placeholder, hard-coded price or external payment route is permitted.
 - `Rate the App` is not inside Support, is not rewarded, and is never required after a purchase or restore.
 - The MVP does not show an unsolicited support prompt. Any later low-frequency reminder would require `Not Now` and `Don't Ask Again`, and could never appear on first use, during a reading, while revealing or inspecting a card, or during another critical task.
 - Dismissal returns to the exact prior `Read` state.
@@ -453,7 +455,7 @@ The final legal destinations and wording are release inputs. Creating or accepti
 - Shows no custom star gate, sentiment survey, reward, purchase prompt, or review requirement.
 - Cancellation or system unavailability returns quietly to Settings and does not affect supporter or reading state.
 
-## S10 — Support the App (deferred after 1.0)
+## S10 — Support the App
 
 ### Goal
 
@@ -464,16 +466,12 @@ Let a user voluntarily support continued development while making it unmistakabl
 Title: **Support the App**
 Intro: **Tarot Deck is free for everyone. If you enjoy it, you can support its continued development.**
 
-Planned monthly levels:
-
-- **Monthly Supporter**
-- **Kind Supporter**
-- **Generous Supporter**
+The screen presents exactly seven monthly levels from the single `Tarot Deck Support` subscription group. All seven grant the same supporter recognition. Their immutable product IDs are recorded in `store/tarot-subscriptions.v1.json`; visible prices and currencies always come from StoreKit.
 
 Each level:
 
 - is monthly and auto-renewable;
-- displays its live localized App Store price and billing period from StoreKit after separate product configuration;
+  - displays its live localized App Store price and monthly billing period from StoreKit;
 - grants the same access, supporter status, thank-you, and at most minor visual acknowledgement;
 - differs only in the amount the user voluntarily contributes;
 - has a clear purchase action with no preselected level.
@@ -515,7 +513,7 @@ Restore is available from both Settings and Support. It does not require an acco
 - Read, Learn, Cards, all meanings, active readings, Privacy, Terms, and Rate the App remain usable.
 - No fallback payment link, manual transfer, external checkout, or invented price appears.
 
-Creating product identifiers, choosing prices, accepting paid-app agreements, configuring tax or banking, uploading a build, testing live commerce, and submitting products for review are separate unauthorized actions. Their absence does not block implementation or verification of `Read`, `Learn`, and `Cards`.
+The proprietor authorized creation and configuration of the seven production products under A-064. Accepting agreements, changing tax or banking, uploading a build, enabling external testing, and submitting the app or subscriptions for review remain separate actions.
 
 ## Persistence and privacy matrix
 
@@ -561,7 +559,7 @@ Both English and Spanish reference-content key sets must equal the identity-mani
 - A revealed reading card announces position, identity, and available meaning action.
 - Library items announce card name and position in the current filter.
 - Card detail exposes title, the semantic `Meaning` / `Significado` heading, keywords, meaning, reading note, and artwork description in a logical order; the heading has no button trait.
-- The Settings gear has the label **Settings** rather than relying on its symbol; each 1.0 Settings row exposes its purpose without implying unavailable commerce.
+- The Settings gear has the label **Settings** rather than relying on its symbol; each row exposes its purpose and the Support row announces verified supporter state without implying locked functionality.
 - The language selector announces its group label, both options, and selected state; a switch announces completion in the newly active language without moving focus unexpectedly.
 - Support level controls announce name, live price, monthly period, selected state, and equivalent-access explanation. Purchase and restore status changes are announced without trapping focus.
 - Decorative texture and ornament are hidden from VoiceOver.
@@ -639,7 +637,7 @@ Result: 78 identities map one-to-one to complete English and Spanish upright ref
 
 ### I. Inspect support without losing a reading
 
-Deferred post-1.0: `Three Cards active` → Settings gear → `Support the App` → compare the three monthly levels → `Back` → dismiss Settings
+`Three Cards active` → Settings gear → `Support the App` → compare the seven monthly levels → `Back` → dismiss Settings
 
 Result: all levels communicate equivalent access, no level is preselected, no purchase is required, and the exact reading returns unchanged.
 
@@ -702,7 +700,7 @@ Additional registered references under A-021:
 14. `S07 Cards Library / All with discoverable horizontal filters` — V-122, replacing V-022.
 15. `S08 Card Detail from Library / previous-next` — V-023.
 16. `S09 Settings` — V-127 Spanish and V-128 English, replacing V-045 with release-ready language, rating, privacy and support rows.
-17. `S10 Support the App / not active` — V-027 remains a deferred historical plan; it is not part of the 1.0 Settings surface or binary.
+17. `S10 Support the App / not active and active` — V-133/V-134 govern the seven-level support screen; V-027 remains historical.
 18. `S01.2 Read / Deck Home / active Three Cards reading` — V-028, historical and superseded by direct table restoration under A-033.
 19. `S03.1 One Card / ready to shuffle` — V-029 portrait and V-030 landscape, historical after A-059's automatic opening shuffle.
 20. `S03.2 One Card / shuffled` — V-031 portrait and V-032 landscape.
@@ -720,7 +718,7 @@ Additional registered references under A-021:
 32. `S03 active reading / contextual tutorial`, portrait Spanish — V-088.
 33. `S03 Reading Table / repeatable physical shuffle motion V3` — V-089, historical and superseded by V-100.
 
-Still requiring a complete reference before any future implementation: the deferred `S10` supporter/restore/purchase variants and custom confirmations if they depart from standard native iOS confirmation patterns. Standard native iOS confirmations may implement approved copy without a custom composition. StoreKit product creation and live prices remain separately unauthorized and do not block the free 1.0 release.
+Still requiring a complete reference before any future implementation: custom confirmation compositions if they depart from standard native iOS presentation. V-131–V-134 now cover Settings and the seven-level Support surface; StoreKit system purchase sheets, pending states and errors remain native Apple or standard alert presentation and do not need invented custom compositions.
 
 A shared card-reference component may serve S04 and S08 only after both navigation contexts are represented and registered. Portrait and landscape require separate references whenever the composition changes materially. A-021 removes the need to pause for routine approval but does not remove image creation, registration, fidelity review, or accessibility adaptation.
 
@@ -728,7 +726,7 @@ A shared card-reference component may serve S04 and S08 only after both navigati
 
 The expanded MVP core is complete when the journeys above for Read, Learn, and Cards pass on iPhone, all required visual references are registered before their corresponding final UI, Home/tutorial interaction conforms to V-080–V-102, Table interaction conforms to new A-059 portrait/landscape references, the 78 identity and 78 meaning key sets match exactly, the full internal `English / Español` switch is atomic and persistent, all artwork distribution rights are resolved, the foundation lessons and eight reading tutorials are bundled with exact bilingual parity, and macOS/Xcode verifies build, tests, orientation, VoiceOver, Dynamic Type, Reduce Motion, recovery, and offline behavior.
 
-Settings is complete for the free 1.0 release when language switching is atomic and Rate the App, Privacy and Support are functional, accessible and bilingual, with no inactive commerce rows. S10 remains a future, separately gated StoreKit feature; products, prices, contracts, tax/banking setup and purchase review require separate authority and do not block 1.0.
+Settings is complete for the free 1.0 release when language switching is atomic and Support the App, Rate the App, Privacy and Support are functional, accessible and bilingual. S10 loads exactly seven live monthly products, verifies transactions, restores purchases and links Apple management, Privacy and Terms while leaving every feature free. Product review, agreements and tax/banking remain separate App Store Connect gates.
 
 Publishing remains separately unauthorized.
 

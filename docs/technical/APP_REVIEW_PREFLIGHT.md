@@ -35,7 +35,7 @@ This evidence proves source compilation and packaging only. It does not replace 
 - Full 78-card deck, one-card, five three-card methods, one documented six-card method, and saved custom spreads of 1–12 cards.
 - Read, Learn, Cards, Favorites and Settings are available without account, payment or network access.
 - English and Spanish content are bundled and selected inside Settings.
-- No ads, analytics, tracking, third-party runtime SDK, account, cloud sync, StoreKit purchase, subscription or protected-data permission.
+- No ads, analytics, tracking, third-party runtime SDK, account, cloud sync or protected-data permission. StoreKit 2 is used only for seven equivalent optional monthly supporter subscriptions.
 - `PrivacyInfo.xcprivacy` declares no tracking, no collected data and only the app-owned UserDefaults required-reason API.
 - `ITSAppUsesNonExemptEncryption=NO` is set for Release.
 - The 78 card faces and non-face assets have project provenance. Public distribution is cleared by the project gate only for `US`, `GB` and `ES`; worldwide remains false.
@@ -85,9 +85,10 @@ To review the main flow:
 4. Open the information control on a reading to visit its tutorial and return to the unchanged reading.
 5. Open Learn to browse the foundations and eight reading tutorials.
 6. Open Cards to browse all 78 cards, filter the deck and save favorites.
-7. Open Settings to change language or open Rate the App, Privacy and Support.
+7. Open Settings to change language or open Support the App, Rate the App, Privacy and Support.
+8. Open Support the App to inspect seven live monthly prices, the free-app disclosure, restoration, subscription management, Privacy and Terms.
 
-Custom spread names, optional position labels, readings, favorites and language choice remain only on the device. The app has no purchases, subscriptions, ads, analytics, tracking, third-party SDKs, protected-data permissions, accounts or cloud sync.
+Custom spread names, optional position labels, readings, favorites and language choice remain only on the device. Optional monthly support is processed by Apple through StoreKit; every level provides the same supporter status and unlocks no functionality. The app has no ads, analytics, tracking, third-party SDKs, protected-data permissions, accounts or cloud sync.
 
 Privacy is available from Settings and at https://krazel.github.io/tarot-deck/privacy/.
 ```
@@ -98,15 +99,11 @@ The App Review contact is private App Store Connect data. Verify it there and ne
 
 Screenshots must come from the real processed `1.0 (1)` build. Approved design masters guide art direction but are not submitted as runtime evidence. The bilingual shot list, accepted canvas sizes and provenance requirements are in `APP_STORE_SCREENSHOTS.md`.
 
+An English eight-image candidate set now exists from the supplied WhatsApp recording, with the original video, raw frames, exact timestamps, transformation notes and SHA-256 hashes preserved in the private `TarotCotidianoNative-StoreAssets` directory. Every export is an opaque RGB `1260 × 2736` PNG. This closes composition and ordering, but not the final submission gate: the source is only `384 × 848`, is visibly compressed, does not prove the exact processed build identity, and contains no Spanish UI. Replace it with native full-resolution captures from the processed `1.0 (1)` build and produce the equivalent real Spanish set before upload.
+
 ## Public-page gate
 
-The prepared local Privacy and Support pages are newer than the live pages. Before selecting the build:
-
-1. deploy the prepared page source;
-2. verify both URLs return HTTP 200 without redirects to an unrelated destination;
-3. verify Privacy lists every local state in `PRIVACY_DATA_INVENTORY.md`;
-4. verify Support describes one/three/six/custom readings and uses `Meaning / Significado`;
-5. verify the public support alias works without exposing unnecessary personal details.
+Privacy and Support were published from Pages commit `90d0752` and both returned HTTP 200 on 2026-08-18. Privacy lists every local state in `PRIVACY_DATA_INVENTORY.md` and the Apple-managed StoreKit boundary. Support describes one/three/six/custom readings, the seven equivalent monthly levels, restoration and Apple-managed cancellation. Recheck both URLs and the public support alias immediately before selecting the final build.
 
 ## DSA gate for Spain
 
@@ -136,6 +133,7 @@ These remain intentionally undone until the proprietor explicitly authorizes eac
 - select storefronts and the processed build;
 - save final age rating, App Privacy and accessibility claims;
 - upload final screenshots;
+- attach the seven subscriptions to the app version and add them for review;
 - accept any agreement;
 - click **Add for Review** or **Submit for Review**;
 - release the approved app.

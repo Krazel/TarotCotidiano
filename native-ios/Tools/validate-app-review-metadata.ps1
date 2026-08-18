@@ -49,6 +49,8 @@ $requiredRecord = @(
     'https://krazel.github.io/tarot-deck/privacy/',
     'https://krazel.github.io/tarot-deck/support/',
     'Data Not Collected / No se recopilan datos',
+    'Seven equivalent monthly supporter subscriptions',
+    'Optional monthly support is processed by Apple through StoreKit',
     'solo `US`, `GB` y `ES`',
     'Marketing URL | Vacío',
     'Promotional Text and Marketing URL remain empty'
@@ -78,7 +80,7 @@ foreach ($contract in @('buildVersion = ''1.0''', 'buildNumber = ''1''', 'source
     }
 }
 
-foreach ($contract in @('Data Not Collected / No se recopilan datos', 'Saved custom spreads', 'Custom-spread recovery draft', 'No third-party framework')) {
+foreach ($contract in @('Data Not Collected / No se recopilan datos', 'Saved custom spreads', 'Custom-spread recovery draft', 'No third-party framework', 'Apple StoreKit 2 is used only for voluntary monthly support')) {
     if (-not $privacy.Contains($contract)) {
         throw "Privacy inventory is missing: $contract"
     }
@@ -103,4 +105,4 @@ foreach ($contract in $forbidden) {
     }
 }
 
-Write-Host 'Validated App Review metadata package: 1.0 (1), EN-US/ES-ES limits, Data Not Collected, US/GB/ES rights boundary, review notes, screenshot evidence plan, and no inactive commerce or automatic release.'
+Write-Host 'Validated App Review metadata package: 1.0 (1), EN-US/ES-ES limits, seven equivalent StoreKit support levels, Data Not Collected, US/GB/ES rights boundary, review notes, screenshot evidence plan, and no automatic release.'

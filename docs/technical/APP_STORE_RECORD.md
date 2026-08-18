@@ -25,7 +25,7 @@ Estado: candidata pública `1.0 (1)` aprobada para preparación. Swift tests y b
 | First public train | `1.0`; source RC prepared, no build selected |
 | Latest delivered TestFlight | `0.8 (1)`, `VALID`, `INTERNAL_ONLY`, group `Testers` |
 | Login | None |
-| IAP / subscriptions | None in this release |
+| IAP / subscriptions | Seven equivalent monthly supporter subscriptions; live prices; no gated functionality |
 | Advertising / analytics / tracking | None |
 
 The App Store names remain editable while the record state permits it. Bundle ID, SKU and Apple ID must not be replaced.
@@ -106,20 +106,21 @@ El texto promocional y la URL de marketing permanecen vacíos.
 
 | Uso | URL / comportamiento | Estado local |
 |---|---|---|
-| Privacy Policy | `https://krazel.github.io/tarot-deck/privacy/` | Respondió HTTP 200 el 2026-08-18. Las tres copias locales ya incluyen todos los estados guardados; el sitio público sigue pendiente de desplegar y revalidar. |
-| Support | `https://krazel.github.io/tarot-deck/support/` | Respondió HTTP 200 el 2026-08-18. Las tres copias locales ya reflejan 1/3/6/custom y eliminan `upright/al derecho` y la tangente editorial; falta desplegar. |
+| Privacy Policy | `https://krazel.github.io/tarot-deck/privacy/` | Publicada desde commit `90d0752`; HTTP 200 verificado el 2026-08-18; incluye datos locales y tratamiento StoreKit. |
+| Support | `https://krazel.github.io/tarot-deck/support/` | Publicada desde commit `90d0752`; HTTP 200 verificado el 2026-08-18; incluye siete niveles equivalentes, restauración y gestión/cancelación de Apple. |
 | Rate the App | `https://apps.apple.com/app/id6800144105?action=write-review` | La fila usa el enlace oficial persistente y no un prompt directo. El destino devolvió 404 el 2026-08-18 mientras la ficha no es pública; revalidarlo cuando la app esté disponible. |
 | Marketing URL | Vacío | Opcional y no necesario. |
-| Terms / EULA | Apple Standard EULA | No hay suscripciones ni una pantalla de términos en la app. |
+| Terms / EULA | Apple Standard EULA | Linked directly before purchase and from Support the App. |
 
 ## App Privacy y datos
 
-`Data Not Collected / No se recopilan datos` continúa siendo la respuesta exacta para la app:
+`Data Not Collected / No se recopilan datos` continúa siendo la respuesta exacta para los datos recogidos por el desarrollador:
 
 - no cuenta, backend, red propia, analítica, anuncios, tracking ni SDK de terceros;
 - no permisos protegidos;
 - idioma, selección de tirada, sesión, continuidad, favoritos, tiradas personalizadas y borrador se guardan solo en el dispositivo;
-- tocar Privacy, Support o Rate abre una URL por decisión del usuario; la app no adjunta ni transmite datos.
+- StoreKit transmite a Apple únicamente las solicitudes necesarias para cargar productos, comprar, verificar y restaurar; el desarrollador no recibe datos de tarjeta ni contenido de tarot;
+- tocar Privacy, Support, Terms, Manage Subscription o Rate abre un destino por decisión del usuario; la app no adjunta ni transmite datos propios.
 
 La política pública debe enumerar todos los datos locales anteriores. Evidencia: `docs/technical/PRIVACY_DATA_INVENTORY.md` y `PrivacyInfo.xcprivacy`.
 
@@ -139,7 +140,7 @@ Evidence: `docs/technical/CONTENT_RIGHTS_AUDIT.md`, `native-ios/Content/provenan
 - Encryption: `ITSAppUsesNonExemptEncryption=NO`; verify in the signed archive.
 - Accessibility: only claim features manually proven on the RC. Dark Interface is the current conservative draft.
 - Copyright and App Review contact: required private values stay in App Store Connect and are not copied to this public repository.
-- Supporter subscriptions: absent. Do not show support purchases, Restore Purchases, product IDs or subscription copy in `1.0` unless a separately authorized complete StoreKit flow exists.
+- Supporter subscriptions: seven monthly products in one service-equivalent group. The app remains fully free; every level grants only verified supporter status and a thank-you. Products must be configured, localized and priced in App Store Connect, then included with the first build submitted for review.
 
 ## Review Notes — prepared English draft
 
@@ -152,9 +153,10 @@ To review the main flow:
 3. Tap a revealed card to open its Meaning and In a Reading reference.
 4. Open Learn to browse eight reading tutorials.
 5. Open Cards to browse all 78 cards and save favorites.
-6. Open Settings for language, Rate the App, Privacy, and Support.
+6. Open Settings for language, Support the App, Rate the App, Privacy, and Support.
+7. In Support the App, verify seven monthly choices with live prices, the free-app disclosure, Restore Purchases, Manage Subscription, Privacy, and Terms.
 
-Custom spread names, optional position labels, readings, favorites, and language choice remain only on the device. The app has no purchases, subscriptions, ads, analytics, tracking, third-party SDKs, protected-data permissions, accounts, or cloud sync.
+Custom spread names, optional position labels, readings, favorites, and language choice remain only on the device. Optional monthly support is processed by Apple through StoreKit; all levels provide the same supporter status and unlock no functionality. The app has no ads, analytics, tracking, third-party SDKs, protected-data permissions, accounts, or cloud sync.
 
 Privacy is available from Settings and at https://krazel.github.io/tarot-deck/privacy/.
 ```
@@ -168,8 +170,8 @@ Before `1.0 (1)` can be selected or submitted:
 1. Run the public RC workflow on macOS after the separate red upload authorization: Release archive, distribution signature, privacy manifest, localization and `US/GB/ES` ReleaseGate must all pass. Core and unsigned iPhone QA already passed for commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386` in runs `32172356174` and `32172373006`.
 2. Record the processed App Store Connect build ID and verify `1.0 (1)` is `VALID`; do not reuse Internal Only `0.8`.
 3. Capture real `1.0 (1)` build screenshots in EN-US and ES-ES for Home/selector, a three-card reading, six/custom, Learn, and Cards/detail/favorites. Concept masters are art direction only.
-4. Deploy and revalidate the prepared Privacy and Support pages, then make the App Privacy answers match this exact RC.
-5. Complete the truthful DSA trader/non-trader declaration required for Spain; if it is not complete, omit `ES` and do not claim the three-territory release is ready.
+4. Complete the truthful DSA trader/non-trader declaration required for Spain; if it is not complete, omit `ES` and do not claim the three-territory release is ready.
+5. Verify all seven monthly products have complete EN/ES localization, availability, live prices, review screenshots and an App Store Connect state eligible to accompany the first app version.
 6. Recheck Content Rights, age rating, encryption, accessibility claims, private review contact, metadata, screenshots and Review Notes against the processed binary.
 
 No upload, build selection, territory mutation, DSA attestation, agreement acceptance, review submission or publication was performed while preparing this record.

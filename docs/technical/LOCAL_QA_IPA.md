@@ -86,7 +86,7 @@ Use the same Apple ID and unchanged bundle identifier when refreshing an existin
 - The CI artifact is unsigned and cannot install without user-side signing.
 - The build uses a provisional internal bundle identifier and is not a production identity.
 - The 78 historical card faces are the owner-approved final visual set and integrity-verified. Their rights evidence is limited to US/GB/ES storefront preparation and does not approve worldwide distribution.
-- The build has no StoreKit purchase or restoration flow. Its Settings screen uses the public App Store write-review link plus the canonical Privacy and Support destinations; verify those user-initiated links separately because sideloading does not reproduce App Store distribution behavior.
+- The current source includes StoreKit purchase and restoration, but an unsigned sideloaded Local-QA build cannot prove production product loading, purchase or entitlement behavior. Verify those only in an authorized StoreKit sandbox/TestFlight/App Store context; public Privacy/Support/Terms and rating destinations remain separately user initiated.
 - GitHub stores the artifact only for a short QA window. Repository access controls govern who can download it.
 - Sideloading and Apple authentication happen outside this repository. Do not paste Apple credentials into GitHub, logs, issues or this documentation.
 - The workflow performs no archive, export, notarization, TestFlight upload, App Store submission, release creation or external network upload beyond GitHub Actions artifact storage. Because the repository is public under A-026, treat the artifact and its territory-limited artwork as publicly exposed even though the IPA remains unsigned and marked `INTERNAL ONLY`.

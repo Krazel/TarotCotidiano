@@ -6,6 +6,7 @@ struct ReadRootView: View {
     @ObservedObject var model: ReadFlowModel
     let content: TarotContent
     @ObservedObject var languageStore: AppLanguageStore
+    @ObservedObject var supporterStore: SupporterStore
     let inspectRevealedCard: (String) -> Void
     let openReadingTutorial: (String?, Bool) -> Void
     @State private var showsSettings = false
@@ -71,7 +72,10 @@ struct ReadRootView: View {
         }
         .sheet(isPresented: $showsSettings) {
             NavigationStack {
-                SettingsView(languageStore: languageStore)
+                SettingsView(
+                    languageStore: languageStore,
+                    supporterStore: supporterStore
+                )
             }
             .presentationDragIndicator(.visible)
         }

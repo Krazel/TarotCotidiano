@@ -28,6 +28,7 @@
 		A50000000000000000000001 /* AppLocalization.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000001 /* AppLocalization.swift */; };
 		A60000000000000000000001 /* CeremonialMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = B60000000000000000000001 /* CeremonialMotion.swift */; };
 		A70000000000000000000001 /* FavoriteCardsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70000000000000000000001 /* FavoriteCardsStore.swift */; };
+		A80000000000000000000001 /* SupporterStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B80000000000000000000001 /* SupporterStore.swift */; };
 		A50000000000000000000002 /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000002 /* Localizable.xcstrings */; };
 		A50000000000000000000003 /* card-copy.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000003 /* card-copy.es.v1.json */; };
 		A50000000000000000000004 /* card-meanings.es.v1.json in Resources */ = {isa = PBXBuildFile; fileRef = B50000000000000000000004 /* card-meanings.es.v1.json */; };
@@ -46,6 +47,7 @@
 		B60000000000000000000001 /* CeremonialMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CeremonialMotion.swift; sourceTree = "<group>"; };
 		B10000000000000000000006 /* ReadFlowModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadFlowModel.swift; sourceTree = "<group>"; };
 		B70000000000000000000001 /* FavoriteCardsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteCardsStore.swift; sourceTree = "<group>"; };
+		B80000000000000000000001 /* SupporterStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupporterStore.swift; sourceTree = "<group>"; };
 		B10000000000000000000007 /* ReadingTableShuffledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTableShuffledView.swift; sourceTree = "<group>"; };
 		B10000000000000000000008 /* ReadingTableFirstDrawnFaceDownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingTableFirstDrawnFaceDownView.swift; sourceTree = "<group>"; };
 		B10000000000000000000009 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 			children = (
 				B10000000000000000000006 /* ReadFlowModel.swift */,
 				B70000000000000000000001 /* FavoriteCardsStore.swift */,
+				B80000000000000000000001 /* SupporterStore.swift */,
 			);
 			path = Internal;
 			sourceTree = "<group>";
@@ -375,6 +378,7 @@
 				A50000000000000000000001 /* AppLocalization.swift in Sources */,
 				A60000000000000000000001 /* CeremonialMotion.swift in Sources */,
 				A70000000000000000000001 /* FavoriteCardsStore.swift in Sources */,
+				A80000000000000000000001 /* SupporterStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -14,6 +14,7 @@ struct TarotDeckInternalApp: App {
     @StateObject private var languageStore: AppLanguageStore
     @StateObject private var readModel: ReadFlowModel
     @StateObject private var favoriteStore: FavoriteCardsStore
+    @StateObject private var supporterStore: SupporterStore
 
     init() {
         let languageStore = AppLanguageStore()
@@ -63,6 +64,7 @@ struct TarotDeckInternalApp: App {
             )
         )
         _languageStore = StateObject(wrappedValue: languageStore)
+        _supporterStore = StateObject(wrappedValue: SupporterStore())
     }
 
     /// Creates and verifies the one app-owned persistence directory before any store is built.
@@ -119,6 +121,7 @@ struct TarotDeckInternalApp: App {
                             model: readModel,
                             content: content,
                             languageStore: languageStore,
+                            supporterStore: supporterStore,
                             inspectRevealedCard: inspectRevealedCard,
                             openReadingTutorial: openReadingTutorial
                         )

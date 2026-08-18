@@ -1,0 +1,72 @@
+name: Tarot StoreKit setup
+
+on:
+  workflow_dispatch:
+    inputs:
+      production_change_confirmation:
+        description: Type CREATE_TAROT_MONTHLY_SUPPORT_PRODUCTS to create or verify the seven production subscription products
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tarot-storekit-setup
+  cancel-in-progress: false
+
+jobs:
+  configure-products:
+    name: Configure seven equivalent monthly support products
+    if: ${{ github.ref == 'refs/heads/main' && inputs.production_change_confirmation == 'CREATE_TAROT_MONTHLY_SUPPORT_PRODUCTS' }}
+    runs-on: macos-latest
+    timeout-minutes: 25
+    environment: app-store-production
+
+    steps:
+      - name: Check out repository without retained credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Validate manifest and StoreKit source contract
+        shell: pwsh
+        run: ./native-ios/Tools/validate-support-products.ps1
+
+      - name: Prepare protected App Store Connect key
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        run: |
+          set -euo pipefail
+          set +x
+          : "${APP_STORE_CONNECT_API_KEY_ID:?missing protected API key id}"
+          : "${APP_STORE_CONNECT_ISSUER_ID:?missing protected issuer id}"
+          : "${APP_STORE_CONNECT_API_KEY_BASE64:?missing protected API key}"
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          test -s "$KEY_PATH"
+
+      - name: Create or verify subscriptions, localizations, territories and prices
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+        run: |
+          set -euo pipefail
+          set +x
+          export APP_STORE_CONNECT_API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          ruby native-ios/Tools/configure-support-products.rb store/tarot-subscriptions.v1.json
+
+      - name: Remove temporary App Store Connect key
+        if: ${{ always() }}
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+        run: |
+          set +x
+          rm -f "$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"

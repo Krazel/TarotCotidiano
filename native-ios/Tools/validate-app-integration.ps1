@@ -219,7 +219,8 @@ $requiredSources = @(
     "SettingsView.swift",
     "AppLocalization.swift",
     "CeremonialMotion.swift",
-    "FavoriteCardsStore.swift"
+    "FavoriteCardsStore.swift",
+    "SupporterStore.swift"
 )
 $requiredResources = @(
     "Assets.xcassets in Resources",
@@ -450,8 +451,9 @@ $sourceText = Get-ChildItem -LiteralPath $appRoot -Recurse -File -Filter *.swift
     Get-Content -Raw
 $allAppSource = $sourceText -join "`n"
 $settingsSourceForDestinationBoundary = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
-$nonSettingsAppSource = $allAppSource.Replace($settingsSourceForDestinationBoundary, "")
-$forbidden = @("StoreKit", "Zodiac", "Android")
+$supporterSourceForDestinationBoundary = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/SupporterStore.swift")
+$nonSettingsAppSource = $allAppSource.Replace($settingsSourceForDestinationBoundary, "").Replace($supporterSourceForDestinationBoundary, "")
+$forbidden = @("Zodiac", "Android")
 foreach ($term in $forbidden) {
     if ($allAppSource -match [regex]::Escape($term)) {
         throw "Out-of-scope app source term found: $term"
@@ -1619,16 +1621,26 @@ foreach ($key in $requiredFavoriteCatalogKeys) {
 }
 $settingsSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
 $requiredSettingsCopy = @(
+    "Support the App",
+    "Supporter active",
+    "Not active",
     "Rate the App",
     "Privacy",
     "Support",
     '@Environment(\.openURL)',
     'https://apps.apple.com/app/id6800144105?action=write-review',
-    'https://krazel.github.io/tarot-deck/privacy/',
     'https://krazel.github.io/tarot-deck/support/',
     "Opens the App Store review page",
     "Opens the privacy policy in your browser",
     "Opens the support page in your browser",
+    "Every level offers the same supporter status.",
+    "product.displayPrice",
+    "per month",
+    "auto-renewable subscription",
+    "Restore Purchases",
+    "Manage Subscription",
+    "Terms",
+    "The full app stays free",
     'fallbackVersion = "1.0"'
 )
 foreach ($copy in $requiredSettingsCopy) {
@@ -1636,11 +1648,10 @@ foreach ($copy in $requiredSettingsCopy) {
         throw "Required Settings contract is missing: $copy"
     }
 }
-if ($settingsSource -match '\b(StoreKit|Product\.products|purchase\s*\(|Transaction\.|AppStore\.|requestReview)\b' -or
-    $settingsSource -match 'Support the App|Restore Purchases|Terms|Unavailable|internal build' -or
-    [regex]::Matches($settingsSource, 'https?://').Count -ne 3 -or
+if ($settingsSource -match '\b(requestReview)\b' -or
+    $settingsSource -match '(?i)donation|donate|premium|best value|free trial|remove ads|internal build' -or
     [regex]::Matches($settingsSource, [regex]::Escape('https://apps.apple.com/app/id6800144105?action=write-review')).Count -ne 1) {
-    throw "Settings must contain only the approved public rating, privacy, and support destinations without IAP or internal-build copy."
+    throw "Settings must contain the approved voluntary-support UI without pressure, invented benefits, internal copy, or a nonpersistent rating action."
 }
 if ($settingsSource -match '(?s)Button[^\{]*\{\s*\}' -or
     $settingsSource -match '(?s)Button\([^\)]*\)\s*\{\s*\}') {
@@ -1653,6 +1664,44 @@ if ($readSource -cnotmatch [regex]::Escape('openSettings: { showsSettings = true
 }
 if ($settingsSource -match '\bReadFlowModel\b') {
     throw "Settings must not own or mutate the active reading model."
+}
+$supporterSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/SupporterStore.swift")
+$requiredSupporterContracts = @(
+    "import StoreKit",
+    "com.krazel.tarotdeck.support.monthly.099",
+    "com.krazel.tarotdeck.support.monthly.299",
+    "com.krazel.tarotdeck.support.monthly.499",
+    "com.krazel.tarotdeck.support.monthly.999",
+    "com.krazel.tarotdeck.support.monthly.1499",
+    "com.krazel.tarotdeck.support.monthly.2999",
+    "com.krazel.tarotdeck.support.monthly.50",
+    "Product.products",
+    "product.purchase()",
+    "Transaction.currentEntitlements",
+    "Transaction.updates",
+    "AppStore.sync()",
+    "await transaction.finish()",
+    "revocationDate == nil"
+)
+foreach ($contract in $requiredSupporterContracts) {
+    if ($supporterSource -cnotmatch [regex]::Escape($contract)) {
+        throw "Verified StoreKit supporter contract is missing: $contract"
+    }
+}
+foreach ($url in @(
+    'https://krazel.github.io/tarot-deck/privacy/',
+    'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/',
+    'https://apps.apple.com/account/subscriptions'
+)) {
+    if ($supporterSource -cnotmatch [regex]::Escape($url)) {
+        throw "SupporterStore destination is missing: $url"
+    }
+}
+if ($appSource -cnotmatch [regex]::Escape('@StateObject private var supporterStore: SupporterStore') -or
+    $appSource -cnotmatch [regex]::Escape('_supporterStore = StateObject(wrappedValue: SupporterStore())') -or
+    $readSource -cnotmatch [regex]::Escape('@ObservedObject var supporterStore: SupporterStore') -or
+    $readSource -cnotmatch [regex]::Escape('supporterStore: supporterStore')) {
+    throw "One app-owned SupporterStore must be injected into Settings without touching ReadFlowModel."
 }
 $learnSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Learn/LearnViews.swift")
 if ($learnSource -match '\.font\(\.system\(size:\s*52\b' -or

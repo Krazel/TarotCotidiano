@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "appAppleID": "6800144105",
+  "bundleID": "com.krazel.tarotdeck",
+  "subscriptionGroup": {
+    "referenceName": "Tarot Deck Support",
+    "period": "ONE_MONTH",
+    "groupLevel": 1,
+    "localizations": {
+      "en-US": "Tarot Deck Support",
+      "es-ES": "Apoyo a Tarot Deck"
+    }
+  },
+  "territories": ["ESP", "GBR", "USA"],
+  "availableInNewTerritories": false,
+  "products": [
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.099",
+      "referenceName": "Tarot Deck Support Monthly 0.99",
+      "priceEUR": "0.99"
+    },
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.299",
+      "referenceName": "Tarot Deck Support Monthly 2.99",
+      "priceEUR": "2.99"
+    },
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.499",
+      "referenceName": "Tarot Deck Support Monthly 4.99",
+      "priceEUR": "4.99"
+    },
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.999",
+      "referenceName": "Tarot Deck Support Monthly 9.99",
+      "priceEUR": "9.99"
+    },
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.1499",
+      "referenceName": "Tarot Deck Support Monthly 14.99",
+      "priceEUR": "14.99"
+    },
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.2999",
+      "referenceName": "Tarot Deck Support Monthly 29.99",
+      "priceEUR": "29.99"
+    },
+    {
+      "productID": "com.krazel.tarotdeck.support.monthly.50",
+      "referenceName": "Tarot Deck Support Monthly 49.99",
+      "priceEUR": "49.99"
+    }
+  ],
+  "productLocalizations": {
+    "en-US": {
+      "name": "Monthly Supporter",
+      "description": "Voluntary monthly support with supporter status."
+    },
+    "es-ES": {
+      "name": "Supporter mensual",
+      "description": "Apoyo mensual voluntario con estado de supporter."
+    }
+  },
+  "benefits": {
+    "coreAppRemainsFree": true,
+    "allLevelsEquivalent": true,
+    "supporterStatusInSettings": true,
+    "adsRemoved": false
+  }
+}
