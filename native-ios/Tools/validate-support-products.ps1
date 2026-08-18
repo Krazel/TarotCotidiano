@@ -6,12 +6,14 @@ $storePath = Join-Path $repoRoot "native-ios/TarotDeckApp/Internal/SupporterStor
 $settingsPath = Join-Path $repoRoot "native-ios/TarotDeckApp/Screens/Settings/SettingsView.swift"
 $workflowPath = Join-Path $repoRoot ".github/workflows/tarot-storekit-setup.yml"
 $projectPath = Join-Path $repoRoot "native-ios/TarotDeck.xcodeproj/project.pbxproj"
+$configurePath = Join-Path $repoRoot "native-ios/Tools/configure-support-products.rb"
 
 $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
 $store = Get-Content -Raw -LiteralPath $storePath
 $settings = Get-Content -Raw -LiteralPath $settingsPath
 $workflow = Get-Content -Raw -LiteralPath $workflowPath
 $project = Get-Content -Raw -LiteralPath $projectPath
+$configure = Get-Content -Raw -LiteralPath $configurePath
 
 if ($manifest.schemaVersion -ne 1 -or $manifest.appAppleID -cne "6800144105" -or
     $manifest.bundleID -cne "com.krazel.tarotdeck") {
@@ -141,6 +143,10 @@ foreach ($contract in $workflowContracts) {
 }
 if ($workflow -match '(?i)testflight|xcodebuild|upload-artifact|submit|appReviewSubmission') {
     throw "StoreKit setup workflow must not build, upload, submit, or trigger review."
+}
+if ($configure -cnotmatch [regex]::Escape('(Date.today + 2).iso8601') -or
+    $configure -cnotmatch [regex]::Escape('availableInNewTerritories: false')) {
+    throw "App Store Connect setup must use Apple's future price-start requirement and the fixed territory allowlist."
 }
 
 Write-Host "Validated seven equivalent monthly support products, verified StoreKit entitlements, live prices, disclosures, restoration, and an explicit production-only setup workflow."

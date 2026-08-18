@@ -283,7 +283,7 @@ manifest.fetch("products").each do |product_config|
       data: {
         type: "subscriptionPrices",
         attributes: {
-          startDate: Date.today.iso8601,
+          startDate: (Date.today + 2).iso8601,
           preserveCurrentPrice: false
         },
         relationships: {
