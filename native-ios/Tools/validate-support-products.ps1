@@ -145,7 +145,8 @@ if ($workflow -match '(?i)testflight|xcodebuild|upload-artifact|submit|appReview
     throw "StoreKit setup workflow must not build, upload, submit, or trigger review."
 }
 if ($configure -match '(?m)^\s*startDate:' -or
-    $configure -cnotmatch [regex]::Escape('availableInNewTerritories: false')) {
+    $configure -cnotmatch [regex]::Escape('availableInNewTerritories: false') -or
+    $configure -cnotmatch [regex]::Escape('Subscription states:')) {
     throw "Initial StoreKit prices must omit startDate and keep the fixed territory allowlist."
 }
 

@@ -160,6 +160,7 @@ end
 subscriptions = client.get_all(
   "/subscriptionGroups/#{group_id}/subscriptions?fields[subscriptions]=name,productId,subscriptionPeriod,groupLevel,state&limit=200"
 )
+verified_states = []
 
 manifest.fetch("products").each do |product_config|
   product_id = product_config.fetch("productID")
@@ -192,6 +193,7 @@ manifest.fetch("products").each do |product_config|
          attributes["groupLevel"] == group_config.fetch("groupLevel")
     raise "#{product_id} attributes differ from the approved manifest"
   end
+  verified_states << "#{product_id}=#{attributes.fetch('state', 'UNKNOWN')}"
 
   localizations = client.get_all("/subscriptions/#{subscription_id}/subscriptionLocalizations?limit=200")
   manifest.fetch("productLocalizations").each do |locale, localization|
@@ -297,3 +299,4 @@ manifest.fetch("products").each do |product_config|
 end
 
 puts "Tarot Deck monthly support products are configured idempotently for #{territories.join(', ')}."
+puts "Subscription states: #{verified_states.join(', ')}"
