@@ -179,9 +179,9 @@ Before `1.0 (1)` can be selected or submitted:
 
 1. Run the public RC workflow on macOS after the separate red upload authorization: Release archive, distribution signature, privacy manifest, localization and `US/GB/ES` ReleaseGate must all pass. Core and unsigned iPhone QA already passed for commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386` in runs `32172356174` and `32172373006`.
 2. Record the processed App Store Connect build ID and verify `1.0 (1)` is `VALID`; do not reuse Internal Only `0.8`.
-3. Capture real `1.0 (1)` build screenshots in EN-US and ES-ES for Home/selector, a three-card reading, six/custom, Learn, and Cards/detail/favorites. Concept masters are art direction only.
+3. Upload the proprietor-approved eight-image English `1260 × 2736` set. Leave Spanish without a separate screenshot set so App Store Connect uses the supported primary-language fallback; a native Spanish set is optional.
 4. Complete the truthful DSA trader/non-trader declaration required for Spain; if it is not complete, omit `ES` and do not claim the three-territory release is ready.
-5. Replace `MISSING_METADATA` for all seven products by adding real in-app review screenshots and any remaining Apple-required first-subscription metadata, then attach them to the authorized first-version review submission.
+5. Replace `MISSING_METADATA` for all seven products by adding a private App Review screenshot from the real Support the App screen and any remaining Apple-required first-subscription metadata, then attach them to the authorized first-version review submission. The supplied video cannot fill this field because it never opens that screen.
 6. Recheck Content Rights, age rating, encryption, accessibility claims, private review contact, metadata, screenshots and Review Notes against the processed binary.
 
 No upload, build selection, territory mutation, DSA attestation, agreement acceptance, review submission or publication was performed while preparing this record.

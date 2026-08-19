@@ -107,7 +107,7 @@ The App Review contact is private App Store Connect data. Verify it there and ne
 
 Screenshots must come from the real processed `1.0 (1)` build. Approved design masters guide art direction but are not submitted as runtime evidence. The bilingual shot list, accepted canvas sizes and provenance requirements are in `APP_STORE_SCREENSHOTS.md`.
 
-An English eight-image candidate set now exists from the supplied WhatsApp recording, with the original video, raw frames, exact timestamps, transformation notes and SHA-256 hashes preserved in the private `TarotCotidianoNative-StoreAssets` directory. Every export is an opaque RGB `1260 × 2736` PNG. This closes composition and ordering, but not the final submission gate: the source is only `384 × 848`, is visibly compressed, does not prove the exact processed build identity, and contains no Spanish UI. Replace it with native full-resolution captures from the processed `1.0 (1)` build and produce the equivalent real Spanish set before upload.
+The proprietor approved the eight-image English set extracted from the supplied recording for public submission. The original video, raw frames, timestamps, transformations and SHA-256 hashes remain in the private `TarotCotidianoNative-StoreAssets` directory; every export is an opaque RGB `1260 × 2736` PNG. The screenshots represent UI that remains in `1.0` and exclude the later Settings/StoreKit surface. The Spanish localization will use App Store Connect's primary-language screenshot fallback; a native Spanish set is optional. This closes the public screenshot gate, but not the separate private subscription-review screenshot: the supplied video contains no Support the App screen.
 
 ## Public-page gate
 

@@ -1,7 +1,7 @@
 # App Store screenshots — Tarot Deck 1.0
 
-Updated: 2026-08-18
-Status: an English candidate set has been extracted from the supplied screen recording; native final captures and the Spanish set remain gated.
+Updated: 2026-08-19
+Status: the proprietor approved the eight English exports from the supplied recording as the public submission set. Spanish will use App Store Connect's supported fallback to the primary English screenshots; a native Spanish set is an optional later quality improvement, not a submission gate.
 
 ## Supplied recording and candidate exports
 
@@ -15,9 +15,9 @@ The private original is preserved outside the public repository under `TarotCoti
 - candidate exports: eight opaque RGB PNGs at the Apple-accepted `1260 × 2736` canvas;
 - evidence manifest: `TarotCotidianoNative-StoreAssets/manifests/app-store-screenshots-1.0.1.json`.
 
-The status/recording bar was removed from the derivatives; the untouched source frames and video remain available for verification. The exports are internally consistent and cover Home, selector, active reading, Meaning, Learn, tutorial detail, Cards and the custom editor. They are candidates, not the final submission set: the source is much smaller than the final canvas, its text has messaging compression, and the video itself does not expose a verifiable `1.0 (1)` build identity.
+The status/recording bar was removed from the derivatives; the untouched source frames and video remain available for verification. The exports are internally consistent and cover Home, selector, active reading, Meaning, Learn, tutorial detail, Cards and the custom editor. The proprietor explicitly accepted their messaging compression and approved them for submission. The represented UI remains present in `1.0`; the set deliberately does not show Settings or StoreKit, so the later supporter implementation does not make these frames inaccurate.
 
-No Spanish screenshots were synthesized from English frames. A real Spanish session is still required.
+No Spanish screenshots were synthesized from English frames. App Store Connect may use the primary English screenshot set as the next-best-language fallback for the Spanish localization. A real Spanish set remains desirable but is not required for this submission plan.
 
 ## Can a screen recording be used?
 
@@ -38,7 +38,7 @@ Native screenshots from the device or simulator are preferred because video comp
 
 ## Canonical delivery set
 
-Prepare six to eight portrait screenshots for each localization. Export as opaque PNG or JPEG with no alpha. The current candidate set uses the accepted 6.9-inch canvas `1260 × 2736`; native replacements should keep one accepted exact size consistently for each localized set.
+Use the eight approved portrait exports as opaque RGB PNGs with no alpha. They use the accepted 6.9-inch canvas `1260 × 2736`. Keep their source frames, timestamps and hashes in the private evidence directory.
 
 ### English (U.S.)
 
@@ -51,7 +51,7 @@ Prepare six to eight portrait screenshots for each localization. Export as opaqu
 
 ### Spanish (Spain)
 
-Use the identical screen order and equivalent state:
+If a native Spanish set is added later, use the identical screen order and equivalent state:
 
 1. **Elige tu tirada**.
 2. **Coloca cada carta tú mismo**.
@@ -60,7 +60,7 @@ Use the identical screen order and equivalent state:
 5. **Explora las 78 cartas**.
 6. **Crea tu propia tirada**.
 
-Captions are optional art-direction notes until the real frames exist. Do not bake copy into screenshots merely to fill space; the app UI itself should remain legible and dominant.
+For the first submission, leave the Spanish screenshot well without a separate localized set so App Store Connect can use the approved primary-language screenshots. Do not duplicate or relabel English pixels as Spanish.
 
 ## Landscape candidate
 
