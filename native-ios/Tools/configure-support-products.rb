@@ -114,7 +114,13 @@ client = AppStoreConnectClient.new(
 
 app_id = manifest.fetch("appAppleID")
 group_config = manifest.fetch("subscriptionGroup")
-territories = manifest.fetch("territories").sort
+territory_scope = manifest.fetch("territories")
+territories = if territory_scope == ["ALL_CURRENT_APP_STORE_TERRITORIES"]
+                client.get_all("/territories?limit=200").map { |territory| territory.fetch("id") }.sort
+              else
+                territory_scope.sort
+              end
+available_in_new_territories = manifest.fetch("availableInNewTerritories")
 
 app = client.get("/apps/#{app_id}")
 bundle_id = app.dig("data", "attributes", "bundleId")
@@ -222,7 +228,7 @@ manifest.fetch("products").each do |product_config|
   end
 
   availability = client.get(
-    "/subscriptions/#{subscription_id}/subscriptionAvailability?include=availableTerritories&limit[availableTerritories]=50",
+    "/subscriptions/#{subscription_id}/subscriptionAvailability?include=availableTerritories&limit[availableTerritories]=200",
     allow_not_found: true
   )
   if availability.nil?
@@ -230,7 +236,7 @@ manifest.fetch("products").each do |product_config|
       "/subscriptionAvailabilities",
       data: {
         type: "subscriptionAvailabilities",
-        attributes: { availableInNewTerritories: false },
+        attributes: { availableInNewTerritories: available_in_new_territories },
         relationships: {
           availableTerritories: {
             data: territories.map { |territory| { type: "territories", id: territory } }
@@ -242,8 +248,8 @@ manifest.fetch("products").each do |product_config|
     puts "Configured #{product_id} availability: #{territories.join(',')}"
   else
     actual = Array(availability["included"]).select { |item| item["type"] == "territories" }.map { |item| item["id"] }.sort
-    unless actual == territories && availability.dig("data", "attributes", "availableInNewTerritories") == false
-      raise "#{product_id} availability differs from the approved #{territories.join(',')} allowlist"
+    unless actual == territories && availability.dig("data", "attributes", "availableInNewTerritories") == available_in_new_territories
+      raise "#{product_id} availability differs from the configured App Store territory scope"
     end
   end
 

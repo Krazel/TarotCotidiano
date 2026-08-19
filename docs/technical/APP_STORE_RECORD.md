@@ -1,7 +1,7 @@
 # App Store Connect — Tarot Deck
 
 Actualizado: 2026-08-19
-Estado: candidata pública `1.0 (1)` aprobada para preparación y beta interna `1.0 (2)` procesada en TestFlight. Aún no se ha creado/subido el archive público firmado, seleccionado una build pública ni enviado a App Review.
+Estado: candidata pública `1.0 (1)` subida, procesada y seleccionada. Metadatos EN/ES, ocho capturas, privacidad, soporte, derechos, siete suscripciones y su grupo están reunidos en un único borrador de nueve elementos. El envío final espera la revisión de Apple de la información DSA del comerciante.
 
 ## Identidad verificada
 
@@ -22,7 +22,7 @@ Estado: candidata pública `1.0 (1)` aprobada para preparación y beta interna `
 | Release | Manual |
 | Minimum OS | iOS 16.0 |
 | Current source version | `1.0 (1)` |
-| First public train | `1.0`; source RC prepared, no build selected |
+| First public train | `1.0`; build `1.0 (1)` processed and selected |
 | Latest delivered TestFlight | `1.0 (2)`, `VALID`, `INTERNAL_ONLY`, group `Testers`; runs `32199048236` / `32199365186` |
 | Login | None |
 | IAP / subscriptions | Seven equivalent monthly supporter subscriptions; live prices; no gated functionality |
@@ -35,10 +35,10 @@ The App Store names remain editable while the record state permits it. Bundle ID
 - Subscription group: `Tarot Deck Support`; App Store Connect resource `22318147`.
 - Seven `ONE_MONTH` products use the immutable IDs in `store/tarot-subscriptions.v1.json` and one equivalent service level.
 - Base Spain prices: `€0.99`, `€2.99`, `€4.99`, `€9.99`, `€14.99`, `€29.99`, and `€49.99`; Great Britain and United States use Apple's equalized official price points. The app itself displays only `Product.displayPrice`.
-- Availability: `ESP`, `GBR`, `USA`; automatic availability in new territories is off.
+- Availability: all 175 current App Store countries or regions; future App Store regions are enabled for the subscriptions.
 - English (U.S.) and Spanish (Spain) group/product localizations exist.
 - Creation/completion run: `32178955952`. Idempotent verification runs: `32179199039` and `32179410198`; the latter reported zero mutation lines.
-- Current Apple state for every product: `MISSING_METADATA`. This is not approval or review readiness: a real in-app subscription review screenshot and first-version review attachment remain required.
+- Current Apple state for every product and the group: `Ready for Review / Listo para revisión`. Each product has EN/ES metadata and its private in-app review screenshot, and all eight subscription items are attached to the version `1.0` review draft.
 
 ## Public metadata — English (U.S.)
 
@@ -134,15 +134,12 @@ El texto promocional y la URL de marketing permanecen vacíos.
 
 La política pública debe enumerar todos los datos locales anteriores. Evidencia: `docs/technical/PRIVACY_DATA_INVENTORY.md` y `PrivacyInfo.xcprivacy`.
 
-## Rights, territorios y DSA
+## Rights, availability and DSA
 
-- Las 78 caras son finales y la evidencia local permite preparar solo `US`, `GB` y `ES`.
-- `worldwideDistributionApproved=false`; no seleccionar otros storefronts.
-- Card back, icon and programmatic backgrounds have separate project provenance.
-- Content Rights has not been attested in App Store Connect in this task.
-- Spain is an EU territory. App Store Connect currently identifies the developer as trader; the required DSA information must be confirmed truthfully before enabling `ES`. The private review contact remains separate from public trader information.
-
-Evidence: `docs/technical/CONTENT_RIGHTS_AUDIT.md`, `native-ios/Content/provenance.v2.json`, `native-ios/Content/CandidateRWS/local-evidence.v2.json`, and `native-ios/Content/release-asset-provenance.v1.json`.
+- The owner has confirmed the current art as final and saved the required third-party Content Rights answer in App Store Connect.
+- The app and all seven subscriptions are configured for all 175 current countries or regions; subscriptions automatically include future regions.
+- App Store Connect identifies the developer as a trader. Apple received the required contact information on 2026-08-19 and currently shows the DSA verification as `En revisión`.
+- The private App Review contact remains separate from the public trader information Apple is verifying.
 
 ## Other compliance
 
@@ -150,7 +147,7 @@ Evidence: `docs/technical/CONTENT_RIGHTS_AUDIT.md`, `native-ios/Content/provenan
 - Encryption: `ITSAppUsesNonExemptEncryption=NO`; verify in the signed archive.
 - Accessibility: only claim features manually proven on the RC. Dark Interface is the current conservative draft.
 - Copyright and App Review contact: required private values stay in App Store Connect and are not copied to this public repository.
-- Supporter subscriptions: seven monthly products in one service-equivalent group. The app remains fully free; every level grants only verified supporter status and a thank-you. Products must be configured, localized and priced in App Store Connect, then included with the first build submitted for review.
+- Supporter subscriptions: seven monthly products in one service-equivalent group. The app remains fully free; every level grants only verified supporter status and a thank-you. Products are configured, localized, priced and included with the first build's review draft.
 
 ## Review Notes — prepared English draft
 
@@ -173,15 +170,8 @@ Privacy is available from Settings and at https://krazel.github.io/tarot-deck/pr
 
 Review contact details remain private and must be checked in App Store Connect against the exact submission.
 
-## Remaining public-release gates
+## Remaining public-release gate
 
-Before `1.0 (1)` can be selected or submitted:
+The complete nine-item draft contains app version `1.0 (1)`, all seven subscriptions and their subscription group. Build, signature, privacy manifest, localization, metadata, eight screenshots, private subscription screenshots, age rating, encryption, review contact, Content Rights, free/manual release, public Privacy/Support URLs and 175-country availability have been checked. Apple currently keeps the final submission action unavailable while the trader verification is `En revisión`.
 
-1. Run the public RC workflow on macOS after the separate red upload authorization: Release archive, distribution signature, privacy manifest, localization and `US/GB/ES` ReleaseGate must all pass. Core and unsigned iPhone QA already passed for commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386` in runs `32172356174` and `32172373006`.
-2. Record the processed App Store Connect build ID and verify `1.0 (1)` is `VALID`; do not reuse Internal Only `0.8`.
-3. Upload the proprietor-approved eight-image English `1260 × 2736` set. Leave Spanish without a separate screenshot set so App Store Connect uses the supported primary-language fallback; a native Spanish set is optional.
-4. Complete the truthful DSA trader/non-trader declaration required for Spain; if it is not complete, omit `ES` and do not claim the three-territory release is ready.
-5. Replace `MISSING_METADATA` for all seven products by adding a private App Review screenshot from the real Support the App screen and any remaining Apple-required first-subscription metadata, then attach them to the authorized first-version review submission. The supplied video cannot fill this field because it never opens that screen.
-6. Recheck Content Rights, age rating, encryption, accessibility claims, private review contact, metadata, screenshots and Review Notes against the processed binary.
-
-No upload, build selection, territory mutation, DSA attestation, agreement acceptance, review submission or publication was performed while preparing this record.
+When Apple enables the action, perform one final read-only preflight and obtain an immediate confirmation from the owner before clicking `Enviar a revisión`. Publication remains manual after approval.

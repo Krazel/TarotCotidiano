@@ -1,7 +1,7 @@
 # App Review preflight — Tarot Deck 1.0 (1)
 
 Updated: 2026-08-19
-Scope: first public iPhone release candidate. This record prepares the submission but does not upload, select a build, attest DSA/content rights in App Store Connect, accept agreements, submit for review, or publish.
+Scope: first public iPhone release candidate. The signed build, metadata, screenshots, content-rights answer, subscriptions and subscription group are staged together in one App Review draft. Final submission remains pending while Apple's DSA trader verification is under review.
 
 ## Release identity
 
@@ -16,7 +16,7 @@ Scope: first public iPhone release candidate. This record prepares the submissio
 | Primary language | English (U.S.) | Prepared |
 | Additional localization | Spanish (Spain) | Prepared |
 | Distribution mode | Free, manual release | Prepared; confirm in App Store Connect |
-| Territories | `US`, `GB`, `ES` only | ReleaseGate passes; Spain requires DSA completion |
+| Territories | All 175 current App Store countries or regions | Configured in App Store Connect; future regions enabled for subscriptions |
 
 TestFlight `1.0 (2)` is the current internal beta and is not eligible for the public App Review submission because it was permanently exported as `INTERNAL_ONLY`. Build `1` remains reserved for the public candidate.
 
@@ -45,8 +45,8 @@ This evidence proves source compilation and packaging only. It does not replace 
 - No ads, analytics, tracking, third-party runtime SDK, account, cloud sync or protected-data permission. StoreKit 2 is used only for seven equivalent optional monthly supporter subscriptions.
 - `PrivacyInfo.xcprivacy` declares no tracking, no collected data and only the app-owned UserDefaults required-reason API.
 - `ITSAppUsesNonExemptEncryption=NO` is set for Release.
-- The 78 card faces and non-face assets have project provenance. Public distribution is cleared by the project gate only for `US`, `GB` and `ES`; worldwide remains false.
-- The seven monthly support products exist in App Store Connect with EN/ES, `ESP/GBR/USA` and configured prices. All seven currently report `MISSING_METADATA`; they are not submitted or approved and still require a real in-app review screenshot.
+- The 78 card faces and non-face assets have project provenance, and the owner has attested the required third-party content rights in App Store Connect.
+- The seven monthly support products exist in App Store Connect with EN/ES, live Apple-localized prices, review screenshots, all 175 current countries or regions and future-region availability. The seven products and their group are staged with version `1.0 (1)` in the same nine-item review draft.
 
 ## App Store metadata
 
@@ -113,38 +113,26 @@ The proprietor approved the eight-image English set extracted from the supplied 
 
 Privacy and Support were published from Pages commit `90d0752` and both returned HTTP 200 on 2026-08-18. Privacy lists every local state in `PRIVACY_DATA_INVENTORY.md` and the Apple-managed StoreKit boundary. Support describes one/three/six/custom readings, the seven equivalent monthly levels, restoration and Apple-managed cancellation. Recheck both URLs and the public support alias immediately before selecting the final build.
 
-## DSA gate for Spain
+## DSA trader verification
 
-Apple requires a truthful trader/non-trader declaration for EU distribution and cannot determine the answer for the developer. If `ES` is enabled:
-
-- decide the real status based on whether the app is offered in connection with a trade, business, craft or profession;
-- if trader, provide and verify the contact information Apple/DSA requires for public display;
-- if non-trader, make that declaration truthfully;
-- keep private App Review contact separate from public trader information.
-
-If this decision is not complete, do not enable Spain. The technical rights allowlist does not replace DSA compliance.
+The developer is declared as a trader. Apple received the required contact information on 2026-08-19 and App Store Connect currently shows the verification as `En revisión`. The private App Review contact remains separate from the public trader information.
 
 ## Automated release path
 
 `.github/workflows/tarot-app-review-rc.yml` is manual, main-only and protected by `app-store-production`. It requires the exact red confirmation `UPLOAD_APP_REVIEW_RC_1_0_1`, runs content/localization/release gates and Swift tests, archives and verifies a signed Release build, creates non-binary evidence, and uploads only the binary to App Store Connect.
 
-It does **not** select the build for version 1.0, change territories, fill metadata, attest rights or DSA, accept agreements, submit for review, configure automatic release or publish.
+The automated workflow did not perform App Store Connect form actions. Those staging steps were completed manually afterward with owner authorization: build selection, metadata, screenshots, Content Rights, availability, subscription review items and DSA submission. It still does not submit App Review or publish.
 
 ## Final red-action checklist
 
-These remain intentionally undone until the proprietor explicitly authorizes each material action against the exact processed build:
+Current final-action state:
 
-- upload `1.0 (1)`;
-- deploy the public Privacy/Support pages;
-- declare DSA trader/non-trader status;
-- attest Content Rights in App Store Connect;
-- select storefronts and the processed build;
-- save final age rating, App Privacy and accessibility claims;
-- upload final screenshots;
-- attach the seven subscriptions to the app version and add them for review;
-- accept any agreement;
-- click **Add for Review** or **Submit for Review**;
-- release the approved app.
+- `1.0 (1)` is uploaded, processed and selected;
+- Privacy and Support are public;
+- trader information is under Apple review;
+- Content Rights is saved;
+- the app, seven subscriptions and group are staged together;
+- `Enviar a revisión` has not been clicked and requires immediate confirmation once Apple enables it.
 
 ## Official Apple references
 

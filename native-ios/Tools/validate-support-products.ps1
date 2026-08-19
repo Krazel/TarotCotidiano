@@ -40,9 +40,10 @@ foreach ($productID in $expectedIDs) {
     }
 }
 
-if (@($manifest.territories) -join "," -cne "ESP,GBR,USA" -or
-    $manifest.availableInNewTerritories -ne $false) {
-    throw "Subscriptions must be limited to the approved ESP/GBR/USA allowlist."
+if (@($manifest.territories) -join "," -cne "ALL_CURRENT_APP_STORE_TERRITORIES" -or
+    $manifest.territoryCountAtConfiguration -ne 175 -or
+    $manifest.availableInNewTerritories -ne $true) {
+    throw "Subscriptions must be available in all 175 current App Store territories and future territories."
 }
 
 $expectedPrices = @('0.99', '2.99', '4.99', '9.99', '14.99', '29.99', '49.99')
@@ -145,9 +146,11 @@ if ($workflow -match '(?i)testflight|xcodebuild|upload-artifact|submit|appReview
     throw "StoreKit setup workflow must not build, upload, submit, or trigger review."
 }
 if ($configure -match '(?m)^\s*startDate:' -or
-    $configure -cnotmatch [regex]::Escape('availableInNewTerritories: false') -or
+    $configure -cnotmatch [regex]::Escape('ALL_CURRENT_APP_STORE_TERRITORIES') -or
+    $configure -cnotmatch [regex]::Escape('available_in_new_territories') -or
+    $configure -cnotmatch [regex]::Escape('limit[availableTerritories]=200') -or
     $configure -cnotmatch [regex]::Escape('Subscription states:')) {
-    throw "Initial StoreKit prices must omit startDate and keep the fixed territory allowlist."
+    throw "Initial StoreKit prices must omit startDate and preserve worldwide current/future availability."
 }
 
-Write-Host "Validated seven equivalent monthly support products, verified StoreKit entitlements, live prices, disclosures, restoration, and an explicit production-only setup workflow."
+Write-Host "Validated seven equivalent monthly support products across all 175 current and future App Store territories, verified StoreKit entitlements, live prices, disclosures, restoration, and an explicit production-only setup workflow."

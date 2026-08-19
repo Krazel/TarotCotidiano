@@ -11,8 +11,9 @@
       "es-ES": "Apoyo a Tarot Deck"
     }
   },
-  "territories": ["ESP", "GBR", "USA"],
-  "availableInNewTerritories": false,
+  "territories": ["ALL_CURRENT_APP_STORE_TERRITORIES"],
+  "territoryCountAtConfiguration": 175,
+  "availableInNewTerritories": true,
   "products": [
     {
       "productID": "com.krazel.tarotdeck.support.monthly.099",
