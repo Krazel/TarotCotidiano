@@ -1,0 +1,85 @@
+name: Tarot App Review assets
+
+on:
+  workflow_dispatch:
+    inputs:
+      production_change_confirmation:
+        description: Type UPLOAD_TAROT_APP_REVIEW_ASSETS_1_0 to upload verified screenshots to App Store Connect
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tarot-app-review-assets
+  cancel-in-progress: false
+
+jobs:
+  upload-review-assets:
+    name: Upload public and subscription review screenshots
+    if: ${{ github.ref == 'refs/heads/main' && inputs.production_change_confirmation == 'UPLOAD_TAROT_APP_REVIEW_ASSETS_1_0' }}
+    runs-on: macos-latest
+    timeout-minutes: 30
+    environment: app-store-production
+
+    steps:
+      - name: Check out repository without retained credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Verify exact screenshot inventory and dimensions
+        shell: bash
+        run: |
+          set -euo pipefail
+          PUBLIC_SCREENSHOTS=(store/app-review-assets/en-US/iphone-6.9/*.png)
+          test "${#PUBLIC_SCREENSHOTS[@]}" -eq 8
+          REVIEW_SCREENSHOT=store/app-review-assets/subscriptions/support-subscriptions-review-1260x2736.png
+          test -f "$REVIEW_SCREENSHOT"
+          for FILE in "${PUBLIC_SCREENSHOTS[@]}" "$REVIEW_SCREENSHOT"; do
+            test "$(sips -g pixelWidth "$FILE" | awk '/pixelWidth/ {print $2}')" = "1260"
+            test "$(sips -g pixelHeight "$FILE" | awk '/pixelHeight/ {print $2}')" = "2736"
+            test "$(sips -g hasAlpha "$FILE" | awk '/hasAlpha/ {print $2}')" = "no"
+          done
+          shasum -a 256 "${PUBLIC_SCREENSHOTS[@]}" "$REVIEW_SCREENSHOT"
+
+      - name: Prepare protected App Store Connect key
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          APP_STORE_CONNECT_API_KEY_BASE64: ${{ secrets.APP_STORE_CONNECT_API_KEY_BASE64 }}
+        run: |
+          set -euo pipefail
+          set +x
+          : "${APP_STORE_CONNECT_API_KEY_ID:?missing protected API key id}"
+          : "${APP_STORE_CONNECT_ISSUER_ID:?missing protected issuer id}"
+          : "${APP_STORE_CONNECT_API_KEY_BASE64:?missing protected API key}"
+          KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          printf '%s' "$APP_STORE_CONNECT_API_KEY_BASE64" | base64 --decode > "$KEY_PATH"
+          chmod 600 "$KEY_PATH"
+          test -s "$KEY_PATH"
+
+      - name: Upload and verify App Review assets through the official API
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+          APP_STORE_CONNECT_ISSUER_ID: ${{ secrets.APP_STORE_CONNECT_ISSUER_ID }}
+          TAROT_APP_ID: '6800144105'
+          TAROT_VERSION: '1.0'
+        run: |
+          set -euo pipefail
+          set +x
+          export APP_STORE_CONNECT_API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          ruby native-ios/Tools/upload-app-review-assets.rb
+
+      - name: Remove temporary App Store Connect key
+        if: ${{ always() }}
+        shell: bash
+        env:
+          APP_STORE_CONNECT_API_KEY_ID: ${{ secrets.APP_STORE_CONNECT_API_KEY_ID }}
+        run: |
+          set +x
+          rm -f "$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
