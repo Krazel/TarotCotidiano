@@ -1,12 +1,12 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-08-18
+Actualizado: 2026-08-19
 
 ## Estado ejecutivo
 
 El producto es un **mazo digital de tarot y referencia de aprendizaje para iPhone**, en inglés y castellano, separado por completo de Zodiac/Horoscope. El MVP permite hacer tiradas libres o con posiciones explícitas, consultar el significado de una carta revelada, aprender cómo leer el tarot y recorrer las 78 cartas. No genera interpretaciones automáticas, predicciones ni carta diaria.
 
-Fase actual: **candidata pública local `1.0 (1)` y preflight de App Review**. `0.8 (1)` permanece procesada, válida y asignada al grupo interno `Testers` en TestFlight; no se reutilizará como candidata de App Review.
+Fase actual: **candidata pública local `1.0 (1)` y beta interna `1.0 (2)` disponible en TestFlight**. La build `1.0 (2)` está procesada como `VALID`, marcada permanentemente `INTERNAL_ONLY` y asignada al grupo `Testers`; no puede reutilizarse como candidata de App Review.
 
 La regla global A-022 queda activada por A-064: Settings incorpora siete niveles mensuales equivalentes, precios vivos de StoreKit, estado supporter, agradecimiento, restauración, gestión/cancelación, privacidad y términos. Toda la app sigue gratis y sin anuncios; los productos pueden crearse/configurarse, pero su envío a Review y la publicación siguen sin autorización.
 
@@ -14,7 +14,7 @@ A-023 hace obligatoria la skill `ios-app-launch` para lanzamiento, StoreKit, pri
 
 Implementación visual final: **abierta para toda pantalla que tenga imagen completa creada y registrada bajo A-021**. Implementación estructural no visual: abierta por A-016.
 
-Propietaria activa de implementación: **cerebro local bajo A-064**. StoreKit 2 y la UI EN/ES están integrados. El run macOS `32178024269` compiló y probó la app iPhone en verde. El run protegido `32178955952` creó/completó el grupo `Tarot Deck Support` y los siete productos con EN/ES, allowlist `ESP/GBR/USA` y precios; `32179199039` y `32179410198` verificaron idempotencia sin mutaciones. Apple devuelve `MISSING_METADATA` para los siete porque falta la captura privada de revisión/entrega. No se seleccionó build, subió binario, añadió IAP a Review ni publicó.
+Propietaria activa de implementación: **cerebro local bajo A-064**. StoreKit 2 y la UI EN/ES están integrados. El run macOS `32178024269` compiló y probó la app iPhone en verde. El run protegido `32178955952` creó/completó el grupo `Tarot Deck Support` y los siete productos con EN/ES, allowlist `ESP/GBR/USA` y precios; `32179199039` y `32179410198` verificaron idempotencia sin mutaciones. Apple devuelve `MISSING_METADATA` para los siete porque falta la captura privada de revisión/entrega. El run `32199048236` firmó y subió `1.0 (2)` como TestFlight interno; `32199365186` confirmó upload `COMPLETE`, processing `VALID`, audience `INTERNAL_ONLY` y acceso del grupo `Testers`. No se seleccionó build pública, añadió IAP a Review ni publicó.
 
 A-053 está implementada localmente como `0.6 (1)`: selector coherente con información izquierda/tick derecha, `Six-Card Guidance / Orientación en seis cartas`, tutorial citado, biblioteca y editor de tiradas personalizadas de 1–12 cartas, borrador local, layouts visuales automáticos, movimiento accesible, snapshots inmutables y tutorial `Create Your Own Spread`. V-107 sustituye la maestra errónea V-090; V-091–V-096 permanecen aprobadas bajo A-021. Falta obligatoriamente compilar/testear con Xcode en macOS y comparar la build real con las maestras antes de autorizar TestFlight; no existe autorización de subida en este encargo.
 

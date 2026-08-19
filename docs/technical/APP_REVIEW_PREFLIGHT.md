@@ -1,6 +1,6 @@
 # App Review preflight — Tarot Deck 1.0 (1)
 
-Updated: 2026-08-18
+Updated: 2026-08-19
 Scope: first public iPhone release candidate. This record prepares the submission but does not upload, select a build, attest DSA/content rights in App Store Connect, accept agreements, submit for review, or publish.
 
 ## Release identity
@@ -18,7 +18,14 @@ Scope: first public iPhone release candidate. This record prepares the submissio
 | Distribution mode | Free, manual release | Prepared; confirm in App Store Connect |
 | Territories | `US`, `GB`, `ES` only | ReleaseGate passes; Spain requires DSA completion |
 
-The previous TestFlight `0.8 (1)` is historical internal-only evidence. It is not eligible for the public App Review submission.
+TestFlight `1.0 (2)` is the current internal beta and is not eligible for the public App Review submission because it was permanently exported as `INTERNAL_ONLY`. Build `1` remains reserved for the public candidate.
+
+Current signed TestFlight evidence for source commit `bd77c9ab0b5b0dd9dd0334a2f5f12ce3f78896ef`:
+
+- Archive, signature, entitlements, EN/ES resources, StoreKit source, Swift tests and upload: run `32199048236`, success.
+- Manifest: `TarotDeck-1.0-2-ci13-bd77c9ab0b5b-TestFlight-Internal`.
+- IPA SHA-256 recorded before upload: `49897da6220c13e2d4676b90b8be9fe2ca1e756a53d5afa9ae0d3cfd9b7a8be4`.
+- Apple processing and tester assignment: run `32199365186`, upload `COMPLETE`, build `VALID`, audience `INTERNAL_ONLY`, group `Testers` verified.
 
 MacOS evidence for source commit `0ed6cca7a31b3e6d3d935ec9e9d277c700a18386`:
 

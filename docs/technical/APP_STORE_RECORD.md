@@ -1,7 +1,7 @@
 # App Store Connect — Tarot Deck
 
-Actualizado: 2026-08-18
-Estado: candidata pública `1.0 (1)` aprobada para preparación. Swift tests y builds iPhone sin firma pasaron en macOS; aún no se ha creado/subido el archive público firmado, seleccionado una build ni enviado a App Review.
+Actualizado: 2026-08-19
+Estado: candidata pública `1.0 (1)` aprobada para preparación y beta interna `1.0 (2)` procesada en TestFlight. Aún no se ha creado/subido el archive público firmado, seleccionado una build pública ni enviado a App Review.
 
 ## Identidad verificada
 
@@ -23,7 +23,7 @@ Estado: candidata pública `1.0 (1)` aprobada para preparación. Swift tests y b
 | Minimum OS | iOS 16.0 |
 | Current source version | `1.0 (1)` |
 | First public train | `1.0`; source RC prepared, no build selected |
-| Latest delivered TestFlight | `0.8 (1)`, `VALID`, `INTERNAL_ONLY`, group `Testers` |
+| Latest delivered TestFlight | `1.0 (2)`, `VALID`, `INTERNAL_ONLY`, group `Testers`; runs `32199048236` / `32199365186` |
 | Login | None |
 | IAP / subscriptions | Seven equivalent monthly supporter subscriptions; live prices; no gated functionality |
 | Advertising / analytics / tracking | None |
