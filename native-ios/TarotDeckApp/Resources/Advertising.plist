@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-    <!-- Public Google sample application. Ordinary Release is off; internal TAROT_TEST_ADS uses sample ads only. -->
-    <key>GADApplicationIdentifier</key><string>ca-app-pub-3940256099942544~1458002511</string>
+    <!-- Debug uses Google samples; the production workflow validates the real Tarot IDs. -->
+    <key>GADApplicationIdentifier</key><string>$(TAROT_ADMOB_APP_ID)</string>
+    <key>TarotBannerAdUnitID</key><string>$(TAROT_ADMOB_BANNER_ID)</string>
     <key>GADDelayAppMeasurementInit</key><true/>
     <key>TarotAdvertisingMode</key><string>$(TAROT_ADS_MODE)</string>
     <key>SKAdNetworkItems</key><array><dict>

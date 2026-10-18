@@ -20,6 +20,8 @@ enum SupporterConfiguration {
 
 enum SupporterNotice: Equatable {
     case thankYou
+    case subscriptionChanged
+    case subscriptionChangePending
     case pending
     case purchaseFailed
     case restored
@@ -31,6 +33,10 @@ enum SupporterNotice: Equatable {
         switch self {
         case .thankYou, .restored:
             return "Ads removed"
+        case .subscriptionChanged:
+            return "Subscription change confirmed"
+        case .subscriptionChangePending:
+            return "Subscription change pending"
         case .pending:
             return "Purchase Pending"
         case .purchaseFailed:
@@ -48,6 +54,10 @@ enum SupporterNotice: Equatable {
         switch self {
         case .thankYou:
             return "Your subscription is active. Enjoy Tarot Deck without ads."
+        case .subscriptionChanged:
+            return "Apple has confirmed your request. Manage Subscription shows your current subscription and any upcoming change."
+        case .subscriptionChangePending:
+            return "Apple is still processing this change. Your current subscription remains in effect."
         case .pending:
             return "Apple is still processing this purchase. Ads will be removed once it is approved."
         case .purchaseFailed:
@@ -123,10 +133,13 @@ final class SupporterStore: ObservableObject {
     }
 
     func purchase(_ product: Product) async {
-        guard SupporterConfiguration.monthlyProductIDs.contains(product.id), busyProductID == nil else {
+        guard SupporterConfiguration.monthlyProductIDs.contains(product.id),
+              product.id != activeProductID,
+              busyProductID == nil, !isRestoring else {
             return
         }
 
+        let isChangingSubscription = isSupporter
         busyProductID = product.id
         defer { busyProductID = nil }
 
@@ -136,9 +149,10 @@ final class SupporterStore: ObservableObject {
                 let transaction = try verified(verification)
                 await transaction.finish()
                 await refreshEntitlements(forceRefresh: true)
-                notice = isSupporter ? .thankYou : .purchaseFailed
+                notice = isChangingSubscription ? .subscriptionChanged
+                    : (isSupporter ? .thankYou : .purchaseFailed)
             case .pending:
-                notice = .pending
+                notice = isChangingSubscription ? .subscriptionChangePending : .pending
             case .userCancelled:
                 break
             @unknown default:
@@ -150,7 +164,7 @@ final class SupporterStore: ObservableObject {
     }
 
     func restorePurchases() async {
-        guard !isRestoring else { return }
+        guard !isRestoring, busyProductID == nil else { return }
         isRestoring = true
         defer { isRestoring = false }
 

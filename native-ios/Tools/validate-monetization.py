@@ -29,23 +29,27 @@ for package, version in [('GoogleMobileAds', '12.14.0'), ('GoogleUserMessagingPl
 check(project.count('repositoryURL = ') == 2, 'Exactly two authorized remote SDK package references')
 check(project.count('IPHONEOS_DEPLOYMENT_TARGET = 16.0;') == 2,
       'App target retains iOS16 in both configurations')
-check(project.count('MARKETING_VERSION = 1.1.2;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
-      'Candidate identity is 1.1.2 (1)')
+check(project.count('MARKETING_VERSION = 1.2;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
+      'Candidate identity is 1.2 (1)')
 check(project.count('INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;') == 2,
       'Debug and Release merge advertising plist')
 plist = plistlib.loads((APP / 'Resources/Advertising.plist').read_bytes())
 sample_app = 'ca-app-pub-3940256099942544~1458002511'
 sample_banner = 'ca-app-pub-3940256099942544/2435281174'
-check(plist['GADApplicationIdentifier'] == sample_app and plist['GADDelayAppMeasurementInit'] is True,
-      'Only public Google sample application and delayed measurement configured')
+check(plist['GADApplicationIdentifier'] == '$(TAROT_ADMOB_APP_ID)' and
+      plist['TarotBannerAdUnitID'] == '$(TAROT_ADMOB_BANNER_ID)' and
+      plist['GADDelayAppMeasurementInit'] is True,
+      'Build-specific identifiers and delayed measurement configured')
 all_swift = '\n'.join(path.read_text(encoding='utf-8') for path in APP.rglob('*.swift'))
-check(set(re.findall(r'ca-app-pub-\d+[~/]\d+', all_swift)) == {sample_app, sample_banner},
-      'Runtime source contains only official sample ad identifiers')
+configuration = (ROOT / 'native-ios/Sources/TarotDeckCore/AdvertisingConfiguration.swift').read_text(encoding='utf-8')
+check(set(re.findall(r'ca-app-pub-\d+[~/]\d+', all_swift + configuration)) == {sample_app, sample_banner},
+      'Real identifiers are supplied by the verified build configuration only')
 check(not re.search(r'import (AppTrackingTransparency|AdSupport)|ATTrackingManager|ASIdentifierManager|requestTrackingAuthorization', all_swift),
       'No ATT request, AdSupport import or application IDFA access')
 consent = (APP / 'Internal/TarotAdConsent.swift').read_text(encoding='utf-8')
-check('#if DEBUG || TAROT_TEST_ADS' in consent and '== \"test-only\"' in consent and 'return nil\n        #endif' in consent,
-      'Ordinary Release stays off; internal test mode is explicit')
+check('#if DEBUG || TAROT_TEST_ADS' in consent and '#elseif TAROT_PRODUCTION_ADS' in consent and
+      'let allowsProduction = false' in consent and 'AdvertisingConfiguration.bannerID' in consent,
+      'Development never uses real inventory; production needs explicit compilation and valid publisher configuration')
 check('setPublisherFirstPartyIDEnabled(false)' in consent and 'publisherPrivacyPersonalizationState = .disabled' in consent,
       'Publisher first-party ID and personalization explicitly disabled before SDK start')
 check('ConsentInformation.shared.canRequestAds' in consent and 'requestConsentInfoUpdate' in consent,

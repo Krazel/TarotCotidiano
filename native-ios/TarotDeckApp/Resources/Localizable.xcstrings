@@ -3990,6 +3990,76 @@
           }
         }
       }
+    },
+    "Choose another monthly amount to change your subscription. All options remove ads. Apple shows when the change takes effect before you confirm.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige otro importe mensual para cambiar tu suscripción. Todas las opciones quitan los anuncios. Apple muestra cuándo se aplica el cambio antes de que confirmes."
+          }
+        }
+      }
+    },
+    "Current subscription": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripción actual"
+          }
+        }
+      }
+    },
+    "This subscription is already active": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta suscripción ya está activa"
+          }
+        }
+      }
+    },
+    "Subscription change confirmed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambio de suscripción confirmado"
+          }
+        }
+      }
+    },
+    "Subscription change pending": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambio de suscripción pendiente"
+          }
+        }
+      }
+    },
+    "Apple has confirmed your request. Manage Subscription shows your current subscription and any upcoming change.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple ha confirmado tu solicitud. En Gestionar suscripción puedes ver tu suscripción actual y cualquier cambio previsto."
+          }
+        }
+      }
+    },
+    "Apple is still processing this change. Your current subscription remains in effect.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple sigue tramitando este cambio. Tu suscripción actual sigue vigente."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

@@ -7,20 +7,22 @@ import TarotDeckCore
 import OSLog
 
 enum TarotAdsConfiguration {
-    // Google's public sample IDs, independently verified in the official setup/banner guides.
-    static let sampleApplicationID = "ca-app-pub-3940256099942544~1458002511"
-    static let sampleBannerID = "ca-app-pub-3940256099942544/2435281174"
-
-    static var testBannerID: String? {
+    static var bannerID: String? {
         #if DEBUG || TAROT_TEST_ADS
-        guard Bundle.main.object(forInfoDictionaryKey: "TarotAdvertisingMode") as? String == "test-only",
-              Bundle.main.object(forInfoDictionaryKey: "GADApplicationIdentifier") as? String
-                == sampleApplicationID else { return nil }
-        return sampleBannerID
+        let allowsProduction = false
+        #elseif TAROT_PRODUCTION_ADS
+        guard Bundle.main.bundleIdentifier == "com.krazel.tarotdeck" else { return nil }
+        let allowsProduction = true
         #else
-        // Ordinary Release builds stay off. Only the internal TestFlight workflow
-        // opts into TAROT_TEST_ADS; even then, only Google's sample IDs are accepted.
         return nil
+        #endif
+        #if DEBUG || TAROT_TEST_ADS || TAROT_PRODUCTION_ADS
+        return AdvertisingConfiguration.bannerID(
+            mode: Bundle.main.object(forInfoDictionaryKey: "TarotAdvertisingMode") as? String,
+            applicationID: Bundle.main.object(forInfoDictionaryKey: "GADApplicationIdentifier") as? String,
+            unitID: Bundle.main.object(forInfoDictionaryKey: "TarotBannerAdUnitID") as? String,
+            allowsProduction: allowsProduction
+        )
         #endif
     }
 }
@@ -59,7 +61,7 @@ final class TarotAdConsent: ObservableObject {
     /// Collect the first required choice automatically; Settings remains available
     /// for subsequent changes. Never bypass UMP or present over a reading.
     func updateIfNeeded() async {
-        guard TarotAdsConfiguration.testBannerID != nil, !didUpdateThisLaunch, !isBusy else { return }
+        guard TarotAdsConfiguration.bannerID != nil, !didUpdateThisLaunch, !isBusy else { return }
         isBusy = true
         defer { isBusy = false }
         do {
@@ -89,7 +91,7 @@ final class TarotAdConsent: ObservableObject {
     }
 
     func presentChoices() async {
-        guard TarotAdsConfiguration.testBannerID != nil, !isBusy else { return }
+        guard TarotAdsConfiguration.bannerID != nil, !isBusy else { return }
         isBusy = true
         canRequestAds = false
         requestGeneration += 1 // Destroy all existing requests before changing choices.

@@ -14,7 +14,7 @@ struct TarotBannerSlot: View {
     @State private var loadedHeight: CGFloat = 0
 
     private var eligible: Bool {
-        TarotAdsConfiguration.testBannerID != nil && MonetizationPolicy.allowsBanner(
+        TarotAdsConfiguration.bannerID != nil && MonetizationPolicy.allowsBanner(
             surface: surface, entitlementResolved: supporter.hasResolvedEntitlements,
             isSupporter: supporter.isSupporter, consentAllowsAds: consent.canRequestAds && !consent.isBusy,
             sdkStarted: consent.isStarted, isActive: scenePhase == .active
@@ -74,7 +74,7 @@ private final class TarotBannerController: UIViewController, BannerViewDelegate 
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard width >= 320, let unitID = TarotAdsConfiguration.testBannerID,
+        guard width >= 320, let unitID = TarotAdsConfiguration.bannerID,
               ConsentInformationBridge.canRequestAds else { return }
         let adSize = currentOrientationAnchoredAdaptiveBanner(width: width)
         let banner = BannerView(adSize: adSize)
@@ -99,7 +99,12 @@ private final class TarotBannerController: UIViewController, BannerViewDelegate 
 
     func bannerViewDidReceiveAd(_ bannerView: BannerView) {
         guard !stopped else { return }
-        Logger(subsystem: "com.krazel.tarotdeck", category: "ads").notice("test_banner_loaded")
+        let logger = Logger(subsystem: "com.krazel.tarotdeck", category: "ads")
+        if bannerView.adUnitID == AdvertisingConfiguration.sampleBannerID {
+            logger.notice("test_banner_loaded")
+        } else {
+            logger.notice("production_banner_loaded")
+        }
         onHeight(bannerView.adSize.size.height)
     }
 

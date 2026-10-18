@@ -425,6 +425,8 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				TAROT_ADS_MODE = "test-only";
+				TAROT_ADMOB_APP_ID = "ca-app-pub-3940256099942544~1458002511";
+				TAROT_ADMOB_BANNER_ID = "ca-app-pub-3940256099942544/2435281174";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -468,7 +470,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -490,7 +492,10 @@
 				DEVELOPMENT_LANGUAGE = en;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;
-				TAROT_ADS_MODE = off;
+				TAROT_ADS_MODE = production;
+				TAROT_ADMOB_APP_ID = "ca-app-pub-3425091654264901~4270953811";
+				TAROT_ADMOB_BANNER_ID = "ca-app-pub-3425091654264901/3573694673";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "TAROT_PRODUCTION_ADS $(inherited)";
 				OTHER_LDFLAGS = "$(inherited) -ObjC";
 				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
@@ -500,7 +505,7 @@
 				INFOPLIST_KEY_UIRequiresFullScreen = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-				MARKETING_VERSION = 1.1.2;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;

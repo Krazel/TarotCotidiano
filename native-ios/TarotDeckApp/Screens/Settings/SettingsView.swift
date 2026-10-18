@@ -23,7 +23,7 @@ struct SettingsView: View {
         let bundleVersion = Bundle.main.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
         ) as? String
-        let fallbackVersion = "1.1.2"
+        let fallbackVersion = "1.2"
         guard let bundleVersion, !bundleVersion.isEmpty else { return fallbackVersion }
         return bundleVersion
     }
@@ -158,7 +158,7 @@ struct SettingsView: View {
                                 openURL(Self.privacyURL)
                             }
 
-                            if TarotAdsConfiguration.testBannerID != nil || adConsent.requiresPrivacyOptions {
+                            if TarotAdsConfiguration.bannerID != nil || adConsent.requiresPrivacyOptions {
                                 settingsDivider
                                 SettingsRow(
                                     title: "Advertising choices",
@@ -280,6 +280,24 @@ struct RemoveAdsView: View {
         return []
     }
 
+    private var screenshotActiveProductID: String? {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if screenshotPrices.count == SupporterConfiguration.monthlyProductIDs.count,
+           let index = arguments.firstIndex(of: "--qa-active-product"),
+           arguments.indices.contains(index + 1),
+           SupporterConfiguration.monthlyProductIDs.contains(arguments[index + 1]) {
+            return arguments[index + 1]
+        }
+        #endif
+        return nil
+    }
+
+    // Screenshot fixtures affect presentation only, never verified StoreKit rights.
+    private var displaysActiveSubscription: Bool {
+        screenshotActiveProductID != nil || store.isSupporter
+    }
+
     private var columns: [GridItem] {
         dynamicTypeSize.isAccessibilitySize
             ? [GridItem(.flexible(), spacing: 12)]
@@ -318,7 +336,7 @@ struct RemoveAdsView: View {
                         .multilineTextAlignment(.center)
                         .accessibilityAddTraits(.isHeader)
 
-                    Image(systemName: store.isSupporter ? "checkmark.seal.fill" : "rectangle.slash")
+                    Image(systemName: displaysActiveSubscription ? "checkmark.seal.fill" : "rectangle.slash")
                         .font(.system(size: 52, weight: .light))
                         .foregroundStyle(CeremonialObsidianTheme.brightGold)
                         .frame(width: 76, height: 76)
@@ -327,7 +345,7 @@ struct RemoveAdsView: View {
                         .accessibilityHidden(true)
 
                     VStack(spacing: 8) {
-                        if store.isSupporter {
+                        if displaysActiveSubscription {
                             Text("Ad-free active")
                                 .font(.system(.title3, design: .serif, weight: .semibold))
                                 .foregroundStyle(CeremonialObsidianTheme.brightGold)
@@ -344,8 +362,9 @@ struct RemoveAdsView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                    if !store.isSupporter {
-                    Text("Choose a monthly option to remove ads. All readings and cards remain free.")
+                    Text(AppLocalization.text(displaysActiveSubscription
+                         ? "Choose another monthly amount to change your subscription. All options remove ads. Apple shows when the change takes effect before you confirm."
+                         : "Choose a monthly option to remove ads. All readings and cards remain free."))
                         .font(.system(.body, design: .serif))
                         .foregroundStyle(CeremonialObsidianTheme.secondaryText)
                         .multilineTextAlignment(.center)
@@ -353,8 +372,15 @@ struct RemoveAdsView: View {
 
                     if !screenshotPrices.isEmpty {
                         LazyVGrid(columns: columns, spacing: 12) {
-                            ForEach(Array(screenshotPrices.enumerated()), id: \.offset) { _, price in
-                                purchaseOption(price: price, action: {}).allowsHitTesting(false)
+                            ForEach(Array(screenshotPrices.enumerated()), id: \.offset) { index, price in
+                                purchaseOption(
+                                    price: price,
+                                    isCurrent: SupporterConfiguration.monthlyProductIDs.indices.contains(index)
+                                        && SupporterConfiguration.monthlyProductIDs[index] == screenshotActiveProductID,
+                                    action: {}
+                                )
+                                .disabled(true)
+                                .allowsHitTesting(false)
                             }
                         }
                     } else if store.isLoadingProducts {
@@ -377,13 +403,14 @@ struct RemoveAdsView: View {
                     } else {
                         LazyVGrid(columns: columns, spacing: 12) {
                             ForEach(store.products, id: \.id) { product in
-                                purchaseOption(price: product.displayPrice) {
+                                purchaseOption(
+                                    price: product.displayPrice,
+                                    isCurrent: product.id == store.activeProductID
+                                ) {
                                     Task { await store.purchase(product) }
                                 }
                             }
                         }
-                    }
-
                     }
 
                     VStack(spacing: 8) {
@@ -413,7 +440,7 @@ struct RemoveAdsView: View {
                         ) {
                             Task { await store.restorePurchases() }
                         }
-                        .disabled(store.isRestoring || store.busyProductID != nil)
+                        .disabled(!screenshotPrices.isEmpty || store.isRestoring || store.busyProductID != nil)
 
                         settingsDivider
 
@@ -469,7 +496,11 @@ struct RemoveAdsView: View {
         }
     }
 
-    private func purchaseOption(price: String, action: @escaping () -> Void) -> some View {
+    private func purchaseOption(
+        price: String,
+        isCurrent: Bool = false,
+        action: @escaping () -> Void
+    ) -> some View {
         Button(action: action) {
             VStack(spacing: 3) {
                 Text(price)
@@ -477,28 +508,39 @@ struct RemoveAdsView: View {
                 Text("per month")
                     .font(.system(.caption, design: .serif))
                     .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                if isCurrent {
+                    Label("Current subscription", systemImage: "checkmark.circle.fill")
+                        .font(.system(.caption, design: .serif, weight: .semibold))
+                        .foregroundStyle(CeremonialObsidianTheme.brightGold)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             .frame(maxWidth: .infinity, minHeight: 64)
             .padding(.horizontal, 8)
+            .padding(.vertical, isCurrent ? 8 : 0)
             .background {
                 RoundedRectangle(cornerRadius: 15)
                     .fill(CeremonialObsidianTheme.cardSurface.opacity(0.92))
                     .overlay {
                         RoundedRectangle(cornerRadius: 15)
-                            .stroke(CeremonialObsidianTheme.gold, lineWidth: 1)
+                            .stroke(CeremonialObsidianTheme.gold, lineWidth: isCurrent ? 2 : 1)
                     }
             }
         }
         .buttonStyle(.plain)
         .foregroundStyle(CeremonialObsidianTheme.parchment)
-        .disabled(store.busyProductID != nil || store.isRestoring)
+        .disabled(isCurrent || store.busyProductID != nil || store.isRestoring)
         .accessibilityLabel(
             AppLocalization.format(
                 "Remove ads, %@ per month",
                 price
             )
         )
-        .accessibilityHint("Starts the Apple purchase confirmation")
+        .accessibilityValue(isCurrent ? Text("Current subscription") : Text(""))
+        .accessibilityHint(isCurrent
+                           ? Text("This subscription is already active")
+                           : Text("Starts the Apple purchase confirmation"))
     }
 
     private var settingsDivider: some View {
