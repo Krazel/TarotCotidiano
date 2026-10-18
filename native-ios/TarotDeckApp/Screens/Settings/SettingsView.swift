@@ -96,8 +96,7 @@ struct SettingsView: View {
                         if showsSupportReminder && supporterStore.hasResolvedEntitlements && !supporterStore.isSupporter {
                             settingsSection(title: "Read without ads") {
                                 VStack(alignment: .leading, spacing: 12) {
-                                    if !store.isSupporter {
-                    Text("Choose a monthly option to remove ads. All readings and cards remain free.")
+                                    Text("Choose a monthly option to remove ads. All readings and cards remain free.")
                                         .fixedSize(horizontal: false, vertical: true)
                                     NavigationLink("Remove ads") {
                                         RemoveAdsView(store: supporterStore)
@@ -345,6 +344,7 @@ struct RemoveAdsView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
+                    if !store.isSupporter {
                     Text("Choose a monthly option to remove ads. All readings and cards remain free.")
                         .font(.system(.body, design: .serif))
                         .foregroundStyle(CeremonialObsidianTheme.secondaryText)
