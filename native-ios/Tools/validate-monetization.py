@@ -88,8 +88,8 @@ check(len(audit['sdks']) == 2 and all(s['privacyManifests'] and s['sha256'] for 
       'Exact SDK archive checksums and actual bundled privacy manifests recorded')
 svg = ROOT / 'design/monetization-20261018/integration.svg'
 ET.parse(svg)
-check(hashlib.sha256(svg.read_bytes()).hexdigest() in (svg.parent / 'REFERENCE.md').read_text(encoding='utf-8'),
-      'Complete code-native visual reference is registered with current SHA-256')
+check(hashlib.sha256(svg.read_text(encoding='utf-8').encode('utf-8')).hexdigest() in (svg.parent / 'REFERENCE.md').read_text(encoding='utf-8'),
+      'Complete visual reference matches registered canonical UTF-8 LF SHA-256')
 tests = (ROOT / 'native-ios/Tests/TarotDeckCoreTests/MonetizationPolicyTests.swift').read_text(encoding='utf-8')
 check(tests.count('func test') == 4 and 'UserDefaults(suiteName: suite)' in tests and 'MonetizationPolicy.Surface.normal, .table, .restoring, .readingMeaning' in tests,
       'XCTest source covers banner gates, reminder boundaries and real UserDefaults persistence (not executed here)')
