@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-18T20:52:46.166Z",
+  "version": "1.2",
+  "build": "1",
+  "buildID": "cb6ea8b2-c2b1-45f1-9fcc-9c022b3bfd58",
+  "submissionID": "32df187e-377e-4585-97fe-f4c75dacf28e",
+  "checks": {
+    "binaryValid": true,
+    "appStoreEligible": true,
+    "sevenApprovedSubscriptions": true,
+    "pricesAndProductsUnchanged": true,
+    "privacyPublished": true,
+    "nonPersonalizedAds": true,
+    "consentPublished": true,
+    "storeMetadataMatches": true,
+    "releaseAfterApproval": true,
+    "automatedTests": 59,
+    "coreCI": "39163276350",
+    "releaseCI": "39163276579"
+  },
+  "limitations": [
+    "New amount-switch UI checked in EN/ES simulator fixture; no claim of a new physical StoreKit switch transaction. User confirmed existing subscription and ad removal in previous beta.",
+    "AdMob app verification remains pending; developer website included in 1.2 metadata, app-ads.txt HTTP 200 with correct publisher."
+  ],
+  "authorization": "User requested change to subscription amount selection and send this version with ads to review for publication: Adelante."
+}

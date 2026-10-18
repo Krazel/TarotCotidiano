@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "app": "Tarot Deck",
+  "version": "1.2",
+  "build": "1",
+  "bundleID": "com.krazel.tarotdeck",
+  "commit": "6b6ac7957a835bba45ce72f49928e6d934d6571f",
+  "ciRunNumber": "3",
+  "ciRunAttempt": "1",
+  "ciRunID": "39163276579",
+  "purpose": "App-Review-RC",
+  "internalTestingOnly": false,
+  "externalTestingCapable": true,
+  "appStoreReleaseCapable": true,
+  "submittedForReview": false,
+  "advertisingMode": "production",
+  "admobApplicationID": "ca-app-pub-3425091654264901~4270953811",
+  "admobBannerID": "ca-app-pub-3425091654264901/3573694673",
+  "artifact": "TarotDeck-1.2-1-ci3-6b6ac7957a83-App-Review-RC",
+  "sha256": "094e66a81ad29c3e6cea8fed08c841f9aab986bc1ed90fd7827efab83fff32ac"
+}

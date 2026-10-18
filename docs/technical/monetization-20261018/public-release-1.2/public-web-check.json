@@ -1,0 +1,25 @@
+{
+  "checkedAt": "2026-10-18T20:47:56.509Z",
+  "appAds": {
+    "status": 200,
+    "url": "https://krazel.github.io/app-ads.txt",
+    "content": "google.com, pub-3425091654264901, DIRECT, f08c47fec0942fa0\n"
+  },
+  "store": {
+    "status": 200,
+    "url": "https://itunes.apple.com/lookup?id=6800144105&country=es",
+    "app": {
+      "version": "1.0",
+      "trackViewUrl": "https://apps.apple.com/es/app/tarot-deck-lee-y-aprende/id6800144105?uo=4",
+      "bundleId": "com.krazel.tarotdeck"
+    }
+  },
+  "privacy": {
+    "status": 200,
+    "url": "https://krazel.github.io/tarot-deck/privacy/"
+  },
+  "support": {
+    "status": 200,
+    "url": "https://krazel.github.io/tarot-deck/support/"
+  }
+}

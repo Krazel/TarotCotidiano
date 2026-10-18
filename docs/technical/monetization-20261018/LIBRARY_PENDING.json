@@ -4,7 +4,7 @@
   "status": "Pending authorized write; reread and merge before PATCH",
   "changes": {
     "stage": "En producción",
-    "version": "1.1.2",
+    "version": "1.2",
     "build": 1,
     "publicVersion": "1.0",
     "tracking": {
@@ -14,7 +14,7 @@
       "testflightUrl": "",
       "appStoreUrl": "https://apps.apple.com/pk/app/tarot-deck-read-learn/id6800144105"
     },
-    "next": "Probar 1.1.2 (1) en TestFlight y consultar el resultado de la revisión exclusiva de textos Apple (ocho versiones WAITING_FOR_REVIEW). Rediseño pausado.",
-    "source": "12/10 GitHub privado verificado; soporte público separado. Evidencia: .studio/github-private-support-20261012.md.\n\nTarot: STATUS.md, candidata pública 1.0 (1), última beta 1.0 (2). Ficha pública Apple localizada 05/09. Agrupa Tarot Cotidiano y carpetas QA.\n18/10: 1.1 (1) VALID/INTERNAL_ONLY/IN_BETA_TESTING; grupo Testers verificado. 53 XCTest, firma y subida PASS; repositorio privado restaurado. Evidencia TarotCotidianoNative/docs/technical/monetization-20261018/TESTFLIGHT_RECEIPT.json.\n18/10: 1.1.1 (1) disponible internamente. 57 tests, banner y formulario automático EEA comprobados en simulador. Repositorio privado restaurado. Evidencia CONSENT_FIX_RECEIPT.json.\n18/10: 1.1.2 (1) VALID/INTERNAL_ONLY/IN_BETA_TESTING; Ajustes y Quitar anuncios sin avisos internos, EN/ES revisados en simulador; 57 tests. Repositorio privado restaurado. Recibo FINAL_SCREENS_RECEIPT.json.\n18/10 19:10 UTC: autorizado y enviado por API el cambio EN/ES Quitar anuncios/Remove ads de siete suscripciones y grupo. Ocho versiones WAITING_FOR_REVIEW, no aprobadas; sin nueva versión de app ni cambios de precio. Recibo APPLE_METADATA_REVIEW_RECEIPT.json."
+    "next": "Esperar revisión Apple 1.2 (1), publicación automática tras aprobación. Verificar después enlace de desarrollador y aprobación de Tarot en AdMob; aún no confirmar tráfico real. Conciliar PR-003 cuando la escritura esté autorizada.",
+    "source": "12/10 GitHub privado verificado; soporte público separado. Evidencia: .studio/github-private-support-20261012.md.\n\nTarot: STATUS.md, candidata pública 1.0 (1), última beta 1.0 (2). Ficha pública Apple localizada 05/09. Agrupa Tarot Cotidiano y carpetas QA.\n18/10: 1.1 (1) VALID/INTERNAL_ONLY/IN_BETA_TESTING; grupo Testers verificado. 53 XCTest, firma y subida PASS; repositorio privado restaurado. Evidencia TarotCotidianoNative/docs/technical/monetization-20261018/TESTFLIGHT_RECEIPT.json.\n18/10: 1.1.1 (1) disponible internamente. 57 tests, banner y formulario automático EEA comprobados en simulador. Repositorio privado restaurado. Evidencia CONSENT_FIX_RECEIPT.json.\n18/10: 1.1.2 (1) VALID/INTERNAL_ONLY/IN_BETA_TESTING; Ajustes y Quitar anuncios sin avisos internos, EN/ES revisados en simulador; 57 tests. Repositorio privado restaurado. Recibo FINAL_SCREENS_RECEIPT.json.\n18/10 19:10 UTC: autorizado y enviado por API el cambio EN/ES Quitar anuncios/Remove ads de siete suscripciones y grupo. Ocho versiones WAITING_FOR_REVIEW, no aprobadas; sin nueva versión de app ni cambios de precio. Recibo APPLE_METADATA_REVIEW_RECEIPT.json.\n18/10 20:52 UTC: 1.2 (1) VALID/APP_STORE_ELIGIBLE/IN_BETA_TESTING interno, enviada a App Review WAITING_FOR_REVIEW y AFTER_APPROVAL. Siete importes visibles para suscriptor activo, productos/precios sin cambios. AdMob de Coder Apps Krazel configurado y UMP/privacidad Apple publicados; Google pendiente verificar app-ads por enlace nuevo preparado en ficha 1.2. Público aún1.0. 59 tests; GitHub privado restaurado. Recibo PUBLIC_RELEASE_RECEIPT.json."
   }
 }

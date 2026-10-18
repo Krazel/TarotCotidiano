@@ -1,0 +1,46 @@
+- button "Ir al contenido principal":
+  - generic: Ir al contenido principal
+- main:
+  - button "Cerrar":
+    - img: close
+  - heading "Verificar aplicación" [level=1]
+  - button "Más opciones":
+    - img: more_vert
+  - generic: "No hemos podido verificar Tarot Deck: Lee y aprende (iOS)"
+  - generic: Revisa y corrige los problemas que haya con el archivo app-ads.txt y, a continuación, comprueba si hay actualizaciones del archivo. Verificaremos que se haya encontrado el archivo app-ads.txt y que su formato sea el correcto.
+  - heading "Problemas de verificación" [level=2]
+  - heading "¿Qué ha pasado?" [level=3]
+  - paragraph: Puede que hayas configurado un archivo app-ads.txt, pero tus datos no coincidan con la información de tu cuenta de AdMob.
+  - separator
+  - heading "Qué puedes hacer" [level=3]
+  - list:
+    - listitem: Abre las siguientes instrucciones de configuración de app-ads.txt y revisa cada paso.
+    - listitem: Abre el archivo app-ads.txt y comprueba que la información es correcta.
+    - listitem: Una vez que hayas publicado el archivo revisado en el sitio web del desarrollador, comprueba si hay actualizaciones.
+  - button "Buscar actualizaciones": Buscar actualizaciones
+  - heading "¿Necesitas ayuda con el archivo app-ads.txt?" [level=3]
+  - link "Soluciona los problemas":
+    - /url: https://support.google.com/admob/answer/9776740
+  - text: de tu archivo app-ads.txt.
+  - button "Instrucciones de configuración de app-ads.txt":
+    - img: expand_less
+    - generic: Instrucciones de configuración de app-ads.txt
+  - heading "Instrucciones de configuración de app-ads.txt" [level=2]
+  - list:
+    - listitem: Debes crear un archivo app-ads.txt siguiendo las especificaciones de IAB Tech Lab.
+    - generic: "Copia el siguiente fragmento de código y pégalo en tu archivo app-ads.txt:"
+    - button "Copiar en el portapapeles":
+      - img: content_copy
+      - generic: google.com, pub-3425091654264901, DIRECT, f08c47fec0942fa0
+    - generic: "Sube tu archivo app-ads.txt al dominio raíz del sitio web del desarrollador de la aplicación (por ejemplo: sampledomain.com/app-ads.txt)."
+    - img: info
+    - paragraph: Asegúrate de que introduces el nombre del dominio tal como aparece en Google Play o en el App Store.
+    - generic: Rastrea el archivo app-ads.txt para verificar tu aplicación. Haremos algunas comprobaciones para asegurarnos de que se ha encontrado el archivo app-ads.txt y tiene el formato correcto. Este proceso suele durar unos instantes, pero a veces puede prolongarse.
+  - link "Más información, Se abre en otra pestaña":
+    - text: Más información
+    - img: open_in_new
+  - text: © 2026 Google
+  - link "Privacidadopen_in_new":
+    - /url: https://www.google.com/intl/es/policies/privacy
+  - link "Términosopen_in_new":
+    - /url: https://adsense.google.com/adsense/terms

@@ -1,0 +1,12 @@
+{
+  "verifiedAtUTC": "2026-10-18T20:30:32.399369+00:00",
+  "url": "https://krazel.github.io/tarot-deck/privacy/",
+  "anonymousHTTPStatus": 200,
+  "publicMatchesSavedContent": true,
+  "commitSHA": "503b2018216ce409dd7f7ca6187a2c93494a3b60",
+  "blobSHA": "b37cce72237970d39b4927f2d83629b5c795cb57",
+  "expectedSHA256": "8095fdce164e51ea301b5179c4fe1099e7628fbff92064714a2df6e913fc0c33",
+  "anonymousSHA256": "8095fdce164e51ea301b5179c4fe1099e7628fbff92064714a2df6e913fc0c33",
+  "apiContentVerified": true,
+  "changedPath": "tarot-deck/privacy/index.html"
+}

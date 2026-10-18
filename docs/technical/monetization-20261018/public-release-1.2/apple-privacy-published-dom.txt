@@ -1,0 +1,199 @@
+- banner "App Store Connect":
+  - heading "App Store Connect" [level=1]:
+    - link "App Store Connect":
+      - /url: /
+  - navigation "Global":
+    - list:
+      - link "Apps":
+        - /url: /apps
+      - link "Xcode Cloud":
+        - /url: /teams/7f069118-9712-49c8-a1f0-fda00b62a281/xcode-cloud
+      - link "Tendencias":
+        - /url: /trends
+      - link "Informes":
+        - /url: /itc/payments_and_financial_reports
+      - link "Negocio":
+        - /url: /business
+  - button "Guillermo Dura Blabia GUILLERMO DURA BLABIA Account name menu":
+    - generic: Guillermo Dura Blabia
+    - generic: GUILLERMO DURA BLABIA
+- 'button "Menú de apps, Tarot Deck: Read & Learn, seleccionado"':
+  - 'generic "Tarot Deck: Read & Learn"':
+    - 'img "Tarot Deck: Read & Learn"'
+  - generic: "Tarot Deck: Read & Learn"
+- navigation "Apps":
+  - list:
+    - link "Distribución":
+      - /url: /apps/6800144105/distribution
+    - link "Análisis":
+      - /url: /apps/6800144105/analytics
+    - link "TestFlight":
+      - /url: /teams/7f069118-9712-49c8-a1f0-fda00b62a281/apps/6800144105/testflight
+- main:
+  - navigation "Distribución":
+    - list:
+      - heading "App para iOS" [level=2]
+      - list:
+        - link "1.2 En preparación para el envío":
+          - /url: /apps/6800144105/distribution/ios/version/inflight
+          - text: 1.2 En preparación para el envío
+        - link "1.0 Listo para distribución":
+          - /url: /apps/6800144105/distribution/ios/version/deliverable
+          - text: 1.0 Listo para distribución
+      - button "Añadir plataforma"
+      - separator
+      - heading "Información general" [level=2]
+      - list:
+        - link "Información de la app":
+          - /url: /apps/6800144105/distribution/info
+          - generic: Información de la app
+        - link "Revisión de apps":
+          - /url: /apps/6800144105/distribution/reviewsubmissions
+          - generic: Revisión de apps
+        - link "Historial":
+          - /url: /apps/6800144105/distribution/activity/ios/versions
+          - generic: Historial
+      - separator
+      - heading "App Store" [level=2]
+      - heading "Confianza y seguridad" [level=3]
+      - list:
+        - link "Privacidad de la app":
+          - /url: /apps/6800144105/distribution/privacy
+          - generic: Privacidad de la app
+        - link "Accesibilidad de la app":
+          - /url: /apps/6800144105/distribution/accessibility
+          - generic: Accesibilidad de la app
+        - link "Valoraciones y reseñas":
+          - /url: /apps/6800144105/distribution/ratings/ios
+          - generic: Valoraciones y reseñas
+      - heading "Crecimiento y marketing" [level=3]
+      - list:
+        - link "Eventos dentro de la app":
+          - /url: /apps/6800144105/distribution/events
+          - generic: Eventos dentro de la app
+        - link "Páginas del producto personalizadas Novedad":
+          - /url: /apps/6800144105/distribution/productpages
+          - generic: Páginas del producto personalizadas
+          - paragraph: Novedad
+        - link "Biblioteca de componentes Novedad":
+          - /url: /apps/6800144105/distribution/asset-library
+          - generic: Biblioteca de componentes
+          - paragraph: Novedad
+        - link "Optimización de la página del producto Novedad":
+          - /url: /apps/6800144105/distribution/optimization
+          - generic: Optimización de la página del producto
+          - paragraph: Novedad
+        - link "Códigos promocionales":
+          - /url: /apps/6800144105/distribution/promo_codes/generate
+          - generic: Códigos promocionales
+        - link "Game Center":
+          - /url: /apps/6800144105/distribution/gamecenter
+          - generic: Game Center
+      - heading "Monetización" [level=3]
+      - list:
+        - link "Precio y disponibilidad":
+          - /url: /apps/6800144105/distribution/pricing
+          - generic: Precio y disponibilidad
+        - link "Compras dentro de la app":
+          - /url: /apps/6800144105/distribution/iaps
+          - generic: Compras dentro de la app
+        - link "Suscripciones":
+          - /url: /apps/6800144105/distribution/subscriptions
+          - generic: Suscripciones
+      - heading "Destacado" [level=3]
+      - list:
+        - link "Nominaciones":
+          - /url: /apps/6800144105/distribution/nominations
+          - generic: Nominaciones
+  - heading "Privacidad de la app" [level=2]
+  - paragraph: Publicada hace unos segundos por Guillermo Dura Blabia
+  - separator
+  - heading "Política de privacidad" [level=3]
+  - button "Editar"
+  - button "Inglés (EE. UU.)":
+    - text: Inglés (EE. UU.)
+  - button "?"
+  - generic: URL de la política de privacidad
+  - button "Más información": "?"
+  - paragraph: https://krazel.github.io/tarot-deck/privacy/
+  - generic: URL de las opciones de privacidad del usuario
+  - paragraph: (Opcional)
+  - button "Más información": "?"
+  - paragraph: –
+  - separator
+  - heading "Vista previa de la página del producto" [level=3]
+  - button "Ver detalles"
+  - paragraph: Datos vinculados contigo
+  - paragraph: "Los siguientes datos pueden recopilarse y vincularse con tu identidad:"
+  - paragraph: Ubicación
+  - paragraph: Identificadores
+  - paragraph: Datos de uso
+  - paragraph: Datos no vinculados contigo
+  - paragraph: "Los siguientes datos pueden recopilarse, pero no se vinculan con tu identidad:"
+  - paragraph: Diagnósticos
+  - separator
+  - heading "Tipos de datos" [level=3]
+  - button "Editar"
+  - list:
+    - listitem: "7 tipos de datos recopilados en esta app: Ubicación aproximada, ID del dispositivo, Datos de rendimiento, Interacción con el producto, Otros datos de diagnóstico, Datos de publicidad, Datos de errores"
+  - separator
+  - paragraph: Ubicación
+  - paragraph: Ubicación aproximada
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Análisis de datos, Publicidad de terceros y Funcionalidad de la app"
+    - listitem: Se vinculan con la identidad del usuario
+  - separator
+  - paragraph: Identificadores
+  - paragraph: ID del dispositivo
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Publicidad de terceros y Análisis de datos"
+    - listitem: Se vinculan con la identidad del usuario
+  - separator
+  - paragraph: Datos de uso
+  - paragraph: Interacción con el producto
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Funcionalidad de la app, Publicidad de terceros y Análisis de datos"
+    - listitem: Se vinculan con la identidad del usuario
+  - paragraph: Datos de publicidad
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Publicidad de terceros y Análisis de datos"
+    - listitem: Se vinculan con la identidad del usuario
+  - separator
+  - paragraph: Diagnósticos
+  - paragraph: Datos de errores
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Análisis de datos"
+  - paragraph: Datos de rendimiento
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Análisis de datos, Publicidad de terceros y Funcionalidad de la app"
+  - paragraph: Otros datos de diagnóstico
+  - button "Más información": "?"
+  - button "Editar"
+  - list:
+    - listitem: "Se usan para: Publicidad de terceros y Análisis de datos"
+- contentinfo:
+  - list:
+    - link "App Store Connect":
+      - /url: /apps
+  - list:
+    - listitem: Copyright © 2026 Apple Inc. Todos los derechos reservados. |
+    - link "Condiciones de servicio":
+      - /url: /WebObjects/iTunesConnect.woa/wa/termsOfService
+    - text: "|"
+    - link "Política de privacidad":
+      - /url: https://www.apple.com/legal/privacy
+    - text: "|"
+    - link "Contacta con nosotros":
+      - /url: /contact-us

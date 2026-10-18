@@ -1,0 +1,145 @@
+{
+  "appID": "6800144105",
+  "bundleID": "com.krazel.tarotdeck",
+  "version": "1.2",
+  "auditedAt": "2026-10-18T20:27:13.824626+00:00",
+  "status": "PUBLISHED_VERIFIED_IN_APP_STORE_CONNECT",
+  "sdkAudit": "TarotCotidianoNative/docs/technical/monetization-20261018/SDK_AUDIT.json",
+  "sdkVersions": {
+    "GoogleMobileAds": "12.14.0",
+    "UserMessagingPlatform": "3.1.0"
+  },
+  "dataTypes": [
+    {
+      "dataType": "COARSE_LOCATION",
+      "linked": true,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "tracking": false
+    },
+    {
+      "dataType": "DEVICE_ID",
+      "linked": true,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ],
+      "tracking": false
+    },
+    {
+      "dataType": "PRODUCT_INTERACTION",
+      "linked": true,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "tracking": false
+    },
+    {
+      "dataType": "ADVERTISING_DATA",
+      "linked": true,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ],
+      "tracking": false
+    },
+    {
+      "dataType": "CRASH_DATA",
+      "linked": false,
+      "purposes": [
+        "ANALYTICS"
+      ],
+      "tracking": false
+    },
+    {
+      "dataType": "PERFORMANCE_DATA",
+      "linked": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "tracking": false
+    },
+    {
+      "dataType": "OTHER_DIAGNOSTIC_DATA",
+      "linked": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ],
+      "tracking": false
+    }
+  ],
+  "implementation": {
+    "npa": "1",
+    "publisherPrivacyPersonalizationState": "disabled",
+    "publisherFirstPartyIDEnabled": false,
+    "attRequested": false,
+    "mediationAdapters": false
+  },
+  "rationale": {
+    "collection": "Seven categories are disclosed by the exact SDK manifests. Apple-only StoreKit processing and device-only readings/favorites/custom spreads do not add collected developer data.",
+    "linkage": "Use exact-version manifest linkage: location, IDs, advertising and interaction linked; three diagnostic categories unlinked. UMP contributes nonlinked location, performance and interaction for app functionality; category union retains linked=true where GMA declares it.",
+    "purposes": "Ad-serving and SDK measurement use third-party advertising and analytics; crash data is analytics only in 12.14.0. UMP adds app functionality for its three declared types. No developer advertising: no house campaign, own-ad attribution SDK, analytics connection, direct sales or remarketing in this app.",
+    "tracking": "No tracking declared based on explicit npa=1, PPT disabled and publisher first-party ID disabled before SDK initialization; no ATT/IDFA request or mediation adapters. SDK default DeviceID tracking declaration covers optional IDFA; app-scoped identifiers remain collected. Parent verified in live AdMob UI that RTB creative partner consent checks are enabled, with no Tarot mediation or SDK bidding partners. NPA removes identifiers from third-party bid requests; PPT forbids updating user profiles. This conclusion requires these production controls to remain in place."
+  },
+  "sources": [
+    "https://developers.google.com/admob/ios/privacy/data-disclosure",
+    "https://developers.google.com/admob/ios/targeting",
+    "https://developers.google.com/admob/ios/privacy/strategies",
+    "https://support.google.com/admob/answer/14323214",
+    "https://support.google.com/admob/answer/14199649?hl=en",
+    "https://support.google.com/admob/answer/9997589?hl=en",
+    "https://developer.apple.com/app-store/app-privacy-details/"
+  ],
+  "publishedVerifiedAt": "2026-10-18T20:46:26.139275+00:00",
+  "admobVerification": {
+    "verifiedBy": "Parent agent /root through visible AdMob UI",
+    "account": "coderappskrazel@gmail.com",
+    "publisher": "pub-3425091654264901",
+    "applicationID": "ca-app-pub-3425091654264901~4270953811",
+    "bannerID": "ca-app-pub-3425091654264901/3573694673",
+    "rtbCreativePartnerConsentCheckEnabled": true,
+    "mediationGroupsForTarot": false,
+    "mediationAdapters": false,
+    "sdkBiddingPartners": false,
+    "globalSettingsChanged": false
+  },
+  "evidence": [
+    {
+      "file": "apple-privacy-published-dom.txt",
+      "sha256": "0230a58dcf27a69e061fc580e2e5c6ede06836a73fa7acbb56bc9f94f248389d"
+    },
+    {
+      "file": "apple-privacy-published.jpg",
+      "sha256": "d33a757b8beb485e922082c85ac404f599901db92cc9b43d8e4fa930222bdedf"
+    },
+    {
+      "file": "apple-privacy-summary.jpg",
+      "sha256": "a37f6537179a80d7ad500539d93b22e9c426ba17e8b79b9f064586dd8c81914c"
+    }
+  ],
+  "verification": {
+    "sevenCategoriesPublished": true,
+    "unfinishedConfigurationWarningAbsent": true,
+    "dataLinkedCategories": [
+      "LOCATION",
+      "IDENTIFIERS",
+      "USAGE_DATA"
+    ],
+    "dataNotLinkedCategories": [
+      "DIAGNOSTICS"
+    ],
+    "trackingDeclared": false,
+    "policyURL": "https://krazel.github.io/tarot-deck/privacy/",
+    "versionMetadataChanged": false,
+    "subscriptionsChanged": false,
+    "appReviewSubmitted": false
+  }
+}

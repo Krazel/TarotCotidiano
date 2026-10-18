@@ -1,0 +1,131 @@
+{
+  "checkedAt": "2026-10-18T22:54:41.023785+02:00",
+  "appID": "6800144105",
+  "version": "1.2",
+  "build": 1,
+  "sourceCommit": "6b6ac7957a835bba45ce72f49928e6d934d6571f",
+  "binarySha256": "094e66a81ad29c3e6cea8fed08c841f9aab986bc1ed90fd7827efab83fff32ac",
+  "buildID": "cb6ea8b2-c2b1-45f1-9fcc-9c022b3bfd58",
+  "versionID": "ce44a188-a413-460c-9490-8cc942f8b4cb",
+  "submissionID": "32df187e-377e-4585-97fe-f4c75dacf28e",
+  "reviewState": "WAITING_FOR_REVIEW",
+  "submittedDate": "2026-10-18T20:52:47.577Z",
+  "releaseType": "AFTER_APPROVAL",
+  "publicVersion": "1.0",
+  "testflight": {
+    "internal": "IN_BETA_TESTING",
+    "external": "READY_FOR_BETA_SUBMISSION",
+    "externalSubmitted": false
+  },
+  "github": {
+    "visibility": "PRIVATE",
+    "releaseCI": "39163276579",
+    "releaseConclusion": "success",
+    "coreCI": "39163276350",
+    "coreConclusion": "success",
+    "coreTests": 59
+  },
+  "admob": {
+    "profile": "Coder Apps Krazel",
+    "publisher": "pub-3425091654264901",
+    "appID": "ca-app-pub-3425091654264901~4270953811",
+    "bannerID": "ca-app-pub-3425091654264901/3573694673",
+    "consent": "Published EN + ES; No consent available; EEA, UK, Switzerland",
+    "maximumAdContentRating": "PG",
+    "personalized": false,
+    "mediation": false,
+    "rtbCreativeConsentChecked": true,
+    "approval": "Needs review; app verification pending; limited ad serving",
+    "appAdsTxt": "https://krazel.github.io/app-ads.txt",
+    "appAdsHttpStatus": 200,
+    "developerWebsitePendingPublication": "https://krazel.github.io/tarot-deck/support/",
+    "liveImpressionsVerified": false
+  },
+  "privacy": {
+    "applePublished": true,
+    "dataCategories": 7,
+    "trackingDeclared": false,
+    "publicPolicyHttpStatus": 200
+  },
+  "subscriptionMetadataReview": {
+    "id": "530362ed-708a-44b0-9ba1-3625c28e6f2d",
+    "state": "WAITING_FOR_REVIEW",
+    "items": 8
+  },
+  "qa": {
+    "existingPhysicalSubscriptionAndAdRemoval": "User confirmed working before requested update",
+    "activeSubscriptionUI": "EN/ES simulator fixture visually checked; current amount marked; seven amounts remain visible",
+    "physicalAmountSwitchTransaction": "Not exercised in this run"
+  },
+  "library": {
+    "id": "PR-003",
+    "synced": false,
+    "reason": "Previous automatic approval review rejected write; pending record retained, not bypassed"
+  },
+  "evidence": [
+    {
+      "sha256": "52da450bd6968a18c00d2d9f9ea476d8ff00d9929e3d9cc822a62fcfad843872",
+      "file": "public-release-1.2/admob-apps-verified.jpg"
+    },
+    {
+      "sha256": "78fe9f16a79e6f034fbebb5fd4c02d53961208a37967fdfe7c4261fb08dce9fc",
+      "file": "public-release-1.2/admob-content-rating.jpg"
+    },
+    {
+      "sha256": "33b524246c2793ea661d1d73fe3ecb2e8ec3740e356706ba9d9ad9e6238e6c48",
+      "file": "public-release-1.2/admob-rtb-consent.jpg"
+    },
+    {
+      "sha256": "a9d023f9a40add3c58137d70040f6d638252be6e716453ec86415cca338a604a",
+      "file": "public-release-1.2/admob-ump-published.jpg"
+    },
+    {
+      "sha256": "947435fc766d9af412dbd8e3d75c24c4c958af071a394e801346458a03f82af2",
+      "file": "public-release-1.2/admob-verification-pending-dom.txt"
+    },
+    {
+      "sha256": "51ea6ba815fec205dbc508d9a1eeeea47147b2b47cd2b1d2d8e545c8629f2466",
+      "file": "public-release-1.2/admob-verification-pending.jpg"
+    },
+    {
+      "sha256": "f24b6ae106d3bb642ebe6cac7bb6f619e9a345f6d80b889a91f3ab2af4cf057a",
+      "file": "public-release-1.2/apple-privacy-audit.json"
+    },
+    {
+      "sha256": "0230a58dcf27a69e061fc580e2e5c6ede06836a73fa7acbb56bc9f94f248389d",
+      "file": "public-release-1.2/apple-privacy-published-dom.txt"
+    },
+    {
+      "sha256": "a37f6537179a80d7ad500539d93b22e9c426ba17e8b79b9f064586dd8c81914c",
+      "file": "public-release-1.2/apple-privacy-summary.jpg"
+    },
+    {
+      "sha256": "890be6d68a0f996bb623ca6edec0c27155a65a2c8d4bfc554c1d99d724e6055f",
+      "file": "public-release-1.2/binary-manifest.json"
+    },
+    {
+      "sha256": "30afe877b066a355de7f5daff29336b1cb8a87a2331065099ae2062e510f87dc",
+      "file": "public-release-1.2/final-preflight.json"
+    },
+    {
+      "sha256": "e9abc005af364aa160b54d8fea7818f42adc6a3d827c1942420dfcaf0bab28da",
+      "file": "public-release-1.2/privacy-verification.json"
+    },
+    {
+      "sha256": "2d1d269dbb696febbf6045d317bd235cd01d411a223c2aff14c13285069ab091",
+      "file": "public-release-1.2/public-web-check.json"
+    },
+    {
+      "sha256": "56a5b5970a1e7640a67c2b59e1d5c9c8da07ad802596e6b4ea9a63bff7769e30",
+      "file": "public-release-1.2/submitted-verified.json"
+    },
+    {
+      "sha256": "37d834139ee4e7fd29f4ba9d879e3a3a8b356d4999f34e30b1372843c878a80d",
+      "file": "public-release-1.2/tarot-remove-ads-active-english.png"
+    },
+    {
+      "sha256": "dc41581df8da6384075c705b32aefe8158af0e9121112630fe26ff61050759d0",
+      "file": "public-release-1.2/tarot-remove-ads-active-spanish.png"
+    }
+  ]
+}
