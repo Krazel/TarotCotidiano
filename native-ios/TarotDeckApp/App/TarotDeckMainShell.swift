@@ -20,6 +20,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
     let readingContextActive: Bool
     @EnvironmentObject private var supporter: SupporterStore
     @EnvironmentObject private var adConsent: TarotAdConsent
+    @Environment(\.scenePhase) private var scenePhase
     let startReading: (String) -> Void
     let readContent: (
         @escaping (String) -> Void,
@@ -52,6 +53,12 @@ struct TarotDeckMainShell<ReadContent: View>: View {
         self.startReading = startReading
         self.readContent = readContent
         Self.configureTabBarAppearance()
+    }
+
+    private var canPresentAutomaticConsent: Bool {
+        supporter.hasResolvedEntitlements && !supporter.isSupporter
+            && !readingContextActive && readingMeaningCardID == nil
+            && !settingsPresented && scenePhase == .active
     }
 
     var body: some View {
@@ -115,11 +122,11 @@ struct TarotDeckMainShell<ReadContent: View>: View {
                 ))
             }
         }
-        .task(id: supporter.hasResolvedEntitlements && !supporter.isSupporter) {
-            if supporter.hasResolvedEntitlements && !supporter.isSupporter {
-                await adConsent.updateIfNeeded()
-            }
+        .onAppear { adConsent.setAutomaticPresentationAllowed(canPresentAutomaticConsent) }
+        .onChange(of: canPresentAutomaticConsent) { allowed in
+            adConsent.setAutomaticPresentationAllowed(allowed)
         }
+        .onDisappear { adConsent.setAutomaticPresentationAllowed(false) }
         .toolbarBackground(.visible, for: .tabBar)
         .sheet(
             isPresented: Binding(

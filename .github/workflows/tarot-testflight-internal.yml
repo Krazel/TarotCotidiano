@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       internal_only_confirmation:
-        description: "Optional QA rebuild only: upload 1.1 build 1 as permanently internal-only; never use it for public submission"
+        description: "Optional QA rebuild only: upload 1.1.1 build 1 as permanently internal-only; never use it for public submission"
         required: true
         default: "DO_NOT_UPLOAD"
         type: choice
         options:
           - "DO_NOT_UPLOAD"
-          - "TESTFLIGHT_INTERNAL_ONLY_1_1_BUILD_1"
+          - "TESTFLIGHT_INTERNAL_ONLY_1_1_1_BUILD_1"
 
 permissions:
   contents: read
@@ -21,8 +21,8 @@ concurrency:
 
 jobs:
   archive-export-upload:
-    name: TestFlight INTERNAL ONLY - 1.1 (1)
-    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_1_BUILD_1' }}
+    name: TestFlight INTERNAL ONLY - 1.1.1 (1)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_1_1_BUILD_1' }}
     runs-on: macos-latest
     timeout-minutes: 45
     environment: app-store-production
@@ -60,6 +60,7 @@ jobs:
         run: swift test --package-path native-ios --parallel
 
       - name: Compile and launch simulator app
+        timeout-minutes: 18
         shell: bash
         run: |
           set -euo pipefail
@@ -74,15 +75,36 @@ jobs:
           xcrun simctl bootstatus "$DEVICE_ID" -b
           xcrun simctl install "$DEVICE_ID" "$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app"
           xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
-          sleep 8
+          for attempt in {1..12}; do
+            sleep 5
+            xcrun simctl spawn "$DEVICE_ID" log show --last 2m --style compact --predicate 'subsystem == "com.krazel.tarotdeck"' > "$RUNNER_TEMP/tarot-ads-runtime.log"
+            if grep -q test_banner_loaded "$RUNNER_TEMP/tarot-ads-runtime.log"; then break; fi
+          done
+          grep -q test_banner_loaded "$RUNNER_TEMP/tarot-ads-runtime.log"
           xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-home-simulator.png"
+          xcrun simctl terminate "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
+          xcrun simctl uninstall "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
+          xcrun simctl install "$DEVICE_ID" "$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app"
+          xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-consent-eea
+          for attempt in {1..12}; do
+            sleep 5
+            xcrun simctl spawn "$DEVICE_ID" log show --last 2m --style compact --predicate 'subsystem == "com.krazel.tarotdeck"' > "$RUNNER_TEMP/tarot-consent-runtime.log"
+            if grep -q consent_form_presenting "$RUNNER_TEMP/tarot-consent-runtime.log"; then break; fi
+          done
+          grep -q consent_form_presenting "$RUNNER_TEMP/tarot-consent-runtime.log"
+          sleep 3
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-consent-eea.png"
           xcrun simctl shutdown "$DEVICE_ID"
 
       - name: Preserve simulator launch screenshot
         uses: actions/upload-artifact@v4
         with:
-          name: TarotDeck-1.1-1-simulator-${{ github.run_id }}
-          path: ${{ runner.temp }}/tarot-home-simulator.png
+          name: TarotDeck-1.1.1-1-simulator-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/tarot-home-simulator.png
+            ${{ runner.temp }}/tarot-consent-eea.png
+            ${{ runner.temp }}/tarot-ads-runtime.log
+            ${{ runner.temp }}/tarot-consent-runtime.log
           retention-days: 1
 
       - name: Prepare App Store Connect cloud-signing key
@@ -162,7 +184,7 @@ jobs:
             CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18" \
             CURRENT_PROJECT_VERSION=1 \
-            MARKETING_VERSION=1.1 \
+            MARKETING_VERSION=1.1.1 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS=TAROT_TEST_ADS \
             TAROT_ADS_MODE=test-only \
             COMPILER_INDEX_STORE_ENABLE=NO
@@ -188,7 +210,7 @@ jobs:
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1.1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
@@ -247,7 +269,7 @@ jobs:
           VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-testflight-verify.XXXXXX")"
           OUTPUT_PATH="$RUNNER_TEMP/tarot-testflight-evidence"
           SHORT_COMMIT="${GITHUB_SHA:0:12}"
-          BASE_NAME="TarotDeck-1.1-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
+          BASE_NAME="TarotDeck-1.1.1-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
           IPA_PATH="$SOURCE_IPA"
           MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
           SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
@@ -269,7 +291,7 @@ jobs:
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1.1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
@@ -280,7 +302,7 @@ jobs:
           printf '%s  %s.ipa\n' "$IPA_SHA256" "$BASE_NAME" > "$SHA_PATH"
           jq -n \
             --arg app "Tarot Deck" \
-            --arg version "1.1" \
+            --arg version "1.1.1" \
             --arg build "1" \
             --arg bundleID "com.krazel.tarotdeck" \
             --arg commit "$GITHUB_SHA" \

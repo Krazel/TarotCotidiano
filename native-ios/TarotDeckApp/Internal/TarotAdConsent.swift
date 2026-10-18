@@ -3,6 +3,8 @@ import Foundation
 import GoogleMobileAds
 import UIKit
 import UserMessagingPlatform
+import TarotDeckCore
+import OSLog
 
 enum TarotAdsConfiguration {
     // Google's public sample IDs, independently verified in the official setup/banner guides.
@@ -33,23 +35,56 @@ final class TarotAdConsent: ObservableObject {
     @Published var showsError = false
     private var didUpdateThisLaunch = false
     private var isStarting = false
+    private var automaticPresentationAllowed = false
+    private let logger = Logger(subsystem: "com.krazel.tarotdeck", category: "ads")
 
-    /// Update each eligible launch, without presenting a form over a reading or overlay.
-    /// Where consent is required, Settings provides an explicit, non-blocking entry.
+    func setAutomaticPresentationAllowed(_ allowed: Bool) {
+        automaticPresentationAllowed = allowed
+        if allowed { Task { await updateIfNeeded() } }
+    }
+
+    private func requestParameters() -> RequestParameters {
+        let parameters = RequestParameters()
+        #if DEBUG
+        // Simulator QA only. Release/TestFlight always uses the user's real geography.
+        if ProcessInfo.processInfo.arguments.contains("--qa-consent-eea") {
+            let debug = DebugSettings()
+            debug.geography = .EEA
+            parameters.debugSettings = debug
+        }
+        #endif
+        return parameters
+    }
+
+    /// Collect the first required choice automatically; Settings remains available
+    /// for subsequent changes. Never bypass UMP or present over a reading.
     func updateIfNeeded() async {
         guard TarotAdsConfiguration.testBannerID != nil, !didUpdateThisLaunch, !isBusy else { return }
-        didUpdateThisLaunch = true
         isBusy = true
         defer { isBusy = false }
         do {
-            try await ConsentInformation.shared.requestConsentInfoUpdate(with: RequestParameters())
-            refreshState()
-            await startIfAllowed()
+            didUpdateThisLaunch = try await ConsentLaunchSequence.run(
+                refresh: {
+                    try await ConsentInformation.shared.requestConsentInfoUpdate(with: self.requestParameters())
+                },
+                requiresForm: { ConsentInformation.shared.consentStatus == .required },
+                mayPresent: { self.automaticPresentationAllowed },
+                load: { try await ConsentForm.load() },
+                present: { form in
+                    self.logger.notice("consent_form_presenting")
+                    try await form.present(from: nil)
+                },
+                finish: {
+                    self.refreshState()
+                    await self.startIfAllowed()
+                }
+            )
         } catch {
             // Fail closed on update errors, including a missing UMP console configuration.
             canRequestAds = false
             requiresPrivacyOptions = ConsentInformation.shared.privacyOptionsRequirementStatus == .required
             didUpdateThisLaunch = false
+            logger.error("automatic_consent_failed: \(error.localizedDescription, privacy: .public)")
         }
     }
 

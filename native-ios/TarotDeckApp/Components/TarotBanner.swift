@@ -3,6 +3,7 @@ import SwiftUI
 import TarotDeckCore
 import UIKit
 import UserMessagingPlatform
+import OSLog
 
 /// Removed from the hierarchy (including its request/controller) in excluded contexts.
 struct TarotBannerSlot: View {
@@ -98,6 +99,7 @@ private final class TarotBannerController: UIViewController, BannerViewDelegate 
 
     func bannerViewDidReceiveAd(_ bannerView: BannerView) {
         guard !stopped else { return }
+        Logger(subsystem: "com.krazel.tarotdeck", category: "ads").notice("test_banner_loaded")
         onHeight(bannerView.adSize.size.height)
     }
 
