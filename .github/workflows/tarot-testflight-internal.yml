@@ -105,7 +105,36 @@ jobs:
           chmod 600 "$API_KEY_PATH"
           test -s "$API_KEY_PATH"
 
-      - name: Archive signed Release app with cloud signing
+      - name: Prepare existing distribution certificate and Tarot profile
+        shell: bash
+        env:
+          IOS_DISTRIBUTION_P12_BASE64: ${{ secrets.IOS_DISTRIBUTION_P12_BASE64 }}
+          IOS_DISTRIBUTION_P12_PASSWORD: ${{ secrets.IOS_DISTRIBUTION_P12_PASSWORD }}
+          IOS_APP_STORE_PROFILE_BASE64: ${{ secrets.IOS_APP_STORE_PROFILE_BASE64 }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          set -euo pipefail
+          set +x
+          KEYCHAIN_PATH="$RUNNER_TEMP/tarot-signing.keychain-db"
+          SIGNING_PASSWORD="$(openssl rand -hex 24)"
+          printf '%s' "$IOS_DISTRIBUTION_P12_BASE64" | base64 --decode > "$RUNNER_TEMP/tarot-distribution.p12"
+          printf '%s' "$IOS_APP_STORE_PROFILE_BASE64" | base64 --decode > "$RUNNER_TEMP/tarot.mobileprovision"
+          security cms -D -i "$RUNNER_TEMP/tarot.mobileprovision" > "$RUNNER_TEMP/tarot-profile.plist"
+          PROFILE_UUID="$(/usr/libexec/PlistBuddy -c 'Print :UUID' "$RUNNER_TEMP/tarot-profile.plist")"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$RUNNER_TEMP/tarot-profile.plist")" == "$APPLE_TEAM_ID.com.krazel.tarotdeck" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:get-task-allow' "$RUNNER_TEMP/tarot-profile.plist")" == "false" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:beta-reports-active' "$RUNNER_TEMP/tarot-profile.plist")" == "true" ]]
+          mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
+          cp "$RUNNER_TEMP/tarot.mobileprovision" "$HOME/Library/MobileDevice/Provisioning Profiles/$PROFILE_UUID.mobileprovision"
+          security create-keychain -p "$SIGNING_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$SIGNING_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$RUNNER_TEMP/tarot-distribution.p12" -k "$KEYCHAIN_PATH" -P "$IOS_DISTRIBUTION_P12_PASSWORD" -T /usr/bin/codesign -T /usr/bin/security > /dev/null
+          security list-keychains -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$SIGNING_PASSWORD" "$KEYCHAIN_PATH" > /dev/null
+          security find-identity -v -p codesigning "$KEYCHAIN_PATH" | grep -q 'Apple Distribution'
+
+      - name: Archive signed Release app with existing distribution identity
         shell: bash
         env:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -129,7 +158,9 @@ jobs:
             -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
-            CODE_SIGN_STYLE=Automatic \
+            CODE_SIGN_STYLE=Manual \
+            CODE_SIGN_IDENTITY="Apple Distribution" \
+            PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18" \
             CURRENT_PROJECT_VERSION=1 \
             MARKETING_VERSION=1.1 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS=TAROT_TEST_ADS \
@@ -187,7 +218,10 @@ jobs:
           /usr/bin/plutil -create xml1 "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :method string app-store-connect' "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :destination string export' "$EXPORT_OPTIONS"
-          /usr/libexec/PlistBuddy -c 'Add :signingStyle string automatic' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :signingStyle string manual' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :signingCertificate string Apple Distribution' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :provisioningProfiles dict' "$EXPORT_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :provisioningProfiles:com.krazel.tarotdeck string Tarot Deck App Store 2026-10-18' "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c "Add :teamID string $APPLE_TEAM_ID" "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :manageAppVersionAndBuildNumber bool false' "$EXPORT_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :testFlightInternalTestingOnly bool true' "$EXPORT_OPTIONS"
@@ -285,7 +319,10 @@ jobs:
           /usr/bin/plutil -create xml1 "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :method string app-store-connect' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :destination string upload' "$UPLOAD_OPTIONS"
-          /usr/libexec/PlistBuddy -c 'Add :signingStyle string automatic' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :signingStyle string manual' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :signingCertificate string Apple Distribution' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :provisioningProfiles dict' "$UPLOAD_OPTIONS"
+          /usr/libexec/PlistBuddy -c 'Add :provisioningProfiles:com.krazel.tarotdeck string Tarot Deck App Store 2026-10-18' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c "Add :teamID string $APPLE_TEAM_ID" "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :manageAppVersionAndBuildNumber bool false' "$UPLOAD_OPTIONS"
           /usr/libexec/PlistBuddy -c 'Add :testFlightInternalTestingOnly bool true' "$UPLOAD_OPTIONS"
@@ -301,7 +338,7 @@ jobs:
             -authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID" \
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"
 
-      - name: Remove temporary App Store Connect key
+      - name: Remove temporary signing material
         if: ${{ always() }}
         shell: bash
         env:
@@ -309,3 +346,5 @@ jobs:
         run: |
           set +x
           rm -f "$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
+          security delete-keychain "$RUNNER_TEMP/tarot-signing.keychain-db" || true
+          rm -f "$RUNNER_TEMP/tarot-distribution.p12" "$RUNNER_TEMP/tarot.mobileprovision" "$RUNNER_TEMP/tarot-profile.plist"

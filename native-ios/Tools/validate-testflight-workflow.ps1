@@ -51,13 +51,17 @@ $requiredContracts = @(
     '-authenticationKeyID "$APP_STORE_CONNECT_API_KEY_ID"',
     '-authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"',
     'DEVELOPMENT_TEAM="$APPLE_TEAM_ID"',
-    'CODE_SIGN_STYLE=Automatic',
+    'CODE_SIGN_STYLE=Manual',
+    'CODE_SIGN_IDENTITY="Apple Distribution"',
+    'PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18"',
     'CURRENT_PROJECT_VERSION=1',
     'MARKETING_VERSION=1.1',
     'Add :method string app-store-connect',
     'Add :destination string export',
     'Add :destination string upload',
-    'Add :signingStyle string automatic',
+    'Add :signingStyle string manual',
+    'Add :signingCertificate string Apple Distribution',
+    'Add :provisioningProfiles:com.krazel.tarotdeck string Tarot Deck App Store 2026-10-18',
     'Add :manageAppVersionAndBuildNumber bool false',
     'Add :testFlightInternalTestingOnly bool true',
     'CFBundleIdentifier',
@@ -96,7 +100,10 @@ $requiredSecrets = @(
     'APPLE_TEAM_ID',
     'APP_STORE_CONNECT_API_KEY_ID',
     'APP_STORE_CONNECT_ISSUER_ID',
-    'APP_STORE_CONNECT_API_KEY_BASE64'
+    'APP_STORE_CONNECT_API_KEY_BASE64',
+    'IOS_DISTRIBUTION_P12_BASE64',
+    'IOS_DISTRIBUTION_P12_PASSWORD',
+    'IOS_APP_STORE_PROFILE_BASE64'
 )
 $referencedSecrets = @(
     [regex]::Matches($workflow, '\$\{\{\s*secrets\.(?<name>[A-Z0-9_]+)\s*\}\}') |
@@ -104,11 +111,11 @@ $referencedSecrets = @(
         Sort-Object -Unique
 )
 if (@(Compare-Object ($requiredSecrets | Sort-Object) $referencedSecrets).Count -gt 0) {
-    throw "TestFlight workflow must reference only the approved cloud-signing secret names."
+    throw "TestFlight workflow must reference only the approved API and distribution-signing secret names."
 }
 
 $forbiddenPatterns = @(
-    '(?i)BUILD_CERTIFICATE_BASE64|P12_PASSWORD|BUILD_PROVISION_PROFILE_BASE64|KEYCHAIN_PASSWORD',
+    '(?i)BUILD_CERTIFICATE_BASE64|BUILD_PROVISION_PROFILE_BASE64|KEYCHAIN_PASSWORD',
     '(?i)\bReleaseGate\b',
     '(?i)external\s+(tester|testing|group)',
     '(?i)beta\s+app\s+review|app\s+review|submit\s+for\s+review',
@@ -194,4 +201,4 @@ if ($localQAWorkflow -match '(?i)TestFlight|App Store Connect|\bsecrets\.|-expor
     throw "Local-QA workflow must remain unsigned and incapable of TestFlight upload."
 }
 
-Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.1 (1): default is no upload, sample ads remain internal-only, cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."
+Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.1 (1): default is no upload, sample ads remain internal-only, existing distribution signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."

@@ -55,6 +55,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
     }
 
     var body: some View {
+        VStack(spacing: 0) {
         TabView(selection: $selectedDestination) {
             NavigationStack {
                 readContent(
@@ -102,7 +103,7 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             }
         }
         .tint(CeremonialObsidianTheme.brightGold)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
+        // Keep the ad outside TabView so it cannot cover the native tab bar.
             if !settingsPresented {
                 TarotBannerSlot(surface: MonetizationPolicy.surface(
                     isReadDestination: selectedDestination == .read,
