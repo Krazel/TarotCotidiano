@@ -1,3 +1,5 @@
+> Entrega histórica de preparación. Sustituida para el estado actual por [TESTFLIGHT.md](TESTFLIGHT.md): 1.1 (1) ya está en TestFlight interno. Las limitaciones de Debug, ausencia de CI y tutorial elegible de este documento son anteriores a esa entrega.
+
 # Delivery — prepared banner and supporter integration
 
 18/10/2026 · Tarot Deck / Tarot Cotidiano · implementation owner for the delegated scope.
