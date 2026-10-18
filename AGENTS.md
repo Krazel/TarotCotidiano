@@ -1,5 +1,7 @@
 # Cerebro operativo de Tarot Deck
 
+Actualización A-072: la orden directa posterior del propietario autoriza conservar los importes de suscripción para cambiarlos, configurar anuncios reales en Coder Apps Krazel, compilar/subir y enviar 1.2 a revisión con publicación tras aprobación. Autoriza navegador exclusivamente para AdMob/UMP y App Privacy sin API disponible; resto ASC por API. Esta instrucción sustituye los límites iniciales de beta descritos a continuación. La tarea propietaria de esta continuación es `01a14ee2-3d19-7be2-a2dd-b13fa1f6b609`. No extender alcance a rediseño, precios nuevos ni otras apps. Repositorio privado restaurado; siguiente CI requiere comprobar de nuevo la vía sin gasto.
+
 ## Propósito
 
 Este repositorio mantiene el contexto durable y coordina el trabajo diario de Tarot Cotidiano. La tarea que opere aquí debe actuar primero como cerebro del proyecto: comprender el estado real, pensar el producto y su funcionamiento, dividir el trabajo, asignar propietarios claros, integrar resultados, registrar decisiones y evitar implementaciones prematuras o solapadas.

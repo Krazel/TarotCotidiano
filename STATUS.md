@@ -1,6 +1,16 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-08-19
+Actualizado: 2026-10-18
+
+## Entrega vigente — 1.2 (1) enviada a App Review, 18/10/2026
+
+Apple confirmó **WAITING_FOR_REVIEW** el 18/10 a las 20:52:47 UTC; publicación automática **AFTER_APPROVAL** autorizada por el propietario. Build `cb6ea8b2-c2b1-45f1-9fcc-9c022b3bfd58`, VALID/APP_STORE_ELIGIBLE, disponible en TestFlight interno. No enviada a beta externa. Público comprobado: **1.0**, todavía no 1.2. Revisión de textos de las siete suscripciones y grupo sigue WAITING_FOR_REVIEW por separado.
+
+Los suscriptores activos conservan los siete importes, ven el actual marcado y pueden elegir otro mediante StoreKit; productos, precios y nivel del grupo conservados. 59 pruebas Core, CI, firma, exportación y subida correctos; capturas de estado activo EN/ES revisadas. No se atribuye una nueva transacción física de cambio de importe a los fixtures de simulador.
+
+AdMob configurado en **Coder Apps Krazel** (`pub-3425091654264901`), como Voice Recorder y Sopa: app propia `4270953811`, banner `3573694673`, UMP EN/ES publicado con No consentir. Anuncios no personalizados, sin ATT/IDFA ni mediación, máximo PG solo para Tarot; privacidad Apple de siete categorías publicada. **Google aún muestra Debe revisarse / servicio limitado / aplicación sin verificar**. El app-ads.txt público es correcto; el enlace de desarrollador requerido está en la ficha 1.2 y falta en la 1.0 pública. No afirmar impresiones reales ni aprobación de Google. Reintentar su verificación cuando Apple publique el enlace.
+
+Fuente `6b6ac7957a835bba45ce72f49928e6d934d6571f`; CI `39163276579`; GitHub **PRIVATE** restaurado al terminar. Evidencias: `docs/technical/monetization-20261018/PUBLIC_RELEASE_RECEIPT.json` y `public-release-1.2/`. Biblioteca D1 PR-003 no sincronizada: escritura anteriormente rechazada por revisión automática; siguiente estado guardado en LIBRARY_PENDING.json. Rediseño visual pausado. Los apartados siguientes son históricos.
 
 ## Estado ejecutivo
 
