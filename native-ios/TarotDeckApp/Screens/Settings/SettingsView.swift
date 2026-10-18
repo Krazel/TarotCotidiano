@@ -23,7 +23,7 @@ struct SettingsView: View {
         let bundleVersion = Bundle.main.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
         ) as? String
-        let fallbackVersion = "1.1.1"
+        let fallbackVersion = "1.1.2"
         guard let bundleVersion, !bundleVersion.isEmpty else { return fallbackVersion }
         return bundleVersion
     }
@@ -94,12 +94,13 @@ struct SettingsView: View {
                         }
 
                         if showsSupportReminder && supporterStore.hasResolvedEntitlements && !supporterStore.isSupporter {
-                            settingsSection(title: "Support the app without ads") {
+                            settingsSection(title: "Read without ads") {
                                 VStack(alignment: .leading, spacing: 12) {
-                                    Text("Any monthly level removes ads while active. The full app stays free.")
+                                    if !store.isSupporter {
+                    Text("Choose a monthly option to remove ads. All readings and cards remain free.")
                                         .fixedSize(horizontal: false, vertical: true)
-                                    NavigationLink("See support options") {
-                                        SupportTheAppView(store: supporterStore)
+                                    NavigationLink("Remove ads") {
+                                        RemoveAdsView(store: supporterStore)
                                     }
                                     .frame(minHeight: 44)
                                     Button("Not now") { showsSupportReminder = false }
@@ -117,26 +118,26 @@ struct SettingsView: View {
                             }
                         }
 
-                        settingsSection(title: "Support") {
+                        settingsSection(title: "Ads") {
                             NavigationLink {
-                                SupportTheAppView(store: supporterStore)
+                                RemoveAdsView(store: supporterStore)
                             } label: {
                                 SettingsRowLabel(
-                                    title: "Support the App",
+                                    title: "Remove ads",
                                     subtitle: supporterStore.isSupporter
-                                        ? "Supporter active"
-                                        : "Not active",
-                                    systemImage: "heart.circle"
+                                        ? "Ad-free active"
+                                        : "Monthly subscription",
+                                    systemImage: "rectangle.slash"
                                 )
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel("Support the App")
+                            .accessibilityLabel("Remove ads")
                             .accessibilityValue(
                                 AppLocalization.text(
-                                    supporterStore.isSupporter ? "Supporter active" : "Not active"
+                                    supporterStore.isSupporter ? "Ad-free active" : "Monthly subscription"
                                 )
                             )
-                            .accessibilityHint("Opens monthly support options")
+                            .accessibilityHint("Opens monthly ad-removal options")
                         }
 
                         settingsSection(title: "App") {
@@ -160,12 +161,6 @@ struct SettingsView: View {
 
                             if TarotAdsConfiguration.testBannerID != nil || adConsent.requiresPrivacyOptions {
                                 settingsDivider
-                                if TarotAdsConfiguration.testBannerID != nil {
-                                    Text("This test build uses Google test ads. Google processes consent, network and device data to provide them; your readings are not sent. Ads stay off until privacy checks succeed.")
-                                        .font(.footnote)
-                                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
                                 SettingsRow(
                                     title: "Advertising choices",
                                     systemImage: "hand.raised",
@@ -179,9 +174,9 @@ struct SettingsView: View {
                             settingsDivider
 
                             SettingsRow(
-                                title: "Support",
+                                title: "Help and contact",
                                 systemImage: "ellipsis.message",
-                                accessibilityHint: "Opens the support page in your browser"
+                                accessibilityHint: "Opens help and contact in your browser"
                             ) {
                                 if let url = Self.supportURL { openURL(url) }
                             }
@@ -268,13 +263,23 @@ struct SettingsView: View {
     }
 }
 
-private struct SupportTheAppView: View {
+struct RemoveAdsView: View {
     @ObservedObject var store: SupporterStore
-    @State private var isSupportVisible = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @Environment(\.openURL) private var openURL
+
+    private var screenshotPrices: [String] {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if arguments.contains("--qa-remove-ads"), let index = arguments.firstIndex(of: "--qa-prices"),
+           arguments.indices.contains(index + 1) {
+            return arguments[index + 1].split(separator: "|").map(String.init)
+        }
+        #endif
+        return []
+    }
 
     private var columns: [GridItem] {
         dynamicTypeSize.isAccessibilitySize
@@ -308,13 +313,13 @@ private struct SupportTheAppView: View {
                         Spacer()
                     }
 
-                    Text("Support the App")
+                    Text("Remove ads")
                         .font(.system(.largeTitle, design: .serif, weight: .semibold))
                         .foregroundStyle(CeremonialObsidianTheme.parchment)
                         .multilineTextAlignment(.center)
                         .accessibilityAddTraits(.isHeader)
 
-                    Image(systemName: store.isSupporter ? "checkmark.seal.fill" : "heart.circle")
+                    Image(systemName: store.isSupporter ? "checkmark.seal.fill" : "rectangle.slash")
                         .font(.system(size: 52, weight: .light))
                         .foregroundStyle(CeremonialObsidianTheme.brightGold)
                         .frame(width: 76, height: 76)
@@ -324,15 +329,15 @@ private struct SupportTheAppView: View {
 
                     VStack(spacing: 8) {
                         if store.isSupporter {
-                            Text("Supporter active")
+                            Text("Ad-free active")
                                 .font(.system(.title3, design: .serif, weight: .semibold))
                                 .foregroundStyle(CeremonialObsidianTheme.brightGold)
-                            Text("Thank you for helping maintain Tarot Deck and future updates.")
+                            Text("Your subscription removes ads. Thank you!")
                                 .foregroundStyle(CeremonialObsidianTheme.parchment)
                         } else {
-                            Text("Help maintain Tarot Deck and future updates.")
+                            Text("Enjoy Tarot Deck without ads.")
                                 .foregroundStyle(CeremonialObsidianTheme.parchment)
-                            Text("Every level offers the same supporter status.")
+                            Text("All monthly options remove ads.")
                                 .foregroundStyle(CeremonialObsidianTheme.secondaryText)
                         }
                     }
@@ -340,19 +345,25 @@ private struct SupportTheAppView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
 
-                    Text("Any monthly level removes ads while active. The full app stays free.")
+                    Text("Choose a monthly option to remove ads. All readings and cards remain free.")
                         .font(.system(.body, design: .serif))
                         .foregroundStyle(CeremonialObsidianTheme.secondaryText)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    if store.isLoadingProducts {
-                        ProgressView("Loading support options")
+                    if !screenshotPrices.isEmpty {
+                        LazyVGrid(columns: columns, spacing: 12) {
+                            ForEach(Array(screenshotPrices.enumerated()), id: \.offset) { _, price in
+                                purchaseOption(price: price, action: {}).allowsHitTesting(false)
+                            }
+                        }
+                    } else if store.isLoadingProducts {
+                        ProgressView("Loading subscriptions")
                             .tint(CeremonialObsidianTheme.brightGold)
                             .frame(minHeight: 88)
                     } else if store.products.isEmpty {
                         VStack(spacing: 10) {
-                            Text("Support options are temporarily unavailable.")
+                            Text("Subscriptions are temporarily unavailable.")
                                 .font(.system(.headline, design: .serif))
                                 .foregroundStyle(CeremonialObsidianTheme.parchment)
                             Button("Try Again") {
@@ -366,44 +377,18 @@ private struct SupportTheAppView: View {
                     } else {
                         LazyVGrid(columns: columns, spacing: 12) {
                             ForEach(store.products, id: \.id) { product in
-                                Button {
+                                purchaseOption(price: product.displayPrice) {
                                     Task { await store.purchase(product) }
-                                } label: {
-                                    VStack(spacing: 3) {
-                                        Text(product.displayPrice)
-                                            .font(.system(.title3, design: .serif, weight: .semibold))
-                                        Text("per month")
-                                            .font(.system(.caption, design: .serif))
-                                            .foregroundStyle(CeremonialObsidianTheme.secondaryText)
-                                    }
-                                    .frame(maxWidth: .infinity, minHeight: 64)
-                                    .padding(.horizontal, 8)
-                                    .background {
-                                        RoundedRectangle(cornerRadius: 15)
-                                            .fill(CeremonialObsidianTheme.cardSurface.opacity(0.92))
-                                            .overlay {
-                                                RoundedRectangle(cornerRadius: 15)
-                                                    .stroke(CeremonialObsidianTheme.gold, lineWidth: 1)
-                                            }
-                                    }
                                 }
-                                .buttonStyle(.plain)
-                                .foregroundStyle(CeremonialObsidianTheme.parchment)
-                                .disabled(store.busyProductID != nil || store.isRestoring)
-                                .accessibilityLabel(
-                                    AppLocalization.format(
-                                        "Monthly support, %@ per month",
-                                        product.displayPrice
-                                    )
-                                )
-                                .accessibilityHint("Starts the Apple purchase confirmation")
                             }
                         }
                     }
 
+                    }
+
                     VStack(spacing: 8) {
                         Text("Each option is a monthly auto-renewable subscription. Payment is charged to your Apple Account and renews automatically until cancelled.")
-                        Text("Manage or cancel in your Apple Account. The full app stays free with or without support.")
+                        Text("Manage or cancel in your Apple Account. Ads return when your subscription ends.")
                     }
                     .font(.system(.caption, design: .serif))
                     .foregroundStyle(CeremonialObsidianTheme.secondaryText)
@@ -424,7 +409,7 @@ private struct SupportTheAppView: View {
                         SettingsRow(
                             title: "Restore Purchases",
                             systemImage: "arrow.clockwise",
-                            accessibilityHint: "Restores an active monthly support subscription"
+                            accessibilityHint: "Restores an active ad-removal subscription"
                         ) {
                             Task { await store.restorePurchases() }
                         }
@@ -471,24 +456,49 @@ private struct SupportTheAppView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if isSupportVisible && store.busyProductID == nil && !store.isRestoring && store.notice == nil {
-                TarotBannerSlot(surface: .normal)
-            }
-        }
-        .onAppear { isSupportVisible = true }
-        .onDisappear { isSupportVisible = false }
         .task {
-            await store.loadProductsIfNeeded()
+            if screenshotPrices.isEmpty { await store.loadProductsIfNeeded() }
         }
         .alert(
-            AppLocalization.text(store.notice?.titleKey ?? "Support the App"),
+            AppLocalization.text(store.notice?.titleKey ?? "Remove ads"),
             isPresented: noticeBinding
         ) {
             Button("OK") { store.dismissNotice() }
         } message: {
             Text(AppLocalization.text(store.notice?.messageKey ?? ""))
         }
+    }
+
+    private func purchaseOption(price: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 3) {
+                Text(price)
+                    .font(.system(.title3, design: .serif, weight: .semibold))
+                Text("per month")
+                    .font(.system(.caption, design: .serif))
+                    .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+            }
+            .frame(maxWidth: .infinity, minHeight: 64)
+            .padding(.horizontal, 8)
+            .background {
+                RoundedRectangle(cornerRadius: 15)
+                    .fill(CeremonialObsidianTheme.cardSurface.opacity(0.92))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(CeremonialObsidianTheme.gold, lineWidth: 1)
+                    }
+            }
+        }
+        .buttonStyle(.plain)
+        .foregroundStyle(CeremonialObsidianTheme.parchment)
+        .disabled(store.busyProductID != nil || store.isRestoring)
+        .accessibilityLabel(
+            AppLocalization.format(
+                "Remove ads, %@ per month",
+                price
+            )
+        )
+        .accessibilityHint("Starts the Apple purchase confirmation")
     }
 
     private var settingsDivider: some View {

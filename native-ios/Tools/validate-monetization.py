@@ -29,8 +29,8 @@ for package, version in [('GoogleMobileAds', '12.14.0'), ('GoogleUserMessagingPl
 check(project.count('repositoryURL = ') == 2, 'Exactly two authorized remote SDK package references')
 check(project.count('IPHONEOS_DEPLOYMENT_TARGET = 16.0;') == 2,
       'App target retains iOS16 in both configurations')
-check(project.count('MARKETING_VERSION = 1.1.1;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
-      'Candidate identity is 1.1.1 (1)')
+check(project.count('MARKETING_VERSION = 1.1.2;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
+      'Candidate identity is 1.1.2 (1)')
 check(project.count('INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;') == 2,
       'Debug and Release merge advertising plist')
 plist = plistlib.loads((APP / 'Resources/Advertising.plist').read_bytes())
@@ -78,8 +78,8 @@ check('reminder.claimIfEligible(store: supporterStore)' in settings and
       'Reminder is optional inline Settings content with dismiss and persistent opt-out')
 keys = json.loads((APP / 'Resources/required-interface-keys.v1.json').read_text(encoding='utf-8'))['keys']
 catalog = json.loads((APP / 'Resources/Localizable.xcstrings').read_text(encoding='utf-8'))
-new_keys = ['Advertisement', 'Support the app without ads', 'Any monthly level removes ads while active. The full app stays free.',
-            'See support options', 'Not now', "Don't ask again", 'Advertising choices',
+new_keys = ['Advertisement', 'Read without ads', 'Choose a monthly option to remove ads. All readings and cards remain free.',
+            'Remove ads', 'Not now', "Don't ask again", 'Advertising choices',
             'Opens advertising privacy choices', 'Advertising choices unavailable', 'Ads remain off. You can try again later.']
 check(all(k in keys and catalog['strings'][k]['localizations']['es']['stringUnit']['state'] == 'translated' for k in new_keys),
       'New UI and AX copy covered by required EN/ES interface catalog')

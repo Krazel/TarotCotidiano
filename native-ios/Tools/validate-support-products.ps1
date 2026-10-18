@@ -111,8 +111,8 @@ foreach ($contract in $storeContracts) {
 }
 
 $settingsContracts = @(
-    "Support the App",
-    "Every level offers the same supporter status.",
+    "Remove ads",
+    "All monthly options remove ads.",
     "product.displayPrice",
     "per month",
     "auto-renewable subscription",
@@ -120,15 +120,15 @@ $settingsContracts = @(
     "Manage Subscription",
     "Privacy",
     "Terms",
-    "The full app stays free"
+    "All readings and cards remain free"
 )
 foreach ($contract in $settingsContracts) {
     if ($settings -cnotmatch [regex]::Escape($contract)) {
         throw "Support UI disclosure is missing: $contract"
     }
 }
-if ($settings -match '(?i)donation|donate|premium|best value|free trial|remove ads') {
-    throw "Support UI contains prohibited donation, pressure, or invented-benefit copy."
+if ($settings -match '(?i)donation|donate|premium|best value|free trial') {
+    throw "Support UI contains prohibited donation, pressure, or unsupported-benefit copy."
 }
 if ($settings -match '"\s*\$\s*\d|[€£]\s*\d|\d+[\.,]\d{2}\s*[€£$]') {
     throw "Runtime support UI must not hard-code a price or currency."

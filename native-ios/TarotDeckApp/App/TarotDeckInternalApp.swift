@@ -21,6 +21,10 @@ struct TarotDeckInternalApp: App {
 
     init() {
         let languageStore = AppLanguageStore()
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--qa-spanish") { languageStore.select(.spanish) }
+        if ProcessInfo.processInfo.arguments.contains("--qa-english") { languageStore.select(.english) }
+        #endif
         let storageDirectoryURL: URL
         do {
             storageDirectoryURL = try Self.prepareStorageDirectory()
@@ -102,9 +106,8 @@ struct TarotDeckInternalApp: App {
         }
         return storageDirectoryURL
     }
-    var body: some Scene {
-        WindowGroup {
-            Group {
+    @ViewBuilder
+    private var productionContent: some View {
                 switch languageStore.contentResult {
                 case .success(let content):
                     TarotDeckMainShell(
@@ -135,6 +138,20 @@ struct TarotDeckInternalApp: App {
                 case .failure(let error):
                     TarotContentFailureView(message: error.localizedDescription)
                 }
+    }
+
+    var body: some Scene {
+        WindowGroup {
+            Group {
+                #if DEBUG
+                if ProcessInfo.processInfo.arguments.contains("--qa-settings") {
+                    NavigationStack { SettingsView(languageStore: languageStore, supporterStore: supporterStore) }
+                } else if ProcessInfo.processInfo.arguments.contains("--qa-remove-ads") {
+                    NavigationStack { RemoveAdsView(store: supporterStore) }
+                } else { productionContent }
+                #else
+                productionContent
+                #endif
             }
             .environment(\.locale, languageStore.language.locale)
             .environmentObject(supporterStore)

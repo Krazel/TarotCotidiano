@@ -30,7 +30,7 @@ enum SupporterNotice: Equatable {
     var titleKey: String {
         switch self {
         case .thankYou, .restored:
-            return "Thank You"
+            return "Ads removed"
         case .pending:
             return "Purchase Pending"
         case .purchaseFailed:
@@ -40,26 +40,26 @@ enum SupporterNotice: Equatable {
         case .restoreFailed:
             return "Restore Couldn't Be Completed"
         case .productsUnavailable:
-            return "Support Options Unavailable"
+            return "Subscriptions Unavailable"
         }
     }
 
     var messageKey: String {
         switch self {
         case .thankYou:
-            return "Your supporter status is active. Thank you for helping maintain Tarot Deck and future updates."
+            return "Your subscription is active. Enjoy Tarot Deck without ads."
         case .pending:
-            return "Apple is still processing this purchase. Supporter status will update after approval."
+            return "Apple is still processing this purchase. Ads will be removed once it is approved."
         case .purchaseFailed:
             return "The purchase wasn't completed. The full app remains available."
         case .restored:
-            return "Your active supporter status was restored. Thank you for supporting the app."
+            return "Your subscription was restored. Ads are now removed."
         case .nothingToRestore:
-            return "No active monthly support subscription was found for this Apple Account."
+            return "No active ad-removal subscription was found for this Apple Account."
         case .restoreFailed:
             return "Purchases couldn't be restored right now. Please try again."
         case .productsUnavailable:
-            return "Monthly support options couldn't be loaded right now. The full app remains available."
+            return "Subscriptions could not be loaded right now. You can keep using the full app."
         }
     }
 }

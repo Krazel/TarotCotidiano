@@ -699,13 +699,18 @@ if ($resetStart -lt 0 -or $resetIntent -lt 0 -or $resetSessionClear -lt 0 -or
 }
 $shellSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckMainShell.swift")
 $appSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckInternalApp.swift")
-if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
+$appReleaseSource = [regex]::Replace($appSource, '(?s)#if DEBUG(?:(?!#endif).)*?#else(.*?)#endif', '$1')
+$appReleaseSource = [regex]::Replace($appReleaseSource, '(?s)#if DEBUG.*?#endif', '')
+if ($appReleaseSource -match 'EmptyView\(\)' -or
+    $appReleaseSource -notmatch 'TarotDeckMainShell\(' -or
+    $appReleaseSource -notmatch 'ReadRootView\(' -or
+    $appReleaseSource -notmatch 'productionContent' -or
     $readModelSource -match '#if\s+DEBUG' -or
     $activeReadSource -match '#if\s+DEBUG') {
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 1.1.1;',
+    'MARKETING_VERSION = 1.1.2;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -718,7 +723,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.1.1;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.1.2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
@@ -1635,27 +1640,27 @@ foreach ($key in $requiredFavoriteCatalogKeys) {
 }
 $settingsSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
 $requiredSettingsCopy = @(
-    "Support the App",
-    "Supporter active",
-    "Not active",
+    "Remove ads",
+    "Ad-free active",
+    "Monthly subscription",
     "Rate the App",
     "Privacy",
-    "Support",
+    "Help and contact",
     '@Environment(\.openURL)',
     'https://apps.apple.com/app/id6800144105?action=write-review',
     'https://krazel.github.io/tarot-deck/support/',
     "Opens the App Store review page",
     "Opens the privacy policy in your browser",
-    "Opens the support page in your browser",
-    "Every level offers the same supporter status.",
+    "Opens help and contact in your browser",
+    "All monthly options remove ads.",
     "product.displayPrice",
     "per month",
     "auto-renewable subscription",
     "Restore Purchases",
     "Manage Subscription",
     "Terms",
-    "The full app stays free",
-    'fallbackVersion = "1.1.1"'
+    "All readings and cards remain free",
+    'fallbackVersion = "1.1.2"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1663,9 +1668,9 @@ foreach ($copy in $requiredSettingsCopy) {
     }
 }
 if ($settingsSource -match '\b(requestReview)\b' -or
-    $settingsSource -match '(?i)donation|donate|premium|best value|free trial|remove ads|internal build' -or
+    $settingsSource -match '(?i)donation|donate|premium|best value|free trial|internal build' -or
     [regex]::Matches($settingsSource, [regex]::Escape('https://apps.apple.com/app/id6800144105?action=write-review')).Count -ne 1) {
-    throw "Settings must contain the approved voluntary-support UI without pressure, invented benefits, internal copy, or a nonpersistent rating action."
+    throw "Settings must contain the ad-removal UI without pressure, invented benefits, internal copy, or a nonpersistent rating action."
 }
 if ($settingsSource -match '(?s)Button[^\{]*\{\s*\}' -or
     $settingsSource -match '(?s)Button\([^\)]*\)\s*\{\s*\}') {
@@ -1955,4 +1960,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated candidate 1.1.1 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."
+Write-Host "Validated candidate 1.1.2 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."

@@ -61,36 +61,6 @@
         }
       }
     },
-    "See support options": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ver opciones de apoyo"
-          }
-        }
-      }
-    },
-    "Any monthly level removes ads while active. The full app stays free.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cualquier nivel mensual retira los anuncios mientras esté activo. La app completa sigue siendo gratis."
-          }
-        }
-      }
-    },
-    "Support the app without ads": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apoya la app sin anuncios"
-          }
-        }
-      }
-    },
     "Advertisement": {
       "localizations": {
         "es": {
@@ -1677,16 +1647,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abre la política de privacidad en el navegador"
-          }
-        }
-      }
-    },
-    "Opens the support page in your browser": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abre la página de soporte en el navegador"
           }
         }
       }
@@ -3631,112 +3591,12 @@
         }
       }
     },
-    "Support the App": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apoyar la app"
-          }
-        }
-      }
-    },
-    "Supporter active": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Supporter activo"
-          }
-        }
-      }
-    },
-    "Not active": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No activo"
-          }
-        }
-      }
-    },
-    "Opens monthly support options": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Abre las opciones de apoyo mensual"
-          }
-        }
-      }
-    },
-    "Help maintain Tarot Deck and future updates.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ayuda a mantener Tarot Deck y sus futuras actualizaciones."
-          }
-        }
-      }
-    },
-    "Thank you for helping maintain Tarot Deck and future updates.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gracias por ayudar a mantener Tarot Deck y sus futuras actualizaciones."
-          }
-        }
-      }
-    },
-    "Every level offers the same supporter status.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Todos los niveles ofrecen el mismo estado de supporter."
-          }
-        }
-      }
-    },
-    "Loading support options": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cargando opciones de apoyo"
-          }
-        }
-      }
-    },
-    "Support options are temporarily unavailable.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las opciones de apoyo no están disponibles temporalmente."
-          }
-        }
-      }
-    },
     "per month": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "al mes"
-          }
-        }
-      }
-    },
-    "Monthly support, %@ per month": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apoyo mensual, %@ al mes"
           }
         }
       }
@@ -3761,16 +3621,6 @@
         }
       }
     },
-    "Manage or cancel in your Apple Account. The full app stays free with or without support.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gestiona o cancela desde tu cuenta de Apple. La aplicación completa sigue siendo gratuita con o sin apoyo."
-          }
-        }
-      }
-    },
     "Subscription": {
       "localizations": {
         "es": {
@@ -3787,16 +3637,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Restaurar compras"
-          }
-        }
-      }
-    },
-    "Restores an active monthly support subscription": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Restaura una suscripción mensual de apoyo activa"
           }
         }
       }
@@ -3891,62 +3731,12 @@
         }
       }
     },
-    "Support Options Unavailable": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Opciones de apoyo no disponibles"
-          }
-        }
-      }
-    },
-    "Your supporter status is active. Thank you for helping maintain Tarot Deck and future updates.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tu estado de supporter está activo. Gracias por ayudar a mantener Tarot Deck y sus futuras actualizaciones."
-          }
-        }
-      }
-    },
-    "Apple is still processing this purchase. Supporter status will update after approval.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Apple sigue procesando esta compra. El estado de supporter se actualizará después de su aprobación."
-          }
-        }
-      }
-    },
     "The purchase wasn't completed. The full app remains available.": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
             "value": "La compra no se completó. La aplicación completa sigue disponible."
-          }
-        }
-      }
-    },
-    "Your active supporter status was restored. Thank you for supporting the app.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tu estado de supporter activo se ha restaurado. Gracias por apoyar la app."
-          }
-        }
-      }
-    },
-    "No active monthly support subscription was found for this Apple Account.": {
-      "localizations": {
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No se encontró ninguna suscripción mensual de apoyo activa para esta cuenta de Apple."
           }
         }
       }
@@ -3961,28 +3751,242 @@
         }
       }
     },
-    "Monthly support options couldn't be loaded right now. The full app remains available.": {
+    "Read without ads": {
       "localizations": {
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "No se pudieron cargar las opciones de apoyo mensual ahora. La aplicación completa sigue disponible."
+            "value": "Lee sin anuncios"
           }
         }
       }
     },
-    "This test build uses Google test ads. Google processes consent, network and device data to provide them; your readings are not sent. Ads stay off until privacy checks succeed.": {
+    "Remove ads": {
       "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "This test build uses Google test ads. Google processes consent, network and device data to provide them; your readings are not sent. Ads stay off until privacy checks succeed."
-          }
-        },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta versión de prueba usa anuncios de prueba de Google. Google procesa datos de consentimiento, red y dispositivo para mostrarlos; tus tiradas no se envían. Los anuncios permanecen desactivados hasta superar las comprobaciones de privacidad."
+            "value": "Quitar anuncios"
+          }
+        }
+      }
+    },
+    "Ad-free active": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sin anuncios activo"
+          }
+        }
+      }
+    },
+    "Monthly subscription": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripción mensual"
+          }
+        }
+      }
+    },
+    "Opens monthly ad-removal options": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre las opciones mensuales para quitar anuncios"
+          }
+        }
+      }
+    },
+    "Your subscription removes ads. Thank you!": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu suscripción elimina los anuncios. ¡Gracias!"
+          }
+        }
+      }
+    },
+    "Enjoy Tarot Deck without ads.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disfruta de Tarot Deck sin anuncios."
+          }
+        }
+      }
+    },
+    "All monthly options remove ads.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Todas las opciones mensuales eliminan los anuncios."
+          }
+        }
+      }
+    },
+    "Choose a monthly option to remove ads. All readings and cards remain free.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige una opción mensual para quitar los anuncios. Todas las tiradas y cartas siguen siendo gratuitas."
+          }
+        }
+      }
+    },
+    "Loading subscriptions": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cargando suscripciones"
+          }
+        }
+      }
+    },
+    "Subscriptions are temporarily unavailable.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las suscripciones no están disponibles temporalmente."
+          }
+        }
+      }
+    },
+    "Remove ads, %@ per month": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitar anuncios, %@ al mes"
+          }
+        }
+      }
+    },
+    "Manage or cancel in your Apple Account. Ads return when your subscription ends.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gestiona o cancela en tu cuenta de Apple. Los anuncios vuelven cuando finaliza tu suscripción."
+          }
+        }
+      }
+    },
+    "Restores an active ad-removal subscription": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaura una suscripción activa para quitar anuncios"
+          }
+        }
+      }
+    },
+    "Subscriptions Unavailable": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suscripciones no disponibles"
+          }
+        }
+      }
+    },
+    "Your subscription is active. Enjoy Tarot Deck without ads.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu suscripción está activa. Disfruta de Tarot Deck sin anuncios."
+          }
+        }
+      }
+    },
+    "Apple is still processing this purchase. Ads will be removed once it is approved.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apple sigue procesando la compra. Los anuncios se eliminarán cuando se apruebe."
+          }
+        }
+      }
+    },
+    "Your subscription was restored. Ads are now removed.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tu suscripción se ha restaurado. Los anuncios ya están desactivados."
+          }
+        }
+      }
+    },
+    "No active ad-removal subscription was found for this Apple Account.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se ha encontrado ninguna suscripción activa para quitar anuncios en esta cuenta de Apple."
+          }
+        }
+      }
+    },
+    "Subscriptions could not be loaded right now. You can keep using the full app.": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se han podido cargar las suscripciones. Puedes seguir usando toda la app."
+          }
+        }
+      }
+    },
+    "Opens help and contact in your browser": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre la página de ayuda y contacto en tu navegador"
+          }
+        }
+      }
+    },
+    "Ads": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Publicidad"
+          }
+        }
+      }
+    },
+    "Help and contact": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayuda y contacto"
+          }
+        }
+      }
+    },
+    "Ads removed": {
+      "localizations": {
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Anuncios eliminados"
           }
         }
       }
