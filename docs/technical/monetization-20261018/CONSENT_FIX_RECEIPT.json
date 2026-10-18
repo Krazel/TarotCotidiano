@@ -1,0 +1,49 @@
+{
+  "checkedAt": "2026-10-18T15:34:43.651705+00:00",
+  "testflight": {
+    "checkedAt": "2026-10-18T15:34:29.357Z",
+    "appId": "6800144105",
+    "version": "1.1.1",
+    "build": "1",
+    "buildId": "59a7f3e1-0c6d-414b-87db-56914b9a28d2",
+    "processing": "VALID",
+    "audience": "INTERNAL_ONLY",
+    "expired": false,
+    "internalState": "IN_BETA_TESTING",
+    "group": "Testers",
+    "groupId": "ff63f09f-7e2f-4ed7-8a53-637205d523c4",
+    "groupMembershipVerified": true,
+    "allBuilds": true,
+    "notesVerified": true
+  },
+  "repository": {
+    "checked_at": "2026-10-18T15:33:10Z",
+    "full_name": "Krazel/TarotCotidiano",
+    "private": true,
+    "visibility": "private"
+  },
+  "build": {
+    "schemaVersion": 1,
+    "app": "Tarot Deck",
+    "version": "1.1.1",
+    "build": "1",
+    "bundleID": "com.krazel.tarotdeck",
+    "commit": "31394078415f9b7066ef46a15b1ec3d7c4218a3c",
+    "ciRunNumber": "17",
+    "ciRunAttempt": "1",
+    "ciRunID": "39140082659",
+    "purpose": "TestFlight-Internal",
+    "internalTestingOnly": true,
+    "externalTestingCapable": false,
+    "appStoreReleaseCapable": false,
+    "artifact": "TarotDeck-1.1.1-1-ci17-31394078415f-TestFlight-Internal",
+    "sha256": "8739a976c859bd12d1b7defd0f87df54d8fda316994fe384bf10bf27be730c03"
+  },
+  "ciURL": "https://github.com/Krazel/TarotCotidiano/actions/runs/39140082659",
+  "xctestCount": 57,
+  "bannerLoadAndScreenshotVerified": true,
+  "automaticEEAFormAndScreenshotVerified": true,
+  "userConfirmedAdsAfterManualConsentInPreviousBuild": true,
+  "physicalDeviceFixedBuildTested": false,
+  "librarySynced": false
+}

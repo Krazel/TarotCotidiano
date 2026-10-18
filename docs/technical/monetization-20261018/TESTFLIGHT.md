@@ -1,3 +1,5 @@
+> Entrega 1.1 anterior. Corrección vigente: [1.1.1 (1), consentimiento automático](CONSENT_FIX.md).
+
 # Entrega interna de anuncios — 1.1 (1)
 
 18/10/2026. **Disponible en TestFlight interno**, grupo existente Testers. API Apple releída: VALID, INTERNAL_ONLY, IN_BETA_TESTING, no caducada; pertenencia al grupo y notas EN/ES verificadas. ID de build: `984ee966-7966-4d8c-8886-c0e18ebf118b`. La versión pública sigue siendo 1.0 READY_FOR_SALE. No hay pruebas externas ni envío a App Review.
