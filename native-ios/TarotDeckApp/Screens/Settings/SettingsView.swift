@@ -5,6 +5,10 @@ import SwiftUI
 struct SettingsView: View {
     @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var supporterStore: SupporterStore
+    @EnvironmentObject private var adConsent: TarotAdConsent
+    @EnvironmentObject private var reminder: SupportReminderStore
+    @State private var showsSupportReminder = false
+    @State private var isSettingsVisible = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -19,7 +23,7 @@ struct SettingsView: View {
         let bundleVersion = Bundle.main.object(
             forInfoDictionaryKey: "CFBundleShortVersionString"
         ) as? String
-        let fallbackVersion = "1.0"
+        let fallbackVersion = "1.1"
         guard let bundleVersion, !bundleVersion.isEmpty else { return fallbackVersion }
         return bundleVersion
     }
@@ -89,6 +93,30 @@ struct SettingsView: View {
                             .padding(.vertical, 14)
                         }
 
+                        if showsSupportReminder && supporterStore.hasResolvedEntitlements && !supporterStore.isSupporter {
+                            settingsSection(title: "Support the app without ads") {
+                                VStack(alignment: .leading, spacing: 12) {
+                                    Text("Any monthly level removes ads while active. The full app stays free.")
+                                        .fixedSize(horizontal: false, vertical: true)
+                                    NavigationLink("See support options") {
+                                        SupportTheAppView(store: supporterStore)
+                                    }
+                                    .frame(minHeight: 44)
+                                    Button("Not now") { showsSupportReminder = false }
+                                        .frame(minHeight: 44)
+                                    Button("Don't ask again") {
+                                        reminder.optOut()
+                                        showsSupportReminder = false
+                                    }
+                                    .frame(minHeight: 44)
+                                }
+                                .font(.system(.body, design: .serif))
+                                .foregroundStyle(CeremonialObsidianTheme.parchment)
+                                .tint(CeremonialObsidianTheme.brightGold)
+                                .padding(18)
+                            }
+                        }
+
                         settingsSection(title: "Support") {
                             NavigationLink {
                                 SupportTheAppView(store: supporterStore)
@@ -128,6 +156,24 @@ struct SettingsView: View {
                                 accessibilityHint: "Opens the privacy policy in your browser"
                             ) {
                                 openURL(Self.privacyURL)
+                            }
+
+                            if TarotAdsConfiguration.testBannerID != nil || adConsent.requiresPrivacyOptions {
+                                settingsDivider
+                                if TarotAdsConfiguration.testBannerID != nil {
+                                    Text("This test build uses Google test ads. Google processes consent, network and device data to provide them; your readings are not sent. Ads stay off until privacy checks succeed.")
+                                        .font(.footnote)
+                                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                SettingsRow(
+                                    title: "Advertising choices",
+                                    systemImage: "hand.raised",
+                                    accessibilityHint: "Opens advertising privacy choices"
+                                ) {
+                                    Task { await adConsent.presentChoices() }
+                                }
+                                .disabled(adConsent.isBusy)
                             }
 
                             settingsDivider
@@ -180,8 +226,19 @@ struct SettingsView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if isSettingsVisible { TarotBannerSlot(surface: .normal) }
+        }
+        .onAppear { isSettingsVisible = true }
+        .onDisappear { isSettingsVisible = false }
         .task {
             await supporterStore.refreshEntitlements()
+            showsSupportReminder = reminder.claimIfEligible(store: supporterStore)
+        }
+        .alert("Advertising choices unavailable", isPresented: $adConsent.showsError) {
+            Button("OK", role: .cancel) { adConsent.showsError = false }
+        } message: {
+            Text("Ads remain off. You can try again later.")
         }
         .alert(
             AppLocalization.text("Language Couldn't Be Changed"),
@@ -213,6 +270,7 @@ struct SettingsView: View {
 
 private struct SupportTheAppView: View {
     @ObservedObject var store: SupporterStore
+    @State private var isSupportVisible = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -281,6 +339,12 @@ private struct SupportTheAppView: View {
                     .font(.system(.body, design: .serif))
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
+
+                    Text("Any monthly level removes ads while active. The full app stays free.")
+                        .font(.system(.body, design: .serif))
+                        .foregroundStyle(CeremonialObsidianTheme.secondaryText)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     if store.isLoadingProducts {
                         ProgressView("Loading support options")
@@ -407,6 +471,13 @@ private struct SupportTheAppView: View {
         }
         .toolbar(.hidden, for: .navigationBar)
         .preferredColorScheme(.dark)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if isSupportVisible && store.busyProductID == nil && !store.isRestoring && store.notice == nil {
+                TarotBannerSlot(surface: .normal)
+            }
+        }
+        .onAppear { isSupportVisible = true }
+        .onDisappear { isSupportVisible = false }
         .task {
             await store.loadProductsIfNeeded()
         }

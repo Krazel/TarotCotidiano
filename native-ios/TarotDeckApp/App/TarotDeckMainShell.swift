@@ -1,4 +1,5 @@
 import SwiftUI
+import TarotDeckCore
 import UIKit
 
 enum TarotPrimaryDestination: Hashable {
@@ -16,30 +17,38 @@ struct TarotDeckMainShell<ReadContent: View>: View {
     let content: TarotContent
     @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var favoriteStore: FavoriteCardsStore
+    let readingContextActive: Bool
+    @EnvironmentObject private var supporter: SupporterStore
+    @EnvironmentObject private var adConsent: TarotAdConsent
     let startReading: (String) -> Void
     let readContent: (
         @escaping (String) -> Void,
-        @escaping (String?, Bool) -> Void
+        @escaping (String?, Bool) -> Void,
+        @escaping (Bool) -> Void
     ) -> ReadContent
 
     @State private var selectedDestination: TarotPrimaryDestination = .read
     @State private var readingMeaningCardID: String?
     @State private var learnPath: [LearnRoute] = []
     @State private var tutorialReturnsToReading = false
+    @State private var settingsPresented = false
 
     init(
         content: TarotContent,
         languageStore: AppLanguageStore,
         favoriteStore: FavoriteCardsStore,
+        readingContextActive: Bool,
         startReading: @escaping (String) -> Void,
         @ViewBuilder readContent: @escaping (
             @escaping (String) -> Void,
-            @escaping (String?, Bool) -> Void
+            @escaping (String?, Bool) -> Void,
+            @escaping (Bool) -> Void
         ) -> ReadContent
     ) {
         self.content = content
         self.languageStore = languageStore
         self.favoriteStore = favoriteStore
+        self.readingContextActive = readingContextActive
         self.startReading = startReading
         self.readContent = readContent
         Self.configureTabBarAppearance()
@@ -58,7 +67,8 @@ struct TarotDeckMainShell<ReadContent: View>: View {
                             articleID: articleID,
                             activeReading: activeReading
                         )
-                    }
+                    },
+                    { settingsPresented = $0 }
                 )
             }
             .tag(TarotPrimaryDestination.read)
@@ -92,6 +102,23 @@ struct TarotDeckMainShell<ReadContent: View>: View {
             }
         }
         .tint(CeremonialObsidianTheme.brightGold)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if !settingsPresented {
+                TarotBannerSlot(surface: MonetizationPolicy.surface(
+                    isReadDestination: selectedDestination == .read,
+                    isLearnDestination: selectedDestination == .learn,
+                    readingContextActive: readingContextActive,
+                    hasReadingMeaning: readingMeaningCardID != nil,
+                    tutorialReturnsToReading: tutorialReturnsToReading,
+                    hasLearnRoute: !learnPath.isEmpty
+                ))
+            }
+        }
+        .task(id: supporter.hasResolvedEntitlements && !supporter.isSupporter) {
+            if supporter.hasResolvedEntitlements && !supporter.isSupporter {
+                await adConsent.updateIfNeeded()
+            }
+        }
         .toolbarBackground(.visible, for: .tabBar)
         .sheet(
             isPresented: Binding(

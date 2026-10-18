@@ -7,6 +7,7 @@ struct ReadRootView: View {
     let content: TarotContent
     @ObservedObject var languageStore: AppLanguageStore
     @ObservedObject var supporterStore: SupporterStore
+    let settingsPresentationChanged: (Bool) -> Void
     let inspectRevealedCard: (String) -> Void
     let openReadingTutorial: (String?, Bool) -> Void
     @State private var showsSettings = false
@@ -83,6 +84,7 @@ struct ReadRootView: View {
             guard model.surface == .home else { return }
             showsSettings = false
         }
+        .onChange(of: showsSettings) { settingsPresentationChanged($0) }
         .task {
             await model.restoreIfNeeded()
         }

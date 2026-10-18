@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-18",
+  "actions": "local checks only; no build or service mutation",
+  "results": [
+    {
+      "command": "python native-ios/tools/validate-monetization.py",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "2ff69b",
+        "wall_time_seconds": 1.2781786,
+        "exit_code": 0,
+        "original_token_count": 22,
+        "output": "PASS: 29 offline structural checks; Swift compilation/XCTest/device QA NOT executed.\r\n"
+      }
+    },
+    {
+      "command": "& ./native-ios/tools/validate-app-integration.ps1",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "f24fb0",
+        "wall_time_seconds": 3.8762997,
+        "exit_code": 0,
+        "original_token_count": 115,
+        "output": "Validated public release candidate 1.0 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates.\r\n"
+      }
+    },
+    {
+      "command": "& ./native-ios/tools/validate-support-products.ps1",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "c94096",
+        "wall_time_seconds": 1.5200697,
+        "exit_code": 0,
+        "original_token_count": 55,
+        "output": "Validated local seven-product contract, live-price/verified-entitlement code, restoration, and ad-removal amendment; historical territorial configuration is not a fresh Apple-server verification. No workflow executed.\r\n"
+      }
+    },
+    {
+      "command": "git -c core.safecrlf=false diff --check",
+      "status": "fulfilled",
+      "value": {
+        "chunk_id": "24f3ea",
+        "wall_time_seconds": 1.246777,
+        "exit_code": 0,
+        "original_token_count": 0,
+        "output": ""
+      }
+    }
+  ],
+  "runtimeLimit": "Swift/Xcode unavailable; XCTest source prepared but not executed."
+}

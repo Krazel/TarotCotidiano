@@ -387,6 +387,17 @@
     "Your active supporter status was restored. Thank you for supporting the app.",
     "No active monthly support subscription was found for this Apple Account.",
     "Purchases couldn't be restored right now. Please try again.",
-    "Monthly support options couldn't be loaded right now. The full app remains available."
+    "Monthly support options couldn't be loaded right now. The full app remains available.",
+    "Ads remain off. You can try again later.",
+    "Advertisement",
+    "Advertising choices",
+    "Advertising choices unavailable",
+    "Any monthly level removes ads while active. The full app stays free.",
+    "Don't ask again",
+    "Not now",
+    "Opens advertising privacy choices",
+    "See support options",
+    "Support the app without ads",
+    "This test build uses Google test ads. Google processes consent, network and device data to provide them; your readings are not sent. Ads stay off until privacy checks succeed."
   ]
 }

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "status": "LOCAL_PREPARATION_ONLY",
+  "authority": "Human delegation 2026-10-18",
+  "existingAppleContract": "tarot-subscriptions.v1.json",
+  "newProducts": [],
+  "priceChanges": [],
+  "benefits": {
+    "coreAppRemainsFree": true,
+    "allSevenMonthlyLevelsEquivalent": true,
+    "supporterStatusAndThanksPreserved": true,
+    "removeBannerWhileAnyVerifiedSupportIsActive": true,
+    "appliesToExistingSubscribers": true
+  },
+  "ads": {
+    "format": "anchoredAdaptiveBannerOnly",
+    "excluded": ["restoring", "tableEntry", "shuffle", "deal", "reveal", "orientation", "tableOverlays", "readingMeaning", "background", "unresolvedEntitlements", "activeSupporter"],
+    "debug": "Google sample IDs only; UMP required",
+    "release": "disabledInSource",
+    "realAppID": null,
+    "realBannerUnitID": null,
+    "tracking": "No ATT request; no IDFA use; personalization and publisher first-party ID disabled"
+  },
+  "reminder": {
+    "placement": "inlineSettingsOnly",
+    "minimumElapsedDays": 14,
+    "neverFirstObservedLaunch": true,
+    "optOutPersistent": true
+  },
+  "proposedAppleProductDescriptionsNotApplied": {
+    "en-US": "Monthly support. Removes ads while active.",
+    "es-ES": "Apoyo mensual. Sin anuncios mientras esté activo."
+  },
+  "gates": ["Fresh read-only Apple product/status verification", "Separate authority for Apple metadata/privacy changes", "Authorized macOS/device QA", "Own AdMob configuration and approved regional UMP messages", "Separate authority before live ads, builds or publication"]
+}

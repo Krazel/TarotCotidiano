@@ -32,8 +32,8 @@ $requiredContracts = @(
     'permissions:`n  contents: read',
     'internal_only_confirmation:',
     'default: "DO_NOT_UPLOAD"',
-    'TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2',
-    "if: `${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2' }}",
+    'TESTFLIGHT_INTERNAL_ONLY_1_1_BUILD_1',
+    "if: `${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_1_BUILD_1' }}",
     'environment: app-store-production',
     'uses: actions/checkout@v4',
     'persist-credentials: false',
@@ -52,8 +52,8 @@ $requiredContracts = @(
     '-authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID"',
     'DEVELOPMENT_TEAM="$APPLE_TEAM_ID"',
     'CODE_SIGN_STYLE=Automatic',
-    'CURRENT_PROJECT_VERSION=2',
-    'MARKETING_VERSION=1.0',
+    'CURRENT_PROJECT_VERSION=1',
+    'MARKETING_VERSION=1.1',
     'Add :method string app-store-connect',
     'Add :destination string export',
     'Add :destination string upload',
@@ -149,7 +149,7 @@ if ($unexpectedActions.Count -gt 0) {
 }
 
 $projectContracts = @(
-    'MARKETING_VERSION = 1.0;',
+    'MARKETING_VERSION = 1.1;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
@@ -164,7 +164,7 @@ foreach ($contract in $projectContracts) {
     }
 }
 if ($project -match '(?m)^\s*DEVELOPMENT_TEAM\s*=' -or
-    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.0;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2) {
     throw "Team must be workflow-parametrized and version/build must be exact in both configurations."
 }
@@ -194,4 +194,4 @@ if ($localQAWorkflow -match '(?i)TestFlight|App Store Connect|\bsecrets\.|-expor
     throw "Local-QA workflow must remain unsigned and incapable of TestFlight upload."
 }
 
-Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.0 (2): default is no upload, build 1 remains reserved for App Review, cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."
+Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.1 (1): default is no upload, sample ads remain internal-only, cloud signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."

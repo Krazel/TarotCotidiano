@@ -84,7 +84,14 @@ if ($manifest.benefits.coreAppRemainsFree -ne $true -or
     $manifest.benefits.allLevelsEquivalent -ne $true -or
     $manifest.benefits.supporterStatusInSettings -ne $true -or
     $manifest.benefits.adsRemoved -ne $false) {
-    throw "Support benefits do not match the approved free-app contract."
+    throw "Historical Apple setup contract has changed unexpectedly; prepare amendments separately."
+}
+$amendment = Get-Content -Raw -LiteralPath (Join-Path $repoRoot "store/tarot-monetization-20261018.json") | ConvertFrom-Json
+if ($amendment.status -cne 'LOCAL_PREPARATION_ONLY' -or
+    $amendment.benefits.removeBannerWhileAnyVerifiedSupportIsActive -ne $true -or
+    $amendment.benefits.appliesToExistingSubscribers -ne $true -or
+    $amendment.newProducts.Count -ne 0 -or $amendment.priceChanges.Count -ne 0) {
+    throw "The authorized local amendment must preserve all seven products/prices and remove banners for existing active supporters."
 }
 
 $storeContracts = @(
@@ -153,4 +160,4 @@ if ($configure -match '(?m)^\s*startDate:' -or
     throw "Initial StoreKit prices must omit startDate and preserve worldwide current/future availability."
 }
 
-Write-Host "Validated seven equivalent monthly support products across all 175 current and future App Store territories, verified StoreKit entitlements, live prices, disclosures, restoration, and an explicit production-only setup workflow."
+Write-Host "Validated local seven-product contract, live-price/verified-entitlement code, restoration, and ad-removal amendment; historical territorial configuration is not a fresh Apple-server verification. No workflow executed."

@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import StoreKit
 
@@ -68,12 +69,15 @@ final class SupporterStore: ObservableObject {
     @Published private(set) var products: [Product] = []
     @Published private(set) var isLoadingProducts = false
     @Published private(set) var isSupporter = false
+    @Published private(set) var hasResolvedEntitlements = false
     @Published private(set) var activeProductID: String?
     @Published private(set) var busyProductID: String?
     @Published private(set) var isRestoring = false
     @Published var notice: SupporterNotice?
 
     private var transactionUpdatesTask: Task<Void, Never>?
+    private var expirationRefreshTask: Task<Void, Never>?
+    private var entitlementRefreshTask: Task<Void, Never>?
 
     init() {
         transactionUpdatesTask = listenForTransactionUpdates()
@@ -81,6 +85,7 @@ final class SupporterStore: ObservableObject {
 
     deinit {
         transactionUpdatesTask?.cancel()
+        expirationRefreshTask?.cancel()
     }
 
     func loadProductsIfNeeded() async {
@@ -91,6 +96,8 @@ final class SupporterStore: ObservableObject {
 
         isLoadingProducts = true
         defer { isLoadingProducts = false }
+        // Existing subscribers never depend on the product catalog/network succeeding.
+        await refreshEntitlements()
 
         do {
             let order = Dictionary(
@@ -128,7 +135,7 @@ final class SupporterStore: ObservableObject {
             case .success(let verification):
                 let transaction = try verified(verification)
                 await transaction.finish()
-                await refreshEntitlements()
+                await refreshEntitlements(forceRefresh: true)
                 notice = isSupporter ? .thankYou : .purchaseFailed
             case .pending:
                 notice = .pending
@@ -149,30 +156,72 @@ final class SupporterStore: ObservableObject {
 
         do {
             try await AppStore.sync()
-            await refreshEntitlements()
+            await refreshEntitlements(forceRefresh: true)
             notice = isSupporter ? .restored : .nothingToRestore
         } catch {
             notice = .restoreFailed
         }
     }
 
-    func refreshEntitlements() async {
+    func refreshEntitlements(forceRefresh: Bool = false) async {
+        if let entitlementRefreshTask {
+            await entitlementRefreshTask.value
+            // A purchase/restore/update must not reuse a scan begun before that event.
+            if forceRefresh { await resolveEntitlements() }
+            return
+        }
+        let task = Task<Void, Never> { [weak self] in
+            guard let self else { return }
+            await self.resolveEntitlements()
+        }
+        entitlementRefreshTask = task
+        await task.value
+        entitlementRefreshTask = nil
+    }
+
+    private func resolveEntitlements() async {
         var verifiedProductID: String?
+        var nextExpiration: Date?
+        var hasUnverifiedSupport = false
         for await result in Transaction.currentEntitlements {
+            if case .unverified(let transaction, _) = result,
+               SupporterConfiguration.monthlyProductIDs.contains(transaction.productID) {
+                hasUnverifiedSupport = true
+            }
             guard let transaction = try? verified(result),
                   SupporterConfiguration.monthlyProductIDs.contains(transaction.productID),
-                  transaction.revocationDate == nil else {
+                  transaction.revocationDate == nil, !transaction.isUpgraded else {
                 continue
             }
             verifiedProductID = transaction.productID
-            break
+            if let expiration = transaction.expirationDate {
+                nextExpiration = min(nextExpiration ?? expiration, expiration)
+            }
         }
         activeProductID = verifiedProductID
         isSupporter = verifiedProductID != nil
+        hasResolvedEntitlements = isSupporter || !hasUnverifiedSupport
+        expirationRefreshTask?.cancel()
+        if let nextExpiration {
+            // currentEntitlements also covers Apple's billing grace period. A past
+            // expiration is not itself a revocation; ask StoreKit again during grace.
+            let delay = nextExpiration > Date()
+                ? max(1, nextExpiration.timeIntervalSinceNow + 1) : 60
+            expirationRefreshTask = Task { [weak self] in
+                do { try await Task.sleep(nanoseconds: UInt64(min(delay, 86_400) * 1_000_000_000)) }
+                catch { return }
+                await self?.refreshEntitlements()
+            }
+        }
     }
 
     func dismissNotice() {
         notice = nil
+    }
+
+    func invalidateEntitlements() {
+        // Re-entering the foreground must not briefly show ads using stale rights.
+        hasResolvedEntitlements = false
     }
 
     private func listenForTransactionUpdates() -> Task<Void, Never> {
@@ -182,7 +231,7 @@ final class SupporterStore: ObservableObject {
                 guard let transaction = try? self.verified(result) else { continue }
                 await transaction.finish()
                 if SupporterConfiguration.monthlyProductIDs.contains(transaction.productID) {
-                    await self.refreshEntitlements()
+                    await self.refreshEntitlements(forceRefresh: true)
                 }
             }
         }

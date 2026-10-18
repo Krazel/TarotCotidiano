@@ -453,6 +453,12 @@ $allAppSource = $sourceText -join "`n"
 $settingsSourceForDestinationBoundary = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Screens/Settings/SettingsView.swift")
 $supporterSourceForDestinationBoundary = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/SupporterStore.swift")
 $nonSettingsAppSource = $allAppSource.Replace($settingsSourceForDestinationBoundary, "").Replace($supporterSourceForDestinationBoundary, "")
+$adConsentSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/TarotAdConsent.swift")
+$bannerSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Components/TarotBanner.swift")
+$nonAdvertisingAppSource = $allAppSource.Replace($adConsentSource, "").Replace($bannerSource, "")
+if ($nonAdvertisingAppSource -match '(?m)^\s*import\s+(GoogleMobileAds|UserMessagingPlatform)\b') {
+    throw "Advertising SDK imports must remain inside the two scoped advertising adapters."
+}
 $forbidden = @("Zodiac", "Android")
 foreach ($term in $forbidden) {
     if ($allAppSource -match [regex]::Escape($term)) {
@@ -463,13 +469,21 @@ if ($nonSettingsAppSource -match '(?m)^\s*import\s+(Network|WebKit|StoreKit|AdSu
     $nonSettingsAppSource -match '\b(URLSession|URLRequest|NWConnection|NWPathMonitor|WKWebView|openURL|UIApplication\.shared\.open)\b' -or
     $nonSettingsAppSource -match 'https?://' -or
     $allAppSource -match '\b(requestAuthorization|requestAccess|ATTrackingManager|UNUserNotificationCenter|CLLocationManager|AVCaptureDevice|PHPhotoLibrary|CNContactStore|EKEventStore|HKHealthStore|CBCentralManager)\b' -or
-    $allAppSource -match '\b(Firebase|GoogleMobileAds|GADMobileAds|Sentry|Crashlytics|Mixpanel|Amplitude)\b') {
+    $allAppSource -match '\b(Firebase|GADMobileAds|Sentry|Crashlytics|Mixpanel|Amplitude)\b') {
     throw "App source contains unauthorized network, permission, or third-party SDK integration."
 }
 $packageSource = Get-Content -Raw -LiteralPath (Join-Path $native.Path "Package.swift")
-if ($packageSource -match '\.package\s*\(' -or $project -match 'XCRemoteSwiftPackageReference|repositoryURL' -or
+if ($packageSource -match '\.package\s*\(' -or
     $project -match 'INFOPLIST_KEY_NS[A-Za-z]+UsageDescription|CODE_SIGN_ENTITLEMENTS') {
-    throw "The app target contains an external package, permission usage description, or entitlement file."
+    throw "The core contains an external dependency, or app has unauthorized permissions/entitlements."
+}
+$allowedSDKURLs = @(
+    'https://github.com/googleads/swift-package-manager-google-mobile-ads.git',
+    'https://github.com/googleads/swift-package-manager-google-user-messaging-platform.git'
+)
+$actualSDKURLs = @([regex]::Matches($project, 'repositoryURL = "([^"]+)";') | ForEach-Object { $_.Groups[1].Value })
+if ($actualSDKURLs.Count -ne 2 -or @(Compare-Object $allowedSDKURLs $actualSDKURLs).Count -gt 0) {
+    throw "Only the two authorized Google advertising/consent packages may be linked."
 }
 $entitlementFiles = @(Get-ChildItem -LiteralPath $native.Path -Recurse -File -Filter *.entitlements)
 if ($entitlementFiles.Count -gt 0) {
@@ -477,8 +491,8 @@ if ($entitlementFiles.Count -gt 0) {
 }
 $frameworkNames = @([regex]::Matches($project, '(?m)^\s*[A-F0-9]+ /\* (.+?) in Frameworks \*/') |
     ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
-if ($frameworkNames.Count -ne 1 -or $frameworkNames[0] -cne "TarotDeckCore") {
-    throw "The app target must link only the local TarotDeckCore product."
+if ($frameworkNames.Count -ne 3 -or @(Compare-Object @('TarotDeckCore', 'GoogleMobileAds', 'GoogleUserMessagingPlatform') $frameworkNames).Count -gt 0) {
+    throw "The app target may link only core, GMA and UMP."
 }
 if ($sourceText -match '\brwsTheMoon\b' -or $sourceText -match [regex]::Escape('rws-the-moon')) {
     throw "Obsolete duplicate The Moon runtime asset name remains in Swift source."
@@ -691,7 +705,7 @@ if ($appSource -match '#if\s+DEBUG|EmptyView\(\)' -or
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
 $projectReleaseContracts = @(
-    'MARKETING_VERSION = 1.0;',
+    'MARKETING_VERSION = 1.1;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -704,7 +718,7 @@ foreach ($contract in $projectReleaseContracts) {
         throw "TestFlight project contract is missing: $contract"
     }
 }
-if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.0;')).Count -ne 2 -or
+if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
@@ -1641,7 +1655,7 @@ $requiredSettingsCopy = @(
     "Manage Subscription",
     "Terms",
     "The full app stays free",
-    'fallbackVersion = "1.0"'
+    'fallbackVersion = "1.1"'
 )
 foreach ($copy in $requiredSettingsCopy) {
     if ($settingsSource -cnotmatch [regex]::Escape($copy)) {
@@ -1941,4 +1955,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated public release candidate 1.0 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."
+Write-Host "Validated candidate 1.1 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."

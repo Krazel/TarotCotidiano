@@ -15,6 +15,9 @@ struct TarotDeckInternalApp: App {
     @StateObject private var readModel: ReadFlowModel
     @StateObject private var favoriteStore: FavoriteCardsStore
     @StateObject private var supporterStore: SupporterStore
+    @StateObject private var adConsent = TarotAdConsent()
+    @StateObject private var supportReminder = SupportReminderStore()
+    @Environment(\.scenePhase) private var scenePhase
 
     init() {
         let languageStore = AppLanguageStore()
@@ -108,6 +111,7 @@ struct TarotDeckInternalApp: App {
                         content: content,
                         languageStore: languageStore,
                         favoriteStore: favoriteStore,
+                        readingContextActive: readModel.surface != .home || readModel.hasActiveReading,
                         startReading: { presetID in
                             if presetID == "customSpread" {
                                 readModel.requestCustomSpreadCreationFromLearn()
@@ -116,12 +120,13 @@ struct TarotDeckInternalApp: App {
                             guard let preset = ReadingPreset(rawValue: presetID) else { return }
                             readModel.requestReadingFromLearn(preset)
                         }
-                    ) { inspectRevealedCard, openReadingTutorial in
+                    ) { inspectRevealedCard, openReadingTutorial, settingsPresentationChanged in
                         ReadRootView(
                             model: readModel,
                             content: content,
                             languageStore: languageStore,
                             supporterStore: supporterStore,
+                            settingsPresentationChanged: settingsPresentationChanged,
                             inspectRevealedCard: inspectRevealedCard,
                             openReadingTutorial: openReadingTutorial
                         )
@@ -132,6 +137,16 @@ struct TarotDeckInternalApp: App {
                 }
             }
             .environment(\.locale, languageStore.language.locale)
+            .environmentObject(supporterStore)
+            .environmentObject(adConsent)
+            .environmentObject(supportReminder)
+            .task { await supporterStore.refreshEntitlements() }
+            .onChange(of: scenePhase) { phase in
+                supporterStore.invalidateEntitlements()
+                if phase == .active {
+                    Task { await supporterStore.refreshEntitlements() }
+                }
+            }
         }
     }
 }

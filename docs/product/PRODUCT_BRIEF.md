@@ -1,8 +1,10 @@
 # Tarot Deck — Product Brief
 
-Status: active expanded MVP baseline through A-059
+Status: expanded MVP baseline; scoped monetization amendment authorized 2026-10-18
 First release: iPhone only, English and Spanish
 Date: 2026-08-13
+
+Current amendment (2026-10-18): the full app remains free. A bottom banner may appear on ordinary screens, with no reserved space throughout any active reading table or its contextual meaning. Any of the seven existing verified monthly supporter levels removes the banner while active, retaining supporter status and thanks. An optional dismissible Settings reminder is limited to once per 14 elapsed days, never the first observed launch. Debug uses test ads only; Release is disabled pending separate configuration/QA authority. This replaces older no-ad wording below; historical records remain preserved. See `docs/technical/monetization-20261018/DELIVERY.md` and `store/tarot-monetization-20261018.json`.
 
 ## Product in one sentence
 
@@ -69,8 +71,8 @@ The MVP proves that promise through:
 6. **Simple layouts, explicit intent.** A three-card reading either assigns `Past · Present · Possible Future`, `Situation · Challenge · Advice`, `You · The other person · Connection`, or `For · Against · Destiny`, or deliberately uses Freeform with neutral `Card 1 · Card 2 · Card 3` labels.
 7. **Private and local.** The app collects no question, notes, account, analytics profile, or cloud record.
 8. **Bounded learning.** The guide teaches a usable method; it is not a course, feed, streak, or content program.
-9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment, advertising, or a supporter entitlement.
-10. **Support is voluntary.** Equivalent monthly support levels express appreciation through supporter status, a thank-you, and at most minor visual acknowledgement; they do not unlock substantial functionality.
+9. **Free means complete.** Read, Learn, all 78 Cards, and every meaning remain usable without payment or a supporter entitlement. Reading tables stay free of banners.
+10. **Support is voluntary.** All seven monthly support levels retain supporter status and thanks and remove the banner while active, including existing subscribers; they do not gate reading, cards or learning.
 11. **Visual-first.** A complete iPhone image is created and registered before each new final UI surface. Under A-021, in-scope images created by the project brain are approved on registration and do not require a separate pause.
 12. **The deck starts the ritual.** Home keeps the deck large and exposes only one small selector button before it is touched. That button opens a progressive visual chooser. Each choice has a separate information action that opens its tutorial without selecting or starting it. The chooser is never a dropdown, permanent carousel, or vertical text list. A newly created table shuffles automatically. After that, tapping the deck places the next card in the spread's defined order, while tapping a particular empty position places the next card there. A small dedicated `Shuffle / Barajar` control can shuffle the remaining undealt cards repeatedly without changing cards already placed.
 13. **The viewport does not jump.** Persistent controls, the deck frame, reading positions, and visible tab bar keep stable geometry while labels and logical states change; motion happens inside those bounds.
@@ -194,7 +196,7 @@ The MVP has one central job—help the user read a physical-style deck—and two
 - Sharing cards or readings.
 - Multiple visual decks, alternate card backs, themes, imports, or downloadable content.
 - Accounts, profiles, login, sync, cloud backup, or cross-device recovery.
-- Required purchase, paywall, locked card, feature entitlement, advertising, or supporter-only content. The only commerce is the equivalent monthly voluntary support defined by A-022/A-064.
+- Required purchase, paywall, locked card, gated reading/learning, interstitials, rewarded ads, or supporter-only content. The equivalent seven monthly subscriptions now also remove the optional ordinary-screen banner under the 2026-10-18 amendment.
 - One-time tips, consumables, paid deck packs, premium readings, or differing functional benefits between support levels.
 - Network-fetched tarot or learning content, remote content management, analytics, or generative content. StoreKit purchase/restoration, legal links and App Store rating may use Apple or system services without making core use network-dependent.
 - Promotional support prompts in the first-use experience, during a reading, while revealing or inspecting a card, or during another critical task. The MVP keeps support discoverable in Settings instead of interrupting use.

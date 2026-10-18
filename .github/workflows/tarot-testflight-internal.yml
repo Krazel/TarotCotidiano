@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       internal_only_confirmation:
-        description: "Optional QA rebuild only: upload 1.0 build 2 as permanently internal-only; never use it for public submission"
+        description: "Optional QA rebuild only: upload 1.1 build 1 as permanently internal-only; never use it for public submission"
         required: true
         default: "DO_NOT_UPLOAD"
         type: choice
         options:
           - "DO_NOT_UPLOAD"
-          - "TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2"
+          - "TESTFLIGHT_INTERNAL_ONLY_1_1_BUILD_1"
 
 permissions:
   contents: read
@@ -21,8 +21,8 @@ concurrency:
 
 jobs:
   archive-export-upload:
-    name: TestFlight INTERNAL ONLY - 1.0 (2)
-    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_0_BUILD_2' }}
+    name: TestFlight INTERNAL ONLY - 1.1 (1)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_1_BUILD_1' }}
     runs-on: macos-latest
     timeout-minutes: 45
     environment: app-store-production
@@ -51,9 +51,39 @@ jobs:
           ./native-ios/Tools/validate-app-integration.ps1
           ./native-ios/Tools/validate-app-integration.ps1 -InternalTestFlightGate
 
+      - name: Validate test advertising contract
+        shell: bash
+        run: python3 native-ios/Tools/validate-monetization.py
+
       - name: Run structural Swift tests
         shell: bash
         run: swift test --package-path native-ios --parallel
+
+      - name: Compile and launch simulator app
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild build -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/TarotAdsSimulator" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          DEVICE_ID="$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
+          test -n "$DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" || true
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+          xcrun simctl install "$DEVICE_ID" "$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app"
+          xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
+          sleep 8
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-home-simulator.png"
+          xcrun simctl shutdown "$DEVICE_ID"
+
+      - name: Preserve simulator launch screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: TarotDeck-1.1-1-simulator-${{ github.run_id }}
+          path: ${{ runner.temp }}/tarot-home-simulator.png
+          retention-days: 1
 
       - name: Prepare App Store Connect cloud-signing key
         shell: bash
@@ -100,8 +130,10 @@ jobs:
             -authenticationKeyIssuerID "$APP_STORE_CONNECT_ISSUER_ID" \
             DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
             CODE_SIGN_STYLE=Automatic \
-            CURRENT_PROJECT_VERSION=2 \
-            MARKETING_VERSION=1.0 \
+            CURRENT_PROJECT_VERSION=1 \
+            MARKETING_VERSION=1.1 \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS=TAROT_TEST_ADS \
+            TAROT_ADS_MODE=test-only \
             COMPILER_INDEX_STORE_ENABLE=NO
 
       - name: Verify signed archive and internal release identity
@@ -119,12 +151,14 @@ jobs:
           test -d "$APP_PATH"
           test -f "$EXECUTABLE_PATH"
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotAdvertisingMode' "$INFO_PLIST")" == "test-only" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$INFO_PLIST")" == "ca-app-pub-3940256099942544~1458002511" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.0" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
@@ -179,7 +213,7 @@ jobs:
           VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-testflight-verify.XXXXXX")"
           OUTPUT_PATH="$RUNNER_TEMP/tarot-testflight-evidence"
           SHORT_COMMIT="${GITHUB_SHA:0:12}"
-          BASE_NAME="TarotDeck-1.0-2-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
+          BASE_NAME="TarotDeck-1.1-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
           IPA_PATH="$SOURCE_IPA"
           MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
           SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
@@ -195,12 +229,14 @@ jobs:
 
           test -d "$APP_PATH"
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotAdvertisingMode' "$INFO_PLIST")" == "test-only" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$INFO_PLIST")" == "ca-app-pub-3940256099942544~1458002511" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.0" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
@@ -210,8 +246,8 @@ jobs:
           printf '%s  %s.ipa\n' "$IPA_SHA256" "$BASE_NAME" > "$SHA_PATH"
           jq -n \
             --arg app "Tarot Deck" \
-            --arg version "1.0" \
-            --arg build "2" \
+            --arg version "1.1" \
+            --arg build "1" \
             --arg bundleID "com.krazel.tarotdeck" \
             --arg commit "$GITHUB_SHA" \
             --arg ciRunNumber "$GITHUB_RUN_NUMBER" \
