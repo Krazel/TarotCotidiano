@@ -1,0 +1,166 @@
+{
+  "checkedAt": "2026-10-18T16:36:23.008Z",
+  "applied": true,
+  "reviewSubmitted": false,
+  "products": [
+    {
+      "parentId": "6802804272",
+      "productId": "com.krazel.tarotdeck.support.monthly.099",
+      "versionId": "c5228077-c2c3-41f0-854d-75cc2a9a28f1",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "e5d61234-9546-4803-b445-14ca8e194211",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        },
+        {
+          "id": "f45404ba-31c0-4490-8653-cb54356505be",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        }
+      ]
+    },
+    {
+      "parentId": "6802805682",
+      "productId": "com.krazel.tarotdeck.support.monthly.1499",
+      "versionId": "6b6dd4bb-d260-4f8d-bf40-e92732735f73",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "5b97c014-5135-4cc4-b07a-45fa898e0efa",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        },
+        {
+          "id": "325102ea-8233-4f9e-8c38-cf53d3e82277",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        }
+      ]
+    },
+    {
+      "parentId": "6802805387",
+      "productId": "com.krazel.tarotdeck.support.monthly.299",
+      "versionId": "04e05f43-91ee-4d3e-86bd-092bd378d256",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "be677f92-4f49-4400-8da4-ac877dcdebbd",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        },
+        {
+          "id": "4a9ba925-cdbd-445a-b1f8-bf9585c7e172",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        }
+      ]
+    },
+    {
+      "parentId": "6802805692",
+      "productId": "com.krazel.tarotdeck.support.monthly.2999",
+      "versionId": "555966ce-3e3e-4bcf-ab38-6284349f925f",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "4ef23f1e-7ff9-4cd9-a97e-47ab5c6faa39",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        },
+        {
+          "id": "e47fd731-03d5-4f81-8e58-919bf1dab733",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        }
+      ]
+    },
+    {
+      "parentId": "6802805430",
+      "productId": "com.krazel.tarotdeck.support.monthly.499",
+      "versionId": "1649a52c-4665-4573-b0be-bfdb2d84e1a4",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "91dbaffd-08f5-414c-a995-292d3dec49fc",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        },
+        {
+          "id": "cbaf9d2c-9f82-4098-abec-b2f44f663cf8",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        }
+      ]
+    },
+    {
+      "parentId": "6802805666",
+      "productId": "com.krazel.tarotdeck.support.monthly.50",
+      "versionId": "32a6c008-b162-438d-b771-3c2e7b4d5bd6",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "f1ad9563-15a6-47f5-a211-897d56406ca9",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        },
+        {
+          "id": "b971b0b1-5fdc-4958-a60f-e0f49c2fc3dc",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        }
+      ]
+    },
+    {
+      "parentId": "6802805566",
+      "productId": "com.krazel.tarotdeck.support.monthly.999",
+      "versionId": "7049c4bd-fac9-48a6-aa7b-03e02f83e814",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "localizations": [
+        {
+          "id": "93de1350-0c6b-4a58-92cb-7ed121ed3ae1",
+          "name": "Quitar anuncios",
+          "locale": "es-ES",
+          "description": "Suscripción mensual. Sin anuncios mientras esté activa."
+        },
+        {
+          "id": "047cab8b-3e85-48f5-be09-9cf343680f91",
+          "name": "Remove ads",
+          "locale": "en-US",
+          "description": "Monthly subscription. No ads while active."
+        }
+      ]
+    }
+  ],
+  "group": {
+    "parentId": "22318147",
+    "versionId": "ebc8dcc3-b348-4140-879a-4e72d97d10c3",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "localizations": [
+      {
+        "id": "1f4dee41-63ae-486b-914f-9042efac96bb",
+        "name": "Quitar anuncios",
+        "customAppName": null,
+        "locale": "es-ES"
+      },
+      {
+        "id": "d7cc220d-7894-4f1b-bb3f-ad045b95ee74",
+        "name": "Remove ads",
+        "customAppName": null,
+        "locale": "en-US"
+      }
+    ]
+  }
+}
