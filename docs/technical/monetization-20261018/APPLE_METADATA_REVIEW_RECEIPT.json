@@ -1,0 +1,137 @@
+{
+  "appId": "6800144105",
+  "authorizedScope": "Only EN/ES subscription and group names/descriptions; no app version or price change",
+  "reviewSubmitted": true,
+  "submissionId": "530362ed-708a-44b0-9ba1-3625c28e6f2d",
+  "preSubmitVerified": {
+    "checkedAt": "2026-10-18T19:10:23.660Z",
+    "items": [
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fGM1MjI4MDc3LWMyYzMtNDFmMC04NTRkLTc1Y2MyYTlhMjhmMQ",
+        "versionId": "c5228077-c2c3-41f0-854d-75cc2a9a28f1",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fDZiNmRkNGJiLWQyNjAtNGY4ZC1iZjQwLWU5MjczMjczNWY3Mw",
+        "versionId": "6b6dd4bb-d260-4f8d-bf40-e92732735f73",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fDA0ZTA1ZjQzLTkxZWUtNGQzZS04NmJkLTA5MmJkMzc4ZDI1Ng",
+        "versionId": "04e05f43-91ee-4d3e-86bd-092bd378d256",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fDU1NTk2NmNlLTNlM2UtNGJjZi1hYjM4LTYyODQzNDlmOTI1Zg",
+        "versionId": "555966ce-3e3e-4bcf-ab38-6284349f925f",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fDE2NDlhNTJjLTQ2NjUtNDU3My1iMGJlLWJmZGIyZDg0ZTFhNA",
+        "versionId": "1649a52c-4665-4573-b0be-bfdb2d84e1a4",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fDMyYTZjMDA4LWIxNjItNDM4ZC1iNzcxLTNjMmU3YjRkNWJkNg",
+        "versionId": "32a6c008-b162-438d-b771-3c2e7b4d5bd6",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE4fDcwNDljNGJkLWZhYzktNDhhNi1hYTdiLTAzZTAyZjgzZTgxNA",
+        "versionId": "7049c4bd-fac9-48a6-aa7b-03e02f83e814",
+        "type": "subscriptionVersions"
+      },
+      {
+        "id": "NTMwMzYyZWQtNzA4YS00NGIwLTliYTEtMzYyNWMyOGU2ZjJkfDE5fGViYzhkY2MzLWIzNDgtNDE0MC04NzlhLTRlNzJkOTdkMTBjMw",
+        "versionId": "ebc8dcc3-b348-4140-879a-4e72d97d10c3",
+        "type": "subscriptionGroupVersions"
+      }
+    ],
+    "state": "READY_FOR_REVIEW"
+  },
+  "checkedAt": "2026-10-18T19:10:25.875Z",
+  "submission": {
+    "type": "reviewSubmissions",
+    "id": "530362ed-708a-44b0-9ba1-3625c28e6f2d",
+    "attributes": {
+      "platform": "IOS",
+      "submittedDate": "2026-10-18T19:10:25.106Z",
+      "state": "WAITING_FOR_REVIEW"
+    },
+    "relationships": {
+      "items": {
+        "links": {
+          "self": "https://api.appstoreconnect.apple.com/v1/reviewSubmissions/530362ed-708a-44b0-9ba1-3625c28e6f2d/relationships/items",
+          "related": "https://api.appstoreconnect.apple.com/v1/reviewSubmissions/530362ed-708a-44b0-9ba1-3625c28e6f2d/items"
+        }
+      }
+    },
+    "links": {
+      "self": "https://api.appstoreconnect.apple.com/v1/reviewSubmissions/530362ed-708a-44b0-9ba1-3625c28e6f2d"
+    }
+  },
+  "versions": [
+    {
+      "id": "c5228077-c2c3-41f0-854d-75cc2a9a28f1",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.099",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "6b6dd4bb-d260-4f8d-bf40-e92732735f73",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.1499",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "04e05f43-91ee-4d3e-86bd-092bd378d256",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.299",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "555966ce-3e3e-4bcf-ab38-6284349f925f",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.2999",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "1649a52c-4665-4573-b0be-bfdb2d84e1a4",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.499",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "32a6c008-b162-438d-b771-3c2e7b4d5bd6",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.50",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "7049c4bd-fac9-48a6-aa7b-03e02f83e814",
+      "type": "subscriptionVersions",
+      "productId": "com.krazel.tarotdeck.support.monthly.999",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    },
+    {
+      "id": "ebc8dcc3-b348-4140-879a-4e72d97d10c3",
+      "type": "subscriptionGroupVersions",
+      "version": 2,
+      "state": "WAITING_FOR_REVIEW"
+    }
+  ],
+  "appStoreVersions": [
+    {
+      "id": "5a4759c0-0f72-4e65-9831-f399875a6100",
+      "version": "1.0",
+      "state": "READY_FOR_SALE"
+    }
+  ]
+}
