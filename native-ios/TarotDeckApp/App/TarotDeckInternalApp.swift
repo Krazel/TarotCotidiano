@@ -157,6 +157,13 @@ struct TarotDeckInternalApp: App {
             .environmentObject(supporterStore)
             .environmentObject(adConsent)
             .environmentObject(supportReminder)
+            #if DEBUG
+            .overlay(alignment: .topLeading) {
+                if ProcessInfo.processInfo.arguments.contains("--qa-consent-observe") {
+                    TarotConsentQAView(consent: adConsent)
+                }
+            }
+            #endif
             .task { await supporterStore.refreshEntitlements() }
             .onChange(of: scenePhase) { phase in
                 supporterStore.invalidateEntitlements()

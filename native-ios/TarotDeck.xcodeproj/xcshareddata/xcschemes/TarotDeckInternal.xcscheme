@@ -28,6 +28,10 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
+         <TestableReference skipped="NO" parallelizable="NO">
+            <BuildableReference BuildableIdentifier="primary" BlueprintIdentifier="E91000000000000000000001" BuildableName="TarotConsentUITests.xctest" BlueprintName="TarotConsentUITests" ReferencedContainer="container:TarotDeck.xcodeproj" />
+         </TestableReference>
+
       </Testables>
    </TestAction>
    <LaunchAction

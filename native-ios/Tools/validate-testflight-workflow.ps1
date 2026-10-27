@@ -19,7 +19,6 @@ foreach ($path in @($workflowPath, $localQAWorkflowPath, $appValidatorPath, $pro
 
 $workflow = (Get-Content -Raw -LiteralPath $workflowPath) -replace "`r`n", "`n"
 $localQAWorkflow = (Get-Content -Raw -LiteralPath $localQAWorkflowPath) -replace "`r`n", "`n"
-$appValidator = Get-Content -Raw -LiteralPath $appValidatorPath
 $project = Get-Content -Raw -LiteralPath $projectPath
 $scheme = Get-Content -Raw -LiteralPath $schemePath
 
@@ -32,8 +31,8 @@ $requiredContracts = @(
     'permissions:`n  contents: read',
     'internal_only_confirmation:',
     'default: "DO_NOT_UPLOAD"',
-    'TESTFLIGHT_INTERNAL_ONLY_1_1_2_BUILD_1',
-    "if: `${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_1_2_BUILD_1' }}",
+    'TESTFLIGHT_INTERNAL_ONLY_1_2_1_BUILD_1',
+    "if: `${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_2_1_BUILD_1' }}",
     'environment: app-store-production',
     'uses: actions/checkout@v4',
     'persist-credentials: false',
@@ -41,7 +40,9 @@ $requiredContracts = @(
     './native-ios/Content/validate-content.ps1',
     './native-ios/Content/Education/validate-education.ps1',
     './native-ios/Content/Localization/validate-localization.ps1',
-    './native-ios/Tools/validate-app-integration.ps1 -InternalTestFlightGate',
+    './native-ios/Tools/validate-app-integration.ps1',
+    'python3 native-ios/Tools/validate-monetization.py',
+    '[[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]',
     'swift test --package-path native-ios --parallel',
     '-scheme TarotDeckInternal',
     '-configuration Release',
@@ -55,7 +56,18 @@ $requiredContracts = @(
     'CODE_SIGN_IDENTITY="Apple Distribution"',
     'PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18"',
     'CURRENT_PROJECT_VERSION=1',
-    'MARKETING_VERSION=1.1.2',
+    'MARKETING_VERSION=1.2.1',
+    'SWIFT_ACTIVE_COMPILATION_CONDITIONS="DEBUG TAROT_TEST_ADS"',
+    'SWIFT_ACTIVE_COMPILATION_CONDITIONS=TAROT_TEST_ADS',
+    'TAROT_ADS_MODE=test-only',
+    "TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511'",
+    "TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174'",
+    'Print :TarotBannerAdUnitID',
+    'grep -q test_banner_loaded',
+    'grep -q consent_form_presenting',
+    'for language in spanish english; do',
+    '--qa-active-product com.krazel.tarotdeck.support.monthly.499',
+    'Google sample app/banner identifiers only; no production inventory.',
     'Add :method string app-store-connect',
     'Add :destination string export',
     'Add :destination string upload',
@@ -84,6 +96,8 @@ $requiredContracts = @(
     'internalTestingOnly: true',
     'externalTestingCapable: false',
     'appStoreReleaseCapable: false',
+    'advertisingMode: "test-only"',
+    'advertisingInventory: "Google sample IDs"',
     'ciRunNumber: $ciRunNumber',
     'uses: actions/upload-artifact@v4',
     'Preserve non-binary TestFlight evidence',
@@ -117,6 +131,7 @@ if (@(Compare-Object ($requiredSecrets | Sort-Object) $referencedSecrets).Count 
 $forbiddenPatterns = @(
     '(?i)BUILD_CERTIFICATE_BASE64|BUILD_PROVISION_PROFILE_BASE64|KEYCHAIN_PASSWORD',
     '(?i)\bReleaseGate\b',
+    '(?i)\bInternalTestFlightGate\b|TAROT_PRODUCTION_ADS|TAROT_ADS_MODE=production',
     '(?i)external\s+(tester|testing|group)',
     '(?i)beta\s+app\s+review|app\s+review|submit\s+for\s+review',
     '(?i)manageAppVersionAndBuildNumber\s+bool\s+true',
@@ -138,6 +153,27 @@ if ([regex]::Matches($workflow, 'Add :testFlightInternalTestingOnly bool true').
     throw "Both export and upload must be permanently internal-only with fixed source version/build."
 }
 
+$sampleAppID = 'ca-app-pub-3940256099942544~1458002511'
+$sampleBannerID = 'ca-app-pub-3940256099942544/2435281174'
+$workflowAdIDs = @([regex]::Matches($workflow, 'ca-app-pub-\d+[~/]\d+') |
+    ForEach-Object { $_.Value } | Sort-Object -Unique)
+if (@(Compare-Object (@($sampleAppID, $sampleBannerID) | Sort-Object) $workflowAdIDs).Count -gt 0 -or
+    [regex]::Matches($workflow, [regex]::Escape("TAROT_ADMOB_APP_ID='$sampleAppID'")).Count -ne 3 -or
+    [regex]::Matches($workflow, [regex]::Escape("TAROT_ADMOB_BANNER_ID='$sampleBannerID'")).Count -ne 3 -or
+    [regex]::Matches($workflow, 'TAROT_ADS_MODE=test-only').Count -ne 3 -or
+    [regex]::Matches($workflow, 'Print :GADApplicationIdentifier').Count -ne 3 -or
+    [regex]::Matches($workflow, 'Print :TarotBannerAdUnitID').Count -ne 3) {
+    throw "Simulator build, consent tests and signed archive must override production IDs with samples; simulator, archive and IPA must verify identifiers."
+}
+
+foreach ($contract in @(
+    'Verify real sample consent choices in simulator', '-parallel-testing-enabled NO',
+    '-only-testing:TarotConsentUITests', 'TarotConsentQA.xcresult',
+    'Preserve native consent QA result', 'tarot-consent-tests.log'
+)) {
+    if (-not $workflow.Contains($contract)) { throw "Missing native consent QA contract: $contract" }
+}
+
 if ($workflow -match '(?m)^\s*cp\s+"\$SOURCE_IPA"' -or
     $workflow -match '(?m)^\s*IPA_PATH="\$OUTPUT_PATH/.+\.ipa"' -or
     $workflow -notmatch '(?m)^\s*IPA_PATH="\$SOURCE_IPA"$') {
@@ -156,7 +192,7 @@ if ($unexpectedActions.Count -gt 0) {
 }
 
 $projectContracts = @(
-    'MARKETING_VERSION = 1.1.2;',
+    'MARKETING_VERSION = 1.2.1;',
     'CURRENT_PROJECT_VERSION = 1;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
@@ -171,7 +207,7 @@ foreach ($contract in $projectContracts) {
     }
 }
 if ($project -match '(?m)^\s*DEVELOPMENT_TEAM\s*=' -or
-    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.1.2;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.2.1;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2) {
     throw "Team must be workflow-parametrized and version/build must be exact in both configurations."
 }
@@ -187,12 +223,8 @@ foreach ($contract in $schemeContracts) {
     }
 }
 
-if ($appValidator -cnotmatch [regex]::Escape('[switch]$ReleaseGate') -or
-    $appValidator -cnotmatch [regex]::Escape('[switch]$InternalTestFlightGate') -or
-    $appValidator -cnotmatch [regex]::Escape('[string[]]$RequestedTerritories') -or
-    $appValidator -cnotmatch [regex]::Escape('storefronts outside the approved US/GB/ES allowlist') -or
-    $appValidator -cnotmatch [regex]::Escape('Validated INTERNAL-ONLY TestFlight artwork gate: 78/78 owner-approved final faces are intact')) {
-    throw "Public ReleaseGate and separate internal-only artwork gate must both remain explicit."
+if ([regex]::Matches($workflow, '(?m)^\s*\./native-ios/Tools/validate-app-integration\.ps1\s*$').Count -ne 1) {
+    throw "Use the current normal app/artwork validation once; the historical territory-limited internal gate is not the candidate's distribution scope."
 }
 
 if ($localQAWorkflow -match '(?i)TestFlight|App Store Connect|\bsecrets\.|-exportArchive|destination string upload' -or
@@ -201,4 +233,4 @@ if ($localQAWorkflow -match '(?i)TestFlight|App Store Connect|\bsecrets\.|-expor
     throw "Local-QA workflow must remain unsigned and incapable of TestFlight upload."
 }
 
-Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.1.2 (1): default is no upload, sample ads remain internal-only, existing distribution signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."
+Write-Host "Validated optional protected TestFlight INTERNAL-ONLY QA workflow for Tarot Deck 1.2.1 (1): default is no upload, sample ads remain internal-only, existing distribution signing is parameterized, only non-binary evidence is preserved, and no external/App Store path exists."

@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       internal_only_confirmation:
-        description: "Optional QA rebuild only: upload 1.1.2 build 1 as permanently internal-only; never use it for public submission"
+        description: "Upload 1.2.1 build 1 with Google sample ads as permanently internal-only; never use it for public submission"
         required: true
         default: "DO_NOT_UPLOAD"
         type: choice
         options:
           - "DO_NOT_UPLOAD"
-          - "TESTFLIGHT_INTERNAL_ONLY_1_1_2_BUILD_1"
+          - "TESTFLIGHT_INTERNAL_ONLY_1_2_1_BUILD_1"
 
 permissions:
   contents: read
@@ -21,8 +21,8 @@ concurrency:
 
 jobs:
   archive-export-upload:
-    name: TestFlight INTERNAL ONLY - 1.1.2 (1)
-    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_1_2_BUILD_1' }}
+    name: TestFlight INTERNAL ONLY - 1.2.1 (1)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.internal_only_confirmation == 'TESTFLIGHT_INTERNAL_ONLY_1_2_1_BUILD_1' }}
     runs-on: macos-latest
     timeout-minutes: 45
     environment: app-store-production
@@ -45,11 +45,10 @@ jobs:
           ./native-ios/Content/Education/validate-education.ps1
           ./native-ios/Content/Localization/validate-localization.ps1
 
-      - name: Validate app and internal-only territory-limited artwork gate
+      - name: Validate app integration and approved artwork
         shell: pwsh
         run: |
           ./native-ios/Tools/validate-app-integration.ps1
-          ./native-ios/Tools/validate-app-integration.ps1 -InternalTestFlightGate
 
       - name: Validate test advertising contract
         shell: bash
@@ -64,11 +63,21 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+          echo "Simulator QA uses Google sample app/banner identifiers only; no production inventory."
           xcodebuild build -project native-ios/TarotDeck.xcodeproj \
             -scheme TarotDeckInternal -configuration Debug -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath "$RUNNER_TEMP/TarotAdsSimulator" \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS="DEBUG TAROT_TEST_ADS" \
+            TAROT_ADS_MODE=test-only \
+            TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511' \
+            TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174' \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
+          SIMULATOR_PLIST="$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app/Info.plist"
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotAdvertisingMode' "$SIMULATOR_PLIST")" == "test-only" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$SIMULATOR_PLIST")" == "ca-app-pub-3940256099942544~1458002511" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotBannerAdUnitID' "$SIMULATOR_PLIST")" == "ca-app-pub-3940256099942544/2435281174" ]]
           DEVICE_ID="$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
           test -n "$DEVICE_ID"
           xcrun simctl boot "$DEVICE_ID" || true
@@ -94,6 +103,7 @@ jobs:
           grep -q consent_form_presenting "$RUNNER_TEMP/tarot-consent-runtime.log"
           sleep 3
           xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-consent-eea.png"
+          echo "EN/ES purchase screenshots use DEBUG price/state fixtures, not real StoreKit transactions."
           for language in spanish english; do
             xcrun simctl terminate "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional || true
             xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-settings "--qa-$language"
@@ -104,13 +114,17 @@ jobs:
             xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-remove-ads "--qa-$language" --qa-prices "$PRICES"
             sleep 3
             xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-remove-ads-$language.png"
+            xcrun simctl terminate "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
+            xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-remove-ads "--qa-$language" --qa-prices "$PRICES" --qa-active-product com.krazel.tarotdeck.support.monthly.499
+            sleep 3
+            xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-remove-ads-active-$language.png"
           done
           xcrun simctl shutdown "$DEVICE_ID"
 
       - name: Preserve simulator launch screenshot
         uses: actions/upload-artifact@v4
         with:
-          name: TarotDeck-1.1.2-1-simulator-${{ github.run_id }}
+          name: TarotDeck-1.2.1-1-simulator-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/tarot-home-simulator.png
             ${{ runner.temp }}/tarot-consent-eea.png
@@ -118,6 +132,37 @@ jobs:
             ${{ runner.temp }}/tarot-consent-runtime.log
             ${{ runner.temp }}/tarot-settings-*.png
             ${{ runner.temp }}/tarot-remove-ads-*.png
+          retention-days: 1
+
+      - name: Verify real sample consent choices in simulator
+        timeout-minutes: 12
+        shell: bash
+        run: |
+          set -euo pipefail
+          DEVICE_ID="$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
+          test -n "$DEVICE_ID"
+          xcodebuild test -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal -configuration Debug \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -derivedDataPath "$RUNNER_TEMP/TarotAdsSimulator" \
+            -resultBundlePath "$RUNNER_TEMP/TarotConsentQA.xcresult" \
+            -parallel-testing-enabled NO -only-testing:TarotConsentUITests \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS="DEBUG TAROT_TEST_ADS" \
+            TAROT_ADS_MODE=test-only \
+            TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511' \
+            TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            | tee "$RUNNER_TEMP/tarot-consent-tests.log"
+
+      - name: Preserve native consent QA result
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: TarotDeck-1.2.1-1-consent-qa-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/TarotConsentQA.xcresult
+            ${{ runner.temp }}/tarot-consent-tests.log
+          if-no-files-found: ignore
           retention-days: 1
 
       - name: Prepare App Store Connect cloud-signing key
@@ -181,6 +226,7 @@ jobs:
           ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-TestFlight-Internal.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
 
+          echo "Internal TestFlight overrides Release inventory with Google sample IDs; production project settings remain unchanged."
           xcodebuild archive \
             -project native-ios/TarotDeck.xcodeproj \
             -scheme TarotDeckInternal \
@@ -197,9 +243,11 @@ jobs:
             CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18" \
             CURRENT_PROJECT_VERSION=1 \
-            MARKETING_VERSION=1.1.2 \
+            MARKETING_VERSION=1.2.1 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS=TAROT_TEST_ADS \
             TAROT_ADS_MODE=test-only \
+            TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511' \
+            TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174' \
             COMPILER_INDEX_STORE_ENABLE=NO
 
       - name: Verify signed archive and internal release identity
@@ -219,11 +267,12 @@ jobs:
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotAdvertisingMode' "$INFO_PLIST")" == "test-only" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$INFO_PLIST")" == "ca-app-pub-3940256099942544~1458002511" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotBannerAdUnitID' "$INFO_PLIST")" == "ca-app-pub-3940256099942544/2435281174" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1.2" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.2.1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
@@ -282,7 +331,7 @@ jobs:
           VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-testflight-verify.XXXXXX")"
           OUTPUT_PATH="$RUNNER_TEMP/tarot-testflight-evidence"
           SHORT_COMMIT="${GITHUB_SHA:0:12}"
-          BASE_NAME="TarotDeck-1.1.2-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
+          BASE_NAME="TarotDeck-1.2.1-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-TestFlight-Internal"
           IPA_PATH="$SOURCE_IPA"
           MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
           SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
@@ -300,11 +349,12 @@ jobs:
           test -f "$APP_PATH/PrivacyInfo.xcprivacy"
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotAdvertisingMode' "$INFO_PLIST")" == "test-only" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$INFO_PLIST")" == "ca-app-pub-3940256099942544~1458002511" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotBannerAdUnitID' "$INFO_PLIST")" == "ca-app-pub-3940256099942544/2435281174" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$INFO_PLIST")" == "com.krazel.tarotdeck" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleDisplayName' "$INFO_PLIST")" == "Tarot Deck" ]]
           test -f "$APP_PATH/es.lproj/InfoPlist.strings"
           [[ "$(/usr/bin/plutil -extract CFBundleDisplayName raw -o - "$APP_PATH/es.lproj/InfoPlist.strings")" == "Mazo de tarot" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.1.2" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.2.1" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
@@ -315,7 +365,7 @@ jobs:
           printf '%s  %s.ipa\n' "$IPA_SHA256" "$BASE_NAME" > "$SHA_PATH"
           jq -n \
             --arg app "Tarot Deck" \
-            --arg version "1.1.2" \
+            --arg version "1.2.1" \
             --arg build "1" \
             --arg bundleID "com.krazel.tarotdeck" \
             --arg commit "$GITHUB_SHA" \
@@ -325,7 +375,7 @@ jobs:
             --arg purpose "TestFlight-Internal" \
             --arg artifact "$BASE_NAME" \
             --arg sha256 "$IPA_SHA256" \
-            '{schemaVersion: 1, app: $app, version: $version, build: $build, bundleID: $bundleID, commit: $commit, ciRunNumber: $ciRunNumber, ciRunAttempt: $ciRunAttempt, ciRunID: $ciRunID, purpose: $purpose, internalTestingOnly: true, externalTestingCapable: false, appStoreReleaseCapable: false, artifact: $artifact, sha256: $sha256}' > "$MANIFEST_PATH"
+            '{schemaVersion: 1, app: $app, version: $version, build: $build, bundleID: $bundleID, commit: $commit, ciRunNumber: $ciRunNumber, ciRunAttempt: $ciRunAttempt, ciRunID: $ciRunID, purpose: $purpose, internalTestingOnly: true, externalTestingCapable: false, appStoreReleaseCapable: false, advertisingMode: "test-only", advertisingInventory: "Google sample IDs", artifact: $artifact, sha256: $sha256}' > "$MANIFEST_PATH"
           echo "artifact_name=$BASE_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Preserve non-binary TestFlight evidence

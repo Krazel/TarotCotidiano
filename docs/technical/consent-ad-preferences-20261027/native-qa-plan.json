@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-27",
+  "status": "INTEGRATED_SOURCE_NOT_COMPILED_OR_EXECUTED",
+  "testFile": "native-ios/UITests/TarotConsentUITests.swift",
+  "scope": "Real UMP sample message on DEBUG simulator with Google sample AdMob IDs. No production demand, account changes, fake consent or consent-storage writes.",
+  "integrationOwnedByParent": [
+    "Add an XCUITest bundle and shared test scheme with Tarot as target application; tests are not Swift package core unit tests.",
+    "Use Debug and verified Google sample application/banner IDs. Restrict this scheme to simulator, disable parallel testing for shared app consent state, use an unsubscribed clean simulator and leave StoreKit purchases out of the session.",
+    "Explicit --qa-consent-reset: execute UMP reset once per process before any consent refresh, and only in DEBUG. Resetting UMP does not uninstall the app or erase tarot readings. Ordinary test launch does not reset consent; the persistence test deliberately omits this flag on its second launch.",
+    "Existing --qa-consent-eea forces test geography only for DEBUG test devices. EN app/system locale is requested. Run the production shell, not --qa-settings, so automatic presentation is exercised.",
+    "Only with DEBUG --qa-consent-observe, expose a non-interactive accessibility element tarot.qa.consent-state whose value or label is the JSON contract below. It must remain observable while UMP presents a modal, without covering/intercepting its controls.",
+    "Use the existing real English accessibility labels Settings and Advertising choices; do not introduce a separate settings flow.",
+    "Counters must observe actual form presentations and actual banner.load calls. Observe current real UMP/UserDefaults values; do not synthesize or mutate consent. No complete TC string, advertising identifiers or credentials in diagnostics."
+  ],
+  "snapshotContract": {
+    "updateCompleted": "Bool: current process completed the UMP update/form flow; must become false/pending when appropriate. Existing didUpdateThisLaunch can supply completed-launch state, combined with busy.",
+    "busy": "Bool: actual consent coordinator isBusy",
+    "canRequestAds": "Bool: actual effective coordinator request gate, false while editing consent; not personalization authorization",
+    "sdkStarted": "Bool: actual MobileAds startup completion",
+    "requestCount": "Int: monotonically increasing per process at the actual banner.load call, not number of filled ads",
+    "formPresentations": "Int: monotonically increasing per process immediately before a real required form or privacy-options form is presented; include reopened privacy options",
+    "purposeConsents": "String or null: current IABTCF_PurposeConsents, read only",
+    "vendorConsents": "String or null: current IABTCF_VendorConsents, read only",
+    "umpCanRequestAds": "Bool: raw UMP request eligibility, separate from the coordinator suspension while privacy options are open."
+  },
+  "automatedCases": [
+    "First launch: real Consent/Do not consent/Manage options actions appear; before choosing, SDK not started and zero requests remain true throughout an observation interval.",
+    "Accept: actual purposes 3/4 recorded, gate open, SDK starts and first sample request invoked; relaunch without reset refreshes UMP without re-presenting unchanged message.",
+    "Reject: purposes 3/4 absent or false. canRequestAds is not assumed false because limited/non-personalized modes may remain permitted. If false, requests must remain zero.",
+    "Accept then reopen real Settings > Advertising choices: requests suspended while editing, real form reappears; Do not consent clears purposes 3/4. If requests become ineligible, request counter remains fixed."
+  ],
+  "assertionLimits": [
+    "The purpose-bit assertions document the chosen sample UI outcome only. They are deliberately not a complete TCF/vendor/legal-basis interpretation and never gate production behavior.",
+    "requestCount proves application request invocation, not transport-level privacy flags, ad fill, buyer conduct, no tracking or personalization. SDK startup can have its own network operations; zero banner.load calls is not a claim of zero network traffic.",
+    "Test labels reflect the observed Google sample EN message. If Google changes its remote message, capture failure and inspect it; do not silently skip tests, click coordinates, inject consent or loosen assertions to pass.",
+    "The test deliberately fails when the DEBUG state is missing or malformed, including if hidden by a UMP modal. A screenshot alone cannot prove zero requests.",
+    "Network failures and inaccessible forms are failed integration results, not success. XCTest attachments contain screenshots and bounded consent diagnostics; hierarchy is attached on failure.",
+    "No claim of a real-device test or successful run until CI/device execution actually completes. Local structural checks are not runtime consent verification."
+  ],
+  "remainingRuntimeQA": [
+    "Manage options partial consent: inspect real accessibility controls first, choose differing purpose/vendor permissions, save, and verify the resulting SDK treatment. This source does not guess the current remote control names.",
+    "Consent update failure and missing/invalid consent: exercise genuine failure conditions on an isolated simulator, verify fail-closed coordinator behavior; do not falsify production consent storage.",
+    "Non-EEA and applicable US-region opt-outs, foreground transitions, subscription/restore, no banners during readings, and privacy-options errors.",
+    "Inspect actual test-request privacy signals using supported SDK/ad-inspector diagnostics for accept/reject/partial/revoke. Match observations to App Privacy and public-policy text before distribution. Pure UI tests cannot establish this.",
+    "Physical iPhone verification is separate. This authorized internal TestFlight beta uses verified Google sample IDs and TAROT_TEST_ADS, with all DEBUG observation/reset/geography hooks excluded from Release. Production distribution is a separate gate."
+  ],
+  "execution": {
+    "parallelTesting": false,
+    "networkTimeoutSeconds": 90,
+    "statePollMechanism": "XCTNSPredicateExpectation; no fixed delay used to assume a network completion",
+    "pauseObservationSeconds": 3,
+    "artifacts": "xcresult test attachments and logs with no signed IPA/certificate/profile/secrets",
+    "ciStartedByThisSubtask": false,
+    "buildAttemptedByThisSubtask": false
+  }
+}

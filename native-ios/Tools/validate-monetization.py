@@ -27,8 +27,8 @@ for package, version in [('GoogleMobileAds', '12.14.0'), ('GoogleUserMessagingPl
     check(f'productName = {package};' in project and f'kind = exactVersion; version = {version};' in project,
           f'{package} exact pin and target linkage present')
 check(project.count('repositoryURL = ') == 2, 'Exactly two authorized remote SDK package references')
-check(project.count('IPHONEOS_DEPLOYMENT_TARGET = 16.0;') == 2,
-      'App target retains iOS16 in both configurations')
+check(project.count('IPHONEOS_DEPLOYMENT_TARGET = 16.0;') == 4,
+      'App and UI test targets retain iOS16 in both configurations')
 check(project.count('MARKETING_VERSION = 1.2.1;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
       'Candidate identity is 1.2.1 (1)')
 check(project.count('INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;') == 2,

@@ -2,6 +2,12 @@
 
 Actualizado: 2026-10-27
 
+## TestFlight solicitado — 1.2.1 (1), pendiente de comprobar cuota privada
+
+El propietario pide expresamente subir1.2.1 a TestFlight y pregunta por IDFA/ATT. Autorizada esta beta interna; no se convierte en permiso para publicación App Store ni ampliar identificadores/seguimiento. Preparado workflow manual interno con IDs de demostración Google en simulador, archive e IPA; la beta no genera tráfico de monetización real. Certificado/perfil existentes ACTIVE y vigentes hasta08/08/2027 por API;1.2.1 (1) aún no figura subida.
+
+Añadidos cuatro XCUITest para elección pendiente, aceptar/persistir, rechazar y reabrir/revocar, con observaciones/reset reales solo DEBUG. El binario Release interno excluye esos hooks. Validador de workflow,29checks e integración pasan localmente; Swift/Xcode y esos nuevos tests **no ejecutados**. No se han subido builds, ejecutado CI, cambiado privacidad pública ni activado gasto. Permiso de consulta de facturación solicitado al usuario: la API actual devuelve404 y pide scope user; no hay runners propios. Se mantiene repoPRIVATE y la obligación de comprobar cuota/límite antes de compilar. Recibo TESTFLIGHT_PREPARATION.json.
+
 ## Corrección vigente — preferencias publicitarias 1.2.1 (1), preparada localmente
 
 Propietaria única: esta tarea Tarot `01a14ee2-3d19-7be2-a2dd-b13fa1f6b609`, por encargo del cerebro del27/10 para corregir la restricción global según las preferencias aplicables, sin forzar personalización ni ampliar tracking. Se ha preparado la retirada de `npa=1` y PPT.disabled, usando Request normal y PPT.default; se mantienen first-party ID apagado, ausencia de ATT/IDFA, UMP y todos los controles de colocación/suscripción. Fuente candidata **1.2.1 (1)**, **sin compilar ni distribuir**.

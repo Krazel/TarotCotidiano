@@ -94,6 +94,9 @@ private final class TarotBannerController: UIViewController, BannerViewDelegate 
         // overwrite every user's choice with npa=1, or force it with npa=0.
         // The fresh UMP gate above only permits an applicable ad-serving mode.
         let request = Request()
+        #if DEBUG
+        TarotConsentQAObservation.shared.recordRequest()
+        #endif
         banner.load(request)
     }
 

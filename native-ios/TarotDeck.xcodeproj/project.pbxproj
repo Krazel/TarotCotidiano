@@ -41,6 +41,7 @@
 		A90000000000000000000092 /* TarotBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = B90000000000000000000092 /* TarotBanner.swift */; };
 		A80000000000000000000010 /* GoogleMobileAds in Frameworks */ = {isa = PBXBuildFile; productRef = F80000000000000000000010 /* GoogleMobileAds */; };
 		A80000000000000000000011 /* GoogleUserMessagingPlatform in Frameworks */ = {isa = PBXBuildFile; productRef = F80000000000000000000011 /* GoogleUserMessagingPlatform */; };
+		A91000000000000000000001 /* TarotConsentUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91000000000000000000001 /* TarotConsentUITests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +80,9 @@
 		B90000000000000000000090 /* TarotAdConsent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotAdConsent.swift; sourceTree = "<group>"; };
 		B90000000000000000000091 /* SupportReminderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportReminderStore.swift; sourceTree = "<group>"; };
 		B90000000000000000000092 /* TarotBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotBanner.swift; sourceTree = "<group>"; };
+
+        B91000000000000000000001 /* TarotConsentUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarotConsentUITests.swift; sourceTree = "<group>"; };
+        B91000000000000000000002 /* TarotConsentUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TarotConsentUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,6 +96,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+        C91000000000000000000001 /* UI test frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -99,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				D10000000000000000000002 /* TarotDeckApp */,
+                D91000000000000000000001 /* UITests */,
 				D20000000000000000000005 /* Content Resources */,
 				D1000000000000000000000A /* Products */,
 			);
@@ -285,10 +292,13 @@
 			isa = PBXGroup;
 			children = (
 				B1000000000000000000000A /* TarotDeckInternal.app */,
+                B91000000000000000000002 /* TarotConsentUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
+
+        D91000000000000000000001 /* UITests */ = {isa = PBXGroup; children = (B91000000000000000000001 /* TarotConsentUITests.swift */,); path = UITests; sourceTree = "<group>"; };
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -314,6 +324,16 @@
 			productReference = B1000000000000000000000A /* TarotDeckInternal.app */;
 			productType = "com.apple.product-type.application";
 		};
+
+        E91000000000000000000001 /* TarotConsentUITests */ = {
+            isa = PBXNativeTarget;
+            buildConfigurationList = E91000000000000000000002;
+            buildPhases = (E91000000000000000000003, C91000000000000000000001, E91000000000000000000004,);
+            buildRules = (); dependencies = (E91000000000000000000007,);
+            name = TarotConsentUITests; productName = TarotConsentUITests;
+            productReference = B91000000000000000000002;
+            productType = "com.apple.product-type.bundle.ui-testing";
+        };
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -326,6 +346,10 @@
 				TargetAttributes = {
 					E10000000000000000000001 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					E91000000000000000000001 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = E10000000000000000000001;
 					};
 				};
 			};
@@ -349,6 +373,7 @@
 			projectRoot = "";
 			targets = (
 				E10000000000000000000001 /* TarotDeckInternal */,
+                E91000000000000000000001 /* TarotConsentUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -372,6 +397,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+        E91000000000000000000004 /* UI test resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -402,6 +429,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+
+        E91000000000000000000003 /* UI test sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (A91000000000000000000001 /* TarotConsentUITests.swift in Sources */,); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
@@ -517,6 +546,9 @@
 			};
 			name = Release;
 		};
+
+        E91000000000000000000005 /* UI tests Debug */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.consentuitests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = TarotDeckInternal;}; name = Debug; };
+        E91000000000000000000006 /* UI tests Release */ = {isa = XCBuildConfiguration; buildSettings = {CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 16.0; PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.consentuitests; PRODUCT_NAME = "$(TARGET_NAME)"; SDKROOT = iphoneos; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 1; TEST_TARGET_NAME = TarotDeckInternal;}; name = Release; };
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -538,6 +570,8 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+
+        E91000000000000000000002 /* UI tests configurations */ = {isa = XCConfigurationList; buildConfigurations = (E91000000000000000000005, E91000000000000000000006,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Debug; };
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference GoogleMobileAds */
@@ -572,6 +606,13 @@
 		F80000000000000000000010 /* GoogleMobileAds */ = {isa = XCSwiftPackageProductDependency; package = F90000000000000000000010 /* GoogleMobileAds */; productName = GoogleMobileAds; };
 		F80000000000000000000011 /* GoogleUserMessagingPlatform */ = {isa = XCSwiftPackageProductDependency; package = F90000000000000000000011 /* GoogleUserMessagingPlatform */; productName = GoogleUserMessagingPlatform; };
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin PBXContainerItemProxy section */
+        E91000000000000000000008 /* UI test host proxy */ = {isa = PBXContainerItemProxy; containerPortal = E10000000000000000000005; proxyType = 1; remoteGlobalIDString = E10000000000000000000001; remoteInfo = TarotDeckInternal; };
+/* End PBXContainerItemProxy section */
+/* Begin PBXTargetDependency section */
+        E91000000000000000000007 /* UI test host dependency */ = {isa = PBXTargetDependency; target = E10000000000000000000001; targetProxy = E91000000000000000000008; };
+/* End PBXTargetDependency section */
 	};
 	rootObject = E10000000000000000000005 /* Project object */;
 }

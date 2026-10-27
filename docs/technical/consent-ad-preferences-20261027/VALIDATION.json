@@ -10,7 +10,7 @@
     "GoogleMobileAds exact pin and target linkage present",
     "GoogleUserMessagingPlatform exact pin and target linkage present",
     "Exactly two authorized remote SDK package references",
-    "App target retains iOS16 in both configurations",
+    "App and UI test targets retain iOS16 in both configurations",
     "Candidate identity is 1.2.1 (1)",
     "Debug and Release merge advertising plist",
     "Build-specific identifiers and delayed measurement configured",

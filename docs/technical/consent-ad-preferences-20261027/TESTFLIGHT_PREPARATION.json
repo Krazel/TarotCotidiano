@@ -1,0 +1,105 @@
+{
+  "checkedAt": "2026-10-27T10:39:50.369471+00:00",
+  "status": "PREPARED_AWAITING_PRIVATE_CI_BILLING_CHECK",
+  "authorization": "User explicitly requested TestFlight upload of prepared 1.2.1 candidate; no new App Store publication or spending authorization",
+  "version": "1.2.1",
+  "build": 1,
+  "appID": "6800144105",
+  "baseCommit": "b5ed335a5621547b2d1f2a22ef4271fd95e5a22d",
+  "testflight": {
+    "scope": "internal only",
+    "advertising": "Google sample IDs, no production inventory",
+    "uploaded": false,
+    "buildCreated": false,
+    "compiled": false,
+    "xctestExecuted": false,
+    "nativeConsentTestsExecuted": false
+  },
+  "checks": {
+    "monetization": "PASS 29 structural checks",
+    "appIntegration": "PASS",
+    "internalWorkflowValidator": "PASS",
+    "independentStaticReview": "No P0/P1 found; native execution and diagnostic visibility under UMP remain unverified",
+    "tupleAndSigning": {
+      "checkedAt": "2026-10-27T10:36:09.146Z",
+      "version": "1.2.1",
+      "build": "1",
+      "tupleUnused": true,
+      "existingProfile": {
+        "id": "3JPMF7W93U",
+        "name": "Tarot Deck App Store 2026-10-18",
+        "state": "ACTIVE",
+        "expirationDate": "2027-08-08T21:50:46.000+00:00"
+      },
+      "existingCertificate": {
+        "id": "2K3G3RTCS5",
+        "expirationDate": "2027-08-08T21:50:46.000+00:00"
+      },
+      "uploadStarted": false
+    }
+  },
+  "blocker": {
+    "repositoryVisibility": "PRIVATE",
+    "authentication": "global gh keyring session OK",
+    "selfHostedRunners": 0,
+    "planAndQuota": "unknown, not zero",
+    "billingAPI": "HTTP404 requires user scope",
+    "question": "Permission to expand global session for billing API read, or owner confirmation of available quota and enforced spend limit",
+    "answerReceived": false,
+    "ciStarted": false,
+    "costsEnabled": false,
+    "codeMadePublic": false
+  },
+  "privacy": {
+    "IDFAAdded": false,
+    "ATTAdded": false,
+    "publisherFirstPartyID": false,
+    "publicPolicyChanged": false,
+    "AppPrivacyChanged": false,
+    "productionRolloutAuthorizedByThisMessage": false,
+    "runtimeTransportAndBuyerAudit": "pending; no tracking claim inferred merely from no ATT"
+  },
+  "library": {
+    "id": "PR-003",
+    "synced": false,
+    "pendingFile": "docs/technical/monetization-20261018/LIBRARY_PENDING.json"
+  },
+  "files": [
+    {
+      "file": ".github/workflows/tarot-testflight-internal.yml",
+      "sha256": "9bc9b873644d71c41359f55f881e399604fa1c0030c3dc767ec3043f09fe1c99"
+    },
+    {
+      "file": "native-ios/Tools/validate-testflight-workflow.ps1",
+      "sha256": "cd2f9d0c38649f64c8f4e31e76832140b9ff73950799f2ca1708bda44de03ee3"
+    },
+    {
+      "file": "native-ios/Tools/validate-monetization.py",
+      "sha256": "71d86d5b18ef134b70ff68c35d573fdde3280d60c0e9e24aa9406a48c6c082c8"
+    },
+    {
+      "file": "native-ios/TarotDeck.xcodeproj/project.pbxproj",
+      "sha256": "4ec77f6126e9db917d68a6a7462e388516f889da04fb869811e918af902b404f"
+    },
+    {
+      "file": "native-ios/TarotDeck.xcodeproj/xcshareddata/xcschemes/TarotDeckInternal.xcscheme",
+      "sha256": "7dcd5bdf9d57bb3b3cee41a4d79e6ef901947963b2e309ac28d02b83ef54752a"
+    },
+    {
+      "file": "native-ios/UITests/TarotConsentUITests.swift",
+      "sha256": "314052d998287048011ba205826767047196db977193059e60e6c3648f18487a"
+    },
+    {
+      "file": "native-ios/TarotDeckApp/App/TarotDeckInternalApp.swift",
+      "sha256": "df0fd27613166f5bf4fe0fc7bb522b0c2401937586d1d0501fa36320575a7f7c"
+    },
+    {
+      "file": "native-ios/TarotDeckApp/Internal/TarotAdConsent.swift",
+      "sha256": "bd9622aa6517cf21621b7d6c620395d221885593bdf04a6e78d8549c485b461d"
+    },
+    {
+      "file": "native-ios/TarotDeckApp/Components/TarotBanner.swift",
+      "sha256": "c01d225b38c5df037e867ddc316147104dd8307fb5288d046b66ba461ee7a519"
+    }
+  ]
+}

@@ -5,6 +5,9 @@ import UIKit
 import UserMessagingPlatform
 import TarotDeckCore
 import OSLog
+#if DEBUG
+import SwiftUI
+#endif
 
 enum TarotAdsConfiguration {
     static var bannerID: String? {
@@ -40,6 +43,15 @@ final class TarotAdConsent: ObservableObject {
     private var automaticPresentationAllowed = false
     private let logger = Logger(subsystem: "com.krazel.tarotdeck", category: "ads")
 
+    init() {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("--qa-consent-reset") {
+            // Actual UMP reset in a simulator test installation; never a fake choice.
+            ConsentInformation.shared.reset()
+        }
+        #endif
+    }
+
     func setAutomaticPresentationAllowed(_ allowed: Bool) {
         automaticPresentationAllowed = allowed
         if allowed { Task { await updateIfNeeded() } }
@@ -74,6 +86,9 @@ final class TarotAdConsent: ObservableObject {
                 load: { try await ConsentForm.load() },
                 present: { form in
                     self.logger.notice("consent_form_presenting")
+                    #if DEBUG
+                    TarotConsentQAObservation.shared.recordForm()
+                    #endif
                     try await form.present(from: nil)
                 },
                 finish: {
@@ -99,8 +114,14 @@ final class TarotAdConsent: ObservableObject {
         do {
             try await ConsentInformation.shared.requestConsentInfoUpdate(with: RequestParameters())
             if ConsentInformation.shared.consentStatus == .required {
+                #if DEBUG
+                TarotConsentQAObservation.shared.recordForm()
+                #endif
                 try await ConsentForm.loadAndPresentIfRequired(from: nil)
             } else if ConsentInformation.shared.privacyOptionsRequirementStatus == .required {
+                #if DEBUG
+                TarotConsentQAObservation.shared.recordForm()
+                #endif
                 try await ConsentForm.presentPrivacyOptionsForm(from: nil)
             } else {
                 try await ConsentForm.loadAndPresentIfRequired(from: nil)
@@ -135,4 +156,48 @@ final class TarotAdConsent: ObservableObject {
         isStarted = true
         isStarting = false
     }
+
+    #if DEBUG
+    func qaState(requestCount: Int, formPresentations: Int) -> String {
+        let values: [String: Any] = [
+            "updateCompleted": didUpdateThisLaunch, "busy": isBusy,
+            "canRequestAds": canRequestAds,
+            "umpCanRequestAds": ConsentInformation.shared.canRequestAds,
+            "sdkStarted": isStarted, "requestCount": requestCount,
+            "formPresentations": formPresentations,
+            "purposeConsents": UserDefaults.standard.string(forKey: "IABTCF_PurposeConsents") ?? "",
+            "vendorConsents": UserDefaults.standard.string(forKey: "IABTCF_VendorConsents") ?? ""
+        ]
+        guard let data = try? JSONSerialization.data(withJSONObject: values, options: .sortedKeys),
+              let text = String(data: data, encoding: .utf8) else { return "{}" }
+        return text
+    }
+    #endif
 }
+
+#if DEBUG
+/// Read-only observations of real SDK calls. No identifiers or TCString are exposed.
+@MainActor
+final class TarotConsentQAObservation: ObservableObject {
+    static let shared = TarotConsentQAObservation()
+    @Published private(set) var requestCount = 0
+    @Published private(set) var formPresentations = 0
+    func recordRequest() { requestCount += 1 }
+    func recordForm() { formPresentations += 1 }
+}
+
+@MainActor
+struct TarotConsentQAView: View {
+    @ObservedObject var consent: TarotAdConsent
+    @ObservedObject private var observation = TarotConsentQAObservation.shared
+    var body: some View {
+        Text(consent.qaState(requestCount: observation.requestCount,
+                             formPresentations: observation.formPresentations))
+            .font(.system(size: 8))
+            .foregroundStyle(.white)
+            .background(.black)
+            .accessibilityIdentifier("tarot.qa.consent-state")
+            .allowsHitTesting(false)
+    }
+}
+#endif
