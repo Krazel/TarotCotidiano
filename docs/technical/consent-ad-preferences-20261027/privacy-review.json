@@ -1,0 +1,62 @@
+{
+  "auditDate": "2026-10-27",
+  "scope": "Independent read-only review of consent and personalization; no code, browser, account, App Store or AdMob mutations",
+  "appID": "6800144105",
+  "bundleID": "com.krazel.tarotdeck",
+  "reviewedSDKs": {"GoogleMobileAds": "12.14.0", "UserMessagingPlatform": "3.1.0"},
+  "observedCode": [
+    {"file": "native-ios/TarotDeckApp/Components/TarotBanner.swift", "line": 95, "finding": "Every banner request registers npa=1, regardless of the user's CMP choices."},
+    {"file": "native-ios/TarotDeckApp/Internal/TarotAdConsent.swift", "line": 127, "finding": "Before first SDK startup, publisher first-party ID is disabled and publisherPrivacyPersonalizationState is disabled."},
+    {"file": "native-ios/TarotDeckApp/Internal/TarotAdConsent.swift", "line": 119, "finding": "canRequestAds mirrors UMP request eligibility. The app does not separately evaluate personalization or ATT authorization."},
+    {"file": "native-ios/TarotDeckApp/Internal/TarotAdConsent.swift", "line": 96, "finding": "Opening privacy choices stops requests and increments requestGeneration, invalidating existing banners; preserve this behavior."}
+  ],
+  "existingDisclosureEvidence": {
+    "appleReceipt": "../.studio/tarot-public-release-20261018/apple-privacy-audit.json",
+    "receiptDate": "2026-10-18",
+    "receiptStatus": "PUBLISHED_VERIFIED_IN_APP_STORE_CONNECT",
+    "categories": 7,
+    "trackingDeclared": false,
+    "scopeCaveat": "Historical verified receipt, not an independent live App Store Connect read on October 27; parent owns current ASC verification.",
+    "dependency": "The receipt explicitly bases no-tracking on npa=1, PPT disabled, publisher first-party ID disabled, no ATT/IDFA request, no mediation and RTB partner creative consent checks. Removing NPA/PPT requires a new rationale; the historical conclusion cannot simply be reused.",
+    "policyURL": "https://krazel.github.io/tarot-deck/privacy/",
+    "policyRead": "Public URL inaccessible through web tool on October 27; inspected locally saved October 18 public response instead.",
+    "policySnapshot": "../.studio/tarot-public-release-20261018/privacy-public-response.html",
+    "policyFinding": "Version 1.2 text explicitly says personalization and publisher first-party identifiers are disabled and requests are non-personalized. Those promises must change before distributing behavior that differs. Saved review notes likewise describe non-personalized ads."
+  },
+  "conclusions": [
+    "The two unconditional controls are real independent restrictions: Google applies the most restrictive signal, so an affirmative TCF choice cannot override npa=1 or PPT disabled.",
+    "Removing those restrictions allows the SDK and demand to consider the consent signals; it does not itself prove that personalized ads will be served, that tracking is authorized, or that revenue will improve.",
+    "No ATT request means no ATT authorization and no IDFA access. It does not by itself prove absence of Apple's broader definition of tracking using other identifiers or data.",
+    "Apple does not require ATT for every form of personalization: publisher-scoped or wholly on-device behavior can fall outside tracking. Google's documented publisher-first-party-ID route cannot link publisher activity to third-party apps; that route is explicitly disabled in the proposed minimal change.",
+    "With publisher first-party ID still off and no ATT, the reviewed sources do not establish a concrete effective personalization route for this app. They also do not establish that merely removing both overrides necessarily causes prohibited tracking. The unsupported claim to avoid is that removal alone achieves verified personalized, no-tracking advertising.",
+    "The technical deletion is not sufficient to approve changed privacy claims. Either document an actual nontracking personalization route and the applicable demand controls, or explicitly design an optional ATT-authorized cross-company route and update disclosures. Do not silently enable ATT, first-party IDs, mediation, analytics connections or shared identifiers as a side effect of fixing the global override.",
+    "PPT disabled alone is not a replacement guarantee of no third-party tracking: Google explicitly permits third-party vendor ad serving/tracking with PPT=1, unlike the additional restrictions associated with NPA=1."
+  ],
+  "recommendedGate": {
+    "requestEligibility": "Refresh UMP on each launch, present required forms before initial request, then use canRequestAds only to decide whether an ad request is eligible. Preserve current fail-closed handling when refreshed state cannot be established and preserve purchase/scene/reading exclusions.",
+    "legalPersonalization": "Let the certified CMP and Google SDK consume current TCF/regional signals. If application policy needs an explicit personalization Boolean, obtain it through a complete supported consent interpretation that accounts for purposes, vendors, legal bases and publisher restrictions. Never infer it from canRequestAds, consentStatus obtained/notRequired, form dismissal, locale, or one purpose bit. Outside EEA is not automatic tracking permission.",
+    "trackingAuthorization": "Evaluate separately from legal personalization. Cross-company linking for targeting or measurement requires ATT authorized before it occurs; denied/restricted/notDetermined are not authorized. No ATT implementation means this branch remains unavailable.",
+    "modeDecision": "If no eligible request: do not load. If a supported nontracking-personalization path has been documented and applicable CMP permissions allow it: use that path. If a deliberately implemented tracking path has both legal permissions and ATT authorization: let SDK consent select mode without unconditional NPA/PPT. Otherwise retain privacy-constrained contextual/limited delivery. This is a decision design, not a claim that current Tarot has either personalization path.",
+    "sdkDefaults": "For an approved automatic mode, remove the manual npa extra and use the normal/default PPT state rather than forcing personalization enabled. Preserve all stricter CMP, regional, age and user opt-out signals. Never write IAB consent storage to manufacture consent.",
+    "lifecycle": "Before privacy changes, remove current banner and invalidate pending loads. Recompute policy before every new request and when returning from settings. RequestConfiguration affects subsequent requests, so dynamic changes must not be trapped behind the current one-time isStarted guard. Ignore callbacks from old request generations.",
+    "claims": "Describe choices and data uses accurately. No claim that consent always yields personalized fill or a higher eCPM."
+  },
+  "verificationMatrix": [
+    "Fresh EEA install: no ad before required consent, accepting vs rejecting personalization, purpose/vendor refusals, malformed or absent consent state.",
+    "Non-EEA and applicable US-state opt-outs: no inference that notRequired authorizes tracking.",
+    "ATT denied/restricted/notDetermined/authorized only if ATT is intentionally added; no tracking before authorization or after revocation.",
+    "Reopen privacy choices during an in-flight banner request: destroy old banner, reject stale callback, load only under new decision.",
+    "Launch refresh failure, consent form failure, app foreground return, subscription activation/restoration and removal of ads remain correct.",
+    "Use test-device requests/ad inspector diagnostics and consent state for QA; do not infer actual personalization from creative appearance or click live ads. Production reports can later distinguish ID type and serving restrictions, without a revenue promise."
+  ],
+  "sources": [
+    {"url": "https://developers.google.com/admob/ios/privacy/ad-serving-modes", "accessed": "2026-10-27", "supports": "Personalized, non-personalized and limited modes depend on purpose and vendor permissions; canRequestAds is not the mode decision."},
+    {"url": "https://developers.google.com/admob/ios/privacy", "accessed": "2026-10-27", "supports": "Refresh consent on launch, required forms, request eligibility and privacy options."},
+    {"url": "https://support.google.com/admob/answer/14323214", "accessed": "2026-10-27", "supports": "Most restrictive signal wins; PPT prevents targeting/profile updates but allows third-party ad serving/tracking; NPA has distinct vendor restrictions."},
+    {"url": "https://support.google.com/admob/answer/14199649", "accessed": "2026-10-27", "supports": "Publisher-scoped IDs, disabled-ID consequences, consent controls, optional first-party-ID sharing and identity reporting."},
+    {"url": "https://developers.google.com/admob/ios/privacy/strategies", "accessed": "2026-10-27", "supports": "ATT/IDFA, SKAdNetwork without IDFA, publisher first-party ID control."},
+    {"url": "https://developer.apple.com/app-store/user-privacy-and-data-use/", "accessed": "2026-10-27", "supports": "ATT applies to cross-company tracking, not only IDFA access; developer responsible for SDK behavior."},
+    {"url": "https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration", "accessed": "2026-10-27", "supports": "Request configuration applies to subsequent ad requests; first-party-ID preference persists. Current reference includes APIs newer than pinned SDK: do not upgrade APIs or SDK by inference."}
+  ],
+  "releaseRecommendation": "Do not certify removal-only as verified personalized/no-tracking advertising. Correct the unconditional restriction only within a documented supported path respecting both CMP and Apple tracking permission, reconcile public policy/review text and the no-tracking rationale, and verify the consent lifecycle before release. No new permission request or external change was made by this audit."
+}

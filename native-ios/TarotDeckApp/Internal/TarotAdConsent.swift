@@ -124,8 +124,13 @@ final class TarotAdConsent: ObservableObject {
         guard canRequestAds, !isStarted, !isStarting else { return }
         isStarting = true
         let configuration = MobileAds.shared.requestConfiguration
+        // Keep identifier collection unchanged. UMP/TCF, applicable regional
+        // privacy signals and the OS remain independent restrictions; permission
+        // to request an ad is not permission to track or to personalize it.
         configuration.setPublisherFirstPartyIDEnabled(false)
-        configuration.publisherPrivacyPersonalizationState = .disabled
+        // No additional app-wide opt-out: let the SDK apply the user's choices.
+        // Never use .enabled or infer personalization from canRequestAds.
+        configuration.publisherPrivacyPersonalizationState = .default
         _ = await MobileAds.shared.start()
         isStarted = true
         isStarting = false

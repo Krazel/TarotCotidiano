@@ -1,6 +1,16 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-10-18
+Actualizado: 2026-10-27
+
+## Corrección vigente — preferencias publicitarias 1.2.1 (1), preparada localmente
+
+Propietaria única: esta tarea Tarot `01a14ee2-3d19-7be2-a2dd-b13fa1f6b609`, por encargo del cerebro del27/10 para corregir la restricción global según las preferencias aplicables, sin forzar personalización ni ampliar tracking. Se ha preparado la retirada de `npa=1` y PPT.disabled, usando Request normal y PPT.default; se mantienen first-party ID apagado, ausencia de ATT/IDFA, UMP y todos los controles de colocación/suscripción. Fuente candidata **1.2.1 (1)**, **sin compilar ni distribuir**.
+
+Comprobado de nuevo por API y tienda pública el27/10: **1.2 (1) publicada**, ambas revisiones COMPLETE; TestFlight interno IN_BETA_TESTING, sin beta externa enviada. El dominio de desarrollador está visible. El diagnóstico real del cerebro acredita301impresiones NPA y2limitadas; anuncios actuales **activos**. No seguir presentando el estado pendiente del18/10 como vigente. La muestra de ingresos no demuestra que estas banderas sean toda la causa ni permite prometer un eCPM.
+
+Validación local:29comprobaciones de monetización, integración, localización y siete productos correctos; revisión independiente sin P0/P1/P2 para candidata retenida. Sin nuevas pruebas Swift/XCTest/SDK/iPhone. GitHub PRIVATE; cuota no verificable con la sesión actual (API de facturación404, requiere scope user), sin CI, gastos ni apertura de código.
+
+Antes de distribuir falta aprobar/reconciliar la modificación de la promesa pública «siempre no personalizados», auditar el tratamiento efectivo del SDK/compradores y completar QA nativo; no asumir que no ATT demuestra no tracking. No se activan identificadores first-party ni ATT como atajo. Corrección y texto propuesto: `docs/technical/consent-ad-preferences-20261027/REVIEW.md`; recibo `RECEIPT.json`. Biblioteca PR-003: pendiente local actualizado, sin escritura remota ni afirmación de sincronización tras el rechazo previo. Los apartados siguientes son historia.
 
 ## Entrega vigente — 1.2 (1) enviada a App Review, 18/10/2026
 

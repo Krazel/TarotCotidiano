@@ -29,8 +29,8 @@ for package, version in [('GoogleMobileAds', '12.14.0'), ('GoogleUserMessagingPl
 check(project.count('repositoryURL = ') == 2, 'Exactly two authorized remote SDK package references')
 check(project.count('IPHONEOS_DEPLOYMENT_TARGET = 16.0;') == 2,
       'App target retains iOS16 in both configurations')
-check(project.count('MARKETING_VERSION = 1.2;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
-      'Candidate identity is 1.2 (1)')
+check(project.count('MARKETING_VERSION = 1.2.1;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
+      'Candidate identity is 1.2.1 (1)')
 check(project.count('INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;') == 2,
       'Debug and Release merge advertising plist')
 plist = plistlib.loads((APP / 'Resources/Advertising.plist').read_bytes())
@@ -50,13 +50,15 @@ consent = (APP / 'Internal/TarotAdConsent.swift').read_text(encoding='utf-8')
 check('#if DEBUG || TAROT_TEST_ADS' in consent and '#elseif TAROT_PRODUCTION_ADS' in consent and
       'let allowsProduction = false' in consent and 'AdvertisingConfiguration.bannerID' in consent,
       'Development never uses real inventory; production needs explicit compilation and valid publisher configuration')
-check('setPublisherFirstPartyIDEnabled(false)' in consent and 'publisherPrivacyPersonalizationState = .disabled' in consent,
-      'Publisher first-party ID and personalization explicitly disabled before SDK start')
+check('setPublisherFirstPartyIDEnabled(false)' in consent and 'publisherPrivacyPersonalizationState = .default' in consent and
+      not re.search(r'publisherPrivacyPersonalizationState\s*=\s*\.(enabled|disabled)', consent),
+      'Publisher first-party ID stays disabled; no app-wide personalization override before SDK start')
 check('ConsentInformation.shared.canRequestAds' in consent and 'requestConsentInfoUpdate' in consent,
       'UMP consent info is refreshed and consulted rather than app-cached consent')
 banner = (APP / 'Components/TarotBanner.swift').read_text(encoding='utf-8')
-check('extras.additionalParameters = ["npa": "1"]' in banner and 'ConsentInformationBridge.canRequestAds' in banner,
-      'Nonpersonalized request and fresh UMP request-boundary gate')
+check('ConsentInformationBridge.canRequestAds' in banner and
+      not re.search(r'additionalParameters\s*=.*[\"\']npa[\"\']', banner),
+      'Fresh UMP request-boundary gate; no NPA override of user choices')
 check('dismantleUIViewController' in banner and 'banner?.delegate = nil' in banner and 'banner?.removeFromSuperview()' in banner,
       'Controller teardown removes banner and detaches late callbacks')
 check('.frame(height: loadedHeight)' in banner and 'onHeight(0)' in banner and '.transaction { $0.animation = nil }' in banner,
@@ -97,7 +99,7 @@ check(hashlib.sha256(svg.read_text(encoding='utf-8').encode('utf-8')).hexdigest(
 tests = (ROOT / 'native-ios/Tests/TarotDeckCoreTests/MonetizationPolicyTests.swift').read_text(encoding='utf-8')
 check(tests.count('func test') == 4 and 'UserDefaults(suiteName: suite)' in tests and 'MonetizationPolicy.Surface.normal, .table, .restoring, .readingMeaning' in tests,
       'XCTest source covers banner gates, reminder boundaries and real UserDefaults persistence (not executed here)')
-report = {'date': '2026-10-18', 'type': 'offline structural validation', 'status': 'PASS',
+report = {'date': '2026-10-27', 'type': 'offline structural validation', 'status': 'PASS',
           'checks': checks, 'swiftCompiled': False, 'xctestExecuted': False, 'nativeRuntimeQA': False}
-(ROOT / 'docs/technical/monetization-20261018/VALIDATION.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+(ROOT / 'docs/technical/consent-ad-preferences-20261027/VALIDATION.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(f'PASS: {len(checks)} offline structural checks; Swift compilation/XCTest/device QA NOT executed.')

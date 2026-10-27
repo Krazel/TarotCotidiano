@@ -1,0 +1,94 @@
+{
+  "checkedAt": "2026-10-27T02:08:46.556707+00:00",
+  "status": "LOCAL_CANDIDATE_HELD_FOR_PRIVACY_REVIEW",
+  "candidate": {
+    "version": "1.2.1",
+    "build": 1,
+    "compiled": false,
+    "uploaded": false,
+    "submitted": false,
+    "published": false
+  },
+  "baseCommit": "e4faf44ea54a5a673064d0fb444c4dd508a96147",
+  "public": {
+    "version": "1.2",
+    "build": 1,
+    "versionID": "ce44a188-a413-460c-9490-8cc942f8b4cb",
+    "buildID": "cb6ea8b2-c2b1-45f1-9fcc-9c022b3bfd58",
+    "appState": "READY_FOR_SALE",
+    "storeVersion": "1.2",
+    "appReviewState": "COMPLETE",
+    "subscriptionMetadataReviewState": "COMPLETE",
+    "ads": "Active, observed impressions in Studio audit; no new AdMob account mutation"
+  },
+  "tests": {
+    "structuralMonetization": {
+      "status": "PASS",
+      "checks": 29
+    },
+    "appIntegration": "PASS",
+    "localization": "PASS",
+    "supportProducts": "PASS",
+    "independentReview": "No P0/P1/P2 for held local candidate; not distribution certification",
+    "swiftCompiled": false,
+    "xctestExecuted": false,
+    "sdkNativeQA": false
+  },
+  "changes": {
+    "npaOverrideRemoved": true,
+    "ppt": "default",
+    "firstPartyID": false,
+    "attAdded": false,
+    "idfaAdded": false,
+    "newProviders": false,
+    "mediationAdded": false,
+    "publicPrivacyChanged": false
+  },
+  "pending": [
+    "Approve/reconcile change from unconditional NPA promise to applicable SDK/CMP privacy treatment",
+    "Audit actual permitted SDK/buyer behavior; no-tracking conclusion is not inferred from absence of ATT",
+    "Native accept/refuse/withdraw/regional QA",
+    "Verify authorized private CI quota/cost or runner; no spending allowed"
+  ],
+  "ci": {
+    "repository": "Krazel/TarotCotidiano",
+    "visibility": "PRIVATE",
+    "billingRead": "404; requires user scope; quota unknown",
+    "runStarted": false,
+    "spendingEnabled": false,
+    "visibilityChanged": false
+  },
+  "library": {
+    "id": "PR-003",
+    "lastRevisionReportedByBrain": 1,
+    "synced": false,
+    "pendingRecord": "docs/technical/monetization-20261018/LIBRARY_PENDING.json",
+    "reason": "Prior automatic review rejection; no alternative token/origin or library redeploy used"
+  },
+  "files": [
+    {
+      "file": "native-ios/TarotDeckApp/Internal/TarotAdConsent.swift",
+      "sha256": "de187c88efbe1803547a4d41d76ce4bbee78d0d687b3a58ef9c86e86f23d3010"
+    },
+    {
+      "file": "native-ios/TarotDeckApp/Components/TarotBanner.swift",
+      "sha256": "0f51c59df2a55172af41b3557e51a16352a0cfaff5b8c7e36064ad4959d6d67b"
+    },
+    {
+      "file": "native-ios/TarotDeckApp/Screens/Settings/SettingsView.swift",
+      "sha256": "fac6d35743e7a1d8d2fc2a3109a526a62c2cab7416abf6d02f2fd053fbaaccbd"
+    },
+    {
+      "file": "native-ios/TarotDeck.xcodeproj/project.pbxproj",
+      "sha256": "20ca1d033d4adab10de91e1953ad7b4420e3fc5f8db0286566d0120d5f921fc6"
+    },
+    {
+      "file": "native-ios/Tools/validate-monetization.py",
+      "sha256": "dbc22c3d5595ddacc645ee1c0450793046c0ec9275f9caad28914bc6a093d510"
+    },
+    {
+      "file": "native-ios/Tools/validate-app-integration.ps1",
+      "sha256": "de3cb266bcce9cce2579317f0d61e14a224ab9889b922de7477ecb45067d1ac6"
+    }
+  ]
+}

@@ -90,10 +90,10 @@ private final class TarotBannerController: UIViewController, BannerViewDelegate 
             banner.widthAnchor.constraint(equalToConstant: adSize.size.width),
             banner.heightAnchor.constraint(equalToConstant: adSize.size.height)
         ])
+        // GMA consumes UMP/TCF and other applicable privacy signals. Do not
+        // overwrite every user's choice with npa=1, or force it with npa=0.
+        // The fresh UMP gate above only permits an applicable ad-serving mode.
         let request = Request()
-        let extras = Extras()
-        extras.additionalParameters = ["npa": "1"]
-        request.register(extras)
         banner.load(request)
     }
 

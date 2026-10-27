@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-27",
+  "scope": "Read-only diagnosis requested by user; no advertising, privacy, consent, SDK or app settings changed. Unsaved report view only.",
+  "period": "Last 7 days, matching the user's screenshot (41 Recorder, 303 Tarot, 3 Word Search impressions)",
+  "reportCurrency": "USD",
+  "homeCurrency": "EUR",
+  "liveAdMobFindings": {
+    "recorder": {"format": "Banner", "impressions": 41, "restriction": "No restriction", "observedEcpmUSD": 4.78, "clicks": 0},
+    "tarot": {"format": "Banner", "nonPersonalizedImpressions": 301, "limitedImpressions": 2, "nonPersonalizedEcpmUSD": 0.58, "clicks": 1},
+    "wordSearch": {"format": "Interstitial", "nonPersonalizedImpressions": 3, "observedEcpmUSD": 1.15, "clicks": 0},
+    "sameCountryComparisonUS": {
+      "recorder": {"impressions": 35, "ecpmUSD": 5.50, "estimatedRevenueRoundedUSD": 0.19, "clicks": 0, "restriction": "No restriction"},
+      "tarot": {"impressions": 286, "ecpmUSD": 0.60, "estimatedRevenueRoundedUSD": 0.17, "clicks": 1, "restriction": "Non-personalized ads"}
+    }
+  },
+  "codeEvidence": [
+    {"file": "TarotCotidianoNative/native-ios/TarotDeckApp/Components/TarotBanner.swift", "line": 95, "setting": "extras.additionalParameters = [npa: 1]"},
+    {"file": "TarotCotidianoNative/native-ios/TarotDeckApp/Internal/TarotAdConsent.swift", "line": 127, "setting": "Publisher first-party ID disabled"},
+    {"file": "TarotCotidianoNative/native-ios/TarotDeckApp/Internal/TarotAdConsent.swift", "line": 128, "setting": "publisherPrivacyPersonalizationState = .disabled"}
+  ],
+  "documentedRationale": "Monetization release records disable personalization and tracking by design; no new human approval for changing that policy is inferred.",
+  "interpretation": "Confirmed concrete configuration difference: Tarot forces non-personalized ad requests and disables publisher personalization, consistent with actual served traffic. Same ad format and US country do not eliminate the observed price gap; higher Recorder revenue is not due to more clicks. This is an actionable explanation, not proof that personalization alone causes the entire gap or that enabling it would multiply revenue by a fixed factor. Low traffic and auction differences remain limitations.",
+  "reference": "https://support.google.com/admob/answer/10922726?hl=en"
+}

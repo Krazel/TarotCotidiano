@@ -1,0 +1,13 @@
+{
+  "state": "PROPOSED_NOT_PUBLISHED",
+  "version": "1.2.1",
+  "scope": "Replace only the paragraph that currently says every request is non-personalized; keep all existing data categories, recipients, controls and retention text unless the final audit requires a precise correction.",
+  "english": "Version 1.2.1 removes the app-wide non-personalized-ad override. Google Mobile Ads uses the applicable consent and privacy signals to determine which ad-serving mode is permitted. The app still disables publisher first-party ID and does not add an ATT request or access IDFA. Permission to request an ad does not mean permission to personalize ads or track a user. Required privacy choices appear automatically and can be changed in Settings > Advertising choices. Refusing consent does not block tarot features. These settings do not mean that no technical data leaves the device.",
+  "spanish": "La versión 1.2.1 retira la imposición global de anuncios no personalizados de la app. Google Mobile Ads usa las señales de consentimiento y privacidad aplicables para determinar qué modo de servicio está permitido. La app mantiene desactivado el identificador propio del editor y no añade una solicitud ATT ni acceso al IDFA. Poder solicitar un anuncio no significa tener permiso para personalizar anuncios o hacer seguimiento del usuario. Las opciones de privacidad necesarias aparecen automáticamente y pueden cambiarse desde Ajustes > Opciones de publicidad. Rechazar el consentimiento no bloquea las funciones de tarot. Estos ajustes no significan que ningún dato técnico salga del dispositivo.",
+  "requiredBeforePublication": [
+    "Approve change from global publisher opt-out to SDK treatment of applicable privacy signals",
+    "Verify effective SDK and ad-buyer behavior and reconcile Apple tracking answers with it",
+    "Validate EEA refusal, partial consent, US opt-outs, refresh errors and withdrawal in native QA",
+    "Authorize and verify private no-spend build/distribution route"
+  ]
+}
