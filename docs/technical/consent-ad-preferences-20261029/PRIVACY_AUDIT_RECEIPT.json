@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-29T19:50:41.234761+00:00",
+  "checkedAt": "2026-10-29T20:32:42.715076+00:00",
   "run": 40934397390,
   "runUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40934397390",
   "sourceSHA": "46c86096246fb28447162ef65438ae9ff73d5a56",
@@ -34,7 +34,7 @@
   "publisherMessages": {
     "run": 40942070108,
     "sourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b",
-    "status": "FAILED_5_OF_7_PASSED_QA_CORRECTIONS_PREPARED",
+    "status": "QA_AUTOMATION_CORRECTION_IN_PROGRESS",
     "expectedCases": 7,
     "actualPublisherAppID": true,
     "bannerInventory": "GOOGLE_SAMPLE_ONLY",
@@ -44,7 +44,18 @@
       "GDPR form still present after first Consent tap; no TCF choice recorded. One bounded same-choice retry and real transition verification added; Continue support is separate, not the demonstrated cause.",
       "US preferences saved with real GPP section7 present, but QA decoder returned indeterminate. Added normative sextet padding and official legacy v2 wire-layout compatibility, plus derived diagnostics; actual cause requires rerun."
     ],
-    "productionBehaviorChangedByQAFixes": false
+    "productionBehaviorChangedByQAFixes": false,
+    "secondAttempt": {
+      "run": 40944994794,
+      "sourceSHA": "34e5cdb29d8666d94b8610d61353e5aac41e7396",
+      "status": "FAILED_QA_AUTOMATION_CASCADE",
+      "passedCases": 0,
+      "failedCases": 7,
+      "cause": "Second Consent tap raced with ATT. XCTest default interruption handler explicitly tapped Allow at t55.04, then synthesized the pending stale Consent tap onto the underlying app. A reading was opened and persisted; later actions matched residual offscreen UMP accessibility elements and dealt cards instead of consent choices.",
+      "SDKInterpretation": "SDK correctly kept ads/automatic form presentation off during the reading; this run does not establish seven independent SDK failures.",
+      "GPPDecoderReached": false,
+      "correction": "Remove retry; explicit real ATT interruption handling; coordinator-state guards before UMP actions; DEBUG simulator-only saved-reading isolation between cases, retaining persistence within each case."
+    }
   },
   "vendorSupportContact": "NOT_SENT; explicitly declined by human"
 }

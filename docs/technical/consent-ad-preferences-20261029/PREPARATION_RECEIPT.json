@@ -46,7 +46,7 @@
     "legacySDKCompatibility": "2_CASES_AND_INDEPENDENT_ATT_POSITIVE_CONTROL_PASSED",
     "remoteIDFAAndUS": "PUBLISHED_TAROT_ONLY_EN_ES",
     "publicPolicyAndAppleLabels": "PUBLISHED_VERIFIED",
-    "publisherMessageQA": "5_OF_7_PASSED_2_QA_CORRECTIONS_PREPARED_REQUIRES_RERUN",
+    "publisherMessageQA": "QA_AUTOMATION_CORRECTION_IN_PROGRESS; second attempt has no usable GPP outcome",
     "physicalDeviceQA": "NOT_CERTIFIED",
     "storeCandidateArchiveAndInventory": "NOT_RUN"
   },

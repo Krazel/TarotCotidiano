@@ -4,6 +4,7 @@
     // An older Opt out/Dismiss-only form must fail the explicit-undo check: Dismiss
     // is not opt-in. Propagation/network failures are failures, never fake choices.
     func testPublisherUSOptOutPersistsAndCanBeExplicitlyReversed() throws {
+        expectedATTAction = "Ask App Not to Track"
         publisherLaunchUS(reset: true)
         let initial = try waitForSnapshot("strict publisher-message simulator guard") { _ in true }
         try require(initial.publisherMessageQA == true, "Publisher CMP audit guard is not active.")
@@ -44,22 +45,11 @@
     private func publisherLaunchUS(reset: Bool) {
         app.launchArguments = ["--qa-english", "--qa-consent-us", "--qa-consent-observe",
                                "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
-        if reset { app.launchArguments.append("--qa-consent-reset") }
+        if reset { app.launchArguments += ["--qa-consent-reset", "--qa-consent-fresh-case"] }
         app.launch()
     }
 
     private func publisherFinishOptionalATT() throws {
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let outcome = NSPredicate { [weak self] _, _ in
-            guard let self else { return false }
-            return self.choice("Continue").exists
-                || springboard.alerts.buttons["Ask App Not to Track"].exists
-                || (self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
-        }
-        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: outcome, object: nil)],
-                                   timeout: networkTimeout)
-        try require(result == .completed, "Publisher UMP did not complete or show the real ATT flow; inspect propagation/configuration.")
-        if choice("Continue").exists { try tapChoice("Continue") }
         try finishOptionalATTWithDenial()
     }
 
@@ -77,7 +67,7 @@
                       state.gppSharingOptOut == expectedOptOut,
                       state.gppTargetedAdvertisingOptOut == expectedOptOut else { return false }
             }
-            return !banner || (state.canRequestAds && state.sdkStarted
+            return !banner || (state.automaticPresentationAllowed && state.canRequestAds && state.sdkStarted
                                && state.requestCount > 0 && state.loadedBannerCount > 0)
         }
     }
@@ -104,6 +94,7 @@
     }
 
     private func publisherSelectUSOption(allow: Bool) throws {
+        try requireUMPTapReady()
         let title = allow ? "Allow the sale or sharing of my data" : "Don't sell or share my data"
         let body = allow
             ? "By allowing the sale or sharing of your data, you will see interest-based ads on our sites"
@@ -118,6 +109,6 @@
             XCTFail("Expected explicit US radio choice is absent: \(title). Do not substitute Dismiss or fabricate preferences.")
             throw TestFailure.unmetPrecondition("Missing explicit US radio option")
         }
-        option.tap()
+        try tapActiveUMPElement(option)
         try tapChoice("Save and close")
     }

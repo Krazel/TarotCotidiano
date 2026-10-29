@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-29T20:32:42.728370+00:00",
+  "appID": "ca-app-pub-3425091654264901~4270953811",
+  "publisherID": "pub-3425091654264901",
+  "name": "Tarot Deck: Lee y aprende",
+  "readinessUI": "Lista",
+  "productionImpressionsPresent": true,
+  "monetizationAmountsExported": false,
+  "mutations": 0,
+  "authorizedBrowserException": "Existing AdMob exception; no authorized publisher OAuth available in this session"
+}

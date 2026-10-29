@@ -8,6 +8,11 @@ import XCTest
 final class TarotConsentUITests: XCTestCase {
     private var app: XCUIApplication!
     private let networkTimeout: TimeInterval = 90
+    private var attMonitor: NSObjectProtocol?
+    private var expectedATTAction: String?
+    private var performedATTActions: [String] = []
+    private var interruptedAppTapCount = 0
+    private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
     private struct Snapshot: Decodable {
         let updateCompleted: Bool
@@ -19,6 +24,7 @@ final class TarotConsentUITests: XCTestCase {
         let loadedBannerCount: Int
         let initialTrackingAuthorizationRaw: Int
         let trackingAuthorization: String
+        let automaticPresentationAllowed: Bool
         let purposeConsents: String?
         let vendorConsents: String?
         let publisherMessageQA: Bool?
@@ -42,6 +48,14 @@ final class TarotConsentUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+        expectedATTAction = nil
+        performedATTActions = []
+        interruptedAppTapCount = 0
+        attMonitor = addUIInterruptionMonitor(withDescription: "Explicit Tarot ATT choice") { [weak self] alert in
+            guard let self, self.isATTAlert(alert) else { return false }
+            self.interruptedAppTapCount += 1
+            return self.performATTAction(alert, source: "interruption-monitor")
+        }
         // Documented XCTest API resets the real OS permission for this app.
         // UMP.reset alone does not reset ATT. No TCC database writes or fake choice.
         app.resetAuthorizationStatus(for: .userTracking)
@@ -60,6 +74,8 @@ final class TarotConsentUITests: XCTestCase {
             add(hierarchy)
         }
         app?.terminate()
+        if let attMonitor { removeUIInterruptionMonitor(attMonitor) }
+        attMonitor = nil
         app = nil
     }
 
@@ -85,17 +101,23 @@ final class TarotConsentUITests: XCTestCase {
     }
 
     private func verifyNonEEAATTChoice(allow: Bool) throws {
+        let intendedAction = allow ? "Allow" : "Ask App Not to Track"
+        expectedATTAction = intendedAction
         launch(reset: true, eea: false)
         // The configured Google sample serves a real IDFA explainer here.
         // Advance it, then exercise the real OS choice; never preset ATT/TCC.
         try tapChoice("Continue")
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        let action = springboard.alerts.buttons[allow ? "Allow" : "Ask App Not to Track"].firstMatch
-        try require(action.waitForExistence(timeout: networkTimeout), "Apple ATT choice did not appear after the real UMP explainer.")
-        action.tap()
+        let appeared = NSPredicate { [weak self] _, _ in
+            guard let self else { return false }
+            return !self.performedATTActions.isEmpty || self.isATTAlert(self.springboard.alerts.firstMatch)
+        }
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: appeared, object: nil)], timeout: networkTimeout)
+        try require(result == .completed, "Apple ATT choice did not appear after the real UMP explainer.")
+        _ = performATTAction(springboard.alerts.firstMatch, source: "explicit-att-case")
+        try require(performedATTActions == [intendedAction], "The intended real Apple ATT action was not executed exactly once.")
         let expectedStatus = allow ? "authorized" : "denied"
         let ready = try waitForSnapshot("ATT choice followed by a successfully loaded sample banner") {
-            $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.sdkStarted
+            $0.updateCompleted && !$0.busy && $0.automaticPresentationAllowed && $0.canRequestAds && $0.sdkStarted
                 && $0.requestCount > 0 && $0.loadedBannerCount > 0
                 && $0.trackingAuthorization == expectedStatus
         }
@@ -104,11 +126,12 @@ final class TarotConsentUITests: XCTestCase {
     }
 
     func testAcceptAndPersistChoiceAcrossRelaunch() throws {
+        expectedATTAction = "Ask App Not to Track"
         try launchFresh()
         try tapConsentAndAwaitTransition()
         try finishOptionalATTWithDenial()
         let accepted = try waitForSnapshot("accepted consent and first test request") {
-            $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.sdkStarted && $0.requestCount > 0
+            $0.updateCompleted && !$0.busy && $0.automaticPresentationAllowed && $0.canRequestAds && $0.sdkStarted && $0.requestCount > 0
         }
         XCTAssertTrue(accepted.purpose(3), "The real sample consent should record purpose 3.")
         XCTAssertTrue(accepted.purpose(4), "The real sample consent should record purpose 4.")
@@ -119,7 +142,7 @@ final class TarotConsentUITests: XCTestCase {
         app.terminate()
         launch(reset: false)
         let persisted = try waitForSnapshot("fresh UMP update reuses stored choice") {
-            $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.requestCount > 0
+            $0.updateCompleted && !$0.busy && $0.automaticPresentationAllowed && $0.canRequestAds && $0.requestCount > 0
         }
         XCTAssertEqual(persisted.formPresentations, 0, "The unchanged sample message should not ask again.")
         XCTAssertTrue(persisted.purpose(3))
@@ -148,11 +171,12 @@ final class TarotConsentUITests: XCTestCase {
     }
 
     func testReopenAdvertisingChoicesAndRevokeAcceptedChoice() throws {
+        expectedATTAction = "Ask App Not to Track"
         try launchFresh()
         try tapConsentAndAwaitTransition()
         try finishOptionalATTWithDenial()
         let accepted = try waitForSnapshot("accepted before withdrawal") {
-            $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.requestCount > 0
+            $0.updateCompleted && !$0.busy && $0.automaticPresentationAllowed && $0.canRequestAds && $0.requestCount > 0
         }
         XCTAssertTrue(accepted.purpose(3))
         XCTAssertTrue(accepted.purpose(4))
@@ -193,83 +217,83 @@ final class TarotConsentUITests: XCTestCase {
             "--qa-english", eea ? "--qa-consent-eea" : "--qa-consent-non-eea", "--qa-consent-observe",
             "-AppleLanguages", "(en)", "-AppleLocale", "en_US"
         ]
-        if reset { app.launchArguments.append("--qa-consent-reset") }
+        if reset { app.launchArguments += ["--qa-consent-reset", "--qa-consent-fresh-case"] }
         app.launch()
     }
 
-    /// A cold WebKit form can retain the original GDPR page after XCTest taps.
-    /// Retry that same requested choice once only while the exact untouched
-    /// form is still visible and requests remain blocked; then require progress.
+    /// One real tap only. AX can retain an old GDPR subtree after presentation
+    /// changes; it is never authority for a second Consent tap.
     private func tapConsentAndAwaitTransition() throws {
         try tapChoice("Consent")
-        let moved = NSPredicate { [weak self] _, _ in
-            guard let self else { return false }
-            return !self.choice("Consent").exists
-                || self.choice("Continue").exists
-                || XCUIApplication(bundleIdentifier: "com.apple.springboard")
-                    .alerts.buttons["Ask App Not to Track"].exists
-                || (self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
-        }
-        let initial = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: moved, object: nil)], timeout: 5)
-        if initial != .completed {
-            guard let state = snapshot() else {
-                throw TestFailure.unmetPrecondition("Missing observation before a possible Consent retry")
-            }
-            let originalForm = ["Consent", "Do not consent", "Manage options"].allSatisfy {
-                let element = choice($0)
-                return element.exists && element.isHittable
-            }
-            try require(originalForm && state.busy && !state.canRequestAds
-                        && !state.sdkStarted && state.requestCount == 0,
-                        "Consent did not transition, but the original blocked GDPR form is not intact; refusing a retry.")
-            recordEvidence("original-gdpr-form-before-single-consent-retry")
-            try tapChoice("Consent")
-            let retried = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: moved, object: nil)],
-                                        timeout: networkTimeout)
-            try require(retried == .completed,
-                        "Original GDPR form did not transition after one documented Consent retry.")
-        }
+        // The next helper waits on Springboard or the real coordinator first.
+        // It may advance IDFA Continue, but never repeats the GDPR choice.
     }
 
-    /// UMP may show its IDFA explainer after GDPR, or proceed straight to ATT.
-    /// Continue advances only the explainer; deny the actual Apple prompt.
-    /// Completion without that prompt is still not an ATT pass.
+    private func isATTAlert(_ alert: XCUIElement) -> Bool {
+        alert.exists && alert.buttons["Ask App Not to Track"].exists && alert.buttons["Allow"].exists
+    }
+
+    @discardableResult
+    private func performATTAction(_ alert: XCUIElement, source: String) -> Bool {
+        guard isATTAlert(alert) else { return false }
+        // Unexpected ATT is denied and fails the case; never let XCTest's
+        // default interruption handler grant tracking on our behalf.
+        let action = expectedATTAction ?? "Ask App Not to Track"
+        alert.buttons[action].tap()
+        performedATTActions.append(action)
+        let evidence = XCTAttachment(string: "Actual Apple ATT action: \(action); source: \(source)")
+        evidence.name = "actual-apple-att-action"
+        evidence.lifetime = .keepAlways
+        add(evidence)
+        print("TAROT_QA_ATT_ACTION action=\(action) source=\(source)")
+        if expectedATTAction == nil { XCTFail("Unexpected ATT prompt in a case that must not request tracking.") }
+        return true
+    }
+
+    /// Prefer the real OS alert before any query into the app's AX hierarchy.
+    /// Completion without a prompt is not ATT certification.
     private func finishOptionalATTWithDenial() throws {
-        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        try require(expectedATTAction == nil || expectedATTAction == "Ask App Not to Track",
+                    "A denial helper cannot override a case configured to allow ATT.")
+        expectedATTAction = "Ask App Not to Track"
         let nextStep = NSPredicate { [weak self] _, _ in
             guard let self else { return false }
-            return springboard.alerts.buttons["Ask App Not to Track"].exists
-                || self.choice("Continue").exists
-                || (self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
+            if self.isATTAlert(self.springboard.alerts.firstMatch) { return true }
+            if self.springboard.alerts.firstMatch.exists { return false }
+            guard let state = self.snapshot() else { return false }
+            if state.updateCompleted && !state.busy { return true }
+            guard state.busy && !state.canRequestAds && state.formPresentations > 0 else { return false }
+            let next = self.choice("Continue")
+            return next.exists && next.isHittable
         }
         let next = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: nextStep, object: nil)],
                                  timeout: networkTimeout)
-        try require(next == .completed,
-                    "Neither the UMP IDFA Continue action, Apple ATT, nor UMP completion appeared. Last state: \(snapshotJSON() ?? "missing")")
-        if choice("Continue").exists {
-            let before = try waitForSnapshot("real UMP explainer is still in flight") { $0.busy }
-            XCTAssertFalse(before.canRequestAds)
-            recordEvidence("before-idfa-explainer-continue")
-            try tapChoice("Continue")
+        try require(next == .completed, "No real UMP/ATT transition after the single consent action.")
+        if !performATTAction(springboard.alerts.firstMatch, source: "optional-att-denial") {
+            try require(!springboard.alerts.firstMatch.exists, "Unexpected system alert blocks consent QA.")
+            if let state = snapshot(), state.busy && state.formPresentations > 0 {
+                try tapChoice("Continue")
+            }
         }
         let done = NSPredicate { [weak self] _, _ in
-            springboard.alerts.buttons["Ask App Not to Track"].exists ||
-                (self?.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
+            guard let self else { return false }
+            if self.isATTAlert(self.springboard.alerts.firstMatch) { return true }
+            if self.springboard.alerts.firstMatch.exists { return false }
+            return self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false
         }
         let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: done, object: nil)],
                                    timeout: networkTimeout)
-        try require(result == .completed, "Neither UMP completion nor the Apple ATT prompt appeared.")
-        let deny = springboard.alerts.buttons["Ask App Not to Track"]
-        if deny.exists {
-            deny.tap()
-            let state = try waitForSnapshot("ATT denial finishes without blocking the app") {
-                $0.updateCompleted && !$0.busy
-            }
+        try require(result == .completed, "Neither UMP completion nor the real Apple ATT prompt appeared.")
+        _ = performATTAction(springboard.alerts.firstMatch, source: "after-idfa-continue")
+        let state = try waitForSnapshot("UMP/ATT flow finishes") { $0.updateCompleted && !$0.busy }
+        if !performedATTActions.isEmpty {
+            try require(performedATTActions.allSatisfy { $0 == "Ask App Not to Track" }, "Unexpected ATT grant in denial flow.")
             XCTAssertEqual(state.trackingAuthorization, "denied")
             recordEvidence("actual-att-denied")
         } else {
-            let evidence = XCTAttachment(string: "Sample UMP completed without ATT. Real configured Tarot IDFA/ATT QA remains required.")
-            evidence.name = "sample-is-not-att-certification"
+            XCTAssertNotEqual(state.trackingAuthorization, "authorized", "No recorded Apple interaction may be treated as an authorization.")
+            let evidence = XCTAttachment(string: "UMP completed without an Apple prompt; this is not an ATT pass.")
+            evidence.name = "completion-without-att-certification"
             evidence.lifetime = .keepAlways
             add(evidence)
         }
@@ -293,9 +317,38 @@ final class TarotConsentUITests: XCTestCase {
 
     private func tapChoice(_ label: String) throws {
         try waitForChoice(label)
+        // An Apple prompt can replace Continue between polls. Handle that
+        // real prompt directly and never resume a stale app tap underneath it.
+        if isATTAlert(springboard.alerts.firstMatch) {
+            try require(label == "Continue", "Apple ATT replaced an unexpected UMP action; no app tap was issued.")
+            _ = performATTAction(springboard.alerts.firstMatch, source: "before-continue-app-tap")
+            return
+        }
+        try requireUMPTapReady()
         let element = choice(label)
         try require(element.exists && element.isHittable, "UMP action is not hittable: \(label)")
+        try tapActiveUMPElement(element)
+    }
+
+    private func requireUMPTapReady() throws {
+        try require(!springboard.alerts.firstMatch.exists, "A system alert blocks the app action; no stale tap is allowed.")
+        guard let state = snapshot() else {
+            throw TestFailure.unmetPrecondition("Missing real coordinator observation before UMP tap")
+        }
+        try require(state.busy && !state.canRequestAds && state.formPresentations > 0,
+                    "UMP AX is not backed by an active coordinator presentation; refusing the tap.")
+    }
+
+    private func tapActiveUMPElement(_ element: XCUIElement) throws {
+        try requireUMPTapReady()
+        let interruptionsBefore = interruptedAppTapCount
+        try require(element.exists && element.isHittable, "Active UMP action is not visible/hittable.")
+        try require(!springboard.alerts.firstMatch.exists, "A system alert appeared before the UMP tap; stopping.")
         element.tap()
+        // Even a correct explicit monitor choice cannot certify an app tap
+        // that XCTest resumes after dismissing the OS alert. Fail that race.
+        try require(interruptedAppTapCount == interruptionsBefore,
+                    "ATT interrupted and resumed an app tap. The real OS choice was recorded, but this UI path is not a pass.")
     }
 
     private func waitForChoice(_ label: String) throws {
@@ -303,6 +356,10 @@ final class TarotConsentUITests: XCTestCase {
         // loads, neither its button nor its static-text fallback exists.
         let visible = NSPredicate { [weak self] _, _ in
             guard let self else { return false }
+            if self.isATTAlert(self.springboard.alerts.firstMatch) { return label == "Continue" }
+            if self.springboard.alerts.firstMatch.exists { return false }
+            guard let state = self.snapshot(), state.busy, !state.canRequestAds,
+                  state.formPresentations > 0 else { return false }
             let element = self.choice(label)
             return element.exists && element.isHittable
         }

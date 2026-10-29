@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-10-29T20:32:42.724358+00:00",
+  "status": "REVIEWED_AGAINST_EXACT_SDK_MANIFESTS_AND_CURRENT_PRIMARY_GUIDANCE",
+  "sources": [
+    "https://developers.google.com/admob/ios/privacy/data-disclosure",
+    "https://developer.apple.com/app-store/app-privacy-details/"
+  ],
+  "SDKs": {
+    "GoogleMobileAds": "12.14.0",
+    "UserMessagingPlatform": "3.1.0"
+  },
+  "result": "Seven collected data types retained. Device ID tracking=true for optional permitted IDFA; six remaining tracking=false match exact SDK declarations. Linked categories and merged app-functionality purposes match existing published receipt.",
+  "integrationScope": "No Firebase Analytics or mediation adapters; no reading data or custom user identifiers attached to ad requests.",
+  "limits": [
+    "Generic Google prose describes user-associated performance data while exact manifests mark diagnostics not linked; no concrete integration-specific evidence to override the exact manifests.",
+    "DeveloperAdvertising capability in generic SDK manifest is not enabled as an app feature; no own advertising/remarketing added."
+  ],
+  "addsRestrictionsOrForcesPersonalization": false
+}

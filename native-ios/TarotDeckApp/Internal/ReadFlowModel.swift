@@ -484,6 +484,18 @@ final class ReadFlowModel: ObservableObject {
 
         let restoration: DeckSessionRestoration
         do {
+            #if DEBUG && targetEnvironment(simulator)
+            if ProcessInfo.processInfo.arguments.contains("--qa-consent-fresh-case") {
+                // Isolate only reading continuity between consent test cases.
+                // Within-case relaunches omit the argument and keep persistence.
+                // Use the app's own stores; never edit consent/TCF/GPP or TCC.
+                precondition(Bundle.main.bundleIdentifier == "com.krazel.tarotdeck.internal.provisional"
+                             && TarotAdsConfiguration.bannerID == AdvertisingConfiguration.sampleBannerID,
+                             "Fresh consent-case reading reset requires the internal sample-ad simulator.")
+                try continuityStore.clear()
+                try await coordinator.clearSession()
+            }
+            #endif
             restoration = try await coordinator.restore()
         } catch {
             presentIssue(
