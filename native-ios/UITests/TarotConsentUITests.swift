@@ -16,6 +16,7 @@ final class TarotConsentUITests: XCTestCase {
         let sdkStarted: Bool
         let requestCount: Int
         let formPresentations: Int
+        let trackingAuthorization: String
         let purposeConsents: String?
         let vendorConsents: String?
 
@@ -31,6 +32,9 @@ final class TarotConsentUITests: XCTestCase {
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
+        // Documented XCTest API resets the real OS permission for this app.
+        // UMP.reset alone does not reset ATT. No TCC database writes or fake choice.
+        app.resetAuthorizationStatus(for: .userTracking)
     }
 
     override func tearDownWithError() throws {
@@ -61,6 +65,7 @@ final class TarotConsentUITests: XCTestCase {
     func testAcceptAndPersistChoiceAcrossRelaunch() throws {
         try launchFresh()
         try tapChoice("Consent")
+        try finishOptionalATTWithDenial()
         let accepted = try waitForSnapshot("accepted consent and first test request") {
             $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.sdkStarted && $0.requestCount > 0
         }
@@ -89,6 +94,9 @@ final class TarotConsentUITests: XCTestCase {
         }
         XCTAssertFalse(rejected.purpose(3))
         XCTAssertFalse(rejected.purpose(4))
+        XCTAssertEqual(rejected.trackingAuthorization, "notDetermined",
+                       "A regulatory rejection must not be followed by ATT in this flow.")
+        XCTAssertFalse(XCUIApplication(bundleIdentifier: "com.apple.springboard").alerts.firstMatch.exists)
         // Refusal can still permit non-personalized/limited requests. Do not
         // assert canRequestAds == false, and do not infer mode from ad artwork.
         if !rejected.canRequestAds {
@@ -101,6 +109,7 @@ final class TarotConsentUITests: XCTestCase {
     func testReopenAdvertisingChoicesAndRevokeAcceptedChoice() throws {
         try launchFresh()
         try tapChoice("Consent")
+        try finishOptionalATTWithDenial()
         let accepted = try waitForSnapshot("accepted before withdrawal") {
             $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.requestCount > 0
         }
@@ -143,6 +152,33 @@ final class TarotConsentUITests: XCTestCase {
         ]
         if reset { app.launchArguments.append("--qa-consent-reset") }
         app.launch()
+    }
+
+    /// The Google sample message may not configure IDFA. If it does, deny the
+    /// actual Apple prompt; completion without a prompt is not an ATT pass.
+    private func finishOptionalATTWithDenial() throws {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let done = NSPredicate { [weak self] _, _ in
+            springboard.alerts.buttons["Ask App Not to Track"].exists ||
+                (self?.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
+        }
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: done, object: nil)],
+                                   timeout: networkTimeout)
+        try require(result == .completed, "Neither UMP completion nor the Apple ATT prompt appeared.")
+        let deny = springboard.alerts.buttons["Ask App Not to Track"]
+        if deny.exists {
+            deny.tap()
+            let state = try waitForSnapshot("ATT denial finishes without blocking the app") {
+                $0.updateCompleted && !$0.busy
+            }
+            XCTAssertEqual(state.trackingAuthorization, "denied")
+            recordEvidence("actual-att-denied")
+        } else {
+            let evidence = XCTAttachment(string: "Sample UMP completed without ATT. Real configured Tarot IDFA/ATT QA remains required.")
+            evidence.name = "sample-is-not-att-certification"
+            evidence.lifetime = .keepAlways
+            add(evidence)
+        }
     }
 
     private func launchFresh() throws {

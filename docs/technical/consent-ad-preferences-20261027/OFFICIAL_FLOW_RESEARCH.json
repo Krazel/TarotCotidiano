@@ -1,0 +1,39 @@
+{
+  "date": "2026-10-27",
+  "request": "Search online for the normal integration pattern, rather than only explaining individual permission definitions.",
+  "scope": "Read-only primary-source research. No claim about market adoption percentages, new product approval, remote configuration, build or upload.",
+  "preferredDocumentedIntegration": "For an iOS AdMob app that deliberately supports IDFA, use the certified UMP consent flow and its configured IDFA/ATT message integration instead of inventing a second blanket privacy override or copying a partial manual consent parser.",
+  "sources": [
+    {
+      "url": "https://developers.google.com/admob/ios/privacy/gdpr?hl=en",
+      "section": "FAQ: best practice for showing ATT and GDPR",
+      "finding": "Google recommends GDPR consent first and ATT afterward if consent was given; it states UMP handles this when both messages are configured. Manual ATT integrations must separately evaluate the collected choices."
+    },
+    {
+      "url": "https://developers.google.com/admob/ios/privacy/idfa?hl=en",
+      "finding": "The documented UMP IDFA integration requires message configuration, purpose text in the plist and the Apple tracking framework. Refusal still permits eligible ads without IDFA."
+    },
+    {
+      "url": "https://support.google.com/admob/answer/10114020?hl=en",
+      "finding": "The preceding message varies with region and existing choices; an EU message can replace the separate IDFA explainer. Do not assume every person sees three separate dialogs."
+    },
+    {
+      "url": "https://github.com/googleads/googleads-mobile-ios-examples/blob/main/Swift/admob/BannerExample/BannerExample/GoogleMobileAdsConsentManager.swift",
+      "finding": "The official consent example refreshes UMP on launch, loads/presents required forms and exposes privacy options. The SDK path is the reference; canRequestAds remains request eligibility."
+    },
+    {
+      "url": "https://developers.google.com/admob/ios/targeting?hl=en",
+      "finding": "PPT is optional and .disabled adds an app-wide personalization restriction; the most restrictive privacy signal takes precedence."
+    },
+    {
+      "url": "https://developers.google.com/admob/ios/privacy/strategies?hl=en",
+      "finding": "Publisher first-party ID is enabled by default. Its disablement is an optional publisher decision and is separate from ATT/IDFA."
+    },
+    {
+      "url": "https://developer.apple.com/design/human-interface-guidelines/privacy/",
+      "finding": "Permission wording must explain the actual use; no manipulative explainer or functionality blocked on tracking approval."
+    }
+  ],
+  "applicationToTarot": "Recommend this documented optional-personalization flow for the advertising goal, reconciling privacy disclosures and testing both refusals and revocation. The prepared removal-only 1.2.1 is partial. Current pinned SDK support and the real rejection path must be verified before enabling/distributing any changed tracking behavior; this research does not replace native QA or authorize it by itself.",
+  "clarificationToEarlierAudit": "Earlier records cautioned against assuming remote IDFA configuration safely coordinates a European refusal. The current official FAQ explicitly documents that coordination. Prefer the documented integration and verify its actual behavior, rather than treating uncertainty alone as a reason to implement a custom partial gate."
+}

@@ -490,7 +490,7 @@
 				DEVELOPMENT_LANGUAGE = en;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;
-				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				OTHER_LDFLAGS = "$(inherited) -ObjC -framework AppTrackingTransparency";
 				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -525,7 +525,7 @@
 				TAROT_ADMOB_APP_ID = "ca-app-pub-3425091654264901~4270953811";
 				TAROT_ADMOB_BANNER_ID = "ca-app-pub-3425091654264901/3573694673";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "TAROT_PRODUCTION_ADS $(inherited)";
-				OTHER_LDFLAGS = "$(inherited) -ObjC";
+				OTHER_LDFLAGS = "$(inherited) -ObjC -framework AppTrackingTransparency";
 				INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";

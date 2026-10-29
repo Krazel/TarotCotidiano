@@ -1,0 +1,40 @@
+{
+  "date": "2026-10-29",
+  "status": "PREPARED_NOT_RELEASE_READY",
+  "candidate": {
+    "version": "1.2.1",
+    "build": "1",
+    "compiled": false,
+    "uploaded": false,
+    "submitted": false
+  },
+  "authorization": "A-075: full optional UMP+ATT/IDFA+publisher first-party configuration and preparation for App Review",
+  "configuration": {
+    "publisherFirstPartyIDEnabled": true,
+    "PPT": "default",
+    "manualNPA": null,
+    "manualATTRequest": false,
+    "ATTProvidedBy": "UMP configured IDFA message",
+    "SDKs": {
+      "GMA": "12.14.0",
+      "UMP": "3.1.0"
+    }
+  },
+  "gates": {
+    "privateCINoSpend": "PENDING_BILLING_PERMISSION",
+    "nativeAndPhysicalQA": "NOT_RUN",
+    "trackingManifestDomains": "UNRESOLVED",
+    "remoteIDFA": "DRAFT_ONLY",
+    "publicPolicyAndAppleLabels": "PROPOSED_NOT_PUBLISHED"
+  },
+  "library": "PR-003 pending permitted CAS; not synchronized",
+  "evidence": [
+    "APPLE_DRAFT_RECEIPT.json",
+    "EXACT_SDK_MANIFEST.json",
+    "VALIDATION.json",
+    "CI_PLAN.md",
+    "NATIVE_QA_AND_ROLLOUT.json",
+    "PRIVACY_AUDIT_PROPOSED.json",
+    "PRIVACY_COPY_AND_REVIEW_PROPOSED.json"
+  ]
+}

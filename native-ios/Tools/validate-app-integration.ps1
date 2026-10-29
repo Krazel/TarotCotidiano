@@ -456,7 +456,8 @@ $nonSettingsAppSource = $allAppSource.Replace($settingsSourceForDestinationBound
 $adConsentSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Internal/TarotAdConsent.swift")
 $bannerSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "Components/TarotBanner.swift")
 $nonAdvertisingAppSource = $allAppSource.Replace($adConsentSource, "").Replace($bannerSource, "")
-if ($nonAdvertisingAppSource -match '(?m)^\s*import\s+(GoogleMobileAds|UserMessagingPlatform)\b') {
+if ($nonAdvertisingAppSource -match '(?m)^\s*import\s+(GoogleMobileAds|UserMessagingPlatform|AppTrackingTransparency)\b' -or
+    $nonAdvertisingAppSource -match '\bATTrackingManager\b') {
     throw "Advertising SDK imports must remain inside the two scoped advertising adapters."
 }
 $forbidden = @("Zodiac", "Android")
@@ -465,10 +466,10 @@ foreach ($term in $forbidden) {
         throw "Out-of-scope app source term found: $term"
     }
 }
-if ($nonSettingsAppSource -match '(?m)^\s*import\s+(Network|WebKit|StoreKit|AdSupport|AppTrackingTransparency|UserNotifications|CoreLocation|AVFoundation|Photos|Contacts|EventKit|HealthKit|CoreBluetooth)\b' -or
+if ($nonSettingsAppSource -match '(?m)^\s*import\s+(Network|WebKit|StoreKit|AdSupport|UserNotifications|CoreLocation|AVFoundation|Photos|Contacts|EventKit|HealthKit|CoreBluetooth)\b' -or
     $nonSettingsAppSource -match '\b(URLSession|URLRequest|NWConnection|NWPathMonitor|WKWebView|openURL|UIApplication\.shared\.open)\b' -or
     $nonSettingsAppSource -match 'https?://' -or
-    $allAppSource -match '\b(requestAuthorization|requestAccess|ATTrackingManager|UNUserNotificationCenter|CLLocationManager|AVCaptureDevice|PHPhotoLibrary|CNContactStore|EKEventStore|HKHealthStore|CBCentralManager)\b' -or
+    $allAppSource -match '\b(requestAuthorization|requestTrackingAuthorization|ASIdentifierManager|requestAccess|UNUserNotificationCenter|CLLocationManager|AVCaptureDevice|PHPhotoLibrary|CNContactStore|EKEventStore|HKHealthStore|CBCentralManager)\b' -or
     $allAppSource -match '\b(Firebase|GADMobileAds|Sentry|Crashlytics|Mixpanel|Amplitude)\b') {
     throw "App source contains unauthorized network, permission, or third-party SDK integration."
 }

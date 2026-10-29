@@ -139,6 +139,8 @@ $forbiddenPatterns = @(
     '(?i)\b(push|pull_request|schedule|repository_dispatch):',
     '(?i)\becho\s+"?\$\{?(APPLE_TEAM_ID|APP_STORE_CONNECT_API_KEY_ID|APP_STORE_CONNECT_ISSUER_ID|APP_STORE_CONNECT_API_KEY_BASE64)',
     '(?i)set\s+-x',
+    '(?i)xcrun\s+simctl\s+privacy\s+[^\r\n]*(grant|revoke|reset)',
+    '(?i)TCC\.db|\btccutil\b',
     '(?i)\bgh\s+(workflow|run|api|release)\b'
 )
 foreach ($pattern in $forbiddenPatterns) {
@@ -169,9 +171,21 @@ if (@(Compare-Object (@($sampleAppID, $sampleBannerID) | Sort-Object) $workflowA
 foreach ($contract in @(
     'Verify real sample consent choices in simulator', '-parallel-testing-enabled NO',
     '-only-testing:TarotConsentUITests', 'TarotConsentQA.xcresult',
-    'Preserve native consent QA result', 'tarot-consent-tests.log'
+    'Preserve native consent QA result', 'tarot-consent-tests.log',
+    'Record simulator privacy capabilities without changing permissions',
+    'xcodebuild -version', 'xcrun simctl help privacy',
+    'tarot-qa-xcode-version.txt', 'tarot-qa-simulator-runtimes.json',
+    'tarot-qa-simulator-devices.json', 'tarot-qa-simctl-privacy-help.txt',
+    'The UMP sample message does not certify the production IDFA explainer or the real ATT prompt.',
+    'Any observed ATT state must come from the OS; no production consent fixture is supplied.'
 )) {
     if (-not $workflow.Contains($contract)) { throw "Missing native consent QA contract: $contract" }
+}
+
+if ($workflow.IndexOf('Record simulator privacy capabilities without changing permissions') -gt
+    $workflow.IndexOf('Prepare App Store Connect cloud-signing key') -or
+    $workflow -notmatch '(?s)name: Preserve native consent QA result\s+if: \$\{\{ always\(\) \}\}.*?tarot-qa-simctl-privacy-help\.txt') {
+    throw "Native privacy evidence must precede signing and be retained on failed QA runs."
 }
 
 if ($workflow -match '(?m)^\s*cp\s+"\$SOURCE_IPA"' -or

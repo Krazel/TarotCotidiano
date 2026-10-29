@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-27",
+  "status": "RESEARCH_AND_RECOMMENDATION_NOT_TRACKING_AUTHORIZATION",
+  "userQuestion": "Why are IDFA and ATT omitted, are they needed, what is preferable, and could omission reduce revenue?",
+  "findings": [
+    "ATT is not required merely to show ads. It is required before IDFA access or cross-company tracking under Apple's definition.",
+    "If ATT is denied, the app can still request eligible ads and Google Mobile Ads does not send IDFA. UMP/regional choices remain separate restrictions.",
+    "Google documents publisher-first-party personalization when third-party device IDs are unavailable; it respects existing consent and opt-out settings and does not permit linking publisher activity to third-party apps. Tarot explicitly disables this mechanism too.",
+    "The published 1.2 deliberately forces NPA and PPT disabled and disables first-party ID without ATT. These were optional publisher choices, not a universal AdMob requirement. The monetization consequences should have been explained when choosing that mode.",
+    "Prepared 1.2.1 removes NPA/PPT overrides but still disables first-party ID and omits ATT. It is a partial correction, not a verified complete monetization setup or a proven effective personalization route.",
+    "The local Audio/VoiceRecorder implementation imports AppTrackingTransparency, checks eligibility before requesting ATT, includes the purpose string, and loads a normal Request without the Tarot global NPA override. This source comparison does not prove the ID type of the 41 observed impressions or validate every consent path of Audio.",
+    "Omitting ATT excludes the IDFA path even for users who might agree. That can reduce available targeting/measurement options and revenue potential, but there is no automatic penalty, guaranteed gain or quantifiable loss established by these small samples. Removing restrictions is not proof that all revenue differences disappear."
+  ],
+  "recommendedProductDirection": {
+    "forTarotAdvertisingGoal": "Support optional ATT/IDFA for users whose applicable consent allows the tracking request, plus a separately audited publisher-first-party path where permitted. Do not force personalized ads or treat request eligibility as tracking permission.",
+    "sequence": [
+      "Refresh applicable CMP/regional choices and present any required privacy form at the existing safe point.",
+      "Evaluate whether a tracking request is permitted from complete applicable signals; never derive it solely from canRequestAds, obtained/notRequired, geography or one TCF bit.",
+      "Offer ATT only where appropriate; access IDFA and allow cross-company tracking only after ATT authorization and the applicable regulatory permissions.",
+      "On any refusal, restriction, missing/invalid permission or later revocation, retain only eligible privacy-constrained ad modes and keep all tarot features available.",
+      "Use SDK default privacy treatment without blanket NPA/PPT overrides, while honoring stricter applicable user, regional and age restrictions.",
+      "Document and configure publisher-first-party data separately; do not silently equate it with IDFA or enable unrelated analytics, surveys, mediation or providers.",
+      "Reconcile public policy, Apple privacy disclosures and prompt wording; test accept/refuse/partial/withdrawal and inspect actual SDK signals before distribution.",
+      "Compare later real AdMob ID-type and serving-restriction reports with country, format and period controlled; no eCPM promise."
+    ],
+    "tradeoff": "More optional advertising/measurement capability and potential demand in exchange for broader declared data use, an additional permission prompt where appropriate, and additional verification duties.",
+    "currentState": "Recommendation only; no ATT prompt, IDFA access, first-party-ID enablement, external privacy edits, build or upload added by this investigation. Existing TestFlight request remains authorized and pending the separate private CI prerequisite; final candidate scope should reflect the owner's informed choice."
+  },
+  "localEvidence": [
+    "Audio/native-ios/Sources/AdConsentManager.swift",
+    "Audio/native-ios/Sources/TrackingConsentEligibility.swift",
+    "Audio/native-ios/Sources/AdMobBannerView.swift",
+    "Audio/native-ios/Resources/Info.plist",
+    "TarotCotidianoNative/docs/technical/consent-ad-preferences-20261027/revenue-audit.json"
+  ],
+  "sources": [
+    "https://developer.apple.com/app-store/user-privacy-and-data-use/",
+    "https://developers.google.com/admob/ios/privacy/idfa",
+    "https://support.google.com/admob/answer/14199649?hl=en",
+    "https://support.google.com/admob/answer/9997589?hl=en",
+    "https://developers.google.com/admob/ios/privacy/ad-serving-modes"
+  ]
+}

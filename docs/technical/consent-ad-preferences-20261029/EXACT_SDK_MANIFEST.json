@@ -1,0 +1,101 @@
+{
+  "checkedAt": "2026-10-29",
+  "url": "https://dl.google.com/googleadmobadssdk/c8c5523373ed76aa/googlemobileadsios-spm-12.14.0.zip",
+  "sha256": "c8c5523373ed76aa6da7bbe1324458e680981bd4593271cca5958fc8e8ffc5e7",
+  "manifestPath": "GoogleMobileAds.xcframework/ios-arm64/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+  "manifest": {
+    "NSPrivacyCollectedDataTypes": [
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeOtherDiagnosticData",
+        "NSPrivacyCollectedDataTypeLinked": false,
+        "NSPrivacyCollectedDataTypeTracking": false,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+          "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+          "NSPrivacyCollectedDataTypePurposeAnalytics"
+        ]
+      },
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCoarseLocation",
+        "NSPrivacyCollectedDataTypeLinked": true,
+        "NSPrivacyCollectedDataTypeTracking": false,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+          "NSPrivacyCollectedDataTypePurposeAnalytics",
+          "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising"
+        ]
+      },
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypePerformanceData",
+        "NSPrivacyCollectedDataTypeLinked": false,
+        "NSPrivacyCollectedDataTypeTracking": false,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+          "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+          "NSPrivacyCollectedDataTypePurposeAnalytics"
+        ]
+      },
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeCrashData",
+        "NSPrivacyCollectedDataTypeLinked": false,
+        "NSPrivacyCollectedDataTypeTracking": false,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeAnalytics"
+        ]
+      },
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeAdvertisingData",
+        "NSPrivacyCollectedDataTypeLinked": true,
+        "NSPrivacyCollectedDataTypeTracking": false,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+          "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+          "NSPrivacyCollectedDataTypePurposeAnalytics"
+        ]
+      },
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeProductInteraction",
+        "NSPrivacyCollectedDataTypeLinked": true,
+        "NSPrivacyCollectedDataTypeTracking": false,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeAnalytics",
+          "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising",
+          "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising"
+        ]
+      },
+      {
+        "NSPrivacyCollectedDataType": "NSPrivacyCollectedDataTypeDeviceID",
+        "NSPrivacyCollectedDataTypeLinked": true,
+        "NSPrivacyCollectedDataTypeTracking": true,
+        "NSPrivacyCollectedDataTypePurposes": [
+          "NSPrivacyCollectedDataTypePurposeThirdPartyAdvertising",
+          "NSPrivacyCollectedDataTypePurposeAnalytics",
+          "NSPrivacyCollectedDataTypePurposeDeveloperAdvertising"
+        ]
+      }
+    ],
+    "NSPrivacyAccessedAPITypes": [
+      {
+        "NSPrivacyAccessedAPITypeReasons": [
+          "35F9.1"
+        ],
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategorySystemBootTime"
+      },
+      {
+        "NSPrivacyAccessedAPITypeReasons": [
+          "CA92.1"
+        ],
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults"
+      },
+      {
+        "NSPrivacyAccessedAPITypeReasons": [
+          "E174.1"
+        ],
+        "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryDiskSpace"
+      }
+    ]
+  },
+  "trackingDomainsDeclared": null,
+  "NSPrivacyTracking": null,
+  "status": "SDK has Device ID tracking data declaration, but no top-level tracking flag or domains. App release manifest unresolved; do not invent endpoints or mark full readiness."
+}

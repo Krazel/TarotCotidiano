@@ -1,0 +1,207 @@
+{
+  "status": "QA_PLAN_NOT_EXECUTED",
+  "date": "2026-10-29",
+  "candidateVersion": "1.2.1",
+  "candidateBuild": "1",
+  "cases": [
+    {
+      "id": "EEA_NO_CHOICE",
+      "setup": "Fresh UMP and ATT notDetermined",
+      "action": "Leave required message unanswered",
+      "expected": "No banner load, no SDK startup before the flow permits it, no ATT yet; core reading remains accessible if flow is deferred.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "EEA_REFUSE",
+      "setup": "Fresh install/configured GDPR+IDFA",
+      "action": "Do not consent",
+      "expected": "No ATT immediately after complete legal refusal; IDFA unavailable; SDK selects only a legally permitted restricted mode, not a forced personalized request.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "EEA_ACCEPT_ATT_DENY",
+      "setup": "Fresh ATT state",
+      "action": "Accept regional choices, then Ask App Not to Track",
+      "expected": "ATT denied, no IDFA/cross-company tracking; eligible requests can continue. Publisher-scoped mode must obey consent and not bypass ATT.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "EEA_ACCEPT_ATT_ALLOW",
+      "setup": "Fresh ATT state",
+      "action": "Accept regional choices, then Allow",
+      "expected": "ATT authorized before IDFA use/tracking; verify actual test request signals and configured providers, not merely prompt appearance.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "PARTIAL_PURPOSE",
+      "setup": "Real Manage options controls",
+      "action": "Reject personalization purpose while permitting others",
+      "expected": "No false ATT/personalization grant from canRequestAds or one permitted purpose.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "PARTIAL_VENDOR",
+      "setup": "Real Manage options controls",
+      "action": "Permit purposes but reject Google/applicable vendor",
+      "expected": "No false vendor permission; actual SDK demand treatment reflects choice.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "NON_EEA_FRESH",
+      "setup": "No stored legal choice/ATT notDetermined",
+      "action": "Launch in applicable non-EEA test geography",
+      "expected": "Correct message route, ATT only when appropriate; no region-based automatic tracking grant.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "US_OPTOUT",
+      "setup": "Regulated US state test setting/message",
+      "action": "Open privacy options and opt out",
+      "expected": "GPP/US restrictions honored; prior ATT permission cannot override a legal opt-out.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "ATT_RESTRICTED",
+      "setup": "System restrictions/Allow Apps to Request to Track disabled",
+      "action": "Launch and choose regional options",
+      "expected": "No pressure or fake ATT; no IDFA; core functions and eligible ads remain available.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "REVOKE_CMP",
+      "setup": "Previously accepted+ATT authorized",
+      "action": "Reopen Advertising choices and reject",
+      "expected": "Destroy/invalidate banner before change; no stale callback restores old behavior; new traffic respects withdrawal despite ATT remaining authorized.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "REVOKE_ATT",
+      "setup": "Previously accepted+ATT authorized",
+      "action": "Turn off system tracking permission and return to app",
+      "expected": "Re-read OS status, invalidate old requests, no IDFA/cross-company tracking afterward.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "UPGRADE_1_2",
+      "setup": "Install exact legacy 1.2 then candidate without deleting data",
+      "action": "Retain prior UMP decision and persisted first-party false",
+      "expected": "New candidate deliberately configures first-party setting; stored readings/subscriptions retained; required new permission flow works without resetting production consent.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "OFFLINE_OR_INVALID",
+      "setup": "Clean launch or privacy update with network failure",
+      "action": "Refresh/load/presentation fails",
+      "expected": "No unsupported stale authorization used; retry is safe; no duplicate requests/prompts.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "ACTIVE_READING",
+      "setup": "Start or resume reading during async form preparation",
+      "action": "Await loaded form",
+      "expected": "No presentation over active reading; resumes at safe point; callback does not authorize ads prematurely.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "SUBSCRIBER",
+      "setup": "Verified active entitlement",
+      "action": "Launch, restore, foreground",
+      "expected": "No banners/ad-load requests; no tracking request demanded to retain paid benefit.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "EN_ES",
+      "setup": "Both localized builds/settings",
+      "action": "Render ATT and options",
+      "expected": "Correct purpose string in compiled InfoPlist.strings, no English-only fallback in Spanish.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "LEGACY_REMOTE_ROLLOUT",
+      "setup": "Exact distributed 1.2 without NSUserTrackingUsageDescription",
+      "action": "Evaluate proposed app-scoped remote IDFA message compatibility",
+      "expected": "Do not activate for shared production app ID until legacy behavior is demonstrated safe and published policy/label covers the rollout; never claim old builds have the new gate/string.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    },
+    {
+      "id": "TRANSPORT_AND_ARCHIVE",
+      "setup": "Exact candidate archive and test-device traffic",
+      "action": "Inspect privacy report, manifests, request flags and identifier presence",
+      "expected": "Resolve tracking domains from actual supported evidence, no guessed domains or IDFA values logged. Compare accept/reject/revoke and verify optional parameters really sent.",
+      "status": "NOT_EXECUTED",
+      "evidence": null
+    }
+  ],
+  "testHarness": {
+    "realUMP": true,
+    "noSyntheticConsent": true,
+    "sampleIDsBeforeLiveTraffic": true,
+    "existingFourTests": "The existing four Google-sample tests observe request coordination and legal-choice state. Optional ATT denial handling does not demonstrate ATT Allow or Tarot's remotely configured IDFA message if the sample app does not supply it.",
+    "attReset": {
+      "api": "XCUIApplication.resetAuthorizationStatus(for: .userTracking)",
+      "methodIntroducedIOS": "13.4",
+      "resourceIntroducedIOS": "15.0",
+      "compatibleWithMinimumIOS": "16.0",
+      "verifiedBy": "Public Apple DocC JSON read on 2026-10-29",
+      "sources": [
+        "https://developer.apple.com/tutorials/data/documentation/xcuiautomation/xcuiapplication/resetauthorizationstatus(for:).json",
+        "https://developer.apple.com/tutorials/data/documentation/xcuiautomation/xcuiprotectedresource/usertracking.json"
+      ],
+      "toolchainNote": "Current XCUIAutomation module metadata says Xcode16.3. The API previously lived in XCTest; confirm selected toolchain by compilation, not by treating module migration as the historical API introduction."
+    },
+    "resetLimits": "UMP reset does not reset ATT. Verify actual starting status after XCTest reset; restricted system state may remain restricted. Upgrade case must not reset either production consent or user data.",
+    "observability": "Capture screenshots, current ATT enum, UMP eligibility, actual request count, policy values and privacy report; never log raw IDFA, complete TCString, secrets or personal identifiers.",
+    "requestEvidenceLimit": "Banner-load counters and TCF observations are not proof of transport flags, Google buyer behavior or absence of tracking.",
+    "regressions": "Retain subscription and reading/overlay exclusions. Verify app foreground lifecycle after ATT and Settings does not race UMP or restart it indefinitely."
+  },
+  "manifestDecision": {
+    "status": "UNRESOLVED_REQUIRED_BEFORE_SUBMISSION",
+    "observedAppManifest": "NSPrivacyTracking=false; NSPrivacyCollectedDataTypes empty; UserDefaults reason CA92.1. Third-party SDK manifests carry their own collection declarations.",
+    "observedGMAManifest": "Pinned GMA12.14 declares DeviceID used for tracking but the inspected manifest lacks top-level NSPrivacyTracking/NSPrivacyTrackingDomains.",
+    "appleRule": "NSPrivacyTracking applies to app OR third-party SDK tracking. Apple TN3182 says true plus actual tracking domains for tracking connections; TN3181 says true with empty array is invalid.",
+    "recommendedAction": "Do not certify false merely because the SDK performs collection. Determine actual relevant tracking domains from exact SDK/traffic or vendor guidance and reconcile the aggregate archive report. Do not fabricate a host or add all Google domains. Parent owns implementation and final decision.",
+    "whyGuessesHarm": "iOS blocks requests to declared tracking domains without ATT; a guessed broad/dual-purpose host could disable contextual ads or consent traffic. Apple discusses separating mixed tracking/nontracking hosts; the SDK supplier controls these endpoints.",
+    "sources": [
+      "https://developer.apple.com/documentation/technotes/tn3182-adding-privacy-tracking-keys-to-your-privacy-manifest",
+      "https://developer.apple.com/documentation/technotes/tn3181-debugging-invalid-privacy-manifest",
+      "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytracking",
+      "https://developer.apple.com/documentation/bundleresources/app-privacy-configuration/nsprivacytrackingdomains",
+      "https://developer.apple.com/videos/play/wwdc2023/10060/"
+    ],
+    "noFabricatedDomain": true
+  },
+  "skadnetwork": {
+    "scope": "Adding applicable SKAdNetwork IDs from Google's current documented buyer list enables Apple install attribution for existing AdMob demand. It does not install a network SDK or configure a mediation group.",
+    "condition": "Apple specifies IDs for networks the app works with. Preserve the exact official source/date/list in evidence; do not copy an unrelated aggregator or claim every listed network has served Tarot.",
+    "privacy": "SKAdNetwork attribution can work without IDFA and is distinct from ATT-authorized cross-company tracking. Adding the list does not authorize optional buyers, adapters or broad identifier sharing.",
+    "sources": [
+      "https://developers.google.com/admob/ios/privacy/strategies",
+      "https://developer.apple.com/documentation/bundleresources/information-property-list/skadnetworkitems"
+    ]
+  },
+  "releaseGate": [
+    "Verify configured message routing on the exact pinned SDK and exact app; Google sample alone is insufficient.",
+    "Resolve manifest/domain question without inventing endpoints or invalid true+empty array.",
+    "Confirm archive privacy report and final Apple answers, bind version/build/commit, and read back public policy after authorized update.",
+    "Do not activate remote IDFA on the shared production app ID before legacy compatibility and disclosure rollout are resolved.",
+    "Keep source prepared, binary built, native tests, TestFlight, App Review submission and public release as separate evidence states."
+  ],
+  "remoteMutationsByThisSubtask": false
+}

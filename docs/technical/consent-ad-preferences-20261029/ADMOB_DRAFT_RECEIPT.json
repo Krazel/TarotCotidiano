@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-29",
+  "accountVerifiedInUI": "coderappskrazel@gmail.com",
+  "publisher": "pub-3425091654264901",
+  "messageID": "54ac9f5311bbe2b2",
+  "nameReadBack": "Tarot Deck IDFA EN-ES 1.2.1",
+  "appOnly": "Tarot Deck: Read & Learn",
+  "appStoreID": "6800144105",
+  "url": "https://admob.google.com/v2/privacymessaging/idfa/messages/detail/54ac9f5311bbe2b2",
+  "stateReadBack": "DRAFT",
+  "publishedToggle": false,
+  "languagesReadBack": ["en-US", "es"],
+  "textReadBack": {
+    "en": {
+      "title": "Your advertising privacy choices",
+      "body": "On the next screen, Apple will ask whether AdMob may use your advertising identifier to personalize and measure ads across apps and websites owned by other companies. You can allow or decline. All readings and cards remain available either way."
+    },
+    "es": {
+      "title": "Tus opciones de privacidad publicitaria",
+      "body": "En la siguiente pantalla, Apple te preguntará si AdMob puede usar tu identificador publicitario para personalizar y medir anuncios entre apps y sitios web de otras empresas. Puedes permitirlo o rechazarlo. Todas las tiradas y cartas seguirán disponibles en ambos casos."
+    }
+  },
+  "screenshot": "ADMOB_IDFA_DRAFT.png",
+  "nativeDeliveryVerified": false,
+  "legacyCompatibilityVerified": false,
+  "activationCondition": "Verify exact native flow and legacy 1.2 compatibility, reconcile published privacy, then activate under authorized release scope. Saving this draft does not activate IDFA."
+}

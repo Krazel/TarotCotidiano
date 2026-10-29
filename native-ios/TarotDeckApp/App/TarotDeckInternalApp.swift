@@ -168,6 +168,7 @@ struct TarotDeckInternalApp: App {
             .onChange(of: scenePhase) { phase in
                 supporterStore.invalidateEntitlements()
                 if phase == .active {
+                    adConsent.applicationDidBecomeActive()
                     Task { await supporterStore.refreshEntitlements() }
                 }
             }

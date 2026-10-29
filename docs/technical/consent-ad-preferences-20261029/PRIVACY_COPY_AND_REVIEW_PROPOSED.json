@@ -1,0 +1,62 @@
+{
+  "status": "PROPOSED_NOT_PUBLISHED",
+  "date": "2026-10-29",
+  "candidateVersion": "1.2.1",
+  "candidateBuild": "1",
+  "binaryVerification": "PENDING",
+  "integrationInstructions": [
+    "Bind to the final candidate version/build/commit after native verification. Do not overwrite the historical 1.2 behavior description as if that release already supported ATT.",
+    "Publish a distinct new-version advertising section; update introductory version references and remove contradictory current-version claims of no ATT/no IDFA/first-party disabled/all ads NPA.",
+    "Preserve the verified on-device data, StoreKit, support, rights/contact and Google retention sections. Re-read live page before editing; saved October 18 HTML is only a comparison baseline.",
+    "Review the unqualified existing sentence The developer does not sell your personal data against actual regional advertising-sharing configuration; do not equate absence of a cash sale with absence of legally defined sharing.",
+    "Nothing in this file asserts that remote IDFA messages, Apple labels or a build have been published."
+  ],
+  "attUsageDescription": {
+    "en": "Your permission lets AdMob use your device's advertising identifier to personalize ads and measure advertising across apps and websites owned by other companies.",
+    "es": "Tu permiso permite a AdMob usar el identificador publicitario de tu dispositivo para personalizar anuncios y medir la publicidad entre apps y sitios web de otras empresas.",
+    "note": "Matches the parent's current proposed InfoPlist copy. Localize NSUserTrackingUsageDescription; no revenue pressure, rewards, or promise that an approval prevents all irrelevant ads."
+  },
+  "policy": {
+    "en": {
+      "heading": "Advertising and privacy choices in version 1.2.1",
+      "paragraphs": [
+        "Tarot Deck uses Google Mobile Ads 12.14.0 and Google's User Messaging Platform (UMP) 3.1.0 to show ads and manage applicable privacy choices. Google may process approximate location inferred from network information, device or app identifiers, product interactions, advertising data, crash reports, performance data, other diagnostics and consent choices for advertising, analytics, fraud prevention and SDK operation. Reading content, saved spreads and favorites are not sent as advertising data.",
+        "Where applicable, UMP presents regional privacy choices before ads are requested. If those choices allow the tracking request, iOS may ask separately for App Tracking Transparency permission. With the applicable consent and iOS permission, AdMob can use the device's advertising identifier (IDFA) to personalize ads and measure advertising across other companies' apps and websites. Declining iOS tracking permission prevents this IDFA use and cross-company tracking. Eligible ads may still appear.",
+        "Where your privacy choices and applicable rules permit, AdMob may also use an identifier limited to our apps to make ads more relevant. This publisher-scoped identifier is separate from IDFA; it is not permission to track you across other companies' apps. The SDK applies the relevant consent and opt-out signals rather than treating every user as having agreed to personalization.",
+        "You can change applicable regional choices in Settings > Advertising choices in Tarot Deck. You can change iOS tracking permission in the device's Settings > Privacy & Security > Tracking. These controls are separate: changing regional choices does not override an iOS refusal, and withdrawing consent applies to future processing rather than automatically deleting data already retained. Refusing consent or tracking does not block tarot features. Active ad-removal subscriptions remove banners.",
+        "Google controls retention and deletion of the data it processes under its Privacy Policy. We do not promise a fixed retention period or have access to Google's raw SDK records. Privacy choices do not imply that no technical data leaves the device."
+      ]
+    },
+    "es": {
+      "heading": "Publicidad y opciones de privacidad en la versión 1.2.1",
+      "paragraphs": [
+        "Mazo de tarot utiliza Google Mobile Ads 12.14.0 y User Messaging Platform (UMP) 3.1.0 de Google para mostrar anuncios y gestionar las opciones de privacidad aplicables. Google puede tratar ubicación aproximada deducida de la red, identificadores de dispositivo o app, interacciones con el producto, datos publicitarios, informes de fallos, datos de rendimiento, otros diagnósticos y elecciones de consentimiento para publicidad, analítica, prevención del fraude y funcionamiento de los SDK. El contenido de las tiradas, las tiradas guardadas y los favoritos no se envían como datos publicitarios.",
+        "Cuando corresponde, UMP presenta las opciones regionales de privacidad antes de solicitar anuncios. Si esas elecciones permiten solicitar el seguimiento, iOS puede pedir por separado permiso mediante App Tracking Transparency. Con el consentimiento aplicable y el permiso de iOS, AdMob puede usar el identificador publicitario del dispositivo (IDFA) para personalizar anuncios y medir la publicidad entre apps y sitios web de otras empresas. Rechazar el permiso de seguimiento de iOS impide ese uso del IDFA y el seguimiento entre empresas. Pueden seguir apareciendo anuncios permitidos.",
+        "Cuando tus elecciones de privacidad y las normas aplicables lo permiten, AdMob también puede utilizar un identificador limitado a nuestras apps para mostrar anuncios más relevantes. Este identificador del editor es distinto del IDFA y no autoriza a seguirte entre apps de otras empresas. El SDK aplica las señales de consentimiento y rechazo correspondientes, sin considerar que todas las personas hayan aceptado la personalización.",
+        "Puedes cambiar las elecciones regionales aplicables en Ajustes > Opciones de publicidad dentro de Mazo de tarot. El permiso de seguimiento de iOS se cambia en Ajustes > Privacidad y seguridad > Rastreo del dispositivo. Son controles separados: cambiar las opciones regionales no anula un rechazo de iOS, y retirar el consentimiento afecta al tratamiento futuro, sin borrar automáticamente datos ya conservados. Rechazar el consentimiento o el seguimiento no bloquea las funciones de tarot. Las suscripciones activas para quitar anuncios eliminan los banners.",
+        "Google determina la conservación y eliminación de los datos que trata conforme a su Política de privacidad. No prometemos un plazo fijo ni tenemos acceso a los registros brutos de sus SDK. Las opciones de privacidad no significan que ningún dato técnico salga del dispositivo."
+      ]
+    },
+    "links": [
+      {
+        "label": "Google Privacy Policy / Política de privacidad de Google",
+        "url": "https://policies.google.com/privacy"
+      },
+      {
+        "label": "Google iOS SDK data disclosure / Declaración de datos del SDK de iOS",
+        "url": "https://developers.google.com/admob/ios/privacy/data-disclosure"
+      }
+    ],
+    "publicationPreconditions": [
+      "Validate all described branches on actual configured app; do not publish a guarantee that cross-company tracking stops without verified consent/ATT enforcement.",
+      "Confirm release remains GMA12.14.0/UMP3.1.0 and actual policy controls/routes match wording.",
+      "Resolve privacy manifest tracking/domains and final Apple label answers with evidence.",
+      "Coordinate app-scoped remote IDFA rollout with installed legacy 1.2 that lacks the usage string. A remote toggle can affect older builds independently of this release."
+    ]
+  },
+  "reviewNotesTemplate": {
+    "en": "Version 1.2.1 adds optional advertising tracking permission and permitted publisher-scoped advertising identifiers. UMP handles the applicable regional consent message and the optional iOS ATT flow at the safe home screen, before eligible banner requests. In the EEA/UK/Switzerland, refuse the regional message to verify that tarot remains usable and that the app does not immediately ask for ATT. On a fresh eligible installation, accept the applicable regional choices to reach ATT, then test both Allow and Ask App Not to Track. Outside the EEA the preceding message can differ. Existing OS decisions are not prompted again. Change regional choices at Settings > Advertising choices and iOS permission at Settings > Privacy & Security > Tracking; relaunch/foreground the app to verify current state. All reading, learning and card-reference features remain available after refusal. An active monthly ad-removal subscription removes banners; existing seven equivalent monthly plans and prices are unchanged. No developer login is required. SDKs: Google Mobile Ads 12.14.0 and UMP 3.1.0. Exact reviewed build and regional screenshots: {{VERIFIED_BUILD_AND_EVIDENCE}}.",
+    "es": "La versión 1.2.1 incorpora permiso publicitario de seguimiento opcional e identificadores limitados al editor cuando están permitidos. UMP coordina las opciones regionales y el flujo ATT de iOS en la pantalla inicial segura, antes de las solicitudes de banner permitidas. En el EEE, Reino Unido y Suiza, rechace las opciones regionales para comprobar que el tarot sigue disponible y no aparece inmediatamente ATT. En una instalación nueva elegible, acepte las opciones aplicables y pruebe tanto permitir como rechazar ATT. Fuera del EEE puede variar el mensaje previo. No se vuelve a solicitar una decisión ya registrada por iOS. Las opciones regionales se cambian en Ajustes > Opciones de publicidad; el permiso de iOS, en Ajustes > Privacidad y seguridad > Rastreo. Vuelva a abrir la app para verificar el estado actualizado. Las funciones de tirada, aprendizaje y referencia siguen disponibles tras el rechazo. Una suscripción mensual activa para quitar anuncios elimina los banners; se mantienen los siete planes mensuales equivalentes y sus precios. No se necesita una cuenta del desarrollador. SDKs: Google Mobile Ads 12.14.0 y UMP 3.1.0. Build y evidencias regionales comprobadas: {{VERIFIED_BUILD_AND_EVIDENCE}}.",
+    "submissionCondition": "Replace placeholder only with actual evidence. Do not claim TestFlight, real-device QA, ATT allow branch or production signal verification based on sample-message tests alone."
+  }
+}

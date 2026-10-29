@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-29T14:56:59.169Z",
+  "version": "1.2.1",
+  "build": "1",
+  "tupleUnused": true,
+  "existingProfile": {
+    "id": "3JPMF7W93U",
+    "name": "Tarot Deck App Store 2026-10-18",
+    "state": "ACTIVE",
+    "expirationDate": "2027-08-08T21:50:46.000+00:00"
+  },
+  "existingCertificate": {
+    "id": "2K3G3RTCS5",
+    "expirationDate": "2027-08-08T21:50:46.000+00:00"
+  },
+  "uploadStarted": false
+}

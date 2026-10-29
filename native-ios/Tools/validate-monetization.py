@@ -44,15 +44,20 @@ all_swift = '\n'.join(path.read_text(encoding='utf-8') for path in APP.rglob('*.
 configuration = (ROOT / 'native-ios/Sources/TarotDeckCore/AdvertisingConfiguration.swift').read_text(encoding='utf-8')
 check(set(re.findall(r'ca-app-pub-\d+[~/]\d+', all_swift + configuration)) == {sample_app, sample_banner},
       'Real identifiers are supplied by the verified build configuration only')
-check(not re.search(r'import (AppTrackingTransparency|AdSupport)|ATTrackingManager|ASIdentifierManager|requestTrackingAuthorization', all_swift),
-      'No ATT request, AdSupport import or application IDFA access')
+check('NSUserTrackingUsageDescription' in plist and
+      project.count('-framework AppTrackingTransparency') == 2 and
+      not re.search(r'ASIdentifierManager|requestTrackingAuthorization', all_swift),
+      'ATT purpose and framework configured; UMP owns the prompt with no duplicate/manual IDFA access')
+info = json.loads((APP / 'Resources/InfoPlist.xcstrings').read_text(encoding='utf-8'))
+check(all(info['strings']['NSUserTrackingUsageDescription']['localizations'][language]['stringUnit']['state'] == 'translated'
+          for language in ['en', 'es']), 'ATT purpose text translated in EN/ES')
 consent = (APP / 'Internal/TarotAdConsent.swift').read_text(encoding='utf-8')
 check('#if DEBUG || TAROT_TEST_ADS' in consent and '#elseif TAROT_PRODUCTION_ADS' in consent and
       'let allowsProduction = false' in consent and 'AdvertisingConfiguration.bannerID' in consent,
       'Development never uses real inventory; production needs explicit compilation and valid publisher configuration')
-check('setPublisherFirstPartyIDEnabled(false)' in consent and 'publisherPrivacyPersonalizationState = .default' in consent and
+check('setPublisherFirstPartyIDEnabled(true)' in consent and 'publisherPrivacyPersonalizationState = .default' in consent and
       not re.search(r'publisherPrivacyPersonalizationState\s*=\s*\.(enabled|disabled)', consent),
-      'Publisher first-party ID stays disabled; no app-wide personalization override before SDK start')
+      'Explicit publisher first-party enablement migrates prior persisted opt-out; no app-wide personalization override')
 check('ConsentInformation.shared.canRequestAds' in consent and 'requestConsentInfoUpdate' in consent,
       'UMP consent info is refreshed and consulted rather than app-cached consent')
 banner = (APP / 'Components/TarotBanner.swift').read_text(encoding='utf-8')
@@ -69,6 +74,9 @@ check('MonetizationPolicy.surface(' in shell and 'tutorialReturnsToReading: tuto
 app = (APP / 'App/TarotDeckInternalApp.swift').read_text(encoding='utf-8')
 check('readModel.surface != .home || readModel.hasActiveReading' in app and 'invalidateEntitlements()' in app,
       'Table entry/restoration and foreground stale-entitlement exclusion are wired at root')
+check('adConsent.applicationDidBecomeActive()' in app and
+      'guard !isBusy else { return }' in consent and 'requestGeneration += 1' in consent,
+      'Foreground revalidation invalidates old requests without interrupting an in-flight consent flow')
 store = (APP / 'Internal/SupporterStore.swift').read_text(encoding='utf-8')
 original = json.loads((ROOT / 'store/tarot-subscriptions.v1.json').read_text(encoding='utf-8'))
 ids = re.findall(r'"(com\.krazel\.tarotdeck\.support\.monthly\.[^"]+)"', store)
@@ -99,7 +107,7 @@ check(hashlib.sha256(svg.read_text(encoding='utf-8').encode('utf-8')).hexdigest(
 tests = (ROOT / 'native-ios/Tests/TarotDeckCoreTests/MonetizationPolicyTests.swift').read_text(encoding='utf-8')
 check(tests.count('func test') == 4 and 'UserDefaults(suiteName: suite)' in tests and 'MonetizationPolicy.Surface.normal, .table, .restoring, .readingMeaning' in tests,
       'XCTest source covers banner gates, reminder boundaries and real UserDefaults persistence (not executed here)')
-report = {'date': '2026-10-27', 'type': 'offline structural validation', 'status': 'PASS',
+report = {'date': '2026-10-29', 'type': 'offline structural validation', 'status': 'PASS',
           'checks': checks, 'swiftCompiled': False, 'xctestExecuted': False, 'nativeRuntimeQA': False}
-(ROOT / 'docs/technical/consent-ad-preferences-20261027/VALIDATION.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
+(ROOT / 'docs/technical/consent-ad-preferences-20261029/VALIDATION.json').write_text(json.dumps(report, indent=2) + '\n', encoding='utf-8')
 print(f'PASS: {len(checks)} offline structural checks; Swift compilation/XCTest/device QA NOT executed.')

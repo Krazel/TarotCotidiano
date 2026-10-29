@@ -1,6 +1,18 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-10-27
+Actualizado: 2026-10-29
+
+## Preparación completa de monetización autorizada — 29/10/2026
+
+El propietario autoriza expresamente completar UMP, ATT/IDFA y el identificador propio permitido de AdMob, respetando las negativas, y preparar la versión para revisión. A-075 sustituye el límite anterior de no ampliar esos identificadores; no autoriza gasto ni nueva exposición del código. Propietaria única de implementación: esta tarea Tarot `01a14ee2-3d19-7be2-a2dd-b13fa1f6b609`. Candidata **1.2.1 (1)** todavía sin compilar ni subir.
+
+Preparados en código: first-party ID true explícito para revertir el opt-out persistido de 1.2, PPT.default y Request sin override NPA; framework ATT y propósito EN/ES, coordinación UMP integrada sin un segundo prompt manual, revalidación al volver al primer plano, 50 IDs SKAdNetwork de la lista oficial para la demanda AdMob existente. Se conservan siete suscripciones, exclusión de mesa activa y ausencia de bloqueo de funciones por consentimiento. QA DEBUG observa el estado ATT real y XCTest restablece el recurso OS; el mensaje sample puede no ofrecer ATT y no acredita ese camino.
+
+Apple: borrador 1.2.1 **PREPARE_FOR_SUBMISSION**, ID655beebc-5013-4f14-8189-adadda184449, novedades EN/ES guardadas y releídas por API, release MANUAL, sin build seleccionada ni revisión enviada. AdMob: borrador IDFA EN/ES solo Tarot, publisher correcto; no activar hasta probar compatibilidad de 1.2 instalada. Política y respuestas App Privacy propuestas guardadas, todavía no publicadas. La versión pública 1.2 conserva su tratamiento anterior.
+
+Validación local: 31 checks estructurales, integración, localización, contrato de siete productos y dos workflows. No Swift/Xcode/UITest/iPhone ejecutados. Pendientes concretos: (1) API GitHub de cuota sigue404/requiere scope user; no nueva autorización registrada ni runner propio; no CI/gasto; (2) manifiesto de tracking y dominios efectivos del SDK por resolver con runtime/proveedor, no inventar endpoints ni declarar listo NSPrivacyTracking=false; (3) QA nativo de aceptación/rechazo/ATT allow-deny/upgrade/revocación y señales reales antes de distribución/revisión. El workflow apto para tienda se ha preparado; no certificar esas puertas mediante inputs sin evidencia.
+
+Paquete y recibos: `docs/technical/consent-ad-preferences-20261029/`. PR-003 conserva actualización pendiente local tras rechazo de escritura previo; no sincronizada. Los apartados siguientes son historia, no la preparación actual.
 
 ## TestFlight solicitado — 1.2.1 (1), pendiente de comprobar cuota privada
 

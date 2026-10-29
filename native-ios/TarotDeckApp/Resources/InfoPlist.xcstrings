@@ -1,6 +1,13 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "NSUserTrackingUsageDescription" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Your permission lets AdMob use your device's advertising identifier to personalize ads and measure advertising across apps and websites owned by other companies." } },
+        "es" : { "stringUnit" : { "state" : "translated", "value" : "Tu permiso permite a AdMob usar el identificador publicitario de tu dispositivo para personalizar anuncios y medir la publicidad entre apps y sitios web de otras empresas." } }
+      }
+    },
     "CFBundleDisplayName" : {
       "extractionState" : "manual",
       "localizations" : {

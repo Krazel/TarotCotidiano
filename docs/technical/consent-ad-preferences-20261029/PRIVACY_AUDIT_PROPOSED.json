@@ -1,0 +1,210 @@
+{
+  "auditDate": "2026-10-29",
+  "status": "PROPOSED_PRIVACY_PACKAGE_NOT_PUBLISHED",
+  "appID": "6800144105",
+  "bundleID": "com.krazel.tarotdeck",
+  "authority": "Parent relays human authorization dated 2026-10-29 to complete UMP+ATT/IDFA and permitted publisher-first-party use; no remote mutation/publication in this subtask.",
+  "releaseBinding": {
+    "marketingVersion": "1.2.1",
+    "build": "1",
+    "commit": null,
+    "archiveSHA256": null,
+    "required": "Parent must bind the copy and final privacy answers to the actual verified candidate; no build or distribution is asserted."
+  },
+  "sdkBaseline": {
+    "GoogleMobileAds": "12.14.0",
+    "UMP": "3.1.0",
+    "manifestEvidence": "../monetization-20261018/SDK_AUDIT.json",
+    "GMAArchiveSHA256": "c8c5523373ed76aa6da7bbe1324458e680981bd4593271cca5958fc8e8ffc5e7",
+    "UMPArchiveSHA256": "90fe6bf3b0f4ce0d0199628c0871de58b6f673375148b98d52348aecc86db231",
+    "scope": "These exact official archives were audited on 2026-10-18. No fresh candidate archive or optional-buyer traffic has been inspected in this subtask."
+  },
+  "proposedAppleAnswers": [
+    {
+      "dataType": "COARSE_LOCATION",
+      "collected": true,
+      "linked": true,
+      "proposedTracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "rationale": "GMA linked; UMP adds app functionality. IP-derived location, not GPS permission.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    },
+    {
+      "dataType": "DEVICE_ID",
+      "collected": true,
+      "linked": true,
+      "proposedTracking": true,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ],
+      "rationale": "IDFA when authorized and publisher/app-scoped identifiers. This changes the prior tracking=false answer; exact GMA manifest already declares DeviceID tracking capability.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    },
+    {
+      "dataType": "PRODUCT_INTERACTION",
+      "collected": true,
+      "linked": true,
+      "proposedTracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "rationale": "GMA linked; UMP adds app functionality. No Tarot reading content sent as targeting.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    },
+    {
+      "dataType": "ADVERTISING_DATA",
+      "collected": true,
+      "linked": true,
+      "proposedTracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ],
+      "rationale": "GMA linked advertising interactions. Proposed tracking=false follows exact manifest, conditional on no additional cross-company use beyond the documented SDK configuration.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    },
+    {
+      "dataType": "CRASH_DATA",
+      "collected": true,
+      "linked": false,
+      "proposedTracking": false,
+      "purposes": [
+        "ANALYTICS"
+      ],
+      "rationale": "Exact GMA 12.14 manifest lists analytics only for crash data.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    },
+    {
+      "dataType": "PERFORMANCE_DATA",
+      "collected": true,
+      "linked": false,
+      "proposedTracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ],
+      "rationale": "Exact GMA manifest is unlinked; UMP adds app functionality. Generic Google prose is broader and does not replace the exact archive report.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    },
+    {
+      "dataType": "OTHER_DIAGNOSTIC_DATA",
+      "collected": true,
+      "linked": false,
+      "proposedTracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ],
+      "rationale": "Exact GMA diagnostic category; no extra custom telemetry.",
+      "verification": "PROPOSED_FROM_PINNED_MANIFEST_NOT_FINAL_ARCHIVE_OR_TRANSPORT_AUDIT"
+    }
+  ],
+  "answerInterpretation": [
+    "Declare Device ID tracking=true for the candidate that actually supports authorized IDFA advertising/measurement, even though only consenting users activate it. Do not retain the old all-false tracking rationale.",
+    "The other six proposed tracking values follow the exact SDK manifest, not a rule that ATT makes all data tracked. If final configuration or buyer behavior links location/interaction/advertising/diagnostic data across companies for targeting or measurement, change the affected answers with supporting evidence before submission.",
+    "Linked=true describes linkage to a person or device; it does not imply an app account and is not synonymous with tracking.",
+    "Do not add Product Personalization merely because an ad is personalized: Third-Party Advertising is the supported purpose here. No Tarot content recommendation feature was added.",
+    "Developer Advertising/Marketing remains excluded because no own-ad campaigns, house ads, Firebase analytics connection, remarketing integration or equivalent use was added. Reevaluate if actual scope differs.",
+    "Publisher first-party ID is an app/developer-scoped identifier in the Device ID disclosure here; enabling it is not evidence of collected names/email, precise location or reading content.",
+    "No automatic new categories for StoreKit data handled solely by Apple or Tarot information remaining on device. Preserve existing support-email disclosure and actual on-device storage text."
+  ],
+  "implementationConditions": [
+    "Refresh UMP every launch, finish required message sequence before eligible ad loads, preserve safe presentation and current-request generation invalidation.",
+    "Use the official UMP-coordinated GDPR+IDFA route with the exact app's messages; do not manually call ATT solely on canRequestAds, obtained/notRequired or a purpose bit.",
+    "Current official UMPConsentForm reference confirms the required-status presentation guard. The parent inspected the same contract in the exact 3.1.0 header. Earlier suggestion that this guard necessarily misses ATT is withdrawn; upgrade/non-EEA coordination remains a runtime test.",
+    "Current Google FAQ supports UMP-coordinated messages and qualifies older skill guidance favoring a separate gate. This is a source correction, not permission to ignore rejection; test the pinned SDK's real combined flow.",
+    "IDFA and cross-company tracking only with ATT authorized and applicable regional permission. ATT denied/restricted/notDetermined cannot be overridden by CMP.",
+    "First-party scope is distinct: lawful publisher-scoped personalization need not require ATT, and ATT denial alone is not a blanket legal ban on all first-party use. It must not become an alternate identifier workaround for cross-company tracking; honor CMP and regional opt-outs.",
+    "Explicitly configure intended publisher-first-party setting on upgrade because prior false persists. Use normal SDK treatment rather than global NPA/PPT-disabled defaults; do not force npa=0 or PPT enabled.",
+    "Keep mediation, extra adapters, analytics connections, surveys and optional RTB sharing outside this change unless separately audited and authorized; baseline no adapters is historical, not a live account verification.",
+    "Recheck state after foreground/settings changes, destroy stale banners on withdrawal, prevent stale callbacks re-enabling traffic, and preserve all core functions after refusal."
+  ],
+  "knownEvidenceLimits": [
+    "No live AdMob account or App Store Connect read performed here. The 2026-10-18 Apple receipt and saved public policy are historical; parent owns current reads.",
+    "The public policy URL could not be fetched by web tool on October 29; no assertion that live text still matches saved HTML.",
+    "Metadata, public policy and review notes must be reread after authorized writes. No App Privacy API payload is implied by these local logical answers.",
+    "No claim of wire-level flags, no-tracking proof, iPhone QA, fill increase, eCPM or completed build."
+  ],
+  "sources": [
+    {
+      "id": "apple-privacy",
+      "url": "https://developer.apple.com/app-store/app-privacy-details/",
+      "accessed": "2026-10-29",
+      "supports": "Collection, linkage, tracking and purposes are separate; optional permission does not exempt advertising data from disclosure."
+    },
+    {
+      "id": "apple-att",
+      "url": "https://developer.apple.com/app-store/user-privacy-and-data-use/",
+      "accessed": "2026-10-29",
+      "supports": "ATT precedes IDFA/cross-company tracking; other consent does not override denial; no immediate ATT after rejection of all relevant legal choices."
+    },
+    {
+      "id": "gma-disclosure",
+      "url": "https://developers.google.com/admob/ios/privacy/data-disclosure",
+      "accessed": "2026-10-29",
+      "supports": "Google disclosure overview; exact manifests and actual optional features must determine final answers."
+    },
+    {
+      "id": "gma-firstparty",
+      "url": "https://support.google.com/admob/answer/14199649",
+      "accessed": "2026-10-29",
+      "supports": "Publisher-scoped personalization, consent controls, optional RTB sharing and identity-type reporting."
+    },
+    {
+      "id": "gma-gdpr",
+      "url": "https://developers.google.com/admob/ios/privacy/gdpr",
+      "accessed": "2026-10-29",
+      "supports": "Official FAQ recommends GDPR then ATT when user consented, coordinated by UMP when both messages configured; purpose and vendor permissions both matter."
+    },
+    {
+      "id": "gma-idfa",
+      "url": "https://developers.google.com/admob/ios/privacy/idfa",
+      "accessed": "2026-10-29",
+      "supports": "Info.plist usage description, framework and configured message; denied ATT means no IDFA in ad request; testing needs fresh ATT installation state."
+    },
+    {
+      "id": "ump-form",
+      "url": "https://developers.google.com/admob/ios/privacy/api/reference/Classes/UMPConsentForm",
+      "accessed": "2026-10-29",
+      "supports": "loadAndPresentIfRequired explicitly presents only for consentStatusRequired; no basis to force form merely because it is available."
+    },
+    {
+      "id": "gma-config",
+      "url": "https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration",
+      "accessed": "2026-10-29",
+      "supports": "setPublisherFirstPartyIDEnabled value persists; configure deliberately when upgrading from previous false."
+    },
+    {
+      "id": "message-routing",
+      "url": "https://support.google.com/admob/answer/10114020",
+      "accessed": "2026-10-29",
+      "supports": "Region and previous choices determine messages; European message may replace separate IDFA explainer; US message at privacy-options entry."
+    },
+    {
+      "id": "gma-modes",
+      "url": "https://developers.google.com/admob/ios/privacy/ad-serving-modes",
+      "accessed": "2026-10-29",
+      "supports": "Personalized/non-personalized/limited modes have different legal conditions; eligibility to request is not mode authorization."
+    },
+    {
+      "id": "gma-us",
+      "url": "https://developers.google.com/admob/ios/privacy/us-iab-support",
+      "accessed": "2026-10-29",
+      "supports": "GPP and applicable US state messaging; no simplistic non-EEA blanket permission."
+    },
+    {
+      "id": "google-policy",
+      "url": "https://policies.google.com/privacy",
+      "accessed": "2026-10-29",
+      "supports": "Google retention and controls; not evidence that every Google service data category is present in Tarot."
+    }
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-29",
+  "status": "STATIC_REVIEW_ONLY_NOT_A_RELEASE_APPROVAL",
+  "candidate": "1.2.1 (1)",
+  "scope": [
+    "native-ios/TarotDeckApp/Internal/TarotAdConsent.swift",
+    "native-ios/TarotDeckApp/App/TarotDeckInternalApp.swift",
+    "native-ios/TarotDeckApp/Resources/Advertising.plist",
+    "native-ios/TarotDeckApp/Resources/InfoPlist.xcstrings",
+    "native-ios/TarotDeck.xcodeproj/project.pbxproj",
+    "native-ios/UITests/TarotConsentUITests.swift",
+    "native-ios/TarotDeckApp/Resources/PrivacyInfo.xcprivacy"
+  ],
+  "summary": "No concrete P0/P1 Swift compilation or consent-status defect established by static inspection. Native compilation, presentation/lifecycle and exact-message transport remain unverified; privacy manifest/domain disclosure is unresolved before submission.",
+  "observations": [
+    {
+      "topic": "UMP presentation guard",
+      "result": "Keep consentStatus == required as equivalent to the documented UMP3.1 loadAndPresentIfRequired condition. No evidence establishes a bug solely because ATT is notDetermined while consentStatus is obtained; test that combination with real configured messages. Do not force presentation based only on formStatus.available.",
+      "source": "https://developers.google.com/admob/ios/privacy/api/reference/Classes/UMPConsentForm"
+    },
+    {
+      "topic": "UMP owns ATT sequencing",
+      "result": "Current Google GDPR FAQ states GDPR first then ATT on consent when both messages configured. The candidate does not manually derive ATT permission from canRequestAds and does not issue a separate unconditional ATT call.",
+      "source": "https://developers.google.com/admob/ios/privacy/gdpr"
+    },
+    {
+      "topic": "Persisted first-party setting",
+      "result": "Explicit true is necessary to reverse the previous persisted false for upgrading users. Applying configuration before start's already-started guard also refreshes policy after later choices. SDK regional/OS enforcement still requires runtime evidence; enabling the publisher-scoped option is not an unconditional grant to track.",
+      "source": "https://developers.google.com/admob/ios/api/reference/Classes/GADRequestConfiguration"
+    },
+    {
+      "topic": "ATT linkage/localization",
+      "result": "AppTrackingTransparency linker flags present in app Debug and Release; usage description in Advertising.plist and localized EN/ES catalog. Verify compiled resources and native presentation; source presence alone does not prove compiled localization."
+    },
+    {
+      "topic": "Foreground refresh",
+      "result": "Candidate invalidates requests and refreshes consent on active scene unless UMP busy. This should cover return from tracking Settings; verify reentrancy around ATT/system sheets and no indefinite repeat/hidden modal. No confirmed race claimed from static review."
+    },
+    {
+      "topic": "XCTest reset",
+      "result": "The exact API/case names exist in official Apple docs. Method iOS13.4+, resource userTracking iOS15+. Therefore minimum iOS16 compatible. Current migrated XCUIAutomation module metadata indicates Xcode16.3; actual compiler/toolchain remains to be verified."
+    },
+    {
+      "topic": "Optional ATT test helper",
+      "result": "Waits for either real SpringBoard Ask App Not to Track or UMP completion, records explicit non-certification if absent. Appropriate sample coverage limitation, but cannot substitute for a real ATT Allow test or custom configured Tarot message."
+    }
+  ],
+  "releaseIssues": [
+    {
+      "priority": "P1_BEFORE_DISTRIBUTION",
+      "topic": "Manifest tracking configuration unresolved",
+      "file": "native-ios/TarotDeckApp/Resources/PrivacyInfo.xcprivacy",
+      "line": 5,
+      "detail": "Application still declares NSPrivacyTracking=false while the candidate introduces optional IDFA cross-company tracking; inspected GMA12.14 manifest marks DeviceID tracking but lacks the top-level tracking/domain keys. Apple covers app or SDK tracking. Resolve actual tracking-domain requirements using SDK/transport evidence; false is not justified merely by collection occurring in the SDK. Do not set true with an empty array or fabricate broad Google hosts.",
+      "evidence": "NATIVE_QA_AND_ROLLOUT.json#manifestDecision"
+    },
+    {
+      "priority": "RELEASE_GATE",
+      "topic": "Shared remote-message compatibility",
+      "detail": "Publishing app-scoped IDFA messaging can affect already distributed 1.2 lacking its purpose key and promised identifier behavior. Leave remote message draft until exact legacy behavior/rollout and policy timing are demonstrated. Current source changes cannot fix an installed older binary."
+    },
+    {
+      "priority": "RELEASE_GATE",
+      "topic": "Evidence absent",
+      "detail": "No native execution/ATT Allow/real message transport/aggregate archive privacy report is established by this subtask. Do not label the candidate reviewed or compliant solely from static validators."
+    }
+  ],
+  "mutationsByThisSubtask": "Only proposed JSON artifacts in docs/technical/consent-ad-preferences-20261029. No app, SDK, workflow, account, message, metadata or public policy mutations."
+}

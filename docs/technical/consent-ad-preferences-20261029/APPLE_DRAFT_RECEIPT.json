@@ -1,0 +1,27 @@
+{
+  "checkedAt": "2026-10-29T15:07:55.059Z",
+  "app": "6800144105",
+  "version": "1.2.1",
+  "id": "655beebc-5013-4f14-8189-adadda184449",
+  "state": "PREPARE_FOR_SUBMISSION",
+  "releaseType": "MANUAL",
+  "buildID": null,
+  "locales": [
+    {
+      "locale": "en-US",
+      "whatsNew": "Improved advertising privacy choices, including optional iOS tracking permission. You can keep using all readings and cards whichever privacy choices you make.",
+      "supportUrl": "https://krazel.github.io/tarot-deck/support/",
+      "marketingUrl": "https://krazel.github.io/tarot-deck/support/"
+    },
+    {
+      "locale": "es-ES",
+      "whatsNew": "Mejoras en las opciones de privacidad publicitaria, incluido el permiso opcional de seguimiento de iOS. Puedes seguir usando todas las tiradas y cartas cualquiera que sea tu elección.",
+      "supportUrl": "https://krazel.github.io/tarot-deck/support/",
+      "marketingUrl": "https://krazel.github.io/tarot-deck/support/"
+    }
+  ],
+  "submitted": false,
+  "published": false,
+  "privacyChanged": false,
+  "nativeQA": false
+}

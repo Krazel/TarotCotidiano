@@ -5,6 +5,7 @@ import UIKit
 import UserMessagingPlatform
 import TarotDeckCore
 import OSLog
+import AppTrackingTransparency
 #if DEBUG
 import SwiftUI
 #endif
@@ -57,6 +58,16 @@ final class TarotAdConsent: ObservableObject {
         if allowed { Task { await updateIfNeeded() } }
     }
 
+    /// Re-read both current CMP signals and OS permissions after Settings changes.
+    /// An ATT sheet also changes scene phase: never interrupt an in-flight UMP flow.
+    func applicationDidBecomeActive() {
+        guard !isBusy else { return }
+        canRequestAds = false
+        requestGeneration += 1
+        didUpdateThisLaunch = false
+        Task { await updateIfNeeded() }
+    }
+
     private func requestParameters() -> RequestParameters {
         let parameters = RequestParameters()
         #if DEBUG
@@ -81,6 +92,9 @@ final class TarotAdConsent: ObservableObject {
                 refresh: {
                     try await ConsentInformation.shared.requestConsentInfoUpdate(with: self.requestParameters())
                 },
+                // UMP 3.1's official loadAndPresentIfRequired uses this same status.
+                // With both AdMob messages configured UMP coordinates GDPR then ATT;
+                // do not derive tracking consent from canRequestAds or call ATT again.
                 requiresForm: { ConsentInformation.shared.consentStatus == .required },
                 mayPresent: { self.automaticPresentationAllowed },
                 load: { try await ConsentForm.load() },
@@ -112,7 +126,7 @@ final class TarotAdConsent: ObservableObject {
         requestGeneration += 1 // Destroy all existing requests before changing choices.
         defer { isBusy = false }
         do {
-            try await ConsentInformation.shared.requestConsentInfoUpdate(with: RequestParameters())
+            try await ConsentInformation.shared.requestConsentInfoUpdate(with: requestParameters())
             if ConsentInformation.shared.consentStatus == .required {
                 #if DEBUG
                 TarotConsentQAObservation.shared.recordForm()
@@ -142,22 +156,33 @@ final class TarotAdConsent: ObservableObject {
     }
 
     private func startIfAllowed() async {
-        guard canRequestAds, !isStarted, !isStarting else { return }
-        isStarting = true
+        guard canRequestAds else { return }
         let configuration = MobileAds.shared.requestConfiguration
-        // Keep identifier collection unchanged. UMP/TCF, applicable regional
-        // privacy signals and the OS remain independent restrictions; permission
-        // to request an ad is not permission to track or to personalize it.
-        configuration.setPublisherFirstPartyIDEnabled(false)
+        // Explicitly undo the persisted 1.2 publisher opt-out for upgrading users.
+        // This is a publisher-scoped ID, not a replacement for denied ATT/IDFA.
+        // GMA still applies UMP/TCF, regional opt-outs and the OS permission.
+        configuration.setPublisherFirstPartyIDEnabled(true)
         // No additional app-wide opt-out: let the SDK apply the user's choices.
         // Never use .enabled or infer personalization from canRequestAds.
         configuration.publisherPrivacyPersonalizationState = .default
+        guard !isStarted, !isStarting else { return }
+        isStarting = true
         _ = await MobileAds.shared.start()
         isStarted = true
         isStarting = false
     }
 
     #if DEBUG
+    private var qaTrackingAuthorization: String {
+        switch ATTrackingManager.trackingAuthorizationStatus {
+        case .notDetermined: return "notDetermined"
+        case .restricted: return "restricted"
+        case .denied: return "denied"
+        case .authorized: return "authorized"
+        @unknown default: return "unknown"
+        }
+    }
+
     func qaState(requestCount: Int, formPresentations: Int) -> String {
         let values: [String: Any] = [
             "updateCompleted": didUpdateThisLaunch, "busy": isBusy,
@@ -165,6 +190,7 @@ final class TarotAdConsent: ObservableObject {
             "umpCanRequestAds": ConsentInformation.shared.canRequestAds,
             "sdkStarted": isStarted, "requestCount": requestCount,
             "formPresentations": formPresentations,
+            "trackingAuthorization": qaTrackingAuthorization,
             "purposeConsents": UserDefaults.standard.string(forKey: "IABTCF_PurposeConsents") ?? "",
             "vendorConsents": UserDefaults.standard.string(forKey: "IABTCF_VendorConsents") ?? ""
         ]
