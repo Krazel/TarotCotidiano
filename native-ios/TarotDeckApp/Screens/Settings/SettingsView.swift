@@ -1,6 +1,7 @@
 import Foundation
 import StoreKit
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @ObservedObject var languageStore: AppLanguageStore
@@ -264,7 +265,7 @@ struct SettingsView: View {
 
 struct RemoveAdsView: View {
     @ObservedObject var store: SupporterStore
-    @State private var showsSubscriptionManagement = false
+    @State private var isManagingSubscription = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -453,10 +454,10 @@ struct RemoveAdsView: View {
                             if ProcessInfo.processInfo.isiOSAppOnMac {
                                 openURL(SupporterConfiguration.manageSubscriptionsURL)
                             } else {
-                                showsSubscriptionManagement = true
+                                Task { await manageSubscription() }
                             }
                         }
-                        .disabled(store.isRestoring || store.busyProductID != nil)
+                        .disabled(isManagingSubscription || store.isRestoring || store.busyProductID != nil)
 
                         settingsDivider
 
@@ -492,12 +493,6 @@ struct RemoveAdsView: View {
         .task {
             if screenshotPrices.isEmpty { await store.loadProductsIfNeeded() }
         }
-        .manageSubscriptionsSheet(isPresented: $showsSubscriptionManagement)
-        .onChange(of: showsSubscriptionManagement) { isPresented in
-            if !isPresented {
-                Task { await store.refreshEntitlements(forceRefresh: true) }
-            }
-        }
         .alert(
             AppLocalization.text(store.notice?.titleKey ?? "Remove ads"),
             isPresented: noticeBinding
@@ -506,6 +501,29 @@ struct RemoveAdsView: View {
         } message: {
             Text(AppLocalization.text(store.notice?.messageKey ?? ""))
         }
+    }
+
+    @MainActor
+    private func manageSubscription() async {
+        guard !isManagingSubscription else { return }
+        isManagingSubscription = true
+        defer { isManagingSubscription = false }
+
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: {
+                $0.activationState == .foregroundActive
+                    && $0.windows.contains(where: { $0.isKeyWindow })
+            }) else {
+            store.notice = .managementUnavailable
+            return
+        }
+        do {
+            try await AppStore.showManageSubscriptions(in: scene)
+        } catch {
+            store.notice = .managementUnavailable
+        }
+        await store.refreshEntitlements(forceRefresh: true)
     }
 
     private func purchaseOption(

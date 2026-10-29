@@ -311,7 +311,7 @@ final class TarotConsentUITests: XCTestCase {
         let button = app.buttons.matching(predicate).firstMatch
         if button.exists { return button }
         // WKWebView accessibility may expose an HTML action as a text element.
-        // Exact labels only; no coordinate taps or broad substring matching.
+        // Exact labels only; no hardcoded coordinates or broad substring matching.
         return app.staticTexts.matching(predicate).firstMatch
     }
 
@@ -344,7 +344,28 @@ final class TarotConsentUITests: XCTestCase {
         let interruptionsBefore = interruptedAppTapCount
         try require(element.exists && element.isHittable, "Active UMP action is not visible/hittable.")
         try require(!springboard.alerts.firstMatch.exists, "A system alert appeared before the UMP tap; stopping.")
-        element.tap()
+        if element.label == "Continue" {
+            // Failed RC attempts left the same real UMP button visible after
+            // an AX element tap. Send one physical tap to its live centre,
+            // relative to the foreground app, rather than activating a cached
+            // WebKit AX representation. Keep the real prompt/race guards.
+            let frame = element.frame
+            let appFrame = app.frame
+            let point = CGPoint(x: frame.midX, y: frame.midY)
+            try require(frame.width.isFinite && frame.height.isFinite
+                        && frame.width > 0 && frame.height > 0
+                        && appFrame.contains(point),
+                        "The visible UMP Continue target is outside the app.")
+            try requireUMPTapReady()
+            try require(!springboard.alerts.firstMatch.exists,
+                        "A system alert appeared before the Continue tap.")
+            print("TAROT_QA_UMP_CONTINUE_TARGET frame=\(frame) app=\(appFrame)")
+            app.coordinate(withNormalizedOffset: .zero)
+                .withOffset(CGVector(dx: point.x - appFrame.minX, dy: point.y - appFrame.minY))
+                .tap()
+        } else {
+            element.tap()
+        }
         // Even a correct explicit monitor choice cannot certify an app tap
         // that XCTest resumes after dismissing the OS alert. Fail that race.
         try require(interruptedAppTapCount == interruptionsBefore,

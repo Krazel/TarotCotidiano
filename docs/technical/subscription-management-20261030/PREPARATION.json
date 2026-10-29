@@ -2,13 +2,13 @@
   "date": "2026-10-30",
   "candidate": "1.2.1 (3)",
   "issue": "TestFlight subscription cannot be managed through the production Apple Account subscriptions URL.",
-  "change": "Present native StoreKit manageSubscriptionsSheet on iOS; refresh verified entitlements after dismissal. Preserve external URL only for iOS apps running on Mac, where Apple does not support this sheet.",
+  "change": "Call AppStore.showManageSubscriptions(in:) only after the iOS user taps Manage Subscription, using the foreground key-window scene. Refresh verified entitlements after return, report presentation failures with localized existing copy, and preserve the URL only for iOS apps running on Mac.",
   "appleReference": "https://developer.apple.com/forums/thread/770440",
-  "apiReference": "https://developer.apple.com/documentation/swiftui/view/managesubscriptionssheet(ispresented:)",
+  "apiReference": "https://developer.apple.com/documentation/storekit/appstore/showmanagesubscriptions(in:)",
   "entitlementPolicy": "Cancellation stops renewal. Verified active entitlement remains until StoreKit reports expiry or revocation; no test bypass and no fabricated ad-removal state.",
   "configuration": "Existing production ad IDs, UMP, ATT, subscription products, prices, and privacy declarations unchanged.",
   "authorization": "Existing Tarot monetization completion and TestFlight delivery authorization; this corrects the subscription management route reported by the owner.",
   "ciRoute": "Existing A-076 authorized public repository and standard macOS runner, no new spending enabled.",
-  "validation": "Pending compilation and existing automated regression suite; TestFlight sandbox cancellation on physical device not yet certified.",
+  "validation": "31 structural checks, app integration, workflow and localization pass. Two prior attempts of the first implementation compiled but the automatic UMP Continue tap did not advance; no signing or upload. The updated native presenter and guarded live-geometry Continue tap require fresh compilation and the unchanged real-ATT/banner outcome assertions. Physical TestFlight cancellation is not yet certified.",
   "review": "No App Review submission or public release authorized by this correction."
 }

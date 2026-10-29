@@ -1,0 +1,28 @@
+{
+  "run": 40970926979,
+  "sourceCommit": "570f8c47ded173dc1052d5b7840005496b10fcb6",
+  "conclusion": "failure",
+  "coreTests": "PASS_59",
+  "debugCompilation": "PASS_INCLUDING_NATIVE_SUBSCRIPTION_SHEET",
+  "failedCase": "testNonEEAATTDenialAllowsTestBanner",
+  "failure": "Apple ATT choice did not appear after the real UMP explainer.",
+  "observedAfterAutomaticTap": {
+    "UMPContinueFormStillVisible": true,
+    "trackingAuthorization": "notDetermined",
+    "canRequestAds": false,
+    "sdkStarted": false,
+    "requestCount": 0,
+    "busy": true
+  },
+  "inference": "The automatic tap did not advance the visible real UMP form. This does not establish a production application defect or a successful ATT choice.",
+  "signed": false,
+  "uploaded": false,
+  "sameSourceRetry": {
+    "run": 40973205076,
+    "conclusion": "failure",
+    "sameFailure": true,
+    "signed": false,
+    "uploaded": false
+  },
+  "next": "No more unchanged retries. Open the native subscription sheet only on explicit tap and use one guarded live-geometry physical Continue tap in the test. All real ATT/banner outcome assertions remain required; no consent, permission or purchase state is fabricated and no gate is skipped."
+}

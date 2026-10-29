@@ -28,6 +28,7 @@ enum SupporterNotice: Equatable {
     case nothingToRestore
     case restoreFailed
     case productsUnavailable
+    case managementUnavailable
 
     var titleKey: String {
         switch self {
@@ -45,7 +46,7 @@ enum SupporterNotice: Equatable {
             return "Nothing to Restore"
         case .restoreFailed:
             return "Restore Couldn't Be Completed"
-        case .productsUnavailable:
+        case .productsUnavailable, .managementUnavailable:
             return "Subscriptions Unavailable"
         }
     }
@@ -70,6 +71,8 @@ enum SupporterNotice: Equatable {
             return "Purchases couldn't be restored right now. Please try again."
         case .productsUnavailable:
             return "Subscriptions could not be loaded right now. You can keep using the full app."
+        case .managementUnavailable:
+            return "Subscriptions are temporarily unavailable."
         }
     }
 }
