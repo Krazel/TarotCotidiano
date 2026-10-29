@@ -84,13 +84,90 @@
         }
         try require(advertising.exists && advertising.isHittable, "US privacy entry point is not reachable in Settings.")
         advertising.tap()
-        try waitForChoice("My data preferences")
-        try waitForChoice("Save and close")
         let editing = try waitForSnapshot("real US privacy form suspends requests") {
             $0.busy && !$0.canRequestAds && $0.formPresentations > previous.formPresentations
         }
+        let surface = try publisherWaitForUSSurface()
         try assertNoRequestIncrease(from: editing.requestCount, for: 3)
-        recordEvidence("publisher-us-options-open")
+        publisherRecordUSSurfaceEvidence(surface, name: "publisher-us-options-open")
+    }
+
+    // Run 40954332187 exposed duplicate UMP AX trees: the preloaded tree is
+    // beneath a direct Window child sized 1x1, even though its descendants
+    // claim full-sized frames and isHittable. Reject that ancestor BEFORE any
+    // descendant query. Never choose a copy by its x position or first match.
+    private func publisherUSSurfaces() -> (surfaces: [XCUIElement], diagnostics: [String]) {
+        var surfaces: [XCUIElement] = []
+        var diagnostics: [String] = []
+        for (windowIndex, window) in app.windows.allElementsBoundByIndex.enumerated() {
+            let screen = window.frame
+            guard screen.width > 1 && screen.height > 1 else { continue }
+            for (childIndex, child) in window.children(matching: .any).allElementsBoundByIndex.enumerated() {
+                let frame = child.frame
+                let full = frame.width > 1 && frame.height > 1
+                    && abs(frame.minX - screen.minX) <= screen.width * 0.01
+                    && abs(frame.minY - screen.minY) <= screen.height * 0.01
+                    && abs(frame.width - screen.width) <= screen.width * 0.01
+                    && abs(frame.height - screen.height) <= screen.height * 0.01
+                guard full else {
+                    diagnostics.append("window[\(windowIndex)] child[\(childIndex)] frame=\(frame): excluded non-full/clip ancestor; descendants not queried")
+                    continue
+                }
+                let headings = child.staticTexts.matching(NSPredicate(format: "label == %@", "My data preferences"))
+                    .allElementsBoundByIndex
+                let saves = child.buttons.matching(NSPredicate(format: "label == %@", "Save and close"))
+                    .allElementsBoundByIndex
+                diagnostics.append("window[\(windowIndex)] child[\(childIndex)] frame=\(frame): headings=\(headings.count), saves=\(saves.count)")
+                // Keep any matching branch so the caller rejects ambiguity,
+                // including duplicate forms inside one full-sized ancestor.
+                if !headings.isEmpty || !saves.isEmpty { surfaces.append(child) }
+            }
+        }
+        return (surfaces, diagnostics)
+    }
+
+    private func publisherWaitForUSSurface() throws -> XCUIElement {
+        let visible = NSPredicate { [weak self] _, _ in
+            guard let self, !self.springboard.alerts.firstMatch.exists,
+                  let state = self.snapshot(), state.busy, !state.canRequestAds,
+                  state.formPresentations > 0 else { return false }
+            return !self.publisherUSSurfaces().surfaces.isEmpty
+        }
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: visible, object: nil)], timeout: networkTimeout)
+        try requireUMPTapReady()
+        let found = publisherUSSurfaces()
+        let evidence = XCTAttachment(string: found.diagnostics.joined(separator: "\n"))
+        evidence.name = "publisher-us-window-surface-diagnostics"
+        evidence.lifetime = .keepAlways
+        add(evidence)
+        try require(result == .completed && found.surfaces.count == 1,
+                    "Expected one US form under a full-sized direct Window child; found \(found.surfaces.count).")
+        let surface = found.surfaces[0]
+        _ = try publisherUSControl(in: surface, label: "My data preferences", button: false)
+        _ = try publisherUSControl(in: surface, label: "Save and close", button: true)
+        return surface
+    }
+
+    private func publisherUSControl(in surface: XCUIElement, label: String, button: Bool) throws -> XCUIElement {
+        try requireUMPTapReady()
+        let query = button ? surface.buttons : surface.staticTexts
+        let controls = query.matching(NSPredicate(format: "label == %@", label)).allElementsBoundByIndex
+        try require(controls.count == 1, "Expected one scoped US control '\(label)'; found \(controls.count).")
+        try require(controls[0].isHittable, "Scoped US control is not hittable: \(label).")
+        return controls[0]
+    }
+
+    private func publisherRecordUSSurfaceEvidence(_ surface: XCUIElement, name: String) {
+        let screenshot = XCTAttachment(screenshot: surface.screenshot())
+        screenshot.name = name
+        screenshot.lifetime = .keepAlways
+        add(screenshot)
+        if let json = snapshotJSON() {
+            let state = XCTAttachment(string: json)
+            state.name = "\(name)-consent-state"
+            state.lifetime = .keepAlways
+            add(state)
+        }
     }
 
     private func publisherUSOptionCopy(allow: Bool) -> (title: String, body: String) {
@@ -108,7 +185,7 @@
         return nil
     }
 
-    private func publisherUSRadio(allow: Bool) throws -> XCUIElement {
+    private func publisherUSRadio(in surface: XCUIElement, allow: Bool) throws -> XCUIElement {
         try requireUMPTapReady()
         let (title, body) = publisherUSOptionCopy(allow: allow)
         // WebKit can combine a radio title and its description into one AX label.
@@ -116,7 +193,7 @@
         let expression = "^" + NSRegularExpression.escapedPattern(for: title)
             + "(?:\\s+" + NSRegularExpression.escapedPattern(for: body) + ")?$"
         let predicate = NSPredicate(format: "label MATCHES %@", expression)
-        let options = app.descendants(matching: .any).matching(predicate).allElementsBoundByIndex
+        let options = surface.descendants(matching: .any).matching(predicate).allElementsBoundByIndex
             .filter { $0.isHittable && publisherUSRadioValue($0) != nil }
         let semantic = options.filter { $0.elementType == .radioButton }
         let controls = semantic.isEmpty ? options.filter { $0.elementType == .other } : semantic
@@ -126,9 +203,10 @@
     }
 
     private func publisherSelectUSOption(allow: Bool) throws {
-        let option = try publisherUSRadio(allow: allow)
+        let surface = try publisherWaitForUSSurface()
+        let option = try publisherUSRadio(in: surface, allow: allow)
         try require(publisherUSRadioValue(option) == 0, "The requested US option must start unselected to prove an explicit change.")
-        recordEvidence(allow ? "publisher-us-before-allow" : "publisher-us-before-opt-out")
+        publisherRecordUSSurfaceEvidence(surface, name: allow ? "publisher-us-before-allow" : "publisher-us-before-opt-out")
         if option.elementType == .radioButton {
             try tapActiveUMPElement(option)
         } else {
@@ -139,10 +217,8 @@
             // coordinates. The shorter of the two titles is one line in this
             // observed English form (the Allow title wraps onto two lines).
             try requireUMPTapReady()
-            let title = app.staticTexts[publisherUSOptionCopy(allow: allow).title].firstMatch
-            let otherTitle = app.staticTexts[publisherUSOptionCopy(allow: !allow).title].firstMatch
-            try require(title.exists && title.isHittable && otherTitle.exists && otherTitle.isHittable,
-                        "Both observed US radio titles must be visible for relative circle targeting.")
+            let title = try publisherUSControl(in: surface, label: publisherUSOptionCopy(allow: allow).title, button: false)
+            let otherTitle = try publisherUSControl(in: surface, label: publisherUSOptionCopy(allow: !allow).title, button: false)
             let row = option.frame
             let text = title.frame
             let lineHeight = min(text.height, otherTitle.frame.height)
@@ -165,21 +241,22 @@
 
         let changed = NSPredicate { [weak self] _, _ in
             guard let self, !self.springboard.alerts.firstMatch.exists,
-                  let selected = try? self.publisherUSRadio(allow: allow),
-                  let other = try? self.publisherUSRadio(allow: !allow) else { return false }
+                  let selected = try? self.publisherUSRadio(in: surface, allow: allow),
+                  let other = try? self.publisherUSRadio(in: surface, allow: !allow) else { return false }
             return self.publisherUSRadioValue(selected) == 1 && self.publisherUSRadioValue(other) == 0
         }
         let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: changed, object: nil)], timeout: 15)
         // Capture the real control state even if the click had no effect.
         try requireUMPTapReady()
-        let selectedValue = publisherUSRadioValue(try publisherUSRadio(allow: allow))
-        let otherValue = publisherUSRadioValue(try publisherUSRadio(allow: !allow))
-        recordEvidence(allow ? "publisher-us-allow-before-save" : "publisher-us-opt-out-before-save")
+        let selectedValue = publisherUSRadioValue(try publisherUSRadio(in: surface, allow: allow))
+        let otherValue = publisherUSRadioValue(try publisherUSRadio(in: surface, allow: !allow))
+        publisherRecordUSSurfaceEvidence(surface, name: allow ? "publisher-us-allow-before-save" : "publisher-us-opt-out-before-save")
         let selection = XCTAttachment(string: "Explicit selection=\(allow ? "allow" : "opt-out"); selectedRadioValue=\(String(describing: selectedValue)); otherRadioValue=\(String(describing: otherValue)); saved=false")
         selection.name = "publisher-us-real-radio-selection"
         selection.lifetime = .keepAlways
         add(selection)
         try require(result == .completed && selectedValue == 1 && otherValue == 0,
                     "US radio selection was not confirmed (selected=1, other=0); refuse Save.")
-        try tapChoice("Save and close")
+        let save = try publisherUSControl(in: surface, label: "Save and close", button: true)
+        try tapActiveUMPElement(save)
     }
