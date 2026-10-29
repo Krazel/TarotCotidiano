@@ -8,8 +8,8 @@ if ($workflow -notmatch '(?m)^on:\s*\n\s{2}workflow_dispatch:\s*$' -or
     throw 'Public RC upload must be manual-only.'
 }
 $required = @(
-    'public_rc_confirmation:', 'default: "DO_NOT_UPLOAD"', '"PUBLIC_1_2_1_BUILD_2"',
-    "if: `${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_2' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && (inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' || inputs.private_ci_clearance == 'PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED') }}",
+    'public_rc_confirmation:', 'default: "DO_NOT_UPLOAD"', '"PUBLIC_1_2_1_BUILD_3"',
+    "if: `${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_3' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && (inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' || inputs.private_ci_clearance == 'PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED') }}",
     'release_readiness:', 'verified_source_sha:', 'readiness_evidence:', 'private_ci_clearance:',
     '"PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED"',
     'Verify repository visibility matches the authorized CI route',
@@ -43,7 +43,7 @@ $required = @(
     'Archive signed Release app with existing distribution identity', '-configuration Release',
     'CODE_SIGN_STYLE=Manual', 'CODE_SIGN_IDENTITY="Apple Distribution"',
     'PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18"',
-    'CURRENT_PROJECT_VERSION=2', 'MARKETING_VERSION=1.2.1',
+    'CURRENT_PROJECT_VERSION=3', 'MARKETING_VERSION=1.2.1',
     'Inventory final archive privacy manifests without modifying SDK declarations',
     'CUSTOM_MANIFEST_INVENTORY_NOT_XCODE_REPORT', 'privacy-manifests.json',
     'docs/technical/monetization-20261018/SDK_AUDIT.json',
@@ -150,16 +150,16 @@ foreach ($contract in @(
     'expected_domains = {"googleads.g.doubleclick.net", "pagead2.googleadservices.com"}',
     'root_data.get("NSPrivacyTracking") is not True',
     'len(root_data.get("NSPrivacyTrackingDomains", [])) != 2',
-    '"version": "1.2.1", "build": "2"',
-    'Print :CFBundleVersion'' "$INFO_PLIST")" == "2"'
+    '"version": "1.2.1", "build": "3"',
+    'Print :CFBundleVersion'' "$INFO_PLIST")" == "3"'
 )) {
     if ([regex]::Matches($workflow, [regex]::Escape($contract)).Count -ne 2) {
         throw "Both archive and exported IPA must enforce: $contract"
     }
 }
-if ($workflow -match 'PUBLIC_1_2_1_BUILD_1|1\.2\.1-1|1\.2\.1 \(1\)|CURRENT_PROJECT_VERSION=1\b|--arg build "1"' -or
-    -not $workflow.Contains('--arg build "2"')) {
-    throw 'The consumed build 1 tuple must not remain in the public RC workflow.'
+if ($workflow -match 'PUBLIC_1_2_1_BUILD_[12]|1\.2\.1-[12](?!\d)|1\.2\.1 \([12]\)|CURRENT_PROJECT_VERSION=[12]\b|--arg build "[12]"' -or
+    -not $workflow.Contains('--arg build "3"')) {
+    throw 'The consumed build 1 and 2 tuples must not remain in the public RC workflow.'
 }
 $archiveBlock = $workflow.Substring($archiveStart, $exportStart - $archiveStart)
 if ($archiveBlock.Contains('CODE_SIGNING_ALLOWED=NO') -or $archiveBlock.Contains('CODE_SIGNING_REQUIRED=NO')) {
@@ -206,8 +206,8 @@ $unexpectedActions = @([regex]::Matches($workflow, '(?m)^\s*uses:\s*(?<value>\S+
     Where-Object { $_ -notin @('actions/checkout@v4', 'actions/upload-artifact@v4') })
 if ($unexpectedActions.Count -gt 0) { throw "Unexpected workflow action: $($unexpectedActions -join ', ')" }
 if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.2.1;')).Count -ne 2 -or
-    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 2;')).Count -ne 2) {
-    throw 'The Xcode project must expose Tarot Deck 1.2.1 (2) in Debug and Release.'
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 3;')).Count -ne 2) {
+    throw 'The Xcode project must expose Tarot Deck 1.2.1 (3) in Debug and Release.'
 }
 foreach ($pattern in @(
     'TAROT_ADMOB_APP_ID\s*=\s*"ca-app-pub-3425091654264901~4270953811";',
@@ -217,4 +217,4 @@ foreach ($pattern in @(
         throw 'Production AdMob IDs must be configured for Tarot before starting public release CI.'
     }
 }
-Write-Host 'Validated manual public-capable Tarot Deck 1.2.1 (2): existing manual signing, production publisher checks, simulator ad/consent and active subscription screenshots, no binary artifacts, and separate API review submission.'
+Write-Host 'Validated manual public-capable Tarot Deck 1.2.1 (3): existing manual signing, production publisher checks, simulator ad/consent and active subscription screenshots, no binary artifacts, and separate API review submission.'

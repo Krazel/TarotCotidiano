@@ -264,6 +264,7 @@ struct SettingsView: View {
 
 struct RemoveAdsView: View {
     @ObservedObject var store: SupporterStore
+    @State private var showsSubscriptionManagement = false
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -449,8 +450,13 @@ struct RemoveAdsView: View {
                             systemImage: "person.crop.circle.badge.checkmark",
                             accessibilityHint: "Opens Apple subscription management"
                         ) {
-                            openURL(SupporterConfiguration.manageSubscriptionsURL)
+                            if ProcessInfo.processInfo.isiOSAppOnMac {
+                                openURL(SupporterConfiguration.manageSubscriptionsURL)
+                            } else {
+                                showsSubscriptionManagement = true
+                            }
                         }
+                        .disabled(store.isRestoring || store.busyProductID != nil)
 
                         settingsDivider
 
@@ -485,6 +491,12 @@ struct RemoveAdsView: View {
         .preferredColorScheme(.dark)
         .task {
             if screenshotPrices.isEmpty { await store.loadProductsIfNeeded() }
+        }
+        .manageSubscriptionsSheet(isPresented: $showsSubscriptionManagement)
+        .onChange(of: showsSubscriptionManagement) { isPresented in
+            if !isPresented {
+                Task { await store.refreshEntitlements(forceRefresh: true) }
+            }
         }
         .alert(
             AppLocalization.text(store.notice?.titleKey ?? "Remove ads"),

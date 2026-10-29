@@ -768,7 +768,7 @@ if ($appReleaseSource -match 'EmptyView\(\)' -or
 }
 $projectReleaseContracts = @(
     'MARKETING_VERSION = 1.2.1;',
-    'CURRENT_PROJECT_VERSION = 2;',
+    'CURRENT_PROJECT_VERSION = 3;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
     'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;',
@@ -781,7 +781,7 @@ foreach ($contract in $projectReleaseContracts) {
     }
 }
 if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.2.1;')).Count -ne 2 -or
-    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 2;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 3;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -2017,4 +2017,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated candidate 1.2.1 (2): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."
+Write-Host "Validated candidate 1.2.1 (3): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."
