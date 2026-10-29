@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-29T20:32:42.715076+00:00",
+  "checkedAt": "2026-10-29T21:02:21.476427+00:00",
   "run": 40934397390,
   "runUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40934397390",
   "sourceSHA": "46c86096246fb28447162ef65438ae9ff73d5a56",
@@ -34,7 +34,7 @@
   "publisherMessages": {
     "run": 40942070108,
     "sourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b",
-    "status": "QA_AUTOMATION_CORRECTION_IN_PROGRESS",
+    "status": "SIX_NATIVE_CASES_PASSED_FOCUSED_US_RERUN_PREPARED",
     "expectedCases": 7,
     "actualPublisherAppID": true,
     "bannerInventory": "GOOGLE_SAMPLE_ONLY",
@@ -55,6 +55,38 @@
       "SDKInterpretation": "SDK correctly kept ads/automatic form presentation off during the reading; this run does not establish seven independent SDK failures.",
       "GPPDecoderReached": false,
       "correction": "Remove retry; explicit real ATT interruption handling; coordinator-state guards before UMP actions; DEBUG simulator-only saved-reading isolation between cases, retaining persistence within each case."
+    },
+    "thirdAttempt": {
+      "run": 40950542146,
+      "sourceSHA": "0358985224269124ca6268eae55ab55565fd7a58",
+      "status": "SIX_CASES_PASSED_US_RADIO_NOT_SELECTED",
+      "passedCases": [
+        "testAcceptAndPersistChoiceAcrossRelaunch",
+        "testNonEEAATTAuthorizationAllowsTestBanner",
+        "testNonEEAATTDenialAllowsTestBanner",
+        "testNoRequestsBeforeFirstConsentChoice",
+        "testRejectDoesNotBecomePersonalizationConsent",
+        "testReopenAdvertisingChoicesAndRevokeAcceptedChoice"
+      ],
+      "failedCase": "testPublisherUSOptOutPersistsAndCanBeExplicitlyReversed",
+      "failure": "The test tapped the text container. The opt-out radio remained value0; GPP correctly decoded USNational v1 with all three opt-outs2. No claim that the SDK ignored a selected opt-out.",
+      "GPPObservation": {
+        "diagnostic": "decoded",
+        "version": 1,
+        "coreCharacterCount": 10,
+        "headerCharacterCount": 5,
+        "saleOptOut": 2,
+        "sharingOptOut": 2,
+        "targetedAdvertisingOptOut": 2
+      },
+      "next": "Focused US-only rerun with real circle targeting, selected-radio1/opposite0 required before Save, then actual GPP1 and explicit reversal2 with persistence.",
+      "nativeSourceFingerprints": {
+        "native-ios/TarotDeckApp": "2a99160083ae56edd6753b15256b1df676f1b49d",
+        "native-ios/Sources": "49702e65dbd562e86ac2e0af4f515ec3877d3fd4",
+        "native-ios/UITests": "9ae9c72c5c01c9aa37297a4dff78b72178bc7143",
+        "native-ios/TarotDeck.xcodeproj": "4113df183ddc02b56f0919440d3f1821b9072106"
+      },
+      "logSHA256": "6ff80e870c22e0d4a71c905bf7c72ef527cdb050a7181fcb1c34b6ce8eaf864d"
     }
   },
   "vendorSupportContact": "NOT_SENT; explicitly declined by human"

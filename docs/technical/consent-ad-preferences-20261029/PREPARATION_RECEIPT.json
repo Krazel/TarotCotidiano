@@ -33,7 +33,7 @@
   "storeCandidate": {
     "version": "1.2.1",
     "build": "2",
-    "sourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b",
+    "sourceSHA": "0358985224269124ca6268eae55ab55565fd7a58",
     "simulatorDebugCompiled": true,
     "releaseArchived": false,
     "uploaded": false,
@@ -46,7 +46,7 @@
     "legacySDKCompatibility": "2_CASES_AND_INDEPENDENT_ATT_POSITIVE_CONTROL_PASSED",
     "remoteIDFAAndUS": "PUBLISHED_TAROT_ONLY_EN_ES",
     "publicPolicyAndAppleLabels": "PUBLISHED_VERIFIED",
-    "publisherMessageQA": "QA_AUTOMATION_CORRECTION_IN_PROGRESS; second attempt has no usable GPP outcome",
+    "publisherMessageQA": "SIX_NATIVE_CASES_PASSED; focused US radio selection/persistence rerun pending",
     "physicalDeviceQA": "NOT_CERTIFIED",
     "storeCandidateArchiveAndInventory": "NOT_RUN"
   },

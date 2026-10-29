@@ -93,22 +93,93 @@
         recordEvidence("publisher-us-options-open")
     }
 
-    private func publisherSelectUSOption(allow: Bool) throws {
-        try requireUMPTapReady()
+    private func publisherUSOptionCopy(allow: Bool) -> (title: String, body: String) {
         let title = allow ? "Allow the sale or sharing of my data" : "Don't sell or share my data"
         let body = allow
             ? "By allowing the sale or sharing of your data, you will see interest-based ads on our sites"
             : "We won't sell or share your personal information to inform the ads you see. You may still see interest-based ads if your information is sold or shared by other companies or was sold or shared previously."
+        return (title, body)
+    }
+
+    private func publisherUSRadioValue(_ element: XCUIElement) -> Int? {
+        if let value = element.value as? String, ["0", "1"].contains(value) { return Int(value) }
+        if let value = element.value as? NSNumber, [0, 1].contains(value.intValue),
+           value.doubleValue == Double(value.intValue) { return value.intValue }
+        return nil
+    }
+
+    private func publisherUSRadio(allow: Bool) throws -> XCUIElement {
+        try requireUMPTapReady()
+        let (title, body) = publisherUSOptionCopy(allow: allow)
         // WebKit can combine a radio title and its description into one AX label.
         // Only the exact observed title, optionally followed by its exact body.
         let expression = "^" + NSRegularExpression.escapedPattern(for: title)
             + "(?:\\s+" + NSRegularExpression.escapedPattern(for: body) + ")?$"
         let predicate = NSPredicate(format: "label MATCHES %@", expression)
-        let options = app.descendants(matching: .any).matching(predicate)
-        guard let option = options.allElementsBoundByIndex.first(where: { $0.isHittable }) else {
-            XCTFail("Expected explicit US radio choice is absent: \(title). Do not substitute Dismiss or fabricate preferences.")
-            throw TestFailure.unmetPrecondition("Missing explicit US radio option")
+        let options = app.descendants(matching: .any).matching(predicate).allElementsBoundByIndex
+            .filter { $0.isHittable && publisherUSRadioValue($0) != nil }
+        let semantic = options.filter { $0.elementType == .radioButton }
+        let controls = semantic.isEmpty ? options.filter { $0.elementType == .other } : semantic
+        try require(controls.count == 1,
+                    "Expected one explicit US radio with binary value: \(title); found \(controls.count).")
+        return controls[0]
+    }
+
+    private func publisherSelectUSOption(allow: Bool) throws {
+        let option = try publisherUSRadio(allow: allow)
+        try require(publisherUSRadioValue(option) == 0, "The requested US option must start unselected to prove an explicit change.")
+        recordEvidence(allow ? "publisher-us-before-allow" : "publisher-us-before-opt-out")
+        if option.elementType == .radioButton {
+            try tapActiveUMPElement(option)
+        } else {
+            // Run 40950542146: WebKit exposes the radio as Other(value 0/1),
+            // plus a sibling text-only Other. The row's centre is body text;
+            // screenshot AE13F0B8 shows the circle at the first title line's
+            // left. Derive its centre from live row/title geometry, not screen
+            // coordinates. The shorter of the two titles is one line in this
+            // observed English form (the Allow title wraps onto two lines).
+            try requireUMPTapReady()
+            let title = app.staticTexts[publisherUSOptionCopy(allow: allow).title].firstMatch
+            let otherTitle = app.staticTexts[publisherUSOptionCopy(allow: !allow).title].firstMatch
+            try require(title.exists && title.isHittable && otherTitle.exists && otherTitle.isHittable,
+                        "Both observed US radio titles must be visible for relative circle targeting.")
+            let row = option.frame
+            let text = title.frame
+            let lineHeight = min(text.height, otherTitle.frame.height)
+            let offset = CGVector(dx: lineHeight / 2, dy: text.minY - row.minY + lineHeight / 2)
+            try require(row.contains(text) && lineHeight >= 12 && lineHeight <= 36
+                        && text.minX > row.minX && offset.dx < text.minX - row.minX
+                        && offset.dy > 0 && offset.dy < row.height,
+                        "US radio layout no longer matches the observed first-line circle geometry.")
+            let geometry = XCTAttachment(string: "Target=\(allow ? "allow" : "opt-out"); row=\(row); title=\(text); firstLineHeight=\(lineHeight); relativeCircleOffset=\(offset)")
+            geometry.name = "publisher-us-radio-relative-target"
+            geometry.lifetime = .keepAlways
+            add(geometry)
+            try requireUMPTapReady()
+            let interruptionsBefore = interruptedAppTapCount
+            try require(!springboard.alerts.firstMatch.exists, "System alert prevents the US radio tap.")
+            option.coordinate(withNormalizedOffset: .zero).withOffset(offset).tap()
+            try require(interruptedAppTapCount == interruptionsBefore,
+                        "ATT interrupted the US radio tap; do not certify a resumed app event.")
         }
-        try tapActiveUMPElement(option)
+
+        let changed = NSPredicate { [weak self] _, _ in
+            guard let self, !self.springboard.alerts.firstMatch.exists,
+                  let selected = try? self.publisherUSRadio(allow: allow),
+                  let other = try? self.publisherUSRadio(allow: !allow) else { return false }
+            return self.publisherUSRadioValue(selected) == 1 && self.publisherUSRadioValue(other) == 0
+        }
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: changed, object: nil)], timeout: 15)
+        // Capture the real control state even if the click had no effect.
+        try requireUMPTapReady()
+        let selectedValue = publisherUSRadioValue(try publisherUSRadio(allow: allow))
+        let otherValue = publisherUSRadioValue(try publisherUSRadio(allow: !allow))
+        recordEvidence(allow ? "publisher-us-allow-before-save" : "publisher-us-opt-out-before-save")
+        let selection = XCTAttachment(string: "Explicit selection=\(allow ? "allow" : "opt-out"); selectedRadioValue=\(String(describing: selectedValue)); otherRadioValue=\(String(describing: otherValue)); saved=false")
+        selection.name = "publisher-us-real-radio-selection"
+        selection.lifetime = .keepAlways
+        add(selection)
+        try require(result == .completed && selectedValue == 1 && otherValue == 0,
+                    "US radio selection was not confirmed (selected=1, other=0); refuse Save.")
         try tapChoice("Save and close")
     }

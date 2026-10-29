@@ -12,13 +12,14 @@ on:
           - "DO_NOT_RUN"
           - "QA_ONLY_NO_SIGN_OR_UPLOAD"
       audit_scope:
-        description: "Baseline sample CMP, Tarot publisher CMP, or all experiments"
+        description: "Baseline, full Tarot publisher CMP, its US diagnostic case, or all experiments"
         required: true
         default: "BASELINE"
         type: choice
         options:
           - "BASELINE"
           - "PUBLISHER_MESSAGES_ONLY"
+          - "PUBLISHER_US_ONLY"
           - "ALL"
 
 permissions:
@@ -37,9 +38,10 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        audit_case: ${{ fromJSON(inputs.audit_scope == 'PUBLISHER_MESSAGES_ONLY' && '["publisher_messages"]' || inputs.audit_scope == 'ALL' && '["legacy_no_usage", "tracking_domains", "publisher_messages"]' || '["legacy_no_usage", "tracking_domains"]') }}
+        audit_case: ${{ fromJSON((inputs.audit_scope == 'PUBLISHER_MESSAGES_ONLY' || inputs.audit_scope == 'PUBLISHER_US_ONLY') && '["publisher_messages"]' || inputs.audit_scope == 'ALL' && '["legacy_no_usage", "tracking_domains", "publisher_messages"]' || '["legacy_no_usage", "tracking_domains"]') }}
     env:
       AUDIT_CASE: ${{ matrix.audit_case }}
+      AUDIT_SELECTION: ${{ inputs.audit_scope == 'PUBLISHER_US_ONLY' && 'US_ONLY' || 'ALL' }}
 
     steps:
       - name: Check out source without retained credentials
@@ -65,6 +67,7 @@ jobs:
             --publisher-fragment native-ios/Tools/publisher-message-cases.swift.fragment \
             --receipt "$RUNNER_TEMP/TarotPrivacyEvidence/injection.json"
           python3 native-ios/Tools/prepare-privacy-audit.py cases --case "$AUDIT_CASE" \
+            --selection "$AUDIT_SELECTION" \
             > "$RUNNER_TEMP/TarotPrivacyEvidence/selected-cases.txt"
 
       - name: Build disposable unsigned simulator tests with Google samples
@@ -140,6 +143,7 @@ jobs:
             -parallel-testing-enabled NO "${CASES[@]}" \
             | tee "$TAROT_AUDIT_EVIDENCE/tests.log"
           python3 native-ios/Tools/prepare-privacy-audit.py verify-results --case "$AUDIT_CASE" \
+            --selection "$AUDIT_SELECTION" \
             --log "$TAROT_AUDIT_EVIDENCE/tests.log" --receipt "$TAROT_AUDIT_EVIDENCE/results.json"
           python3 native-ios/Tools/prepare-privacy-audit.py verify-app --receipt "$TAROT_AUDIT_EVIDENCE/patch.json"
 

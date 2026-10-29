@@ -314,10 +314,22 @@ def test_outcomes(log):
     return outcomes
 
 
+def selected_tests(audit_case, selection):
+    require(selection in ("ALL", "US_ONLY"), "An explicit ALL or US_ONLY selection is required")
+    require(audit_case in CASES, "Unknown privacy audit case")
+    if selection == "US_ONLY":
+        require(audit_case == "publisher_messages", "US_ONLY is only valid for publisher_messages")
+        return (PUBLISHER_TEST,)
+    return CASES[audit_case]
+
+
 def verify_results(args):
-    expected = set(CASES[args.case])
+    expected = set(selected_tests(args.case, args.selection))
     outcomes = test_outcomes(args.log)
     save(args.receipt, {"expected": sorted(expected), "observed": outcomes,
+                        "expectedCount": len(expected), "selection": args.selection,
+                        "fullCaseSuite": args.selection == "ALL",
+                        "sourceCommit": os.environ.get("GITHUB_SHA"),
                         "logSHA256": digest(args.log), "case": args.case})
     require(set(outcomes) == expected, "Executed case names do not match the selected experiment")
     require(all(status == ["passed"] for status in outcomes.values()), "Each selected test must pass exactly once; no skips/retries")
@@ -419,6 +431,7 @@ def main():
     verify.add_argument("--receipt", type=Path, required=True)
     results = modes.add_parser("verify-results")
     results.add_argument("--case", choices=CASES, required=True)
+    results.add_argument("--selection", choices=("ALL", "US_ONLY"), required=True)
     results.add_argument("--log", type=Path, required=True)
     results.add_argument("--receipt", type=Path, required=True)
     simulator = modes.add_parser("create-simulator")
@@ -427,11 +440,12 @@ def main():
     simulator.add_argument("--github-env", type=Path, required=True)
     cases = modes.add_parser("cases")
     cases.add_argument("--case", choices=CASES, required=True)
+    cases.add_argument("--selection", choices=("ALL", "US_ONLY"), required=True)
     attachments = modes.add_parser("export-attachments")
     attachments.add_argument("--evidence", type=Path, required=True)
     args = parser.parse_args()
     if args.mode == "cases":
-        for name in CASES[args.case]:
+        for name in selected_tests(args.case, args.selection):
             print("-only-testing:TarotConsentUITests/TarotConsentUITests/" + name)
     else:
         globals()[args.mode.replace("-", "_")](args)
