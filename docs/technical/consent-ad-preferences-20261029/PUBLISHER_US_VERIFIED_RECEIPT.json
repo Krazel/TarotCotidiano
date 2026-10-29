@@ -1,0 +1,129 @@
+{
+  "checkedAt": "2026-10-29T22:21:24.602428+00:00",
+  "run": 40962897752,
+  "runURL": "https://github.com/Krazel/TarotCotidiano/actions/runs/40962897752",
+  "result": {
+    "expected": [
+      "testPublisherUSOptOutPersistsAndCanBeExplicitlyReversed"
+    ],
+    "observed": {
+      "testPublisherUSOptOutPersistsAndCanBeExplicitlyReversed": [
+        "passed"
+      ]
+    },
+    "expectedCount": 1,
+    "selection": "US_ONLY",
+    "fullCaseSuite": false,
+    "sourceCommit": "d94fc018aaef1e529a7467ac5eff0770d3435d5e",
+    "logSHA256": "6da1604cf2ce8783198135c0f4fd20884e46931a646ffc0b014c3b22b100b1a2",
+    "case": "publisher_messages"
+  },
+  "executedCases": 1,
+  "failures": 0,
+  "seconds": 537.897,
+  "scope": "Focused US case; not a seven-case suite in this run",
+  "actualChoiceAssertions": [
+    "Visible radio chosen=1, opposite=0 before Save across equivalent AX representations",
+    "Real saved GPP sale/sharing/targeted-advertising opt-outs=1",
+    "Opt-out persists across relaunch",
+    "Explicit Allow changes those GPP values to2",
+    "Explicit Allow persists across relaunch"
+  ],
+  "derivedSignals": [
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 2,
+      "gppSharingOptOut": 2,
+      "gppTargetedAdvertisingOptOut": 2,
+      "trackingAuthorization": "denied",
+      "canRequestAds": true,
+      "requestCount": 1,
+      "loadedBannerCount": 1
+    },
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 0,
+      "gppSharingOptOut": 0,
+      "gppTargetedAdvertisingOptOut": 0,
+      "trackingAuthorization": "denied",
+      "canRequestAds": false,
+      "requestCount": 2,
+      "loadedBannerCount": 2
+    },
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 1,
+      "gppSharingOptOut": 1,
+      "gppTargetedAdvertisingOptOut": 1,
+      "trackingAuthorization": "denied",
+      "canRequestAds": true,
+      "requestCount": 3,
+      "loadedBannerCount": 2
+    },
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 2,
+      "gppSharingOptOut": 2,
+      "gppTargetedAdvertisingOptOut": 2,
+      "trackingAuthorization": "denied",
+      "canRequestAds": true,
+      "requestCount": 3,
+      "loadedBannerCount": 2
+    },
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 1,
+      "gppSharingOptOut": 1,
+      "gppTargetedAdvertisingOptOut": 1,
+      "trackingAuthorization": "denied",
+      "canRequestAds": true,
+      "requestCount": 1,
+      "loadedBannerCount": 1
+    },
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 1,
+      "gppSharingOptOut": 1,
+      "gppTargetedAdvertisingOptOut": 1,
+      "trackingAuthorization": "denied",
+      "canRequestAds": false,
+      "requestCount": 2,
+      "loadedBannerCount": 2
+    },
+    {
+      "gppObservation": "usNationalV1",
+      "gppSectionIDs": [
+        7
+      ],
+      "gppSaleOptOut": 0,
+      "gppSharingOptOut": 0,
+      "gppTargetedAdvertisingOptOut": 0,
+      "trackingAuthorization": "denied",
+      "canRequestAds": true,
+      "requestCount": 1,
+      "loadedBannerCount": 1
+    }
+  ],
+  "AppCoreBaseUITestsProjectMatchDistributedBuild": true,
+  "distributedSourceCommit": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
+  "physicalDeviceCertified": false,
+  "encodedGPPOrTCFExported": false
+}

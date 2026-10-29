@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-29T19:50:41.234761+00:00",
-  "status": "INTERNAL_BETA_AVAILABLE_STORE_CANDIDATE_PREPARING",
+  "checkedAt": "2026-10-29T22:21:24.602428+00:00",
+  "status": "CONFIGURATION_COMPLETE_TESTFLIGHT2_AVAILABLE_APP_REVIEW_DRAFT_PREPARED",
   "authorization": "A-075: full optional UMP+ATT/IDFA+publisher first-party configuration and preparation for App Review",
   "configuration": {
     "publisherFirstPartyIDEnabled": true,
@@ -33,11 +33,14 @@
   "storeCandidate": {
     "version": "1.2.1",
     "build": "2",
-    "sourceSHA": "0358985224269124ca6268eae55ab55565fd7a58",
+    "sourceSHA": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
     "simulatorDebugCompiled": true,
-    "releaseArchived": false,
-    "uploaded": false,
-    "submitted": false
+    "releaseArchived": true,
+    "uploaded": true,
+    "submitted": false,
+    "AppleBuildID": "a146d127-d077-423a-88d4-7264f4111123",
+    "audience": "APP_STORE_ELIGIBLE",
+    "internalState": "IN_BETA_TESTING"
   },
   "gates": {
     "CI": "PUBLIC_STANDARD_RUNNER_AUTHORIZED_NO_SPEND_ENABLED",
@@ -46,16 +49,16 @@
     "legacySDKCompatibility": "2_CASES_AND_INDEPENDENT_ATT_POSITIVE_CONTROL_PASSED",
     "remoteIDFAAndUS": "PUBLISHED_TAROT_ONLY_EN_ES",
     "publicPolicyAndAppleLabels": "PUBLISHED_VERIFIED",
-    "publisherMessageQA": "SIX_NATIVE_CASES_PASSED; focused US radio selection/persistence rerun pending",
-    "physicalDeviceQA": "NOT_CERTIFIED",
-    "storeCandidateArchiveAndInventory": "NOT_RUN"
+    "publisherMessageQA": "PASS_6_EUROPEAN_ATT_PLUS1_FOCUSED_US_CASE; identical distributed App/Core/project/base-UI-test contents",
+    "physicalDeviceQA": "NOT_CERTIFIED_PENDING_HUMAN_TESTFLIGHT_CHECK",
+    "storeCandidateArchiveAndInventory": "PASS_SIGNED_RELEASE_EXPORTED_IPA_3_MATCHING_MANIFESTS_APPLE_VALID"
   },
   "library": "PR-003 pending permitted CAS; not synchronized",
   "review": {
     "versionID": "655beebc-5013-4f14-8189-adadda184449",
     "state": "PREPARE_FOR_SUBMISSION",
     "release": "MANUAL",
-    "selectedBuild": null,
+    "selectedBuild": "a146d127-d077-423a-88d4-7264f4111123",
     "submitted": false
   },
   "previousPreparation": {

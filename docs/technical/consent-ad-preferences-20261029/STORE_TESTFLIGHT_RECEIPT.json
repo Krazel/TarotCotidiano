@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-29T21:41:44.999Z",
+  "version": "1.2.1",
+  "build": "2",
+  "buildID": "a146d127-d077-423a-88d4-7264f4111123",
+  "processingState": "VALID",
+  "audience": "APP_STORE_ELIGIBLE",
+  "usesNonExemptEncryption": false,
+  "beta": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "ff63f09f-7e2f-4ed7-8a53-637205d523c4",
+    "name": "Testers",
+    "isInternalGroup": true,
+    "buildRelationVerified": true
+  },
+  "locales": [
+    {
+      "locale": "es-ES",
+      "whatsNew": "Candidata de tienda con mensajes de privacidad de Tarot y configuración de anuncios de producción. Comprueba opciones regionales, permiso ATT opcional, rechazo y cambios posteriores, reinicio, suscripción activa para quitar anuncios, Restaurar y Gestionar suscripción. Las tiradas deben seguir sin banners. Esta build puede mostrar anuncios reales; no pulses los banners durante las pruebas."
+    },
+    {
+      "locale": "en-US",
+      "whatsNew": "Store candidate with Tarot privacy messages and production ad configuration. Check regional choices, optional ATT permission, refusal and later changes, restarting the app, active ad-removal subscription, Restore and Manage Subscription. Readings must remain free of banners. This build may show real ads; do not tap the banners during testing."
+    }
+  ],
+  "sourceCommit": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
+  "ciRunID": "40955667703",
+  "IPASHA256": "ff585bc512283c8bb625af005d8820a66c8b83e979e11db399a91fb7e531b292",
+  "inventory": "CUSTOM_MANIFEST_INVENTORY_NOT_XCODE_REPORT",
+  "appStoreDraft": {
+    "id": "655beebc-5013-4f14-8189-adadda184449",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "selectedBuild": "a146d127-d077-423a-88d4-7264f4111123",
+    "releaseType": "MANUAL"
+  },
+  "externalSubmitted": false,
+  "appReviewSubmitted": false,
+  "physicalDeviceQACertified": false
+}

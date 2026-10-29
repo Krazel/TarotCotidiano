@@ -3,20 +3,20 @@
   "authorization": "A-076 explicit human instruction to make this repository public, build, restore private after approval",
   "repo": "Krazel/TarotCotidiano",
   "visibilityVerified": "PUBLIC",
-  "returnToPrivate": "PENDING_APPROVAL",
+  "returnToPrivate": "PENDING_HUMAN_SPECIFIED_APPROVAL",
   "runID": 40918369100,
   "runUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40918369100",
   "sourceSHA": "e02e2954e2428000059cab049b91b62290a39eb5",
   "version": "1.2.1",
   "build": "1",
   "purpose": "INTERNAL_ONLY_TESTFLIGHT_SAMPLE_ADS",
-  "status": "INTERNAL_BETA_AVAILABLE_STORE_PREPARATION_CONTINUES",
+  "status": "PRODUCTION_CANDIDATE2_AVAILABLE_INTERNAL_TESTFLIGHT_DRAFT_SELECTED",
   "uploaded": true,
   "submittedForReview": false,
   "costChangeEnabled": false,
-  "currentRunID": 40929020703,
-  "currentRunUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40929020703",
-  "currentSourceSHA": "fcdfa4f944f710494da1c60e49067045253b56c5",
+  "currentRunID": 40955667703,
+  "currentRunUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40955667703",
+  "currentSourceSHA": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
   "attempts": [
     {
       "run": 40918369100,
@@ -46,5 +46,20 @@
     }
   ],
   "storeCandidateBuild": "2",
-  "storeCandidateSourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b"
+  "storeCandidateSourceSHA": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
+  "storeCandidateReceipt": "STORE_TESTFLIGHT_RECEIPT.json",
+  "currentPurpose": "APP_STORE_ELIGIBLE_BINARY_DISTRIBUTED_TO_EXISTING_INTERNAL_TESTERS",
+  "storeCandidateAttempts": [
+    {
+      "run": 40954839754,
+      "status": "FAILED_BEFORE_BUILD_SIGN_OR_UPLOAD",
+      "cause": "Overbroad validator rejected isolated simulator-only reading-reset hook"
+    },
+    {
+      "run": 40955667703,
+      "status": "SUCCESS_APPLE_VALID_IN_BETA_TESTING",
+      "build": "2",
+      "sourceSHA": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae"
+    }
+  ]
 }

@@ -34,7 +34,7 @@
   "publisherMessages": {
     "run": 40942070108,
     "sourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b",
-    "status": "SIX_NATIVE_CASES_PASSED_FOCUSED_US_RERUN_PREPARED",
+    "status": "PASS_AGGREGATED_SIX_PLUS_ONE_NOT_SINGLE_SUITE",
     "expectedCases": 7,
     "actualPublisherAppID": true,
     "bannerInventory": "GOOGLE_SAMPLE_ONLY",
@@ -87,6 +87,15 @@
         "native-ios/TarotDeck.xcodeproj": "4113df183ddc02b56f0919440d3f1821b9072106"
       },
       "logSHA256": "6ff80e870c22e0d4a71c905bf7c72ef527cdb050a7181fcb1c34b6ce8eaf864d"
+    },
+    "successfulFocusedUS": {
+      "run": 40962897752,
+      "sourceSHA": "d94fc018aaef1e529a7467ac5eff0770d3435d5e",
+      "selection": "US_ONLY",
+      "expectedCount": 1,
+      "fullCaseSuite": false,
+      "logSHA256": "6da1604cf2ce8783198135c0f4fd20884e46931a646ffc0b014c3b22b100b1a2",
+      "receipt": "PUBLISHER_US_VERIFIED_RECEIPT.json"
     }
   },
   "vendorSupportContact": "NOT_SENT; explicitly declined by human"

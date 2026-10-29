@@ -1,0 +1,92 @@
+{
+  "checkedAt": "2026-10-29T22:21:24.602428+00:00",
+  "status": "CONFIGURATION_COMPLETE_TESTFLIGHT2_AVAILABLE_APP_REVIEW_DRAFT_PREPARED",
+  "repository": {
+    "name": "Krazel/TarotCotidiano",
+    "visibility": "PUBLIC",
+    "authority": "A-076",
+    "restorePrivate": "After human-specified approval condition; pending"
+  },
+  "publicApp": {
+    "version": "1.2",
+    "build": "1",
+    "ads": "ACTIVE",
+    "configuration": "Previously released non-personalized configuration"
+  },
+  "internalBeta": {
+    "version": "1.2.1",
+    "build": "1",
+    "audience": "INTERNAL_ONLY",
+    "state": "IN_BETA_TESTING",
+    "inventory": "GOOGLE_SAMPLE",
+    "receipt": "TESTFLIGHT_RECEIPT.json"
+  },
+  "storeCandidate": {
+    "version": "1.2.1",
+    "build": "2",
+    "sourceCommit": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
+    "run": 40955667703,
+    "state": "VALID_IN_BETA_TESTING",
+    "inventory": "PRODUCTION",
+    "uploadVerified": true,
+    "appReviewSubmitted": false,
+    "buildID": "a146d127-d077-423a-88d4-7264f4111123",
+    "receipt": "STORE_TESTFLIGHT_RECEIPT.json",
+    "audience": "APP_STORE_ELIGIBLE",
+    "distribution": "INTERNAL_ONLY_GROUP_TESTERS; no external beta submitted"
+  },
+  "privacy": {
+    "policy": "PUBLIC_EN_ES_API_AND_ANONYMOUS_HTTP_VERIFIED",
+    "AppleLabels": "PUBLISHED_SEVEN_TYPES_DEVICE_ID_TRACKING_TRUE",
+    "messages": "TAROT_ONLY_IDFA_AND_US_EN_ES_PUBLISHED",
+    "AdMobReadiness": "Lista"
+  },
+  "nativeQA": {
+    "domainCases": 6,
+    "legacyCompatibilityCases": 2,
+    "legacyIndependentATTPositiveControl": "PASS",
+    "actualPublisherConsentATT": {
+      "run": 40950542146,
+      "passedCases": 6,
+      "sourceCommit": "0358985224269124ca6268eae55ab55565fd7a58"
+    },
+    "USFocused": {
+      "run": 40962897752,
+      "sourceCommit": "d94fc018aaef1e529a7467ac5eff0770d3435d5e",
+      "expectedCases": 1,
+      "state": "PASS",
+      "receipt": "PUBLISHER_US_VERIFIED_RECEIPT.json",
+      "seconds": 537.897
+    },
+    "AppCoreBaseUITestsProjectUnchangedAcrossTheseSources": true,
+    "physicalDeviceCertified": false,
+    "RCValidation": {
+      "coreTests": 59,
+      "sampleConsentATTTests": 6,
+      "sampleConsentATTFailures": 0,
+      "sampleConsentATTSeconds": 214.018,
+      "realATTDenialBootstrap": "PASS",
+      "archiveExportManifests": 3,
+      "archiveExportDeclarationsMatch": true,
+      "IPASHA256": "ff585bc512283c8bb625af005d8820a66c8b83e979e11db399a91fb7e531b292",
+      "artifactContainsIPA": false,
+      "logSHA256": "e1b2e1cdbc4ffc98118e38ef444fddc2710c565c539e0ce4701c86613811bc32"
+    },
+    "configuredMessageCoverage": "Six European/ATT cases in40950542146 plus focused US case in40962897752; same App/Core/project/base-UI-test content, distinct test-harness commits and runs"
+  },
+  "AppleDraft": {
+    "id": "655beebc-5013-4f14-8189-adadda184449",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "release": "MANUAL",
+    "selectedBuild": "a146d127-d077-423a-88d4-7264f4111123",
+    "reviewSubmitted": false
+  },
+  "library": {
+    "id": "PR-003",
+    "synchronized": false,
+    "pendingReceipt": "../monetization-20261018/LIBRARY_PENDING.json"
+  },
+  "GoogleSupportContact": "NOT_SENT_EXPLICITLY_DECLINED",
+  "spendingEnabled": false,
+  "remainingHumanQA": "Physical-device verification of the distributed candidate; not claimed by simulator evidence"
+}
