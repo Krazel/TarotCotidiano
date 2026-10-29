@@ -1,0 +1,157 @@
+{
+  "date": "2026-10-29",
+  "status": "RESEARCH_COMPLETE_DOMAIN_SET_NOT_ESTABLISHED",
+  "scope": "Read-only primary-source research; only this JSON written. No CI/GitHub/app/account mutations. Existing sample CI run belongs to parent and was not accessed.",
+  "decision": {
+    "candidateTrackingDomains": [],
+    "emptyArrayMeaning": "No verified domain set was established by this research; this is NOT a suggested NSPrivacyTrackingDomains value.",
+    "noSafeDropInFix": "Neither NSPrivacyTracking=false based solely on SDK delegation nor true with invented/empty domains is justified. Resolve actual endpoints and their tracking use before public submission. Removing the false key alone does not supply missing tracking domains or resolve the substantive question.",
+    "correctConfigurationWhenEstablished": "For actual app/SDK tracking connections, Apple prescribes NSPrivacyTracking=true and one or more correctly formatted actual tracking domains. For no tracking-domain connections Apple permits removal of both keys or false without domains. Applying either branch requires evidence of actual behavior.",
+    "mixedHostConstraint": "If the same hostname provides tracking with ATT and contextual delivery without ATT, declaring it may block both while ATT is denied. Apple suggests separating tracking and nontracking hostnames; for GMA this routing is controlled by Google. No app-side host fabrication, DNS rewrite, proxy workaround, or broad wildcard is proposed.",
+    "priority": "UNRESOLVED_RELEASE_PRIVACY_GATE; not a claim that an Apple upload necessarily fails immediately.",
+    "whatWillClose": "Exact SDK vendor guidance identifying applicable domains/routing, or trace plus primary-source semantic evidence identifying actual tracking connections, followed by ATT-denied regression with the proposed manifest. No observation by itself proves all future demand endpoints."
+  },
+  "pinnedSDK": {
+    "GMA": "12.14.0",
+    "UMP": "3.1.0",
+    "GMASHA256": "c8c5523373ed76aa6da7bbe1324458e680981bd4593271cca5958fc8e8ffc5e7",
+    "evidence": "docs/technical/monetization-20261018/SDK_AUDIT.json and parent's exact-archive inspection",
+    "observed": "GMA DeviceID collection entry sets tracking=true. The inspected GMA manifest omits top-level NSPrivacyTracking and NSPrivacyTrackingDomains; UMP has no tracking domains. Absence is an observed metadata gap, not affirmative evidence that optional IDFA traffic has no tracking destination.",
+    "notPerformed": "No new device/SDK execution or archive export in this subtask."
+  },
+  "primaryFindings": [
+    {
+      "id": "APPLE_TN3182",
+      "source": "https://developer.apple.com/documentation/technotes/tn3182-adding-privacy-tracking-keys-to-your-privacy-manifest",
+      "retrieval": "Apple public DocC JSON read directly 2026-10-29",
+      "finding": "Applies when an app or third-party SDK contacts domains engaged in tracking. Add true and the actual list; therefore collection being implemented only in an SDK is not itself an exemption."
+    },
+    {
+      "id": "APPLE_TN3181",
+      "source": "https://developer.apple.com/documentation/technotes/tn3181-debugging-invalid-privacy-manifest",
+      "retrieval": "Apple public DocC JSON read directly 2026-10-29",
+      "finding": "true+empty domains is an invalid combination; false+nonempty domains is also invalid. If neither app nor SDK contacts tracking domains, remove both keys or use false without domains. plutil -lint checks plist syntax only, not complete privacy semantics."
+    },
+    {
+      "id": "APPLE_RUNTIME",
+      "source": "https://developer.apple.com/videos/play/wwdc2023/10060/",
+      "finding": "Apple describes iOS17 blocking connections declared in any included manifest when tracking permission is absent; mixed-purpose endpoints can be separated into tracking/nontracking hosts. Points of Interest instrument flags potential tracking connections for the developer to assess. Xcode Organizer can generate an aggregate PDF.",
+      "limit": "The instrument's potential-tracker finding is a lead, not an automatic legal classification. No host is inferred from it without assessing its use."
+    },
+    {
+      "id": "GOOGLE_ADVISOR",
+      "source": "https://groups.google.com/g/google-admob-ads-sdk/c/bXq0Ex-o06w",
+      "date": "2024-04-17",
+      "finding": "Mobile Ads SDK Forum Advisor repeats that true requires at least one tracking domain and denied ATT can make requests to those domains fail.",
+      "limit": "The answer supplies NO exact AdMob hostname, no version12.14-specific recommendation, no resolution for mixed contextual/tracking traffic. It cannot authorize copying a guessed Google host."
+    },
+    {
+      "id": "GOOGLE_DISCLOSURE",
+      "source": "https://developers.google.com/admob/ios/privacy/data-disclosure",
+      "finding": "SDK data-disclosure guide supports auditing data types and usage, but does not publish the required tracking-domain list for this exact configuration."
+    },
+    {
+      "id": "GOOGLE_TRACE",
+      "source": "https://developers.google.com/admob/ios/network-tracing",
+      "finding": "GADEnableNetworkTracing=YES enables SDK network logs. Google says support stops at13.0.0; pinned12.14 is earlier. Logs have GMA Debug BEGIN/CONTENT/FINISH framing and can span lines. No third-party certificate profile is required.",
+      "limit": "Confirm working output on exact12.14. This doc does not guarantee every web creative/network library request is recorded. Raw logs may contain private identifiers and encoded payloads."
+    },
+    {
+      "id": "APPLE_NETWORK",
+      "source": "https://developer.apple.com/documentation/Xcode-Release-Notes/xcode-13-release-notes",
+      "finding": "Apple documents the Network instrument for CFNetwork HTTP activity of debuggable processes, headers/bodies and request backtraces; xctrace supports HAR export. This is an additional attribution source when GMA's log is insufficient.",
+      "limit": "Tool/template availability and CLI arguments must be checked on the selected Xcode; no Mac execution was performed here."
+    },
+    {
+      "id": "APPLE_MANIFESTS",
+      "source": "https://developer.apple.com/documentation/bundleresources/privacy-manifest-files",
+      "retrieval": "Apple public DocC JSON read directly 2026-10-29",
+      "finding": "The manifest must be in target resources to participate in Xcode's privacy report. Inspect the final archived app, not only source packages."
+    }
+  ],
+  "rejectedEvidence": [
+    "Domains merely appearing inside ad creatives, ad-click redirect URLs or third-party ad content do not establish the SDK tracking endpoint.",
+    "Historical 2018/2021 Google forum ad request samples are too old and integration-specific to select tracking domains for GMA12.14.",
+    "Host strings embedded in an SDK binary or sample XML establish possible strings, not actual runtime use or tracking purpose.",
+    "DNS/App Privacy Report lists contacted hosts but cannot alone separate first-party scope, contextual requests, fraud prevention and cross-company tracking.",
+    "An archive privacy report aggregates declarations; it cannot discover omitted tracking domains or inspect server behavior.",
+    "An ATT enum of authorized or a nonzero ad request counter is not transport evidence."
+  ],
+  "executablePlan": {
+    "status": "PROPOSED_NOT_EXECUTED",
+    "prerequisites": [
+      "Use an authorized Mac with Xcode and exact pinned dependencies. Record Xcode/iOS/device, SDK archive SHA, source commit and QA binary hash.",
+      "Use a development-signed debuggable build on a dedicated test device for physical IDFA behavior; simulator/sample runs provide narrower evidence.",
+      "Keep app/ad IDs on Google samples initially. To test Tarot's own remote routing use its unit only on a confirmed Google test device with test ad indication, no live ad clicking.",
+      "Do not enable tracing in distributed Release/TestFlight build. Owner can add the key solely to a disposable QA build Info.plist before signing; verify the final public archive lacks it.",
+      "Use private local raw logs. Do not stream xcodebuild/SDK tracing into public Actions logs or upload raw traces/HAR/xcresult/screenshots with identifiers. If CI is used, redirect private diagnostics locally and emit only reviewed redacted summaries.",
+      "Preserve authentic UMP/ATT choices. No TCF writes, fake grant, production reset or pinning bypass."
+    ],
+    "toolDiscoveryCommands": [
+      "xcodebuild -version",
+      "xcodebuild -help",
+      "xcrun xctrace list templates",
+      "xcrun xctrace record --help",
+      "xcrun xctrace export --help",
+      "xcrun simctl spawn booted log help stream"
+    ],
+    "QAOnlyPlistCommands": [
+      "/usr/libexec/PlistBuddy -c 'Add :GADEnableNetworkTracing bool true' \"$TAROT_QA_APP/Info.plist\"",
+      "/usr/libexec/PlistBuddy -c 'Print :GADEnableNetworkTracing' \"$TAROT_QA_APP/Info.plist\""
+    ],
+    "QAOnlyPlistCaveat": "Commands are examples for an existing disposable QA .app before code signing; if key exists inspect it rather than blindly Add. Altering an already signed app invalidates its signature; owner must integrate correctly. Do not run against production archive.",
+    "simulatorCaptureCommand": "xcrun simctl spawn booted log stream --level debug --style json --predicate 'eventMessage CONTAINS \"GMA Debug\"' > \"$TAROT_PRIVATE_QA_DIR/gma-network-private.jsonl\"",
+    "simulatorCaptureCaveat": "Capture starts before app launch and stops after the chosen flow. It may not expose physical IDFA behavior. Confirm console persistence/collection with the actual SDK/toolchain; absence of output is not absence of traffic.",
+    "instrumentSteps": [
+      "On Mac open Instruments Network template and add Points of Interest if available; attach to the exact debug app/process on the dedicated device, before the scenario.",
+      "Alternatively use xctrace CLI after inspecting local help and actual template names. Example shape: xcrun xctrace record --template 'Network' --device \"$TAROT_DEVICE_UDID\" --attach \"$TAROT_APP_PID\" --time-limit 60s --output \"$TAROT_PRIVATE_QA_DIR/allow.trace\". Template/device/PID must be observed, not invented.",
+      "Inspect trace in Instruments; export table of contents with xcrun xctrace export --input \"$TAROT_PRIVATE_QA_DIR/allow.trace\" --toc --output \"$TAROT_PRIVATE_QA_DIR/allow-toc.xml\". Use an actual returned schema for later table export; no guessed XPath.",
+      "For HTTP HAR export, inspect installed xctrace export --help before using its documented --har option. Keep payload-bearing outputs private.",
+      "Correlate GMA request frames and Instruments task backtraces with consent events; do not classify a creative's own URL as an SDK request based only on its hostname."
+    ],
+    "scenarios": [
+      "Required CMP unanswered: no ad-load requests; UMP endpoints are recorded separately.",
+      "EEA refusal: real reject; ATT remains unrequested when applicable; restricted eligible requests assessed.",
+      "EEA accept then ATT deny: identify actual GMA ad request hosts and identifier/consent presence without logging identifier values.",
+      "EEA accept then ATT allow on physical device: identify hosts and code-origin used for IDFA-bearing processing.",
+      "Revoke CMP after allow; revoke ATT in Settings and foreground: confirm next requests remove restricted processing.",
+      "Non-EEA and upgrade1.2 with existing UMP/first-party state: configured messages and permission behavior separately.",
+      "After an evidence-backed manifest change, repeat denied/restricted/allowed on iOS17+ to observe domain blocking and contextual-ad success/failure. Also exercise minimum iOS16 where OS manifest blocking does not provide the same safeguard."
+    ],
+    "redactedOutputSchema": {
+      "scenario": "string",
+      "sdkVersion": "12.14.0",
+      "iosVersion": "observed",
+      "sourceCommit": "observed",
+      "ATT": "enum",
+      "UMPChoice": "observed description",
+      "endpointHost": "actual host only, no query/path credentials",
+      "origin": "GMA native / UMP / creative / unknown",
+      "idfaPresent": "boolean or unknown; never value",
+      "firstPartyIdentifierPresent": "boolean or unknown",
+      "consentSignalPresent": "boolean or unknown; no complete TCString",
+      "adResult": "loaded/failure/not-requested",
+      "trackingPurposeEvidence": "source linking processing to cross-company advertising/measurement",
+      "manifestDecision": "tracking / nontracking / mixed-purpose unresolved",
+      "rawEvidenceLocalSHA256": "hash only; raw files private"
+    },
+    "classificationRule": "A real SDK request containing the permitted identifier plus known cross-company ad processing is strong evidence for tracking use of its host. If the same host serves eligible denied requests, mark mixed-purpose and seek Google-specific routing guidance; do not choose between inaccurate disclosure and breaking contextual ads by guesswork."
+  },
+  "aggregatePrivacyReport": {
+    "officialCLI": "No supported Apple xcodebuild command for generating the Organizer PDF was established from the primary documentation reviewed. Do not invent -exportPrivacyReport or claim an equivalent official CLI exists.",
+    "verifiedOfficialPath": "Use exact .xcarchive in Xcode Organizer, context menu Generate Privacy Report; save PDF privately with archive SHA. This aggregates declarations only.",
+    "CIAlternative": "Read all PrivacyInfo.xcprivacy inside Products/Applications of the exact .xcarchive, validate plist syntax, record relative path/SHA/declared data and domains in a custom inventory. Label it CUSTOM_MANIFEST_INVENTORY, not the Xcode PDF or a runtime compliance certification.",
+    "cliExamples": [
+      "find \"$TAROT_ARCHIVE/Products/Applications\" -name PrivacyInfo.xcprivacy -print -exec plutil -lint '{}' \\;",
+      "xcodebuild -help > \"$TAROT_PRIVATE_QA_DIR/xcodebuild-help.txt\""
+    ],
+    "inventoryPython": "import hashlib,json,pathlib,plistlib,sys\nroot=pathlib.Path(sys.argv[1]).resolve()\napps=root/'Products'/'Applications'\nif not apps.is_dir(): raise SystemExit('Expected an xcarchive Products/Applications directory')\nrows=[]\nfor p in sorted(apps.rglob('PrivacyInfo.xcprivacy')):\n    raw=p.read_bytes(); data=plistlib.loads(raw)\n    rows.append({'path':str(p.relative_to(root)),'sha256':hashlib.sha256(raw).hexdigest(),'trackingKeyPresent':'NSPrivacyTracking' in data,'tracking':data.get('NSPrivacyTracking'),'trackingDomains':data.get('NSPrivacyTrackingDomains'),'collectedData':data.get('NSPrivacyCollectedDataTypes',[]),'accessedAPIs':data.get('NSPrivacyAccessedAPITypes',[])})\nprint(json.dumps({'kind':'CUSTOM_MANIFEST_INVENTORY_NOT_XCODE_REPORT','manifests':rows,'uniqueDeclaredDomains':sorted({d for r in rows for d in (r['trackingDomains'] or [])}),'noRuntimeInference':True},indent=2))",
+    "inventoryInvocation": "python3 inventory_privacy.py \"$TAROT_ARCHIVE\" > \"$TAROT_PRIVATE_QA_DIR/privacy-manifest-inventory.json\"",
+    "inventoryCaveat": "Python snippet is provided as an executable review aid inside this JSON only; not saved/executed as a separate script. It does not merge contradictory declarations away or infer absent=false."
+  },
+  "vendorQuestionDraft": {
+    "sent": false,
+    "text": "For Google Mobile Ads iOS12.14.0 without mediation, we found DeviceID tracking=true in its manifest but no top-level NSPrivacyTracking or NSPrivacyTrackingDomains. Our app uses UMP3.1 and optional ATT. Apple TN3181/3182 requires true plus actual domains when tracking connections occur. Which exact hostnames and configuration must our manifest declare for ATT-authorized IDFA use, while preserving contextual ads when ATT is denied? If tracking and contextual requests share a hostname, what supported SDK routing or manifest treatment resolves iOS17 domain blocking? Please provide version-specific guidance; we will not guess domains."
+  },
+  "nextAction": "Parent can arrange the proposed private native trace and exact archive inventory. If mixed-purpose use remains, obtain vendor clarification before final privacy configuration/public submission. This research did not initiate support messages."
+}

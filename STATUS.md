@@ -2,6 +2,12 @@
 
 Actualizado: 2026-10-29
 
+## Build de beta iniciada — repositorio público por autorización expresa, 29/10/2026
+
+A-076: el usuario autoriza expresamente hacer público el repo, compilar y volver a privado cuando esté todo aprobado. Historial local alcanzable revisado (1007blobs/368MB) sin patrones de claves ni archivos de firma; no había artefactos activos. Secretos en app-store-production, permisos Actions read y rama protegida para despliegues conservados. GitHub PUBLIC verificado por API; no cambio de plan ni gasto habilitado.
+
+Iniciada build interna1.2.1(1), fuentee02e2954e2428000059cab049b91b62290a39eb5, run40918369100. Propósito TestFlight INTERNAL ONLY con anuncios Google de demostración y pruebas nativas antes de firma/subida. No apta para App Review por su audiencia interna; la futura candidata de tienda es una entrega separada. Estado inicial IN_PROGRESS, no afirmar subida todavía. Ya no bloquea la consulta de cuota privada para esta ejecución pública estándar autorizada. Manifiesto de tracking/dominios, QA del mensaje IDFA propio y publicación coherente de privacidad siguen pendientes antes de una candidata comercial. Mantener PUBLIC hasta la aprobación indicada; registrar y verificar su retorno a PRIVATE entonces.
+
 ## Preparación completa de monetización autorizada — 29/10/2026
 
 El propietario autoriza expresamente completar UMP, ATT/IDFA y el identificador propio permitido de AdMob, respetando las negativas, y preparar la versión para revisión. A-075 sustituye el límite anterior de no ampliar esos identificadores; no autoriza gasto ni nueva exposición del código. Propietaria única de implementación: esta tarea Tarot `01a14ee2-3d19-7be2-a2dd-b13fa1f6b609`. Candidata **1.2.1 (1)** todavía sin compilar ni subir.

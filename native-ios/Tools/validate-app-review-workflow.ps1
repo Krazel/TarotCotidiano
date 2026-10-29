@@ -9,8 +9,19 @@ if ($workflow -notmatch '(?m)^on:\s*\n\s{2}workflow_dispatch:\s*$' -or
 }
 $required = @(
     'public_rc_confirmation:', 'default: "DO_NOT_UPLOAD"', '"PUBLIC_1_2_1_BUILD_1"',
-    "if: `${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_1' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' }}",
+    "if: `${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_1' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && (inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' || inputs.private_ci_clearance == 'PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED') }}",
     'release_readiness:', 'verified_source_sha:', 'readiness_evidence:', 'private_ci_clearance:',
+    '"PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED"',
+    'Verify repository visibility matches the authorized CI route',
+    'GH_METADATA_TOKEN: ${{ github.token }}',
+    'CI_CLEARANCE: ${{ inputs.private_ci_clearance }}',
+    'curl --fail --silent --show-error',
+    '"$GITHUB_API_URL/repos/$GITHUB_REPOSITORY"',
+    '.full_name == $repository',
+    '.private == false and .visibility == "public"',
+    '.private == true and .visibility == "private"',
+    'billingVerifiedByAPI: false',
+    'cp "$RUNNER_TEMP/tarot-ci-route.json" "$OUTPUT_PATH/ci-route.json"',
     'default: "PENDING"', 'Record external readiness declaration for the exact source',
     'automatedPrivacyCertification: false', 'automatedPhysicalATTValidation: false',
     'cp "$RUNNER_TEMP/tarot-release-readiness.json" "$OUTPUT_PATH/readiness.json"',
@@ -45,6 +56,14 @@ $required = @(
 )
 foreach ($contract in $required) {
     if (-not $workflow.Contains($contract)) { throw "Missing public RC workflow contract: $contract" }
+}
+if ([regex]::Matches($workflow, '(?m)^\s*runs-on:\s*macos-latest\s*$').Count -ne 1 -or
+    [regex]::Matches($workflow, '(?m)^\s*runs-on:').Count -ne 1 -or
+    $workflow.IndexOf('Verify repository visibility matches the authorized CI route') -gt
+    $workflow.IndexOf('Check out repository without retained credentials') -or
+    $workflow -notmatch '(?m)^permissions:\s*\n\s{2}contents: read\s*$' -or
+    $workflow -match '(?i)echo[^\r\n]*GH_METADATA_TOKEN|curl[^\r\n]*--verbose') {
+    throw 'The declared no-spend CI route requires a standard runner, read-only metadata verification before checkout, and no token output.'
 }
 foreach ($contract in @(
     'testFlightInternalTestingOnly bool true',

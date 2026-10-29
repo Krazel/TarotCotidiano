@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-29",
+  "authorization": "A-076 explicit human instruction to make this repository public, build, restore private after approval",
+  "repo": "Krazel/TarotCotidiano",
+  "visibilityVerified": "PUBLIC",
+  "returnToPrivate": "PENDING_APPROVAL",
+  "runID": 40918369100,
+  "runUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40918369100",
+  "sourceSHA": "e02e2954e2428000059cab049b91b62290a39eb5",
+  "version": "1.2.1",
+  "build": "1",
+  "purpose": "INTERNAL_ONLY_TESTFLIGHT_SAMPLE_ADS",
+  "status": "IN_PROGRESS",
+  "uploaded": false,
+  "submittedForReview": false,
+  "costChangeEnabled": false
+}

@@ -30,13 +30,14 @@ on:
         default: "PENDING"
         type: string
       private_ci_clearance:
-        description: "Confirm private runner quota/storage and spend limit were checked before dispatch"
+        description: "Select the verified no-spend route: private quota or authorized public standard runner"
         required: true
         default: "PENDING"
         type: choice
         options:
           - "PENDING"
           - "PRIVATE_CI_NO_SPEND_VERIFIED"
+          - "PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED"
 
 permissions:
   contents: read
@@ -48,12 +49,39 @@ concurrency:
 jobs:
   archive-export-upload:
     name: App Review RC binary - 1.2.1 (1)
-    if: ${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_1' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' }}
+    if: ${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_1' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && (inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' || inputs.private_ci_clearance == 'PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED') }}
     runs-on: macos-latest
     timeout-minutes: 45
     environment: app-store-production
 
     steps:
+      - name: Verify repository visibility matches the authorized CI route
+        shell: bash
+        env:
+          GH_METADATA_TOKEN: ${{ github.token }}
+          CI_CLEARANCE: ${{ inputs.private_ci_clearance }}
+        run: |
+          set -euo pipefail
+          set +x
+          curl --fail --silent --show-error \
+            -H "Authorization: Bearer $GH_METADATA_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY" \
+            --output "$RUNNER_TEMP/tarot-repository-metadata.json"
+          jq -e --arg repository "$GITHUB_REPOSITORY" '.full_name == $repository' "$RUNNER_TEMP/tarot-repository-metadata.json" > /dev/null
+          case "$CI_CLEARANCE" in
+            PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED)
+              jq -e '.private == false and .visibility == "public"' "$RUNNER_TEMP/tarot-repository-metadata.json" > /dev/null
+              ;;
+            PRIVATE_CI_NO_SPEND_VERIFIED)
+              jq -e '.private == true and .visibility == "private"' "$RUNNER_TEMP/tarot-repository-metadata.json" > /dev/null
+              ;;
+            *) exit 1 ;;
+          esac
+          jq --arg route "$CI_CLEARANCE" \
+            '{repository: .full_name, visibility: .visibility, selectedRoute: $route, runnerLabel: "macos-latest", billingVerifiedByAPI: false}' \
+            "$RUNNER_TEMP/tarot-repository-metadata.json" > "$RUNNER_TEMP/tarot-ci-route.json"
+
       - name: Check out repository without retained credentials
         uses: actions/checkout@v4
         with:
@@ -406,6 +434,7 @@ jobs:
           test -n "$SOURCE_IPA"
           mkdir -p "$OUTPUT_PATH"
           cp "$RUNNER_TEMP/tarot-release-readiness.json" "$OUTPUT_PATH/readiness.json"
+          cp "$RUNNER_TEMP/tarot-ci-route.json" "$OUTPUT_PATH/ci-route.json"
           /usr/bin/ditto -x -k "$IPA_PATH" "$VERIFY_PATH"
           APP_PATH="$(find "$VERIFY_PATH/Payload" -maxdepth 1 -type d -name '*.app' -print -quit)"
           INFO_PLIST="$APP_PATH/Info.plist"

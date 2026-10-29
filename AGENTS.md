@@ -1,5 +1,9 @@
 # Cerebro operativo de Tarot Deck
 
+## Excepción expresa de visibilidad — 29/10/2026, A-076
+
+El propietario ordena hacer público Krazel/TarotCotidiano para compilar por GitHub Actions y volverlo privado cuando esté todo aprobado. Esta autorización posterior y específica prevalece sobre la regla de código privado para este repositorio durante esta entrega; no afecta a otros productos ni autoriza gasto. Usar API/gh global, runners estándar y firma protegida. Verificar ausencia de secretos antes de abrir, registrar la visibilidad real y mantener pendiente el retorno a privado tras la aprobación de la actualización o una indicación posterior. No restablecer privado inmediatamente al terminar CI contra esta instrucción. La compilación/TestFlight no demuestra QA físico ni aprobación de revisión.
+
 Actualización A-072: la orden directa posterior del propietario autoriza conservar los importes de suscripción para cambiarlos, configurar anuncios reales en Coder Apps Krazel, compilar/subir y enviar 1.2 a revisión con publicación tras aprobación. Autoriza navegador exclusivamente para AdMob/UMP y App Privacy sin API disponible; resto ASC por API. Esta instrucción sustituye los límites iniciales de beta descritos a continuación. La tarea propietaria de esta continuación es `01a14ee2-3d19-7be2-a2dd-b13fa1f6b609`. No extender alcance a rediseño, precios nuevos ni otras apps. Repositorio privado restaurado; siguiente CI requiere comprobar de nuevo la vía sin gasto.
 
 ## Propósito
