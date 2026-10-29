@@ -230,12 +230,18 @@ struct TarotConsentQAView: View {
     @ObservedObject var consent: TarotAdConsent
     @ObservedObject private var observation = TarotConsentQAObservation.shared
     var body: some View {
-        Text(consent.qaState(requestCount: observation.requestCount,
-                             formPresentations: observation.formPresentations,
-                             loadedBannerCount: observation.loadedBannerCount))
+        let state = consent.qaState(requestCount: observation.requestCount,
+                                    formPresentations: observation.formPresentations,
+                                    loadedBannerCount: observation.loadedBannerCount)
+        // Keep observation out of the Settings button's hit-test area. The
+        // complete read-only JSON remains available to XCTest, not on screen.
+        Text(verbatim: "Consent QA")
             .font(.system(size: 8))
+            .fixedSize()
             .foregroundStyle(.white)
             .background(.black)
+            .accessibilityLabel(state)
+            .accessibilityValue(state)
             .accessibilityIdentifier("tarot.qa.consent-state")
             .allowsHitTesting(false)
     }

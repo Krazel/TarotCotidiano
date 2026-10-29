@@ -41,7 +41,11 @@ final class TarotConsentUITests: XCTestCase {
     override func tearDownWithError() throws {
         if testRun?.hasSucceeded == false, app != nil {
             recordEvidence("failure")
-            let hierarchy = XCTAttachment(string: app.debugDescription)
+            let description = app.debugDescription
+            // CI contains only fresh simulator/sample-ad data. Print this
+            // failure-only hierarchy as well as attaching it to the xcresult.
+            print("TAROT_QA_FAILURE_HIERARCHY_BEGIN\n\(description)\nTAROT_QA_FAILURE_HIERARCHY_END")
+            let hierarchy = XCTAttachment(string: description)
             hierarchy.name = "accessibility-hierarchy"
             hierarchy.lifetime = .keepAlways
             add(hierarchy)
@@ -145,7 +149,9 @@ final class TarotConsentUITests: XCTestCase {
         XCTAssertTrue(accepted.purpose(4))
 
         let settings = app.buttons["Settings"].firstMatch
-        try require(settings.waitForExistence(timeout: 15) && settings.isHittable, "Settings control is missing.")
+        let settingsExists = settings.waitForExistence(timeout: 15)
+        try require(settingsExists && settings.isHittable,
+                    "Settings control is not reachable (exists=\(settingsExists), hittable=\(settings.isHittable)).")
         settings.tap()
         let advertising = app.buttons["Advertising choices"].firstMatch
         for _ in 0..<8 {
