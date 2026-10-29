@@ -713,11 +713,56 @@ $shellSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckM
 $appSource = Get-Content -Raw -LiteralPath (Join-Path $appRoot "App/TarotDeckInternalApp.swift")
 $appReleaseSource = [regex]::Replace($appSource, '(?s)#if DEBUG(?:(?!#endif).)*?#else(.*?)#endif', '$1')
 $appReleaseSource = [regex]::Replace($appReleaseSource, '(?s)#if DEBUG.*?#endif', '')
+function Get-ValidatedReadFlowReleaseSource {
+    param([Parameter(Mandatory = $true)][string]$Source)
+
+    $normalized = $Source.Replace("`r`n", "`n")
+    # This is the sole approved exclusion, not a general Swift conditional remover.
+    # Every guard and operation is literal so an extra API or UI gate fails closed.
+    $qaReset = @'
+            #if DEBUG && targetEnvironment(simulator)
+            if ProcessInfo.processInfo.arguments.contains("--qa-consent-fresh-case") {
+                // Isolate only reading continuity between consent test cases.
+                // Within-case relaunches omit the argument and keep persistence.
+                // Use the app's own stores; never edit consent/TCF/GPP or TCC.
+                precondition(Bundle.main.bundleIdentifier == "com.krazel.tarotdeck.internal.provisional"
+                             && TarotAdsConfiguration.bannerID == AdvertisingConfiguration.sampleBannerID,
+                             "Fresh consent-case reading reset requires the internal sample-ad simulator.")
+                try continuityStore.clear()
+                try await coordinator.clearSession()
+            }
+            #endif
+'@
+    $qaReset = $qaReset.Replace("`r`n", "`n")
+    $qaStart = $normalized.IndexOf($qaReset, [StringComparison]::Ordinal)
+    if ($qaStart -lt 0 -or $qaStart -ne $normalized.LastIndexOf($qaReset, [StringComparison]::Ordinal)) {
+        throw 'Read flow must contain exactly the approved simulator-only consent-case continuity reset, with all guards and no extra APIs.'
+    }
+    $restoreDeclaration = "    func restoreIfNeeded() async {`n"
+    $restoreStart = $normalized.IndexOf($restoreDeclaration, [StringComparison]::Ordinal)
+    if ($restoreStart -lt 0 -or $restoreStart -ne $normalized.LastIndexOf($restoreDeclaration, [StringComparison]::Ordinal)) {
+        throw 'Expected exactly one read-flow restoreIfNeeded method.'
+    }
+    $restoreEnd = $normalized.IndexOf("`n    }", $restoreStart, [StringComparison]::Ordinal)
+    $restoreContext = "        let restoration: DeckSessionRestoration`n        do {`n" + $qaReset + "`n            restoration = try await coordinator.restore()"
+    $contextStart = $normalized.IndexOf($restoreContext, [StringComparison]::Ordinal)
+    if ($contextStart -le $restoreStart -or $restoreEnd -lt 0 -or
+        $contextStart + $restoreContext.Length -gt $restoreEnd) {
+        throw 'The QA reset must occur inside restoreIfNeeded, immediately before the real coordinator restoration.'
+    }
+    if ([regex]::Matches($normalized, '(?m)^\s*#if\b').Count -ne 1 -or
+        [regex]::Matches($normalized, '(?m)^\s*#endif\b').Count -ne 1 -or
+        $normalized -match '(?m)^\s*#(?:else|elseif)\b') {
+        throw 'No additional or nested conditional gates may surround the approved read-flow QA reset.'
+    }
+    return $normalized.Remove($qaStart, $qaReset.Length)
+}
+$readModelReleaseSource = Get-ValidatedReadFlowReleaseSource -Source $readModelSource
 if ($appReleaseSource -match 'EmptyView\(\)' -or
     $appReleaseSource -notmatch 'TarotDeckMainShell\(' -or
     $appReleaseSource -notmatch 'ReadRootView\(' -or
     $appReleaseSource -notmatch 'productionContent' -or
-    $readModelSource -match '#if\s+DEBUG' -or
+    $readModelReleaseSource -match '#if\s+DEBUG' -or
     $activeReadSource -match '#if\s+DEBUG') {
     throw "The real Tarot UI and read flow must compile in Release without DEBUG-only gates."
 }
