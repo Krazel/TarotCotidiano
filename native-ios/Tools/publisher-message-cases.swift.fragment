@@ -72,7 +72,7 @@
         }
     }
 
-    private func publisherOpenUSOptions(after previous: Snapshot) throws -> PublisherUSSurface {
+    private func publisherOpenUSOptions(after previous: Snapshot) throws -> PublisherUSSurfaceGroup {
         let settings = app.buttons["Settings"].firstMatch
         try require(settings.waitForExistence(timeout: 15) && settings.isHittable,
                     "Settings control is not reachable.")
@@ -89,7 +89,7 @@
         }
         let surface = try publisherWaitForUSSurface()
         try assertNoRequestIncrease(from: editing.requestCount, for: 3)
-        publisherRecordUSSurfaceEvidence(surface, name: "publisher-us-options-open")
+        publisherRecordUSSurfaceEvidence(surface.canonical, name: "publisher-us-options-open")
         return surface
     }
 
@@ -97,6 +97,12 @@
         let webView: XCUIElement
         let controls: [XCUIElement]
         let path: String
+        let windowIndex: Int
+    }
+
+    private struct PublisherUSSurfaceGroup {
+        let canonical: PublisherUSSurface
+        let aliases: [PublisherUSSurface]
     }
 
     // Runs 40954332187/40957397385 expose a preloaded tree below a 1x1
@@ -165,7 +171,9 @@
                 diagnostics.append("\(path): unexpected nested document in terminal WebView")
                 return
             }
-            if [.staticText, .button, .radioButton, .other].contains(type) { controls.append(node) }
+            // Keep the complete visible node set, including decorative nodes,
+            // for exact equivalence; actionable filters are applied later.
+            controls.append(node)
             for (index, child) in node.children(matching: .any).allElementsBoundByIndex.enumerated() {
                 collectControls(child, clip: visible, path: "\(path)/child[\(index)]",
                                 depth: depth + 1, controls: &controls)
@@ -188,7 +196,8 @@
                     let saves = controls.filter { $0.elementType == .button && $0.label == "Save and close" }
                     diagnostics.append("\(path): terminal WebView frame=\(webView.frame), controls=\(controls.count), headings=\(headings.count), saves=\(saves.count)")
                     if !headings.isEmpty || !saves.isEmpty {
-                        surfaces.append(PublisherUSSurface(webView: webView, controls: controls, path: path))
+                        surfaces.append(PublisherUSSurface(webView: webView, controls: controls, path: path,
+                                                           windowIndex: windowIndex))
                     }
                 }
             }
@@ -198,7 +207,7 @@
         return (surfaces, diagnostics)
     }
 
-    private func publisherWaitForUSSurface() throws -> PublisherUSSurface {
+    private func publisherWaitForUSSurface() throws -> PublisherUSSurfaceGroup {
         var found: (surfaces: [PublisherUSSurface], diagnostics: [String]) = ([], [])
         let visible = NSPredicate { [weak self] _, _ in
             guard let self, !self.springboard.alerts.firstMatch.exists,
@@ -214,12 +223,113 @@
         evidence.lifetime = .keepAlways
         add(evidence)
         try requireUMPTapReady()
-        try require(result == .completed && found.surfaces.count == 1,
-                    "Expected one terminal US WebView with an unclipped full-surface ancestor chain; found \(found.surfaces.count).")
-        let surface = found.surfaces[0]
-        _ = try publisherUSControl(in: surface, label: "My data preferences", button: false)
-        _ = try publisherUSControl(in: surface, label: "Save and close", button: true)
-        return surface
+        try require(result == .completed && !found.surfaces.isEmpty,
+                    "No terminal US WebView with an unclipped full-surface ancestor chain was found.")
+        return try publisherGroupEquivalentSurfaces(found.surfaces, phase: "before-selection")
+    }
+
+    private func publisherExactFrame(_ frame: CGRect) throws -> [String] {
+        let coordinates = [Double(frame.minX), Double(frame.minY), Double(frame.width), Double(frame.height)]
+        try require(coordinates.allSatisfy { $0.isFinite }, "Non-finite US control frame cannot establish equivalence.")
+        // Exact IEEE bits, without rounding coordinates or merging near copies.
+        return coordinates.map { String($0.bitPattern, radix: 16) }
+    }
+
+    private func publisherStableJSON(_ value: Any) throws -> String {
+        let data = try JSONSerialization.data(withJSONObject: value, options: [.sortedKeys])
+        return String(decoding: data, as: UTF8.self)
+    }
+
+    private func publisherSurfaceSignature(_ surface: PublisherUSSurface) throws -> String {
+        try requireUMPTapReady()
+        let window = app.windows.element(boundBy: surface.windowIndex)
+        try require(window.exists && surface.webView.exists, "A US representation lost its Window or WebView.")
+        var controls: [String] = []
+        for control in surface.controls {
+            try require(control.exists, "A US control disappeared while checking exact representation equivalence.")
+            let state: [String: Any] = [
+                "type": control.elementType.rawValue, "label": control.label,
+                "frameBits": try publisherExactFrame(control.frame),
+                "binaryValue": publisherUSRadioValue(control).map { String($0) } ?? "not-binary",
+                "selected": control.isSelected, "enabled": control.isEnabled, "hittable": control.isHittable
+            ]
+            controls.append(try publisherStableJSON(state))
+        }
+        // Sorted MULTISET: duplicate nodes remain duplicates. Do not deduplicate
+        // by count, coordinates alone, or the diagnostic fingerprint below.
+        return try publisherStableJSON([
+            "windowIndex": surface.windowIndex, "windowFrameBits": try publisherExactFrame(window.frame),
+            "webViewFrameBits": try publisherExactFrame(surface.webView.frame),
+            "webViewLabel": surface.webView.label, "controls": controls.sorted()
+        ])
+    }
+
+    private func publisherSignatureFingerprint(_ signature: String) -> String {
+        // Log label only. Grouping always compares the complete exact strings,
+        // so a fingerprint collision cannot merge two different control sets.
+        var value: UInt64 = 14695981039346656037
+        for byte in signature.utf8 { value = (value ^ UInt64(byte)) &* 1099511628211 }
+        return String(value, radix: 16)
+    }
+
+    private func publisherGroupEquivalentSurfaces(_ surfaces: [PublisherUSSurface], phase: String) throws -> PublisherUSSurfaceGroup {
+        var groups: [String: [PublisherUSSurface]] = [:]
+        var diagnostics: [String] = []
+        for surface in surfaces {
+            // Every representation must itself contain the exact unique
+            // heading, Save button, titles and binary-valued radio pair.
+            _ = try publisherUSControl(in: surface, label: "My data preferences", button: false)
+            _ = try publisherUSControl(in: surface, label: "Save and close", button: true)
+            for allow in [false, true] {
+                _ = try publisherUSControl(in: surface, label: publisherUSOptionCopy(allow: allow).title, button: false)
+                _ = try publisherUSRadio(in: surface, allow: allow)
+            }
+            let signature = try publisherSurfaceSignature(surface)
+            groups[signature, default: []].append(surface)
+            let line = "phase=\(phase) path=\(surface.path) fingerprint=\(publisherSignatureFingerprint(signature)) exactControlSet=\(signature)"
+            diagnostics.append(line)
+            print("TAROT_QA_US_EQUIVALENCE \(line)")
+        }
+        print("TAROT_QA_US_GROUPS phase=\(phase) representations=\(surfaces.count) exactGroups=\(groups.count)")
+        let evidence = XCTAttachment(string: diagnostics.joined(separator: "\n"))
+        evidence.name = "publisher-us-equivalence-\(phase)"
+        evidence.lifetime = .keepAlways
+        add(evidence)
+        try require(groups.count == 1, "US surface representations differ in Window, geometry, complete controls or state; refusing ambiguous interaction.")
+        // All members are now proven physically/state equivalent. The path
+        // only chooses a deterministic API representation of that one target.
+        let aliases = surfaces.sorted { $0.path < $1.path }
+        return PublisherUSSurfaceGroup(canonical: aliases[0], aliases: aliases)
+    }
+
+    private func publisherRereadSurface(_ surface: PublisherUSSurface) throws -> PublisherUSSurface {
+        try requireUMPTapReady()
+        var controls: [XCUIElement] = []
+        var visited = 0
+        func collect(_ node: XCUIElement, clip: CGRect, depth: Int) throws {
+            visited += 1
+            try require(visited <= 150 && depth <= 48, "Cannot prove US representation consistency from a partial traversal.")
+            let frame = node.frame
+            let visible = clip.intersection(frame)
+            guard frame.width > 1 && frame.height > 1, visible.width > 1, visible.height > 1 else { return }
+            try require(node.elementType != .webView, "A second document appeared inside the terminal US WebView.")
+            controls.append(node)
+            for child in node.children(matching: .any).allElementsBoundByIndex {
+                try collect(child, clip: visible, depth: depth + 1)
+            }
+        }
+        let window = app.windows.element(boundBy: surface.windowIndex)
+        try require(window.exists && surface.webView.exists, "US representation disappeared before Save.")
+        let screen = window.frame
+        let clip = screen.intersection(surface.webView.frame)
+        try require(screen.width > 1 && screen.height > 1
+                    && clip.width >= screen.width * 0.99 && clip.height >= screen.height * 0.99,
+                    "US representation is no longer a full-surface WebView before Save.")
+        for child in surface.webView.children(matching: .any).allElementsBoundByIndex {
+            try collect(child, clip: clip, depth: 0)
+        }
+        return PublisherUSSurface(webView: surface.webView, controls: controls,
+                                  path: surface.path, windowIndex: surface.windowIndex)
     }
 
     private func publisherUSControl(in surface: PublisherUSSurface, label: String, button: Bool) throws -> XCUIElement {
@@ -280,7 +390,8 @@
         return controls[0]
     }
 
-    private func publisherSelectUSOption(in surface: PublisherUSSurface, allow: Bool) throws {
+    private func publisherSelectUSOption(in group: PublisherUSSurfaceGroup, allow: Bool) throws {
+        let surface = group.canonical
         let option = try publisherUSRadio(in: surface, allow: allow)
         try require(publisherUSRadioValue(option) == 0, "The requested US option must start unselected to prove an explicit change.")
         publisherRecordUSSurfaceEvidence(surface, name: allow ? "publisher-us-before-allow" : "publisher-us-before-opt-out")
@@ -334,6 +445,14 @@
         add(selection)
         try require(result == .completed && selectedValue == 1 && otherValue == 0,
                     "US radio selection was not confirmed (selected=1, other=0); refuse Save.")
-        let save = try publisherUSControl(in: surface, label: "Save and close", button: true)
+        let refreshed = try group.aliases.map { try publisherRereadSurface($0) }
+        let consistent = try publisherGroupEquivalentSurfaces(refreshed, phase: "before-save")
+        for alias in consistent.aliases {
+            let selected = publisherUSRadioValue(try publisherUSRadio(in: alias, allow: allow))
+            let other = publisherUSRadioValue(try publisherUSRadio(in: alias, allow: !allow))
+            print("TAROT_QA_US_PRESAVE path=\(alias.path) selected=\(String(describing: selected)) other=\(String(describing: other))")
+            try require(selected == 1 && other == 0, "A US alias is stale or inconsistent before Save; no choice will be saved.")
+        }
+        let save = try publisherUSControl(in: consistent.canonical, label: "Save and close", button: true)
         try tapActiveUMPElement(save)
     }
