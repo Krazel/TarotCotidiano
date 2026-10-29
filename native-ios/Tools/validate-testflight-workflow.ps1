@@ -160,12 +160,12 @@ $sampleBannerID = 'ca-app-pub-3940256099942544/2435281174'
 $workflowAdIDs = @([regex]::Matches($workflow, 'ca-app-pub-\d+[~/]\d+') |
     ForEach-Object { $_.Value } | Sort-Object -Unique)
 if (@(Compare-Object (@($sampleAppID, $sampleBannerID) | Sort-Object) $workflowAdIDs).Count -gt 0 -or
-    [regex]::Matches($workflow, [regex]::Escape("TAROT_ADMOB_APP_ID='$sampleAppID'")).Count -ne 3 -or
-    [regex]::Matches($workflow, [regex]::Escape("TAROT_ADMOB_BANNER_ID='$sampleBannerID'")).Count -ne 3 -or
-    [regex]::Matches($workflow, 'TAROT_ADS_MODE=test-only').Count -ne 3 -or
+    [regex]::Matches($workflow, [regex]::Escape("TAROT_ADMOB_APP_ID='$sampleAppID'")).Count -ne 4 -or
+    [regex]::Matches($workflow, [regex]::Escape("TAROT_ADMOB_BANNER_ID='$sampleBannerID'")).Count -ne 4 -or
+    [regex]::Matches($workflow, 'TAROT_ADS_MODE=test-only').Count -ne 4 -or
     [regex]::Matches($workflow, 'Print :GADApplicationIdentifier').Count -ne 3 -or
     [regex]::Matches($workflow, 'Print :TarotBannerAdUnitID').Count -ne 3) {
-    throw "Simulator build, consent tests and signed archive must override production IDs with samples; simulator, archive and IPA must verify identifiers."
+    throw "Simulator build, ATT bootstrap, consent suite and signed archive must override production IDs with samples; simulator, archive and IPA must verify identifiers."
 }
 
 foreach ($contract in @(
@@ -176,7 +176,7 @@ foreach ($contract in @(
     'xcodebuild -version', 'xcrun simctl help privacy',
     'tarot-qa-xcode-version.txt', 'tarot-qa-simulator-runtimes.json',
     'tarot-qa-simulator-devices.json', 'tarot-qa-simctl-privacy-help.txt',
-    'The UMP sample message does not certify the production IDFA explainer or the real ATT prompt.',
+    'Sample integration does not certify production AdMob message configuration or physical-device ATT behavior.',
     'Any observed ATT state must come from the OS; no production consent fixture is supplied.'
 )) {
     if (-not $workflow.Contains($contract)) { throw "Missing native consent QA contract: $contract" }
@@ -196,9 +196,20 @@ foreach ($contract in @(
     '"--info", "--debug"', 'log stream --level debug', 'kill -0 "$APP_PID"',
     '--qa-consent-non-eea --qa-consent-observe --qa-english',
     '--qa-consent-eea --qa-consent-observe --qa-english',
-    '${{ runner.temp }}/tarot-qa-*'
+    '${{ runner.temp }}/tarot-qa-*',
+    '-only-testing:TarotConsentUITests/TarotConsentUITests/testNonEEAATTDenialAllowsTestBanner',
+    'TarotATTDenialSmoke.xcresult', 'tarot-att-denial-smoke.log',
+    "grep -Eq 'testNonEEAATTDenialAllowsTestBanner.*passed'",
+    'Running six UMP/ATT sample integration tests.'
 )) {
     if (-not $workflow.Contains($contract)) { throw "Missing fresh simulator or smoke diagnostic contract: $contract" }
+}
+$bootstrapStart = $workflow.IndexOf('-only-testing:TarotConsentUITests/TarotConsentUITests/testNonEEAATTDenialAllowsTestBanner')
+$firstCLILaunch = $workflow.IndexOf('xcrun simctl launch "$DEVICE_ID"')
+if ($bootstrapStart -lt 0 -or $firstCLILaunch -le $bootstrapStart -or
+    $workflow.Substring($bootstrapStart, $firstCLILaunch - $bootstrapStart) -match 'simctl (uninstall|install)|--qa-consent-reset' -or
+    $workflow -notmatch '(?s)name: Preserve native consent QA result\s+if: \$\{\{ always\(\) \}\}.*?TarotATTDenialSmoke\.xcresult.*?tarot-att-denial-smoke\.log') {
+    throw 'Real ATT denial bootstrap must precede CLI launch, retain its choices and preserve test evidence even on failure.'
 }
 if ($workflow.Contains('[0].udid') -or $workflow -match '(?m)^\s*xcrun simctl boot .*\|\| true') {
     throw 'Never select the first pre-existing simulator or suppress a failed boot.'

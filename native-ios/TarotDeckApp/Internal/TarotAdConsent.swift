@@ -189,13 +189,14 @@ final class TarotAdConsent: ObservableObject {
         }
     }
 
-    func qaState(requestCount: Int, formPresentations: Int) -> String {
+    func qaState(requestCount: Int, formPresentations: Int, loadedBannerCount: Int) -> String {
         let values: [String: Any] = [
             "updateCompleted": didUpdateThisLaunch, "busy": isBusy,
             "canRequestAds": canRequestAds,
             "umpCanRequestAds": ConsentInformation.shared.canRequestAds,
             "sdkStarted": isStarted, "requestCount": requestCount,
             "formPresentations": formPresentations,
+            "loadedBannerCount": loadedBannerCount,
             "trackingAuthorization": qaTrackingAuthorization,
             "automaticPresentationAllowed": automaticPresentationAllowed,
             "bannerConfigured": TarotAdsConfiguration.bannerID != nil,
@@ -218,8 +219,10 @@ final class TarotConsentQAObservation: ObservableObject {
     static let shared = TarotConsentQAObservation()
     @Published private(set) var requestCount = 0
     @Published private(set) var formPresentations = 0
+    @Published private(set) var loadedBannerCount = 0
     func recordRequest() { requestCount += 1 }
     func recordForm() { formPresentations += 1 }
+    func recordLoadedBanner() { loadedBannerCount += 1 }
 }
 
 @MainActor
@@ -228,7 +231,8 @@ struct TarotConsentQAView: View {
     @ObservedObject private var observation = TarotConsentQAObservation.shared
     var body: some View {
         Text(consent.qaState(requestCount: observation.requestCount,
-                             formPresentations: observation.formPresentations))
+                             formPresentations: observation.formPresentations,
+                             loadedBannerCount: observation.loadedBannerCount))
             .font(.system(size: 8))
             .foregroundStyle(.white)
             .background(.black)

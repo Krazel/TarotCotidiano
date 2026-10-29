@@ -16,6 +16,7 @@ final class TarotConsentUITests: XCTestCase {
         let sdkStarted: Bool
         let requestCount: Int
         let formPresentations: Int
+        let loadedBannerCount: Int
         let trackingAuthorization: String
         let purposeConsents: String?
         let vendorConsents: String?
@@ -60,6 +61,33 @@ final class TarotConsentUITests: XCTestCase {
         try assertNoRequestIncrease(from: 0, for: 3)
         XCTAssertTrue(choice("Consent").exists, "No selection was made by this test.")
         recordEvidence("no-choice-no-requests")
+    }
+
+    func testNonEEAATTDenialAllowsTestBanner() throws {
+        try verifyNonEEAATTChoice(allow: false)
+    }
+
+    func testNonEEAATTAuthorizationAllowsTestBanner() throws {
+        try verifyNonEEAATTChoice(allow: true)
+    }
+
+    private func verifyNonEEAATTChoice(allow: Bool) throws {
+        launch(reset: true, eea: false)
+        // The configured Google sample serves a real IDFA explainer here.
+        // Advance it, then exercise the real OS choice; never preset ATT/TCC.
+        try tapChoice("Continue")
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let action = springboard.alerts.buttons[allow ? "Allow" : "Ask App Not to Track"].firstMatch
+        try require(action.waitForExistence(timeout: networkTimeout), "Apple ATT choice did not appear after the real UMP explainer.")
+        action.tap()
+        let expectedStatus = allow ? "authorized" : "denied"
+        let ready = try waitForSnapshot("ATT choice followed by a successfully loaded sample banner") {
+            $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.sdkStarted
+                && $0.requestCount > 0 && $0.loadedBannerCount > 0
+                && $0.trackingAuthorization == expectedStatus
+        }
+        XCTAssertEqual(ready.trackingAuthorization, expectedStatus)
+        recordEvidence(allow ? "actual-att-authorized-banner" : "actual-att-denied-banner")
     }
 
     func testAcceptAndPersistChoiceAcrossRelaunch() throws {
@@ -145,9 +173,9 @@ final class TarotConsentUITests: XCTestCase {
         recordEvidence("withdrawn")
     }
 
-    private func launch(reset: Bool) {
+    private func launch(reset: Bool, eea: Bool = true) {
         app.launchArguments = [
-            "--qa-english", "--qa-consent-eea", "--qa-consent-observe",
+            "--qa-english", eea ? "--qa-consent-eea" : "--qa-consent-non-eea", "--qa-consent-observe",
             "-AppleLanguages", "(en)", "-AppleLocale", "en_US"
         ]
         if reset { app.launchArguments.append("--qa-consent-reset") }

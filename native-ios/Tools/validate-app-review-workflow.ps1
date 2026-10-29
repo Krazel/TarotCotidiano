@@ -34,7 +34,7 @@ $required = @(
     'Verify real sample consent choices in simulator', '-only-testing:TarotConsentUITests',
     '-parallel-testing-enabled NO', 'TarotConsentQA.xcresult', 'Preserve native consent QA result',
     'tarot-consent-tests.log', 'tarot-qa-simctl-privacy-help.txt',
-    'The UMP sample message does not certify the production IDFA explainer or the real ATT prompt.',
+    'Sample integration does not certify production AdMob message configuration or physical-device ATT behavior.',
     'grep -q test_banner_loaded', '--qa-consent-eea', 'grep -q consent_form_presenting',
     'for language in spanish english',
     '--qa-remove-ads "--qa-$language" --qa-prices "$PRICES" --qa-active-product com.krazel.tarotdeck.support.monthly.499',
@@ -71,9 +71,20 @@ foreach ($contract in @(
     '"--info", "--debug"', 'log stream --level debug', 'kill -0 "$APP_PID"',
     '--qa-consent-non-eea --qa-consent-observe --qa-english',
     '--qa-consent-eea --qa-consent-observe --qa-english',
-    '${{ runner.temp }}/tarot-qa-*'
+    '${{ runner.temp }}/tarot-qa-*',
+    '-only-testing:TarotConsentUITests/TarotConsentUITests/testNonEEAATTDenialAllowsTestBanner',
+    'TarotATTDenialSmoke.xcresult', 'tarot-att-denial-smoke.log',
+    "grep -Eq 'testNonEEAATTDenialAllowsTestBanner.*passed'",
+    'Running six UMP/ATT sample integration tests.'
 )) {
     if (-not $workflow.Contains($contract)) { throw "Missing fresh simulator or smoke diagnostic contract: $contract" }
+}
+$bootstrapStart = $workflow.IndexOf('-only-testing:TarotConsentUITests/TarotConsentUITests/testNonEEAATTDenialAllowsTestBanner')
+$firstCLILaunch = $workflow.IndexOf('xcrun simctl launch "$DEVICE_ID"')
+if ($bootstrapStart -lt 0 -or $firstCLILaunch -le $bootstrapStart -or
+    $workflow.Substring($bootstrapStart, $firstCLILaunch - $bootstrapStart) -match 'simctl (uninstall|install)|--qa-consent-reset' -or
+    $workflow -notmatch '(?s)name: Preserve native consent QA result\s+if: \$\{\{ always\(\) \}\}.*?TarotATTDenialSmoke\.xcresult.*?tarot-att-denial-smoke\.log') {
+    throw 'Real ATT denial bootstrap must precede CLI launch, retain its choices and preserve test evidence even on failure.'
 }
 if ($workflow.Contains('[0].udid') -or $workflow -match '(?m)^\s*xcrun simctl boot .*\|\| true') {
     throw 'Never select the first pre-existing simulator or suppress a failed boot.'
@@ -144,8 +155,8 @@ foreach ($contract in @(
     "TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511'",
     "TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174'"
 )) {
-    if ([regex]::Matches($workflow.Substring(0, $signingStart), [regex]::Escape($contract)).Count -ne 2) {
-        throw "Both unsigned simulator build and native tests must use: $contract"
+    if ([regex]::Matches($workflow.Substring(0, $signingStart), [regex]::Escape($contract)).Count -ne 3) {
+        throw "Unsigned simulator build, ATT bootstrap and full consent suite must use: $contract"
     }
 }
 if ($workflow -match '(?i)xcrun\s+simctl\s+privacy\s+[^\r\n]*(grant|revoke|reset)|TCC\.db|\btccutil\b' -or

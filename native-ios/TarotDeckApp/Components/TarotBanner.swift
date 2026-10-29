@@ -105,6 +105,9 @@ private final class TarotBannerController: UIViewController, BannerViewDelegate 
         let logger = Logger(subsystem: "com.krazel.tarotdeck", category: "ads")
         if bannerView.adUnitID == AdvertisingConfiguration.sampleBannerID {
             logger.notice("test_banner_loaded")
+            #if DEBUG
+            TarotConsentQAObservation.shared.recordLoadedBanner()
+            #endif
         } else {
             logger.notice("production_banner_loaded")
         }

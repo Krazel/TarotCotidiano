@@ -70,11 +70,11 @@ jobs:
           else
             echo "simctl privacy help unavailable; no permission override attempted."
           fi
-          echo "No simulator tracking permission is granted, revoked or mocked by this workflow."
-          echo "The UMP sample message does not certify the production IDFA explainer or the real ATT prompt."
+          echo "Tracking permission is exercised through XCTest and the real Apple prompt; no TCC writes or fabricated state."
+          echo "Sample integration does not certify production AdMob message configuration or physical-device ATT behavior."
 
       - name: Compile and launch simulator app
-        timeout-minutes: 18
+        timeout-minutes: 24
         shell: bash
         run: |
           set -euo pipefail
@@ -170,6 +170,22 @@ jobs:
             sleep 2
           }
           xcrun simctl install "$DEVICE_ID" "$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app"
+          echo "Bootstrap real non-EEA UMP and Apple ATT denial using Google samples before the CLI banner smoke."
+          xcodebuild test -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal -configuration Debug \
+            -destination "platform=iOS Simulator,id=$DEVICE_ID" \
+            -derivedDataPath "$RUNNER_TEMP/TarotAdsSimulator" \
+            -resultBundlePath "$RUNNER_TEMP/TarotATTDenialSmoke.xcresult" \
+            -parallel-testing-enabled NO \
+            -only-testing:TarotConsentUITests/TarotConsentUITests/testNonEEAATTDenialAllowsTestBanner \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS="DEBUG TAROT_TEST_ADS" \
+            TAROT_ADS_MODE=test-only \
+            TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511' \
+            TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            | tee "$RUNNER_TEMP/tarot-att-denial-smoke.log"
+          grep -Eq 'testNonEEAATTDenialAllowsTestBanner.*passed' "$RUNNER_TEMP/tarot-att-denial-smoke.log"
+          # XCTest terminated the app; retain its real UMP/ATT choices for this CLI relaunch.
           start_runtime_log "$RUNNER_TEMP/tarot-ads-runtime.log"
           xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-consent-non-eea --qa-consent-observe --qa-english | tee "$RUNNER_TEMP/tarot-qa-launch-non-eea.log"
           xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-qa-after-launch-non-eea.png"
@@ -238,7 +254,7 @@ jobs:
           set -euo pipefail
           DEVICE_ID="${TAROT_QA_DEVICE_ID:?Fresh smoke simulator ID is required}"
           test -n "$DEVICE_ID"
-          echo "Running UMP sample integration tests. Any observed ATT state must come from the OS; no production consent fixture is supplied."
+          echo "Running six UMP/ATT sample integration tests. Any observed ATT state must come from the OS; no production consent fixture is supplied."
           xcodebuild test -project native-ios/TarotDeck.xcodeproj \
             -scheme TarotDeckInternal -configuration Debug \
             -destination "platform=iOS Simulator,id=$DEVICE_ID" \
@@ -258,6 +274,8 @@ jobs:
         with:
           name: TarotDeck-1.2.1-1-consent-qa-${{ github.run_id }}
           path: |
+            ${{ runner.temp }}/TarotATTDenialSmoke.xcresult
+            ${{ runner.temp }}/tarot-att-denial-smoke.log
             ${{ runner.temp }}/TarotConsentQA.xcresult
             ${{ runner.temp }}/tarot-consent-tests.log
             ${{ runner.temp }}/tarot-qa-xcode-version.txt
