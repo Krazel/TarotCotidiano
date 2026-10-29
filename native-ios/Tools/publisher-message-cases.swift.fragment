@@ -14,8 +14,8 @@
         try require(baseline.requiresPrivacyOptions == true, "UMP did not require the US privacy-options entry point.")
         recordEvidence("publisher-us-initial")
 
-        try publisherOpenUSOptions(after: baseline)
-        try publisherSelectUSOption(allow: false)
+        let optOutSurface = try publisherOpenUSOptions(after: baseline)
+        try publisherSelectUSOption(in: optOutSurface, allow: false)
         let optedOut = try publisherWaitForUSState("real US opt-out saved", expectedOptOut: 1)
         recordEvidence("publisher-us-opted-out")
 
@@ -27,8 +27,8 @@
         XCTAssertEqual(persisted.gppSectionIDs, optedOut.gppSectionIDs)
         recordEvidence("publisher-us-opt-out-persisted")
 
-        try publisherOpenUSOptions(after: persisted)
-        try publisherSelectUSOption(allow: true)
+        let allowSurface = try publisherOpenUSOptions(after: persisted)
+        try publisherSelectUSOption(in: allowSurface, allow: true)
         _ = try publisherWaitForUSState("explicit Allow action undoes the US opt-out", expectedOptOut: 2)
         recordEvidence("publisher-us-explicit-allow")
 
@@ -72,7 +72,7 @@
         }
     }
 
-    private func publisherOpenUSOptions(after previous: Snapshot) throws {
+    private func publisherOpenUSOptions(after previous: Snapshot) throws -> PublisherUSSurface {
         let settings = app.buttons["Settings"].firstMatch
         try require(settings.waitForExistence(timeout: 15) && settings.isHittable,
                     "Settings control is not reachable.")
@@ -90,75 +90,148 @@
         let surface = try publisherWaitForUSSurface()
         try assertNoRequestIncrease(from: editing.requestCount, for: 3)
         publisherRecordUSSurfaceEvidence(surface, name: "publisher-us-options-open")
+        return surface
     }
 
-    // Run 40954332187 exposed duplicate UMP AX trees: the preloaded tree is
-    // beneath a direct Window child sized 1x1, even though its descendants
-    // claim full-sized frames and isHittable. Reject that ancestor BEFORE any
-    // descendant query. Never choose a copy by its x position or first match.
-    private func publisherUSSurfaces() -> (surfaces: [XCUIElement], diagnostics: [String]) {
-        var surfaces: [XCUIElement] = []
+    private struct PublisherUSSurface {
+        let webView: XCUIElement
+        let controls: [XCUIElement]
+        let path: String
+    }
+
+    // Runs 40954332187/40957397385 expose a preloaded tree below a 1x1
+    // ancestor, and broad descendant queries return matching controls from
+    // three wrappers. Walk public children at EVERY level instead. Preserve
+    // the ancestor clip and only collect terminal full-screen WebViews;
+    // three nested WebView wrappers are one form, not three candidates.
+    private func publisherUSSurfaces() -> (surfaces: [PublisherUSSurface], diagnostics: [String]) {
+        var surfaces: [PublisherUSSurface] = []
         var diagnostics: [String] = []
+        var visited = 0
+        var traversalComplete = true
+
+        func coversScreen(_ frame: CGRect, _ screen: CGRect) -> Bool {
+            frame.width > 1 && frame.height > 1
+                && frame.minX <= screen.minX + screen.width * 0.01
+                && frame.minY <= screen.minY + screen.height * 0.01
+                && frame.maxX >= screen.maxX - screen.width * 0.01
+                && frame.maxY >= screen.maxY - screen.height * 0.01
+        }
+
+        func permittedVisit(_ path: String, _ depth: Int) -> Bool {
+            visited += 1
+            guard visited <= 300 && depth <= 48 else {
+                traversalComplete = false
+                diagnostics.append("\(path): traversal bound exceeded; no candidate may pass")
+                return false
+            }
+            return true
+        }
+
+        func terminalWebViews(_ node: XCUIElement, screen: CGRect, clip: CGRect,
+                              path: String, depth: Int) -> [(XCUIElement, String)] {
+            guard permittedVisit(path, depth) else { return [] }
+            let frame = node.frame
+            let visible = clip.intersection(frame)
+            guard coversScreen(frame, screen), coversScreen(visible, screen) else {
+                diagnostics.append("\(path) frame=\(frame) clip=\(visible): pruned before children")
+                return []
+            }
+            let type = node.elementType
+            diagnostics.append("\(path) type=\(type.rawValue) frame=\(frame): full ancestor")
+            var deeper: [(XCUIElement, String)] = []
+            for (index, child) in node.children(matching: .any).allElementsBoundByIndex.enumerated() {
+                deeper += terminalWebViews(child, screen: screen, clip: visible,
+                                           path: "\(path)/child[\(index)]", depth: depth + 1)
+            }
+            if type == .webView && deeper.isEmpty { return [(node, path)] }
+            return deeper
+        }
+
+        func collectControls(_ node: XCUIElement, clip: CGRect, path: String,
+                             depth: Int, controls: inout [XCUIElement]) {
+            guard permittedVisit(path, depth) else { return }
+            let frame = node.frame
+            let visible = clip.intersection(frame)
+            guard frame.width > 1 && frame.height > 1, visible.width > 1, visible.height > 1 else {
+                diagnostics.append("\(path) frame=\(frame): clipped control branch pruned before children")
+                return
+            }
+            let type = node.elementType
+            // A nested WebView here did not satisfy full-surface traversal.
+            // Do not merge its controls or silently accept another document.
+            guard type != .webView else {
+                traversalComplete = false
+                diagnostics.append("\(path): unexpected nested document in terminal WebView")
+                return
+            }
+            if [.staticText, .button, .radioButton, .other].contains(type) { controls.append(node) }
+            for (index, child) in node.children(matching: .any).allElementsBoundByIndex.enumerated() {
+                collectControls(child, clip: visible, path: "\(path)/child[\(index)]",
+                                depth: depth + 1, controls: &controls)
+            }
+        }
+
         for (windowIndex, window) in app.windows.allElementsBoundByIndex.enumerated() {
             let screen = window.frame
             guard screen.width > 1 && screen.height > 1 else { continue }
             for (childIndex, child) in window.children(matching: .any).allElementsBoundByIndex.enumerated() {
-                let frame = child.frame
-                let full = frame.width > 1 && frame.height > 1
-                    && abs(frame.minX - screen.minX) <= screen.width * 0.01
-                    && abs(frame.minY - screen.minY) <= screen.height * 0.01
-                    && abs(frame.width - screen.width) <= screen.width * 0.01
-                    && abs(frame.height - screen.height) <= screen.height * 0.01
-                guard full else {
-                    diagnostics.append("window[\(windowIndex)] child[\(childIndex)] frame=\(frame): excluded non-full/clip ancestor; descendants not queried")
-                    continue
+                let terminals = terminalWebViews(child, screen: screen, clip: screen,
+                    path: "window[\(windowIndex)]/child[\(childIndex)]", depth: 0)
+                for (webView, path) in terminals {
+                    var controls: [XCUIElement] = []
+                    for (index, content) in webView.children(matching: .any).allElementsBoundByIndex.enumerated() {
+                        collectControls(content, clip: screen.intersection(webView.frame),
+                                        path: "\(path)/content[\(index)]", depth: 0, controls: &controls)
+                    }
+                    let headings = controls.filter { $0.elementType == .staticText && $0.label == "My data preferences" }
+                    let saves = controls.filter { $0.elementType == .button && $0.label == "Save and close" }
+                    diagnostics.append("\(path): terminal WebView frame=\(webView.frame), controls=\(controls.count), headings=\(headings.count), saves=\(saves.count)")
+                    if !headings.isEmpty || !saves.isEmpty {
+                        surfaces.append(PublisherUSSurface(webView: webView, controls: controls, path: path))
+                    }
                 }
-                let headings = child.staticTexts.matching(NSPredicate(format: "label == %@", "My data preferences"))
-                    .allElementsBoundByIndex
-                let saves = child.buttons.matching(NSPredicate(format: "label == %@", "Save and close"))
-                    .allElementsBoundByIndex
-                diagnostics.append("window[\(windowIndex)] child[\(childIndex)] frame=\(frame): headings=\(headings.count), saves=\(saves.count)")
-                // Keep any matching branch so the caller rejects ambiguity,
-                // including duplicate forms inside one full-sized ancestor.
-                if !headings.isEmpty || !saves.isEmpty { surfaces.append(child) }
             }
         }
+        // A partial walk cannot establish uniqueness.
+        if !traversalComplete { surfaces.removeAll() }
         return (surfaces, diagnostics)
     }
 
-    private func publisherWaitForUSSurface() throws -> XCUIElement {
+    private func publisherWaitForUSSurface() throws -> PublisherUSSurface {
+        var found: (surfaces: [PublisherUSSurface], diagnostics: [String]) = ([], [])
         let visible = NSPredicate { [weak self] _, _ in
             guard let self, !self.springboard.alerts.firstMatch.exists,
                   let state = self.snapshot(), state.busy, !state.canRequestAds,
                   state.formPresentations > 0 else { return false }
-            return !self.publisherUSSurfaces().surfaces.isEmpty
+            found = self.publisherUSSurfaces()
+            return !found.surfaces.isEmpty
         }
         let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: visible, object: nil)], timeout: networkTimeout)
-        try requireUMPTapReady()
-        let found = publisherUSSurfaces()
+        for line in found.diagnostics { print("TAROT_QA_US_SURFACE \(line)") }
         let evidence = XCTAttachment(string: found.diagnostics.joined(separator: "\n"))
         evidence.name = "publisher-us-window-surface-diagnostics"
         evidence.lifetime = .keepAlways
         add(evidence)
+        try requireUMPTapReady()
         try require(result == .completed && found.surfaces.count == 1,
-                    "Expected one US form under a full-sized direct Window child; found \(found.surfaces.count).")
+                    "Expected one terminal US WebView with an unclipped full-surface ancestor chain; found \(found.surfaces.count).")
         let surface = found.surfaces[0]
         _ = try publisherUSControl(in: surface, label: "My data preferences", button: false)
         _ = try publisherUSControl(in: surface, label: "Save and close", button: true)
         return surface
     }
 
-    private func publisherUSControl(in surface: XCUIElement, label: String, button: Bool) throws -> XCUIElement {
+    private func publisherUSControl(in surface: PublisherUSSurface, label: String, button: Bool) throws -> XCUIElement {
         try requireUMPTapReady()
-        let query = button ? surface.buttons : surface.staticTexts
-        let controls = query.matching(NSPredicate(format: "label == %@", label)).allElementsBoundByIndex
+        let controls = surface.controls.filter { $0.elementType == (button ? .button : .staticText) && $0.label == label }
         try require(controls.count == 1, "Expected one scoped US control '\(label)'; found \(controls.count).")
         try require(controls[0].isHittable, "Scoped US control is not hittable: \(label).")
         return controls[0]
     }
 
-    private func publisherRecordUSSurfaceEvidence(_ surface: XCUIElement, name: String) {
-        let screenshot = XCTAttachment(screenshot: surface.screenshot())
+    private func publisherRecordUSSurfaceEvidence(_ surface: PublisherUSSurface, name: String) {
+        let screenshot = XCTAttachment(screenshot: surface.webView.screenshot())
         screenshot.name = name
         screenshot.lifetime = .keepAlways
         add(screenshot)
@@ -185,25 +258,29 @@
         return nil
     }
 
-    private func publisherUSRadio(in surface: XCUIElement, allow: Bool) throws -> XCUIElement {
+    private func publisherUSRadio(in surface: PublisherUSSurface, allow: Bool) throws -> XCUIElement {
         try requireUMPTapReady()
         let (title, body) = publisherUSOptionCopy(allow: allow)
         // WebKit can combine a radio title and its description into one AX label.
         // Only the exact observed title, optionally followed by its exact body.
         let expression = "^" + NSRegularExpression.escapedPattern(for: title)
             + "(?:\\s+" + NSRegularExpression.escapedPattern(for: body) + ")?$"
-        let predicate = NSPredicate(format: "label MATCHES %@", expression)
-        let options = surface.descendants(matching: .any).matching(predicate).allElementsBoundByIndex
-            .filter { $0.isHittable && publisherUSRadioValue($0) != nil }
+        let predicate = NSPredicate(format: "SELF MATCHES %@", expression)
+        let options = surface.controls.filter {
+            predicate.evaluate(with: $0.label) && $0.isHittable && publisherUSRadioValue($0) != nil
+        }
         let semantic = options.filter { $0.elementType == .radioButton }
         let controls = semantic.isEmpty ? options.filter { $0.elementType == .other } : semantic
+        print("TAROT_QA_US_RADIO surface=\(surface.path) choice=\(allow ? "allow" : "opt-out") count=\(controls.count)")
+        for control in controls {
+            print("TAROT_QA_US_RADIO_CONTROL frame=\(control.frame) value=\(String(describing: publisherUSRadioValue(control)))")
+        }
         try require(controls.count == 1,
                     "Expected one explicit US radio with binary value: \(title); found \(controls.count).")
         return controls[0]
     }
 
-    private func publisherSelectUSOption(allow: Bool) throws {
-        let surface = try publisherWaitForUSSurface()
+    private func publisherSelectUSOption(in surface: PublisherUSSurface, allow: Bool) throws {
         let option = try publisherUSRadio(in: surface, allow: allow)
         try require(publisherUSRadioValue(option) == 0, "The requested US option must start unselected to prove an explicit change.")
         publisherRecordUSSurfaceEvidence(surface, name: allow ? "publisher-us-before-allow" : "publisher-us-before-opt-out")
