@@ -240,7 +240,7 @@ if ($unexpectedActions.Count -gt 0) {
 
 $projectContracts = @(
     'MARKETING_VERSION = 1.2.1;',
-    'CURRENT_PROJECT_VERSION = 1;',
+    'CURRENT_PROJECT_VERSION = 2;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
@@ -255,7 +255,7 @@ foreach ($contract in $projectContracts) {
 }
 if ($project -match '(?m)^\s*DEVELOPMENT_TEAM\s*=' -or
     [regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.2.1;')).Count -ne 2 -or
-    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2) {
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 2;')).Count -ne 2) {
     throw "Team must be workflow-parametrized and version/build must be exact in both configurations."
 }
 

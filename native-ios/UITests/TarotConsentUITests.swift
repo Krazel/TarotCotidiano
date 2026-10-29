@@ -21,6 +21,14 @@ final class TarotConsentUITests: XCTestCase {
         let trackingAuthorization: String
         let purposeConsents: String?
         let vendorConsents: String?
+        let publisherMessageQA: Bool?
+        let requiresPrivacyOptions: Bool?
+        let gppPresent: Bool?
+        let gppSectionIDs: [Int]?
+        let gppObservation: String?
+        let gppSaleOptOut: Int?
+        let gppSharingOptOut: Int?
+        let gppTargetedAdvertisingOptOut: Int?
 
         // Observation only: not a complete TCF interpretation or a runtime gate.
         func purpose(_ number: Int) -> Bool {

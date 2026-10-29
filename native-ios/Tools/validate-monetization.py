@@ -29,8 +29,8 @@ for package, version in [('GoogleMobileAds', '12.14.0'), ('GoogleUserMessagingPl
 check(project.count('repositoryURL = ') == 2, 'Exactly two authorized remote SDK package references')
 check(project.count('IPHONEOS_DEPLOYMENT_TARGET = 16.0;') == 4,
       'App and UI test targets retain iOS16 in both configurations')
-check(project.count('MARKETING_VERSION = 1.2.1;') == 2 and project.count('CURRENT_PROJECT_VERSION = 1;') == 2,
-      'Candidate identity is 1.2.1 (1)')
+check(project.count('MARKETING_VERSION = 1.2.1;') == 2 and project.count('CURRENT_PROJECT_VERSION = 2;') == 2,
+      'Candidate identity is 1.2.1 (2)')
 check(project.count('INFOPLIST_FILE = TarotDeckApp/Resources/Advertising.plist;') == 2,
       'Debug and Release merge advertising plist')
 plist = plistlib.loads((APP / 'Resources/Advertising.plist').read_bytes())
@@ -42,8 +42,19 @@ check(plist['GADApplicationIdentifier'] == '$(TAROT_ADMOB_APP_ID)' and
       'Build-specific identifiers and delayed measurement configured')
 all_swift = '\n'.join(path.read_text(encoding='utf-8') for path in APP.rglob('*.swift'))
 configuration = (ROOT / 'native-ios/Sources/TarotDeckCore/AdvertisingConfiguration.swift').read_text(encoding='utf-8')
-check(set(re.findall(r'ca-app-pub-\d+[~/]\d+', all_swift + configuration)) == {sample_app, sample_banner},
-      'Real identifiers are supplied by the verified build configuration only')
+consent = (APP / 'Internal/TarotAdConsent.swift').read_text(encoding='utf-8')
+publisher_app = 'ca-app-pub-3425091654264901~4270953811'
+publisher_guard = consent[consent.index('enum TarotAdsConfiguration'):consent.index('    static var bannerID')]
+check(set(re.findall(r'ca-app-pub-\d+[~/]\d+', all_swift + configuration)) == {sample_app, sample_banner, publisher_app}
+      and all_swift.count(publisher_app) == 1
+      and '#if DEBUG' in publisher_guard and '#if targetEnvironment(simulator)' in publisher_guard
+      and '"TarotPublisherMessageQA") as? Bool == true' in publisher_guard
+      and 'Bundle.main.bundleIdentifier == "com.krazel.tarotdeck.internal.provisional"' in publisher_guard
+      and '"TarotAdvertisingMode") as? String == "test-only"' in publisher_guard
+      and publisher_app in publisher_guard
+      and '== AdvertisingConfiguration.sampleBannerID' in publisher_guard
+      and '#if DEBUG\n        if publisherMessageQAEnabled { return AdvertisingConfiguration.sampleBannerID }' in consent,
+      'Publisher App ID is permitted only by the exact DEBUG simulator/sample-banner CMP guard; live banner IDs remain build-config only')
 check('NSUserTrackingUsageDescription' in plist and
       project.count('-framework AppTrackingTransparency') == 2 and
       not re.search(r'ASIdentifierManager|requestTrackingAuthorization', all_swift),
@@ -51,7 +62,6 @@ check('NSUserTrackingUsageDescription' in plist and
 info = json.loads((APP / 'Resources/InfoPlist.xcstrings').read_text(encoding='utf-8'))
 check(all(info['strings']['NSUserTrackingUsageDescription']['localizations'][language]['stringUnit']['state'] == 'translated'
           for language in ['en', 'es']), 'ATT purpose text translated in EN/ES')
-consent = (APP / 'Internal/TarotAdConsent.swift').read_text(encoding='utf-8')
 check('#if DEBUG || TAROT_TEST_ADS' in consent and '#elseif TAROT_PRODUCTION_ADS' in consent and
       'let allowsProduction = false' in consent and 'AdvertisingConfiguration.bannerID' in consent,
       'Development never uses real inventory; production needs explicit compilation and valid publisher configuration')

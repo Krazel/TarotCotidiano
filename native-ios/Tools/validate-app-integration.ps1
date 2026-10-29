@@ -164,17 +164,28 @@ $rootKeys = @($privacyRoot.ChildNodes | Where-Object {
 } | ForEach-Object { $_.InnerText })
 $expectedPrivacyRootKeys = @(
     "NSPrivacyTracking",
+    "NSPrivacyTrackingDomains",
     "NSPrivacyCollectedDataTypes",
     "NSPrivacyAccessedAPITypes"
 )
-if ($privacyRootElements.Count -ne 6 -or $rootKeys.Count -ne $expectedPrivacyRootKeys.Count -or
+if ($privacyRootElements.Count -ne 8 -or $rootKeys.Count -ne $expectedPrivacyRootKeys.Count -or
     @(Compare-Object $expectedPrivacyRootKeys $rootKeys).Count -gt 0) {
-    throw "PrivacyInfo.xcprivacy must contain only tracking, collected-data, and accessed-API declarations."
+    throw "PrivacyInfo.xcprivacy must contain tracking, tested domains, collected-data, and accessed-API declarations."
 }
 
 $trackingNode = Get-PlistDictionaryValueNode -Dictionary $privacyRoot -Key "NSPrivacyTracking"
-if ($trackingNode.LocalName -cne "false") {
-    throw "The app privacy manifest must declare NSPrivacyTracking=false."
+if ($trackingNode.LocalName -cne "true") {
+    throw "The app privacy manifest must declare optional advertising tracking with NSPrivacyTracking=true."
+}
+$trackingDomainsNode = Get-PlistDictionaryValueNode -Dictionary $privacyRoot -Key "NSPrivacyTrackingDomains"
+$trackingDomainElements = @($trackingDomainsNode.ChildNodes | Where-Object {
+    $_.NodeType -eq [Xml.XmlNodeType]::Element
+})
+$expectedTrackingDomains = @("googleads.g.doubleclick.net", "pagead2.googleadservices.com")
+if ($trackingDomainsNode.LocalName -cne "array" -or $trackingDomainElements.Count -ne 2 -or
+    @($trackingDomainElements | Where-Object { $_.LocalName -cne "string" }).Count -gt 0 -or
+    @(Compare-Object $expectedTrackingDomains @($trackingDomainElements | ForEach-Object { $_.InnerText })).Count -gt 0) {
+    throw "Tracking domains must match the two observed hosts that passed real denied/authorized-ATT simulator regressions."
 }
 $collectedDataNode = Get-PlistDictionaryValueNode -Dictionary $privacyRoot -Key "NSPrivacyCollectedDataTypes"
 $collectedDataElements = @($collectedDataNode.ChildNodes | Where-Object {
@@ -712,7 +723,7 @@ if ($appReleaseSource -match 'EmptyView\(\)' -or
 }
 $projectReleaseContracts = @(
     'MARKETING_VERSION = 1.2.1;',
-    'CURRENT_PROJECT_VERSION = 1;',
+    'CURRENT_PROJECT_VERSION = 2;',
     'PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck;',
     'INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";',
     'INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;',
@@ -725,7 +736,7 @@ foreach ($contract in $projectReleaseContracts) {
     }
 }
 if ([regex]::Matches($project, [regex]::Escape('MARKETING_VERSION = 1.2.1;')).Count -ne 2 -or
-    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 1;')).Count -ne 2 -or
+    [regex]::Matches($project, [regex]::Escape('CURRENT_PROJECT_VERSION = 2;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_CFBundleDisplayName = "Tarot Deck";')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;')).Count -ne 2 -or
     [regex]::Matches($project, [regex]::Escape('PRODUCT_BUNDLE_IDENTIFIER = com.krazel.tarotdeck.internal.provisional;')).Count -ne 1 -or
@@ -1961,4 +1972,4 @@ if ($InternalTestFlightGate) {
 }
 
 $placeholderCount = 78 - $verifiedRecords.Count
-Write-Host "Validated candidate 1.2.1 (1): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."
+Write-Host "Validated candidate 1.2.1 (2): English/Spanish UI and content, public-ready Settings destinations, inline once-per-reading orientation guidance, right-side landscape deck, automatic/repeatable shuffle, persistent deck, recovery, accessibility, 78 owner-approved final faces, approved non-face asset provenance, and an explicit US/GB/ES-only rights allowlist. Xcode runtime QA, screenshots, App Store fields, and submission remain separate gates."

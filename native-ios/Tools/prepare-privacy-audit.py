@@ -23,6 +23,14 @@ TRACKING = (
     "testRejectDoesNotBecomePersonalizationConsent",
     "testReopenAdvertisingChoicesAndRevokeAcceptedChoice",
 )
+PUBLISHER_TEST = "testPublisherUSOptOutPersistsAndCanBeExplicitlyReversed"
+CASES = {
+    "legacy_no_usage": LEGACY,
+    "tracking_domains": TRACKING,
+    "publisher_messages": TRACKING + (PUBLISHER_TEST,),
+}
+PUBLISHER_APP_ID = "ca-app-pub-3425091654264901~4270953811"
+SAMPLE_APP_ID = "ca-app-pub-3940256099942544~1458002511"
 USAGE = "NSUserTrackingUsageDescription"
 APP_NAME = "TarotDeckInternal.app"
 
@@ -97,17 +105,34 @@ def collect_values(value, key):
     return []
 
 
-def assert_sample_app(app):
+def tracking_domains(path):
+    config = json.loads(path.read_text(encoding="utf-8"))
+    domains = config.get("domains") if isinstance(config, dict) else config
+    require(isinstance(domains, list) and domains and all(isinstance(d, str) for d in domains),
+            "Expected a nonempty domains string array")
+    require(len(domains) == len(set(domains)), "Expected unique domains")
+    require(all(re.fullmatch(r"(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", d)
+                for d in domains), "Domains must be literal lowercase hostnames; no paths, wildcards or schemes")
+    return domains
+
+
+def assert_sample_app(app, audit_case=None):
     require(app.name == APP_NAME and app.is_dir(), "Expected the compiled audit app")
     info = read_plist(app / "Info.plist")
     for key, expected in {
         "CFBundleIdentifier": "com.krazel.tarotdeck.internal.provisional",
         "DTPlatformName": "iphonesimulator",
         "TarotAdvertisingMode": "test-only",
-        "GADApplicationIdentifier": "ca-app-pub-3940256099942544~1458002511",
+        "GADApplicationIdentifier": PUBLISHER_APP_ID if audit_case == "publisher_messages" else SAMPLE_APP_ID,
         "TarotBannerAdUnitID": "ca-app-pub-3940256099942544/2435281174",
     }.items():
         require(info.get(key) == expected, f"Unsafe audit app contract: {key}")
+    if audit_case == "publisher_messages":
+        require(info.get("TarotPublisherMessageQA") is True,
+                "Publisher messages require an explicit boolean QA flag")
+    else:
+        require(info.get("TarotPublisherMessageQA") is None or info.get("TarotPublisherMessageQA") is False,
+                "Publisher message QA must not be enabled in a sample-app experiment")
     require(not info.get("GADEnableNetworkTracing", False), "Raw network tracing is forbidden")
     return info
 
@@ -115,19 +140,27 @@ def assert_sample_app(app):
 def inject_tests(args):
     source = args.source.read_text(encoding="utf-8")
     fragment = args.fragment.read_text(encoding="utf-8")
+    publisher_fragment = args.publisher_fragment.read_text(encoding="utf-8")
     methods = re.findall(r"\bfunc\s+(test\w+)\s*\(", fragment)
     require(set(methods) == set(LEGACY) and len(methods) == 2, "Expected exactly two audit test methods")
-    require(all(name not in source for name in LEGACY), "Audit tests already injected")
+    publisher_methods = re.findall(r"\bfunc\s+(test\w+)\s*\(", publisher_fragment)
+    require(publisher_methods == [PUBLISHER_TEST], "Expected exactly the publisher US opt-out test")
+    require(all(name not in source for name in (*LEGACY, PUBLISHER_TEST)), "Audit tests already injected")
+    all_methods = re.findall(r"\bfunc\s+(\w+)\s*\(", source + "\n" + fragment + "\n" + publisher_fragment)
+    require(len(all_methods) == len(set(all_methods)), "Injected methods would duplicate an existing test/helper")
     require(all(len(re.findall(r"\bfunc\s+" + name + r"\s*\(", source)) == 1 for name in TRACKING),
             "Expected the six original consent tests")
     require(source.count("final class TarotConsentUITests: XCTestCase") == 1, "Unexpected test class")
     require(len(re.findall(r"^}\s*$", source, re.M)) == 1 and source.rstrip().endswith("}"),
             "Test class must be the sole top-level closing brace")
     before = digest(args.source)
-    patched = source.rstrip()[:-1] + "\n    // Runner-only privacy audit methods.\n" + fragment + "\n}\n"
+    patched = (source.rstrip()[:-1] + "\n    // Runner-only privacy audit methods.\n"
+               + fragment + "\n" + publisher_fragment + "\n}\n")
     args.source.write_text(patched, encoding="utf-8")
     save(args.receipt, {"sourceBeforeSHA256": before, "sourceAfterSHA256": digest(args.source),
-                        "fragmentSHA256": digest(args.fragment), "injectedTests": list(LEGACY),
+                        "fragmentSHA256": digest(args.fragment),
+                        "publisherFragmentSHA256": digest(args.publisher_fragment),
+                        "injectedTests": [*LEGACY, PUBLISHER_TEST],
                         "sourceCommit": os.environ.get("GITHUB_SHA"), "runnerOnly": True})
 
 
@@ -185,7 +218,7 @@ def patch_app(args):
     touched = [app / "Info.plist"]
     if args.case == "legacy_no_usage":
         touched += main_localized_info(app)
-    else:
+    elif args.case == "tracking_domains":
         touched.append(app / "PrivacyInfo.xcprivacy")
     protected_exclusions = {str(p.relative_to(app)) for p in touched} | {str(executable.relative_to(app))}
     resources_before = resource_fingerprint(app, protected_exclusions)
@@ -198,33 +231,40 @@ def patch_app(args):
             remove_key(data, USAGE)
             write_plist(path, data)
             require(not contains_key(read_plist(path), USAGE), f"Localized usage description remains: {path}")
-    else:
-        config = json.loads(args.domains.read_text(encoding="utf-8"))
-        domains = config.get("domains") if isinstance(config, dict) else config
-        require(isinstance(domains, list) and domains and len(domains) == len(set(domains)),
-                "Expected a nonempty unique domains array")
-        require(all(isinstance(d, str) and re.fullmatch(r"(?=.{1,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", d)
-                    for d in domains), "Domains must be literal lowercase hostnames; no paths, wildcards or schemes")
+    elif args.case == "tracking_domains":
+        domains = tracking_domains(args.domains)
         manifest = app / "PrivacyInfo.xcprivacy"
         before[manifest.name] = digest(manifest)
         data = read_plist(manifest)
         data["NSPrivacyTracking"] = True
         data["NSPrivacyTrackingDomains"] = domains
         write_plist(manifest, data)
+    elif args.case == "publisher_messages":
+        domains = tracking_domains(args.domains)
+        root_privacy = read_plist(app / "PrivacyInfo.xcprivacy")
+        require(root_privacy.get("NSPrivacyTracking") is True
+                and root_privacy.get("NSPrivacyTrackingDomains") == domains,
+                "Publisher audit requires the reviewed root manifest without modifying it")
+        info["TarotPublisherMessageQA"] = True
+        info["GADApplicationIdentifier"] = PUBLISHER_APP_ID
+        write_plist(app / "Info.plist", info)
+    else:
+        raise RuntimeError("Unknown privacy audit case")
     require(digest(executable) == binary_sha, "Audit must not modify the executable")
     require(resource_fingerprint(app, protected_exclusions) == resources_before,
             "Audit must preserve every resource outside its explicit main-bundle patch")
-    assert_sample_app(app)
+    assert_sample_app(app, args.case)
     receipt = {"case": args.case, "sourceCommit": os.environ.get("GITHUB_SHA"), "app": str(app),
                "xctestrun": str(run), "xctestrunSHA256": digest(run), "binary": str(executable),
                "binarySHA256": binary_sha, "beforeSHA256": before,
                "afterSHA256": {str(p.relative_to(app)): digest(p) for p in touched},
                "unchangedSDKManifestsSHA256": sdk_manifests,
                "unchangedResources": resources_before, "resourceExclusions": sorted(protected_exclusions),
-               "domains": domains, "sampleInventoryOnly": True, "distributionEligible": False}
-    if args.case == "tracking_domains":
+               "domains": domains, "sampleInventoryOnly": True, "distributionEligible": False,
+               "publisherMessages": args.case == "publisher_messages"}
+    if args.case in ("tracking_domains", "publisher_messages"):
         receipt["domainsSourceSHA256"] = digest(args.domains)
-    else:
+    if args.case != "tracking_domains":
         receipt["unchangedRootManifestSHA256"] = root_manifest_sha
     save(args.receipt, receipt)
     if args.github_env:
@@ -235,7 +275,7 @@ def patch_app(args):
 def verify_app(args):
     receipt = json.loads(args.receipt.read_text(encoding="utf-8"))
     app = Path(receipt["app"])
-    assert_sample_app(app)
+    info = assert_sample_app(app, receipt["case"])
     require(digest(Path(receipt["binary"])) == receipt["binarySHA256"], "Executable changed after patch")
     require(digest(Path(receipt["xctestrun"])) == receipt["xctestrunSHA256"], "Test run configuration changed")
     sdk_manifests = {str(p.relative_to(app)): digest(p) for p in app.rglob("PrivacyInfo.xcprivacy")
@@ -250,10 +290,16 @@ def verify_app(args):
                 "Legacy experiment must preserve the root privacy manifest")
         for path in [app / "Info.plist", *main_localized_info(app)]:
             require(not contains_key(read_plist(path), USAGE), f"Usage description remains: {path}")
-    else:
+    elif receipt["case"] == "tracking_domains":
         data = read_plist(app / "PrivacyInfo.xcprivacy")
         require(data.get("NSPrivacyTracking") is True and data.get("NSPrivacyTrackingDomains") == receipt["domains"],
                 "Tracking manifest patch was not preserved")
+    elif receipt["case"] == "publisher_messages":
+        require(bool(info.get(USAGE)), "Publisher audit must retain the ATT usage description")
+        require(digest(app / "PrivacyInfo.xcprivacy") == receipt["unchangedRootManifestSHA256"],
+                "Publisher experiment must preserve the root privacy manifest")
+    else:
+        raise RuntimeError("Unknown privacy audit case")
 
 
 def test_outcomes(log):
@@ -269,12 +315,55 @@ def test_outcomes(log):
 
 
 def verify_results(args):
-    expected = set(LEGACY if args.case == "legacy_no_usage" else TRACKING)
+    expected = set(CASES[args.case])
     outcomes = test_outcomes(args.log)
     save(args.receipt, {"expected": sorted(expected), "observed": outcomes,
                         "logSHA256": digest(args.log), "case": args.case})
     require(set(outcomes) == expected, "Executed case names do not match the selected experiment")
     require(all(status == ["passed"] for status in outcomes.values()), "Each selected test must pass exactly once; no skips/retries")
+
+
+def export_attachments(args):
+    """Optional evidence only; discover support from this runner's actual tool help."""
+    evidence = args.evidence.resolve()
+    evidence.mkdir(parents=True, exist_ok=True)
+    bundles = sorted(evidence.rglob("*.xcresult"))
+    receipt = {"bestEffort": True, "testOutcomeAuthority": False, "bundles": []}
+
+    def run(command, output, timeout):
+        try:
+            result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    text=True, errors="replace", timeout=timeout, check=False)
+            output.write_text(result.stdout, encoding="utf-8")
+            return result.returncode, result.stdout
+        except (OSError, subprocess.TimeoutExpired) as error:
+            output.write_text(f"{type(error).__name__}: {error}\n", encoding="utf-8")
+            return None, ""
+
+    status, help_text = run(["xcrun", "xcresulttool", "help", "export"],
+                            evidence / "xcresulttool-export-help.txt", 60)
+    if status != 0 or not re.search(r"(?m)^\s+attachments(?:\s|$)", help_text):
+        receipt["status"] = "attachments_subcommand_not_advertised"
+        save(evidence / "attachments-export.json", receipt)
+        return
+    status, help_text = run(["xcrun", "xcresulttool", "help", "export", "attachments"],
+                            evidence / "xcresulttool-attachments-help.txt", 60)
+    flags_present = all(re.search(r"(?<![\w-])" + re.escape(flag) + r"(?![\w-])", help_text)
+                        for flag in ("--path", "--output-path"))
+    if status != 0 or not flags_present:
+        receipt["status"] = "required_attachment_flags_not_advertised"
+        save(evidence / "attachments-export.json", receipt)
+        return
+    for bundle in bundles:
+        destination = bundle.parent / (bundle.stem + "-attachments")
+        status, _ = run(["xcrun", "xcresulttool", "export", "attachments", "--path", str(bundle),
+                         "--output-path", str(destination)],
+                        bundle.parent / (bundle.stem + "-attachments-export.log"), 180)
+        receipt["bundles"].append({"path": str(bundle.relative_to(evidence)),
+                                   "output": str(destination.relative_to(evidence)),
+                                   "exitCode": status, "exported": status == 0})
+    receipt["status"] = "finished" if bundles else "no_result_bundles"
+    save(evidence / "attachments-export.json", receipt)
 
 
 def create_simulator(args):
@@ -311,6 +400,7 @@ def main():
     inject = modes.add_parser("inject-tests")
     inject.add_argument("--source", type=Path, required=True)
     inject.add_argument("--fragment", type=Path, required=True)
+    inject.add_argument("--publisher-fragment", type=Path, required=True)
     inject.add_argument("--receipt", type=Path, required=True)
     control = modes.add_parser("prepare-control")
     control.add_argument("--products", type=Path, required=True)
@@ -324,22 +414,24 @@ def main():
     patch.add_argument("--domains", type=Path, required=True)
     patch.add_argument("--github-env", type=Path)
     patch.add_argument("--receipt", type=Path, required=True)
-    patch.add_argument("--case", choices=("legacy_no_usage", "tracking_domains"), required=True)
+    patch.add_argument("--case", choices=CASES, required=True)
     verify = modes.add_parser("verify-app")
     verify.add_argument("--receipt", type=Path, required=True)
     results = modes.add_parser("verify-results")
-    results.add_argument("--case", choices=("legacy_no_usage", "tracking_domains"), required=True)
+    results.add_argument("--case", choices=CASES, required=True)
     results.add_argument("--log", type=Path, required=True)
     results.add_argument("--receipt", type=Path, required=True)
     simulator = modes.add_parser("create-simulator")
-    simulator.add_argument("--case", choices=("legacy_no_usage", "tracking_domains"), required=True)
+    simulator.add_argument("--case", choices=CASES, required=True)
     simulator.add_argument("--output", type=Path, required=True)
     simulator.add_argument("--github-env", type=Path, required=True)
     cases = modes.add_parser("cases")
-    cases.add_argument("--case", choices=("legacy_no_usage", "tracking_domains"), required=True)
+    cases.add_argument("--case", choices=CASES, required=True)
+    attachments = modes.add_parser("export-attachments")
+    attachments.add_argument("--evidence", type=Path, required=True)
     args = parser.parse_args()
     if args.mode == "cases":
-        for name in LEGACY if args.case == "legacy_no_usage" else TRACKING:
+        for name in CASES[args.case]:
             print("-only-testing:TarotConsentUITests/TarotConsentUITests/" + name)
     else:
         globals()[args.mode.replace("-", "_")](args)

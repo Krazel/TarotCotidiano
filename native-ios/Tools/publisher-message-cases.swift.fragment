@@ -1,0 +1,123 @@
+    // Inject only into the existing simulator XCTest class before build-for-testing.
+    // Uses Tarot's published CMP with Google's sample BANNER, never live inventory.
+    // Exact English labels/body were observed in the publisher editor on 2026-10-29.
+    // An older Opt out/Dismiss-only form must fail the explicit-undo check: Dismiss
+    // is not opt-in. Propagation/network failures are failures, never fake choices.
+    func testPublisherUSOptOutPersistsAndCanBeExplicitlyReversed() throws {
+        publisherLaunchUS(reset: true)
+        let initial = try waitForSnapshot("strict publisher-message simulator guard") { _ in true }
+        try require(initial.publisherMessageQA == true, "Publisher CMP audit guard is not active.")
+        XCTAssertEqual(initial.initialTrackingAuthorizationRaw, 0)
+        try publisherFinishOptionalATT()
+        let baseline = try publisherWaitForUSState("published US message and sample banner", banner: true)
+        try require(baseline.requiresPrivacyOptions == true, "UMP did not require the US privacy-options entry point.")
+        recordEvidence("publisher-us-initial")
+
+        try publisherOpenUSOptions(after: baseline)
+        try publisherSelectUSOption(allow: false)
+        let optedOut = try publisherWaitForUSState("real US opt-out saved", expectedOptOut: 1)
+        recordEvidence("publisher-us-opted-out")
+
+        app.terminate()
+        publisherLaunchUS(reset: false)
+        try publisherFinishOptionalATT()
+        let persisted = try publisherWaitForUSState("US opt-out persists across launch with sample banner",
+                                                   expectedOptOut: 1, banner: true)
+        XCTAssertEqual(persisted.gppSectionIDs, optedOut.gppSectionIDs)
+        recordEvidence("publisher-us-opt-out-persisted")
+
+        try publisherOpenUSOptions(after: persisted)
+        try publisherSelectUSOption(allow: true)
+        _ = try publisherWaitForUSState("explicit Allow action undoes the US opt-out", expectedOptOut: 2)
+        recordEvidence("publisher-us-explicit-allow")
+
+        app.terminate()
+        publisherLaunchUS(reset: false)
+        try publisherFinishOptionalATT()
+        _ = try publisherWaitForUSState("explicit US choice persists with sample banner",
+                                       expectedOptOut: 2, banner: true)
+        // GPP 2 means did-not-opt-out for these three fields, not ATT permission,
+        // proof of personalized delivery, or a forecast of monetization.
+        recordEvidence("publisher-us-explicit-allow-persisted")
+    }
+
+    private func publisherLaunchUS(reset: Bool) {
+        app.launchArguments = ["--qa-english", "--qa-consent-us", "--qa-consent-observe",
+                               "-AppleLanguages", "(en)", "-AppleLocale", "en_US"]
+        if reset { app.launchArguments.append("--qa-consent-reset") }
+        app.launch()
+    }
+
+    private func publisherFinishOptionalATT() throws {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let outcome = NSPredicate { [weak self] _, _ in
+            guard let self else { return false }
+            return self.choice("Continue").exists
+                || springboard.alerts.buttons["Ask App Not to Track"].exists
+                || (self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
+        }
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: outcome, object: nil)],
+                                   timeout: networkTimeout)
+        try require(result == .completed, "Publisher UMP did not complete or show the real ATT flow; inspect propagation/configuration.")
+        if choice("Continue").exists { try tapChoice("Continue") }
+        try finishOptionalATTWithDenial()
+    }
+
+    private func publisherWaitForUSState(_ description: String, expectedOptOut: Int? = nil,
+                                         banner: Bool = false) throws -> Snapshot {
+        try waitForSnapshot(description) { state in
+            guard state.publisherMessageQA == true, state.updateCompleted, !state.busy
+            else { return false }
+            if let expectedOptOut {
+                // Google documents stored GPP after a decision. Its absence
+                // before opening privacy options is not a baseline failure.
+                guard state.gppPresent == true, state.gppSectionIDs == [7],
+                      ["usNationalV1", "usNationalV2"].contains(state.gppObservation ?? ""),
+                      state.gppSaleOptOut == expectedOptOut,
+                      state.gppSharingOptOut == expectedOptOut,
+                      state.gppTargetedAdvertisingOptOut == expectedOptOut else { return false }
+            }
+            return !banner || (state.canRequestAds && state.sdkStarted
+                               && state.requestCount > 0 && state.loadedBannerCount > 0)
+        }
+    }
+
+    private func publisherOpenUSOptions(after previous: Snapshot) throws {
+        let settings = app.buttons["Settings"].firstMatch
+        try require(settings.waitForExistence(timeout: 15) && settings.isHittable,
+                    "Settings control is not reachable.")
+        settings.tap()
+        let advertising = app.buttons["Advertising choices"].firstMatch
+        for _ in 0..<8 {
+            if advertising.exists && advertising.isHittable { break }
+            app.swipeUp()
+        }
+        try require(advertising.exists && advertising.isHittable, "US privacy entry point is not reachable in Settings.")
+        advertising.tap()
+        try waitForChoice("My data preferences")
+        try waitForChoice("Save and close")
+        let editing = try waitForSnapshot("real US privacy form suspends requests") {
+            $0.busy && !$0.canRequestAds && $0.formPresentations > previous.formPresentations
+        }
+        try assertNoRequestIncrease(from: editing.requestCount, for: 3)
+        recordEvidence("publisher-us-options-open")
+    }
+
+    private func publisherSelectUSOption(allow: Bool) throws {
+        let title = allow ? "Allow the sale or sharing of my data" : "Don't sell or share my data"
+        let body = allow
+            ? "By allowing the sale or sharing of your data, you will see interest-based ads on our sites"
+            : "We won't sell or share your personal information to inform the ads you see. You may still see interest-based ads if your information is sold or shared by other companies or was sold or shared previously."
+        // WebKit can combine a radio title and its description into one AX label.
+        // Only the exact observed title, optionally followed by its exact body.
+        let expression = "^" + NSRegularExpression.escapedPattern(for: title)
+            + "(?:\\s+" + NSRegularExpression.escapedPattern(for: body) + ")?$"
+        let predicate = NSPredicate(format: "label MATCHES %@", expression)
+        let options = app.descendants(matching: .any).matching(predicate)
+        guard let option = options.allElementsBoundByIndex.first(where: { $0.isHittable }) else {
+            XCTFail("Expected explicit US radio choice is absent: \(title). Do not substitute Dismiss or fabricate preferences.")
+            throw TestFailure.unmetPrecondition("Missing explicit US radio option")
+        }
+        option.tap()
+        try tapChoice("Save and close")
+    }

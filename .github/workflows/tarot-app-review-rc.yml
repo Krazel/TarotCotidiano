@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       public_rc_confirmation:
-        description: "Upload public-capable 1.2.1 build 1 with production ads; review submission remains a separate API action"
+        description: "Upload public-capable 1.2.1 build 2 with production ads; review submission remains a separate API action"
         required: true
         default: "DO_NOT_UPLOAD"
         type: choice
         options:
           - "DO_NOT_UPLOAD"
-          - "PUBLIC_1_2_1_BUILD_1"
+          - "PUBLIC_1_2_1_BUILD_2"
       release_readiness:
         description: "Operator confirmation only: privacy and source reviewed; physical QA gates later review submission"
         required: true
@@ -48,8 +48,8 @@ concurrency:
 
 jobs:
   archive-export-upload:
-    name: App Review RC binary - 1.2.1 (1)
-    if: ${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_1' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && (inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' || inputs.private_ci_clearance == 'PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED') }}
+    name: App Review RC binary - 1.2.1 (2)
+    if: ${{ github.ref == 'refs/heads/main' && inputs.public_rc_confirmation == 'PUBLIC_1_2_1_BUILD_2' && inputs.release_readiness == 'PRIVACY_SOURCE_REVIEWED' && inputs.verified_source_sha == github.sha && inputs.readiness_evidence != '' && inputs.readiness_evidence != 'PENDING' && (inputs.private_ci_clearance == 'PRIVATE_CI_NO_SPEND_VERIFIED' || inputs.private_ci_clearance == 'PUBLIC_STANDARD_RUNNER_NO_SPEND_VERIFIED') }}
     runs-on: macos-latest
     timeout-minutes: 45
     environment: app-store-production
@@ -303,7 +303,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: TarotDeck-1.2.1-1-simulator-${{ github.run_id }}
+          name: TarotDeck-1.2.1-2-simulator-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/tarot-home-simulator.png
             ${{ runner.temp }}/tarot-consent-eea.png
@@ -340,7 +340,7 @@ jobs:
         if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
-          name: TarotDeck-1.2.1-1-consent-qa-${{ github.run_id }}
+          name: TarotDeck-1.2.1-2-consent-qa-${{ github.run_id }}
           path: |
             ${{ runner.temp }}/TarotATTDenialSmoke.xcresult
             ${{ runner.temp }}/tarot-att-denial-smoke.log
@@ -411,7 +411,7 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-1.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-2.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
 
           xcodebuild archive \
@@ -429,7 +429,7 @@ jobs:
             CODE_SIGN_STYLE=Manual \
             CODE_SIGN_IDENTITY="Apple Distribution" \
             PROVISIONING_PROFILE_SPECIFIER="Tarot Deck App Store 2026-10-18" \
-            CURRENT_PROJECT_VERSION=1 \
+            CURRENT_PROJECT_VERSION=2 \
             MARKETING_VERSION=1.2.1 \
             SWIFT_ACTIVE_COMPILATION_CONDITIONS=TAROT_PRODUCTION_ADS \
             TAROT_ADS_MODE=production \
@@ -439,7 +439,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-1.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-2.xcarchive"
           APP_PATH="$ARCHIVE_PATH/Products/Applications/TarotDeckInternal.app"
           INFO_PLIST="$APP_PATH/Info.plist"
           EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
@@ -466,7 +466,7 @@ jobs:
             [[ -n "$(/usr/bin/plutil -extract NSUserTrackingUsageDescription raw -o - "$TRACKING_STRINGS")" ]]
           done
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.2.1" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :MinimumOSVersion' "$INFO_PLIST")" == "16.0" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' "$INFO_PLIST")" == "false" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
@@ -478,6 +478,61 @@ jobs:
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:get-task-allow' "$PROFILE_PATH")" == "false" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :Entitlements:application-identifier' "$PROFILE_PATH")" == *.com.krazel.tarotdeck ]]
 
+      - name: Inventory final archive privacy manifests without modifying SDK declarations
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import hashlib, json, os, plistlib, re
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          archive = root / "TarotDeck-AppReview-1.2.1-2.xcarchive"
+          app = archive / "Products/Applications/TarotDeckInternal.app"
+          output = root / "tarot-app-review-evidence"
+          output.mkdir(parents=True, exist_ok=True)
+          expected_domains = {"googleads.g.doubleclick.net", "pagead2.googleadservices.com"}
+          project = Path("native-ios/TarotDeck.xcodeproj/project.pbxproj").read_text()
+          audit_path = Path("docs/technical/monetization-20261018/SDK_AUDIT.json")
+          audit = json.loads(audit_path.read_text())
+          sdk_checks = []
+          for name, package, version in [
+              ("GoogleMobileAds", "google-mobile-ads", "12.14.0"),
+              ("UserMessagingPlatform", "google-user-messaging-platform", "3.1.0"),
+          ]:
+              pattern = r'repositoryURL = "https://github.com/googleads/swift-package-manager-' + package + r'\.git";\s*requirement = \{ kind = exactVersion; version = ' + re.escape(version) + r'; \};'
+              if not re.search(pattern, project):
+                  raise RuntimeError("Expected exact SDK pin: " + name + " " + version)
+              sdk = next(item for item in audit["sdks"] if item["name"] == name and item["version"] == version)
+              reference = next(item["manifest"] for item in sdk["privacyManifests"] if "/ios-arm64/" in item["path"])
+              manifest = app / "Frameworks" / (name + ".framework") / "PrivacyInfo.xcprivacy"
+              if plistlib.loads(manifest.read_bytes()) != reference:
+                  raise RuntimeError("SDK privacy declarations differ from the exact official archive audit: " + name)
+              sdk_checks.append({"sdk": name, "version": version, "officialSDKArchiveSHA256": sdk["sha256"], "declarationsUnchanged": True})
+          root_manifest = app / "PrivacyInfo.xcprivacy"
+          root_data = plistlib.loads(root_manifest.read_bytes())
+          if root_data.get("NSPrivacyTracking") is not True or set(root_data.get("NSPrivacyTrackingDomains", [])) != expected_domains or len(root_data.get("NSPrivacyTrackingDomains", [])) != 2:
+              raise RuntimeError("Root manifest must declare tracking and exactly the two tested hosts")
+          source_data = plistlib.loads(Path("native-ios/TarotDeckApp/Resources/PrivacyInfo.xcprivacy").read_bytes())
+          if root_data != source_data:
+              raise RuntimeError("Archived root manifest differs from reviewed source")
+          rows = []
+          for manifest in sorted(app.rglob("PrivacyInfo.xcprivacy")):
+              raw = manifest.read_bytes()
+              data = plistlib.loads(raw)
+              rows.append({"path": str(manifest.relative_to(archive)), "appRelativePath": str(manifest.relative_to(app)),
+                           "sha256": hashlib.sha256(raw).hexdigest(), "keys": sorted(data),
+                           "trackingKeyPresent": "NSPrivacyTracking" in data, "tracking": data.get("NSPrivacyTracking"),
+                           "trackingDomains": data.get("NSPrivacyTrackingDomains"),
+                           "collectedData": data.get("NSPrivacyCollectedDataTypes", []),
+                           "accessedAPIs": data.get("NSPrivacyAccessedAPITypes", []), "declaration": data})
+          inventory = {"kind": "CUSTOM_MANIFEST_INVENTORY_NOT_XCODE_REPORT", "sourceCommit": os.environ["GITHUB_SHA"],
+                       "version": "1.2.1", "build": "2", "archive": archive.name,
+                       "automatedPrivacyCertification": False, "runtimeTrackingCertified": False,
+                       "sdkAuditSHA256": hashlib.sha256(audit_path.read_bytes()).hexdigest(),
+                       "sdkChecks": sdk_checks, "manifests": rows}
+          (output / "privacy-manifests.json").write_text(json.dumps(inventory, indent=2) + "\n")
+          PY
+
       - name: Export signed public-capable IPA
         shell: bash
         env:
@@ -487,7 +542,7 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-1.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-2.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
           EXPORT_PATH="$RUNNER_TEMP/tarot-app-review-export"
           EXPORT_OPTIONS="$RUNNER_TEMP/AppReviewExport.plist"
@@ -524,7 +579,7 @@ jobs:
           VERIFY_PATH="$(mktemp -d "$RUNNER_TEMP/tarot-app-review-verify.XXXXXX")"
           OUTPUT_PATH="$RUNNER_TEMP/tarot-app-review-evidence"
           SHORT_COMMIT="${GITHUB_SHA:0:12}"
-          BASE_NAME="TarotDeck-1.2.1-1-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-App-Review-RC"
+          BASE_NAME="TarotDeck-1.2.1-2-ci${GITHUB_RUN_NUMBER}-${SHORT_COMMIT}-App-Review-RC"
           IPA_PATH="$SOURCE_IPA"
           MANIFEST_PATH="$OUTPUT_PATH/${BASE_NAME}.manifest.json"
           SHA_PATH="$OUTPUT_PATH/${BASE_NAME}.sha256"
@@ -535,6 +590,33 @@ jobs:
           cp "$RUNNER_TEMP/tarot-ci-route.json" "$OUTPUT_PATH/ci-route.json"
           /usr/bin/ditto -x -k "$IPA_PATH" "$VERIFY_PATH"
           APP_PATH="$(find "$VERIFY_PATH/Payload" -maxdepth 1 -type d -name '*.app' -print -quit)"
+          python3 - "$APP_PATH" "$OUTPUT_PATH" <<'PY'
+          import hashlib, json, plistlib, sys
+          from pathlib import Path
+          app, output = map(Path, sys.argv[1:])
+          inventory = json.loads((output / "privacy-manifests.json").read_text())
+          if inventory["kind"] != "CUSTOM_MANIFEST_INVENTORY_NOT_XCODE_REPORT":
+              raise RuntimeError("Expected the verified archive inventory")
+          archived = {item["appRelativePath"]: item for item in inventory["manifests"]}
+          exported = {str(path.relative_to(app)): path for path in app.rglob("PrivacyInfo.xcprivacy")}
+          if set(exported) != set(archived):
+              raise RuntimeError("Exported privacy manifest paths differ from the archive")
+          comparisons = []
+          for relative, manifest in exported.items():
+              raw = manifest.read_bytes()
+              if plistlib.loads(raw) != archived[relative]["declaration"]:
+                  raise RuntimeError("Export changed privacy declarations: " + relative)
+              comparisons.append({"path": relative, "archiveSHA256": archived[relative]["sha256"],
+                                  "exportSHA256": hashlib.sha256(raw).hexdigest(), "declarationsMatch": True})
+          root_data = plistlib.loads((app / "PrivacyInfo.xcprivacy").read_bytes())
+          expected_domains = {"googleads.g.doubleclick.net", "pagead2.googleadservices.com"}
+          if root_data.get("NSPrivacyTracking") is not True or set(root_data.get("NSPrivacyTrackingDomains", [])) != expected_domains or len(root_data.get("NSPrivacyTrackingDomains", [])) != 2:
+              raise RuntimeError("Exported root tracking flag/domains do not match the tested configuration")
+          (output / "privacy-export-comparison.json").write_text(json.dumps({
+              "kind": "MANIFEST_EXPORT_COMPARISON", "sourceCommit": inventory["sourceCommit"],
+              "version": "1.2.1", "build": "2", "automatedPrivacyCertification": False,
+              "comparisons": comparisons}, indent=2) + "\n")
+          PY
           INFO_PLIST="$APP_PATH/Info.plist"
           EXECUTABLE_NAME="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$INFO_PLIST")"
           EXECUTABLE_PATH="$APP_PATH/$EXECUTABLE_NAME"
@@ -558,7 +640,7 @@ jobs:
             [[ -n "$(/usr/bin/plutil -extract NSUserTrackingUsageDescription raw -o - "$TRACKING_STRINGS")" ]]
           done
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$INFO_PLIST")" == "1.2.1" ]]
-          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "1" ]]
+          [[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$INFO_PLIST")" == "2" ]]
           [[ "$(lipo -archs "$EXECUTABLE_PATH")" == *arm64* ]]
           codesign --verify --deep --strict --verbose=2 "$APP_PATH"
           codesign -d --entitlements :- "$APP_PATH" > "$ENTITLEMENTS_PATH"
@@ -574,7 +656,7 @@ jobs:
           jq -n \
             --arg app "Tarot Deck" \
             --arg version "1.2.1" \
-            --arg build "1" \
+            --arg build "2" \
             --arg bundleID "com.krazel.tarotdeck" \
             --arg commit "$GITHUB_SHA" \
             --arg ciRunNumber "$GITHUB_RUN_NUMBER" \
@@ -607,7 +689,7 @@ jobs:
         run: |
           set -euo pipefail
           set +x
-          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-1.xcarchive"
+          ARCHIVE_PATH="$RUNNER_TEMP/TarotDeck-AppReview-1.2.1-2.xcarchive"
           API_KEY_PATH="$RUNNER_TEMP/AuthKey_${APP_STORE_CONNECT_API_KEY_ID}.p8"
           UPLOAD_OPTIONS="$RUNNER_TEMP/AppReviewUpload.plist"
 

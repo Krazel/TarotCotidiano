@@ -4,13 +4,22 @@ on:
   workflow_dispatch:
     inputs:
       audit_confirmation:
-        description: "Google sample simulator experiment only; no signing or distribution"
+        description: "Sample banner simulator experiment only; no signing or distribution"
         required: true
         default: "DO_NOT_RUN"
         type: choice
         options:
           - "DO_NOT_RUN"
           - "QA_ONLY_NO_SIGN_OR_UPLOAD"
+      audit_scope:
+        description: "Baseline sample CMP, Tarot publisher CMP, or all experiments"
+        required: true
+        default: "BASELINE"
+        type: choice
+        options:
+          - "BASELINE"
+          - "PUBLISHER_MESSAGES_ONLY"
+          - "ALL"
 
 permissions:
   contents: read
@@ -28,7 +37,7 @@ jobs:
       fail-fast: false
       max-parallel: 2
       matrix:
-        audit_case: [legacy_no_usage, tracking_domains]
+        audit_case: ${{ fromJSON(inputs.audit_scope == 'PUBLISHER_MESSAGES_ONLY' && '["publisher_messages"]' || inputs.audit_scope == 'ALL' && '["legacy_no_usage", "tracking_domains", "publisher_messages"]' || '["legacy_no_usage", "tracking_domains"]') }}
     env:
       AUDIT_CASE: ${{ matrix.audit_case }}
 
@@ -53,6 +62,7 @@ jobs:
           python3 native-ios/Tools/prepare-privacy-audit.py inject-tests \
             --source native-ios/UITests/TarotConsentUITests.swift \
             --fragment native-ios/Tools/privacy-audit-cases.swift.fragment \
+            --publisher-fragment native-ios/Tools/publisher-message-cases.swift.fragment \
             --receipt "$RUNNER_TEMP/TarotPrivacyEvidence/injection.json"
           python3 native-ios/Tools/prepare-privacy-audit.py cases --case "$AUDIT_CASE" \
             > "$RUNNER_TEMP/TarotPrivacyEvidence/selected-cases.txt"
@@ -140,6 +150,13 @@ jobs:
           if [[ -n "${TAROT_AUDIT_DEVICE_ID:-}" ]]; then
             xcrun simctl io "$TAROT_AUDIT_DEVICE_ID" screenshot "$RUNNER_TEMP/TarotPrivacyEvidence/final.png" || true
           fi
+
+      - name: Export synthetic test attachments when the runner tool supports it
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          python3 native-ios/Tools/prepare-privacy-audit.py export-attachments \
+            --evidence "$RUNNER_TEMP/TarotPrivacyEvidence" || true
 
       - name: Preserve only synthetic QA evidence for one day
         if: ${{ always() }}

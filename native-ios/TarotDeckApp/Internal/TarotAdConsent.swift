@@ -11,7 +11,28 @@ import SwiftUI
 #endif
 
 enum TarotAdsConfiguration {
+    #if DEBUG
+    /// Runner-only CMP audit: Tarot's message configuration, Google's sample inventory.
+    /// Every input is pinned; the flag cannot enable production inventory or Release.
+    static var publisherMessageQAEnabled: Bool {
+        #if targetEnvironment(simulator)
+        return Bundle.main.object(forInfoDictionaryKey: "TarotPublisherMessageQA") as? Bool == true
+            && Bundle.main.bundleIdentifier == "com.krazel.tarotdeck.internal.provisional"
+            && Bundle.main.object(forInfoDictionaryKey: "TarotAdvertisingMode") as? String == "test-only"
+            && Bundle.main.object(forInfoDictionaryKey: "GADApplicationIdentifier") as? String
+                == "ca-app-pub-3425091654264901~4270953811"
+            && Bundle.main.object(forInfoDictionaryKey: "TarotBannerAdUnitID") as? String
+                == AdvertisingConfiguration.sampleBannerID
+        #else
+        return false
+        #endif
+    }
+    #endif
+
     static var bannerID: String? {
+        #if DEBUG
+        if publisherMessageQAEnabled { return AdvertisingConfiguration.sampleBannerID }
+        #endif
         #if DEBUG || TAROT_TEST_ADS
         let allowsProduction = false
         #elseif TAROT_PRODUCTION_ADS
@@ -76,7 +97,11 @@ final class TarotAdConsent: ObservableObject {
         let parameters = RequestParameters()
         #if DEBUG
         // Simulator QA only. Release/TestFlight always uses the user's real geography.
-        if ProcessInfo.processInfo.arguments.contains("--qa-consent-eea") {
+        if ProcessInfo.processInfo.arguments.contains("--qa-consent-us") {
+            let debug = DebugSettings()
+            debug.geography = .regulatedUSState
+            parameters.debugSettings = debug
+        } else if ProcessInfo.processInfo.arguments.contains("--qa-consent-eea") {
             let debug = DebugSettings()
             debug.geography = .EEA
             parameters.debugSettings = debug
@@ -194,7 +219,7 @@ final class TarotAdConsent: ObservableObject {
     }
 
     func qaState(requestCount: Int, formPresentations: Int, loadedBannerCount: Int) -> String {
-        let values: [String: Any] = [
+        var values: [String: Any] = [
             "updateCompleted": didUpdateThisLaunch, "busy": isBusy,
             "canRequestAds": canRequestAds,
             "umpCanRequestAds": ConsentInformation.shared.canRequestAds,
@@ -205,11 +230,16 @@ final class TarotAdConsent: ObservableObject {
             "trackingAuthorization": qaTrackingAuthorization,
             "automaticPresentationAllowed": automaticPresentationAllowed,
             "bannerConfigured": TarotAdsConfiguration.bannerID != nil,
+            "publisherMessageQA": TarotAdsConfiguration.publisherMessageQAEnabled,
+            "requiresPrivacyOptions": requiresPrivacyOptions,
             "consentStatus": ConsentInformation.shared.consentStatus.rawValue,
             "formStatus": ConsentInformation.shared.formStatus.rawValue,
             "purposeConsents": UserDefaults.standard.string(forKey: "IABTCF_PurposeConsents") ?? "",
             "vendorConsents": UserDefaults.standard.string(forKey: "IABTCF_VendorConsents") ?? ""
         ]
+        if TarotAdsConfiguration.publisherMessageQAEnabled {
+            values.merge(TarotGPPQAObservation.read()) { _, observed in observed }
+        }
         guard let data = try? JSONSerialization.data(withJSONObject: values, options: .sortedKeys),
               let text = String(data: data, encoding: .utf8) else { return "{}" }
         return text
@@ -218,6 +248,134 @@ final class TarotAdConsent: ObservableObject {
 }
 
 #if DEBUG
+/// Observation only, never an advertising/ATT gate. UMP only writes the SID and
+/// encoded string. Read it transiently; expose no encoded string or identifier.
+/// Sources: developers.google.com/admob/ios/privacy/us-iab-support
+/// github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/blob/main/Core/Consent%20String%20Specification.md
+/// github.com/InteractiveAdvertisingBureau/Global-Privacy-Platform/tree/main/Sections/US-National
+/// github.com/IABTechLab/iabgpp-es/blob/master/modules/cmpapi/src/encoder/segment/UsNatCoreSegment.ts
+/// Scope: US National section 7 v1/v2. Other sections/versions are indeterminate.
+private enum TarotGPPQAObservation {
+    private enum Invalid: Error { case signal }
+
+    private struct Bits {
+        private let bits: [Int]
+        private var position = 0
+
+        init(_ encoded: Substring) throws {
+            let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
+            guard !encoded.isEmpty, encoded.count <= 4096 else { throw Invalid.signal }
+            var result: [Int] = []
+            for character in encoded {
+                guard let value = alphabet.firstIndex(of: character) else { throw Invalid.signal }
+                for shift in (0..<6).reversed() { result.append((value >> shift) & 1) }
+            }
+            bits = result
+        }
+
+        mutating func take(_ count: Int) throws -> Int {
+            guard count > 0, count <= 16, position + count <= bits.count else { throw Invalid.signal }
+            let value = bits[position..<(position + count)].reduce(0) { ($0 << 1) | $1 }
+            position += count
+            return value
+        }
+
+        mutating func fibonacci() throws -> Int {
+            var current = 1, next = 2, previousBit = 0, value = 0
+            // Section IDs are bounded; reject truncated/unbounded inputs.
+            for _ in 0..<20 {
+                let bit = try take(1)
+                if bit == 1 && previousBit == 1 { return value }
+                if bit == 1 { value += current }
+                (current, next) = (next, current + next)
+                previousBit = bit
+            }
+            throw Invalid.signal
+        }
+
+        func validatePadding() throws {
+            // IAB compressed base64 pads to a byte boundary, then six bits.
+            let paddedLength = (((position + 7) / 8 * 8) + 5) / 6 * 6
+            guard bits.count == paddedLength, bits[position...].allSatisfy({ $0 == 0 })
+            else { throw Invalid.signal }
+        }
+    }
+
+    static func read() -> [String: Any] {
+        let defaults = UserDefaults.standard
+        return observe(encoded: defaults.string(forKey: "IABGPP_HDR_GppString") ?? "",
+                       sid: defaults.string(forKey: "IABGPP_GppSID"))
+    }
+
+    static func observe(encoded: String, sid: String?) -> [String: Any] {
+        var output: [String: Any] = ["gppPresent": !encoded.isEmpty,
+                                      "gppSectionIDs": [Int](), "gppObservation": "indeterminate"]
+        guard let sid, !sid.isEmpty,
+              sid.count <= 128 else { return output }
+        let parts = sid.split(separator: "_", omittingEmptySubsequences: false)
+        let ids = parts.compactMap { Int($0) }
+        guard ids.count == parts.count, Set(ids).count == ids.count,
+              parts.map(String.init) == ids.map(String.init),
+              ids.allSatisfy({ $0 == -1 || (1...4095).contains($0) }) else { return output }
+        output["gppSectionIDs"] = ids
+        // The regulated-US-state simulator exercises the US National message.
+        // Do not interpret Florida/another active section using National offsets.
+        guard ids == [7], !encoded.isEmpty, encoded.count <= 8192 else { return output }
+        do {
+            let sections = encoded.split(separator: "~", omittingEmptySubsequences: false)
+            guard sections.count >= 2 else { throw Invalid.signal }
+            var header = try Bits(sections[0])
+            guard try header.take(6) == 3, try header.take(6) == 1 else { throw Invalid.signal }
+            let count = try header.take(12)
+            guard (1...64).contains(count) else { throw Invalid.signal }
+            var sectionIDs: [Int] = []
+            var last = 0
+            for _ in 0..<count {
+                let range = try header.take(1) == 1
+                let start = last + (try header.fibonacci())
+                let end = range ? start + (try header.fibonacci()) : start
+                guard start > last, end <= 4095, end - start < 64,
+                      sectionIDs.count + end - start + 1 <= 64 else { throw Invalid.signal }
+                sectionIDs.append(contentsOf: start...end)
+                last = end
+            }
+            try header.validatePadding()
+            guard sections.count == sectionIDs.count + 1,
+                  let index = sectionIDs.firstIndex(of: 7) else { throw Invalid.signal }
+            let segments = sections[index + 1].split(separator: ".", omittingEmptySubsequences: false)
+            guard (1...2).contains(segments.count) else { throw Invalid.signal }
+            var core = try Bits(segments[0])
+            let version = try core.take(6)
+            guard version == 1 || version == 2 else { throw Invalid.signal }
+            // Six notices; three opt-outs; sensitive/child arrays; personal
+            // consent; three MSPA fields. Full core length and value validation.
+            let fieldCount = version == 1 ? 27 : 32
+            var fields: [Int] = []
+            for _ in 0..<fieldCount {
+                let value = try core.take(2)
+                guard (0...2).contains(value) else { throw Invalid.signal }
+                fields.append(value)
+            }
+            guard fields[fieldCount - 3] != 0 else { throw Invalid.signal }
+            try core.validatePadding()
+            if segments.count == 2 {
+                var gpc = try Bits(segments[1])
+                guard try gpc.take(2) == 1 else { throw Invalid.signal }
+                _ = try gpc.take(1)
+                try gpc.validatePadding()
+            }
+            output["gppObservation"] = "usNationalV\(version)"
+            output["gppSaleOptOut"] = fields[6]
+            output["gppSharingOptOut"] = fields[7]
+            output["gppTargetedAdvertisingOptOut"] = fields[8]
+        } catch {
+            // Missing, malformed and unsupported are never converted to false.
+            output["gppObservation"] = "indeterminate"
+        }
+        return output
+    }
+}
+
 /// Read-only observations of real SDK calls. No identifiers or TCString are exposed.
 @MainActor
 final class TarotConsentQAObservation: ObservableObject {
