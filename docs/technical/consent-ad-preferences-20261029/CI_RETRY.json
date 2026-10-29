@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-29",
+  "firstRun": 40918369100,
+  "sourceSHA": "e02e2954e2428000059cab049b91b62290a39eb5",
+  "conclusion": "FAILED_BEFORE_SIGNING_AND_UPLOAD",
+  "verified": {
+    "coreTests": 59,
+    "debugBuildSucceeded": true,
+    "swiftCompilerErrors": 0,
+    "newUITestsExecuted": false,
+    "signed": false,
+    "uploaded": false
+  },
+  "failure": "No test_banner_loaded in simulator runtime log after app launch; log contained only header. Legacy iOS26.2 simulator boot spent over7 minutes migrating data and waiting for system apps. This does not establish an app-code or ad-server root cause.",
+  "retryChanges": [
+    "Fresh simulator selected from actual supported types and available iOS runtimes compatible with SDK; saved inventory selects26.5+iPhone17Pro.",
+    "Bounded boot, preserve diagnostics on failure, launch screenshots, live process logs and crash index.",
+    "DEBUG-only explicit nonregulated geography for initial no-form sample-banner smoke. Separate EEA fresh-install scenario and consent tests retain all choices/assertions.",
+    "Read-only DEBUG consent/form/configuration state added to observations. Release retains actual geography."
+  ],
+  "candidateTuple": "1.2.1 (1)",
+  "numberRationale": "No prior candidate upload occurred. This retry adds test diagnostics/geography, with the same proposed unreleased candidate number.",
+  "retryRun": null,
+  "retryOutcome": "NOT_STARTED_YET"
+}

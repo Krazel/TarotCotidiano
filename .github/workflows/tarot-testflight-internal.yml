@@ -93,15 +93,91 @@ jobs:
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotAdvertisingMode' "$SIMULATOR_PLIST")" == "test-only" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :GADApplicationIdentifier' "$SIMULATOR_PLIST")" == "ca-app-pub-3940256099942544~1458002511" ]]
           [[ "$(/usr/libexec/PlistBuddy -c 'Print :TarotBannerAdUnitID' "$SIMULATOR_PLIST")" == "ca-app-pub-3940256099942544/2435281174" ]]
-          DEVICE_ID="$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
-          test -n "$DEVICE_ID"
-          xcrun simctl boot "$DEVICE_ID" || true
-          xcrun simctl bootstatus "$DEVICE_ID" -b
+          python3 <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          def version(value):
+              parts = [int(part) for part in value.split(".")]
+              return tuple((parts + [0, 0, 0])[:3])
+          sdk = subprocess.check_output(["xcrun", "--sdk", "iphonesimulator", "--show-sdk-version"], text=True).strip()
+          runtimes = json.loads((root / "tarot-qa-simulator-runtimes.json").read_text())["runtimes"]
+          compatible = [item for item in runtimes if item.get("isAvailable") and item["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-") and version(item["version"]) <= version(sdk)]
+          if not compatible:
+              raise RuntimeError("No available iOS runtime compatible with the selected simulator SDK")
+          runtime = max(compatible, key=lambda item: version(item["version"]))
+          phones = [item for item in runtime.get("supportedDeviceTypes", []) if item.get("productFamily") == "iPhone"]
+          if not phones:
+              raise RuntimeError("Selected runtime declares no compatible iPhone device type")
+          device_type = next((item for item in phones if item["name"] == "iPhone 17 Pro"), sorted(phones, key=lambda item: item["identifier"])[0])
+          name = "TarotQA-" + os.environ["GITHUB_RUN_ID"] + "-" + os.environ["GITHUB_RUN_ATTEMPT"]
+          device = subprocess.check_output(["xcrun", "simctl", "create", name, device_type["identifier"], runtime["identifier"]], text=True, timeout=60).strip()
+          (root / "tarot-qa-created-device.json").write_text(json.dumps({"udid": device, "name": name, "runtime": runtime["identifier"], "runtimeVersion": runtime["version"], "sdkVersion": sdk, "deviceType": device_type["identifier"]}, indent=2))
+          with open(os.environ["GITHUB_ENV"], "a") as output:
+              output.write("TAROT_QA_DEVICE_ID=" + device + "\n")
+          PY
+          DEVICE_ID="$(jq -er .udid "$RUNNER_TEMP/tarot-qa-created-device.json")"
+          export DEVICE_ID
+          STREAM_PID=""
+          collect_diagnostics() {
+            python3 <<'PY'
+          import json, os, subprocess
+          from pathlib import Path
+          root = Path(os.environ["RUNNER_TEMP"])
+          device = os.environ["DEVICE_ID"]
+          commands = [
+              ("tarot-qa-final.png", ["xcrun", "simctl", "io", device, "screenshot", str(root / "tarot-qa-final.png")], 30),
+              ("tarot-qa-final-runtime.log", ["xcrun", "simctl", "spawn", device, "log", "show", "--last", "10m", "--info", "--debug", "--style", "compact", "--predicate", 'process == "TarotDeckInternal" OR subsystem == "com.krazel.tarotdeck"'], 45),
+              ("tarot-qa-final-devices.json", ["xcrun", "simctl", "list", "devices", "-j"], 15),
+          ]
+          for name, command, timeout in commands:
+              try:
+                  result = subprocess.run(command, capture_output=True, text=True, timeout=timeout)
+                  (root / (name + ".command.log")).write_text("exit=" + str(result.returncode) + "\n" + result.stdout + result.stderr)
+              except Exception as error:
+                  (root / (name + ".command.log")).write_text(type(error).__name__ + ": " + str(error))
+          result = subprocess.run(["ps", "-axo", "pid,ppid,stat,comm"], capture_output=True, text=True, timeout=10)
+          (root / "tarot-qa-final-processes.txt").write_text("\n".join(line for line in result.stdout.splitlines() if "TarotDeck" in line))
+          crash_roots = [Path.home() / "Library/Logs/DiagnosticReports", Path.home() / "Library/Developer/CoreSimulator/Devices" / device / "data/Library/Logs/CrashReporter"]
+          crashes = [{"file": item.name, "bytes": item.stat().st_size} for folder in crash_roots if folder.exists() for item in folder.rglob("*TarotDeck*") if item.is_file()]
+          (root / "tarot-qa-crash-report-index.json").write_text(json.dumps(crashes, indent=2))
+          PY
+          }
+          finish_smoke() {
+            status=$?
+            trap - EXIT
+            set +e
+            if [[ -n "$STREAM_PID" ]]; then kill "$STREAM_PID" 2>/dev/null; fi
+            collect_diagnostics
+            exit "$status"
+          }
+          trap finish_smoke EXIT
+          python3 <<'PY'
+          import os, subprocess, time
+          from pathlib import Path
+          device = os.environ["DEVICE_ID"]
+          started = time.monotonic()
+          with (Path(os.environ["RUNNER_TEMP"]) / "tarot-qa-boot.log").open("w") as log:
+              subprocess.run(["xcrun", "simctl", "boot", device], stdout=log, stderr=subprocess.STDOUT, timeout=60, check=True)
+              subprocess.run(["xcrun", "simctl", "bootstatus", device, "-b"], stdout=log, stderr=subprocess.STDOUT, timeout=max(1, 600 - (time.monotonic() - started)), check=True)
+          PY
+          xcrun simctl list devices -j | jq -e --arg device "$DEVICE_ID" '[.devices[][] | select(.udid == $device and .state == "Booted")] | length == 1' > /dev/null
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-qa-before-app.png"
+          start_runtime_log() {
+            if [[ -n "$STREAM_PID" ]]; then kill "$STREAM_PID" 2>/dev/null || true; fi
+            xcrun simctl spawn "$DEVICE_ID" log stream --level debug --style compact --predicate 'process == "TarotDeckInternal" OR subsystem == "com.krazel.tarotdeck"' > "$1" 2>&1 &
+            STREAM_PID=$!
+            sleep 2
+          }
           xcrun simctl install "$DEVICE_ID" "$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app"
-          xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
+          start_runtime_log "$RUNNER_TEMP/tarot-ads-runtime.log"
+          xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-consent-non-eea --qa-consent-observe --qa-english | tee "$RUNNER_TEMP/tarot-qa-launch-non-eea.log"
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-qa-after-launch-non-eea.png"
+          APP_PID="$(awk '/com\.krazel\.tarotdeck\.internal\.provisional: [0-9]+/ {print $NF}' "$RUNNER_TEMP/tarot-qa-launch-non-eea.log" | tail -1)"
+          [[ "$APP_PID" =~ ^[0-9]+$ ]]
           for attempt in {1..12}; do
             sleep 5
-            xcrun simctl spawn "$DEVICE_ID" log show --last 2m --style compact --predicate 'subsystem == "com.krazel.tarotdeck"' > "$RUNNER_TEMP/tarot-ads-runtime.log"
+            kill -0 "$APP_PID"
             if grep -q test_banner_loaded "$RUNNER_TEMP/tarot-ads-runtime.log"; then break; fi
           done
           grep -q test_banner_loaded "$RUNNER_TEMP/tarot-ads-runtime.log"
@@ -109,10 +185,14 @@ jobs:
           xcrun simctl terminate "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
           xcrun simctl uninstall "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional
           xcrun simctl install "$DEVICE_ID" "$RUNNER_TEMP/TarotAdsSimulator/Build/Products/Debug-iphonesimulator/TarotDeckInternal.app"
-          xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-consent-eea
+          start_runtime_log "$RUNNER_TEMP/tarot-consent-runtime.log"
+          xcrun simctl launch "$DEVICE_ID" com.krazel.tarotdeck.internal.provisional --qa-consent-eea --qa-consent-observe --qa-english | tee "$RUNNER_TEMP/tarot-qa-launch-eea.log"
+          xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-qa-after-launch-eea.png"
+          APP_PID="$(awk '/com\.krazel\.tarotdeck\.internal\.provisional: [0-9]+/ {print $NF}' "$RUNNER_TEMP/tarot-qa-launch-eea.log" | tail -1)"
+          [[ "$APP_PID" =~ ^[0-9]+$ ]]
           for attempt in {1..12}; do
             sleep 5
-            xcrun simctl spawn "$DEVICE_ID" log show --last 2m --style compact --predicate 'subsystem == "com.krazel.tarotdeck"' > "$RUNNER_TEMP/tarot-consent-runtime.log"
+            kill -0 "$APP_PID"
             if grep -q consent_form_presenting "$RUNNER_TEMP/tarot-consent-runtime.log"; then break; fi
           done
           grep -q consent_form_presenting "$RUNNER_TEMP/tarot-consent-runtime.log"
@@ -134,7 +214,6 @@ jobs:
             sleep 3
             xcrun simctl io "$DEVICE_ID" screenshot "$RUNNER_TEMP/tarot-remove-ads-active-$language.png"
           done
-          xcrun simctl shutdown "$DEVICE_ID"
 
       - name: Preserve simulator launch screenshot
         if: ${{ always() }}
@@ -148,6 +227,7 @@ jobs:
             ${{ runner.temp }}/tarot-consent-runtime.log
             ${{ runner.temp }}/tarot-settings-*.png
             ${{ runner.temp }}/tarot-remove-ads-*.png
+            ${{ runner.temp }}/tarot-qa-*
           if-no-files-found: ignore
           retention-days: 1
 
@@ -156,7 +236,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          DEVICE_ID="$(xcrun simctl list devices available -j | jq -r '[.devices[][] | select(.name | startswith("iPhone"))][0].udid')"
+          DEVICE_ID="${TAROT_QA_DEVICE_ID:?Fresh smoke simulator ID is required}"
           test -n "$DEVICE_ID"
           echo "Running UMP sample integration tests. Any observed ATT state must come from the OS; no production consent fixture is supplied."
           xcodebuild test -project native-ios/TarotDeck.xcodeproj \

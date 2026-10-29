@@ -76,6 +76,12 @@ final class TarotAdConsent: ObservableObject {
             let debug = DebugSettings()
             debug.geography = .EEA
             parameters.debugSettings = debug
+        } else if ProcessInfo.processInfo.arguments.contains("--qa-consent-non-eea") {
+            // Isolate the no-regional-form banner smoke test from runner geography.
+            // EEA acceptance/refusal is tested separately; never used in Release.
+            let debug = DebugSettings()
+            debug.geography = .other
+            parameters.debugSettings = debug
         }
         #endif
         return parameters
@@ -191,6 +197,10 @@ final class TarotAdConsent: ObservableObject {
             "sdkStarted": isStarted, "requestCount": requestCount,
             "formPresentations": formPresentations,
             "trackingAuthorization": qaTrackingAuthorization,
+            "automaticPresentationAllowed": automaticPresentationAllowed,
+            "bannerConfigured": TarotAdsConfiguration.bannerID != nil,
+            "consentStatus": ConsentInformation.shared.consentStatus.rawValue,
+            "formStatus": ConsentInformation.shared.formStatus.rawValue,
             "purposeConsents": UserDefaults.standard.string(forKey: "IABTCF_PurposeConsents") ?? "",
             "vendorConsents": UserDefaults.standard.string(forKey: "IABTCF_VendorConsents") ?? ""
         ]

@@ -57,6 +57,27 @@ $required = @(
 foreach ($contract in $required) {
     if (-not $workflow.Contains($contract)) { throw "Missing public RC workflow contract: $contract" }
 }
+foreach ($contract in @(
+    '"--sdk", "iphonesimulator", "--show-sdk-version"',
+    'version(item["version"]) <= version(sdk)',
+    'runtime = max(compatible, key=lambda item: version(item["version"]))',
+    'runtime.get("supportedDeviceTypes", [])',
+    '["xcrun", "simctl", "create", name, device_type["identifier"], runtime["identifier"]]',
+    'TAROT_QA_DEVICE_ID=', 'Fresh smoke simulator ID is required',
+    'tarot-qa-created-device.json', 'tarot-qa-boot.log',
+    '600 - (time.monotonic() - started)', 'check=True',
+    'tarot-qa-before-app.png', 'tarot-qa-after-launch-non-eea.png', 'tarot-qa-after-launch-eea.png',
+    'trap finish_smoke EXIT', 'exit "$status"', 'tarot-qa-crash-report-index.json',
+    '"--info", "--debug"', 'log stream --level debug', 'kill -0 "$APP_PID"',
+    '--qa-consent-non-eea --qa-consent-observe --qa-english',
+    '--qa-consent-eea --qa-consent-observe --qa-english',
+    '${{ runner.temp }}/tarot-qa-*'
+)) {
+    if (-not $workflow.Contains($contract)) { throw "Missing fresh simulator or smoke diagnostic contract: $contract" }
+}
+if ($workflow.Contains('[0].udid') -or $workflow -match '(?m)^\s*xcrun simctl boot .*\|\| true') {
+    throw 'Never select the first pre-existing simulator or suppress a failed boot.'
+}
 if ([regex]::Matches($workflow, '(?m)^\s*runs-on:\s*macos-latest\s*$').Count -ne 1 -or
     [regex]::Matches($workflow, '(?m)^\s*runs-on:').Count -ne 1 -or
     $workflow.IndexOf('Verify repository visibility matches the authorized CI route') -gt
