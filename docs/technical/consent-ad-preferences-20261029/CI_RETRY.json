@@ -20,6 +20,23 @@
   ],
   "candidateTuple": "1.2.1 (1)",
   "numberRationale": "No prior candidate upload occurred. This retry adds test diagnostics/geography, with the same proposed unreleased candidate number.",
-  "retryRun": null,
-  "retryOutcome": "NOT_STARTED_YET"
+  "retryRun": 40922012576,
+  "retryOutcome": "FAILED_BEFORE_SIGNING_AND_UPLOAD",
+  "retrySourceSHA": "b1e92e8762a4fe2312e87b65e6b2d99f0a3eb565",
+  "secondFailure": "Actual screenshot showed sample UMP IDFA explainer; required consent remained unanswered. SDK banner requests were correctly suspended. No app ad eligibility gate was bypassed.",
+  "currentRun": 40929020703,
+  "currentSourceSHA": "fcdfa4f944f710494da1c60e49067045253b56c5",
+  "currentOutcome": "SUCCESS_UPLOADED_VALID_IN_BETA_TESTING",
+  "thirdAttemptChange": "Exercise real UMP Continue and ATT denial before CLI banner smoke; record real sample banner callback count and test both ATT choices in full suite.",
+  "thirdOutcome": "FAILED_BEFORE_SIGNING_AND_UPLOAD",
+  "thirdFailure": "Five of six UI cases passed; verbose DEBUG accessibility diagnostic label occupied the Settings hit target. Reduced visible diagnostic badge while retaining full read-only accessibility JSON.",
+  "finalVerification": {
+    "coreTests": 59,
+    "realConsentATTUITests": 6,
+    "skipped": 0,
+    "signed": true,
+    "uploaded": true,
+    "audience": "INTERNAL_ONLY",
+    "receipt": "TESTFLIGHT_RECEIPT.json"
+  }
 }

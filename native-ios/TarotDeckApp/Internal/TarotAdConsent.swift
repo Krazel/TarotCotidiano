@@ -294,9 +294,14 @@ private enum TarotGPPQAObservation {
         }
 
         func validatePadding() throws {
-            // IAB compressed base64 pads to a byte boundary, then six bits.
-            let paddedLength = (((position + 7) / 8 * 8) + 5) / 6 * 6
-            guard bits.count == paddedLength, bits[position...].allSatisfy({ $0 == 0 })
+            // The GPP specification pads directly to six bits. IAB's reference
+            // encoder also emits byte-then-six-bit padding; its USNat decoder
+            // explicitly accepts both 60-bit and 66-bit v1 cores. Accept only
+            // those two exact lengths, with zero padding, never arbitrary tails.
+            let sextetLength = (position + 5) / 6 * 6
+            let byteThenSextetLength = (((position + 7) / 8 * 8) + 5) / 6 * 6
+            guard (bits.count == sextetLength || bits.count == byteThenSextetLength),
+                  bits[position...].allSatisfy({ $0 == 0 })
             else { throw Invalid.signal }
         }
     }
@@ -309,7 +314,8 @@ private enum TarotGPPQAObservation {
 
     static func observe(encoded: String, sid: String?) -> [String: Any] {
         var output: [String: Any] = ["gppPresent": !encoded.isEmpty,
-                                      "gppSectionIDs": [Int](), "gppObservation": "indeterminate"]
+                                      "gppSectionIDs": [Int](), "gppObservation": "indeterminate",
+                                      "gppDiagnostic": "sidMissingOrInvalid"]
         guard let sid, !sid.isEmpty,
               sid.count <= 128 else { return output }
         let parts = sid.split(separator: "_", omittingEmptySubsequences: false)
@@ -318,12 +324,17 @@ private enum TarotGPPQAObservation {
               parts.map(String.init) == ids.map(String.init),
               ids.allSatisfy({ $0 == -1 || (1...4095).contains($0) }) else { return output }
         output["gppSectionIDs"] = ids
+        output["gppDiagnostic"] = "unsupportedActiveSectionsOrMissingString"
         // The regulated-US-state simulator exercises the US National message.
         // Do not interpret Florida/another active section using National offsets.
         guard ids == [7], !encoded.isEmpty, encoded.count <= 8192 else { return output }
         do {
+            // Classification/lengths only: never include encoded data in errors.
+            output["gppDiagnostic"] = "sectionEnvelope"
             let sections = encoded.split(separator: "~", omittingEmptySubsequences: false)
             guard sections.count >= 2 else { throw Invalid.signal }
+            output["gppHeaderCharacterCount"] = sections[0].count
+            output["gppDiagnostic"] = "headerStructure"
             var header = try Bits(sections[0])
             guard try header.take(6) == 3, try header.take(6) == 1 else { throw Invalid.signal }
             let count = try header.take(12)
@@ -339,32 +350,48 @@ private enum TarotGPPQAObservation {
                 sectionIDs.append(contentsOf: start...end)
                 last = end
             }
+            output["gppDiagnostic"] = "headerPadding"
             try header.validatePadding()
+            output["gppDiagnostic"] = "sectionMapping"
             guard sections.count == sectionIDs.count + 1,
                   let index = sectionIDs.firstIndex(of: 7) else { throw Invalid.signal }
             let segments = sections[index + 1].split(separator: ".", omittingEmptySubsequences: false)
             guard (1...2).contains(segments.count) else { throw Invalid.signal }
+            output["gppCoreCharacterCount"] = segments[0].count
+            output["gppDiagnostic"] = "coreVersion"
             var core = try Bits(segments[0])
             let version = try core.take(6)
+            output["gppCoreVersion"] = version
             guard version == 1 || version == 2 else { throw Invalid.signal }
             // Six notices; three opt-outs; sensitive/child arrays; personal
             // consent; three MSPA fields. Full core length and value validation.
-            let fieldCount = version == 1 ? 27 : 32
+            // The reference decoder expands 60/66-bit legacy cores even when
+            // their version field is 2 (official vector CVQqAAAACg). Select the
+            // documented wire layout by its length, not only its version tag.
+            guard (10...12).contains(segments[0].count) else { throw Invalid.signal }
+            let fieldCount = segments[0].count <= 11 ? 27 : 32
+            output["gppCoreLayout"] = fieldCount == 27 ? "legacy60Bits" : "current70Bits"
             var fields: [Int] = []
+            output["gppDiagnostic"] = "coreFields"
             for _ in 0..<fieldCount {
                 let value = try core.take(2)
                 guard (0...2).contains(value) else { throw Invalid.signal }
                 fields.append(value)
             }
+            output["gppDiagnostic"] = "mspaCoveredTransaction"
             guard fields[fieldCount - 3] != 0 else { throw Invalid.signal }
+            output["gppDiagnostic"] = "corePadding"
             try core.validatePadding()
             if segments.count == 2 {
+                output["gppGPCCharacterCount"] = segments[1].count
+                output["gppDiagnostic"] = "gpcSubsection"
                 var gpc = try Bits(segments[1])
                 guard try gpc.take(2) == 1 else { throw Invalid.signal }
                 _ = try gpc.take(1)
                 try gpc.validatePadding()
             }
             output["gppObservation"] = "usNationalV\(version)"
+            output["gppDiagnostic"] = "decoded"
             output["gppSaleOptOut"] = fields[6]
             output["gppSharingOptOut"] = fields[7]
             output["gppTargetedAdvertisingOptOut"] = fields[8]

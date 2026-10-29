@@ -105,7 +105,7 @@ final class TarotConsentUITests: XCTestCase {
 
     func testAcceptAndPersistChoiceAcrossRelaunch() throws {
         try launchFresh()
-        try tapChoice("Consent")
+        try tapConsentAndAwaitTransition()
         try finishOptionalATTWithDenial()
         let accepted = try waitForSnapshot("accepted consent and first test request") {
             $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.sdkStarted && $0.requestCount > 0
@@ -149,7 +149,7 @@ final class TarotConsentUITests: XCTestCase {
 
     func testReopenAdvertisingChoicesAndRevokeAcceptedChoice() throws {
         try launchFresh()
-        try tapChoice("Consent")
+        try tapConsentAndAwaitTransition()
         try finishOptionalATTWithDenial()
         let accepted = try waitForSnapshot("accepted before withdrawal") {
             $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.requestCount > 0
@@ -197,10 +197,61 @@ final class TarotConsentUITests: XCTestCase {
         app.launch()
     }
 
-    /// The Google sample message may not configure IDFA. If it does, deny the
-    /// actual Apple prompt; completion without a prompt is not an ATT pass.
+    /// A cold WebKit form can retain the original GDPR page after XCTest taps.
+    /// Retry that same requested choice once only while the exact untouched
+    /// form is still visible and requests remain blocked; then require progress.
+    private func tapConsentAndAwaitTransition() throws {
+        try tapChoice("Consent")
+        let moved = NSPredicate { [weak self] _, _ in
+            guard let self else { return false }
+            return !self.choice("Consent").exists
+                || self.choice("Continue").exists
+                || XCUIApplication(bundleIdentifier: "com.apple.springboard")
+                    .alerts.buttons["Ask App Not to Track"].exists
+                || (self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
+        }
+        let initial = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: moved, object: nil)], timeout: 5)
+        if initial != .completed {
+            guard let state = snapshot() else {
+                throw TestFailure.unmetPrecondition("Missing observation before a possible Consent retry")
+            }
+            let originalForm = ["Consent", "Do not consent", "Manage options"].allSatisfy {
+                let element = choice($0)
+                return element.exists && element.isHittable
+            }
+            try require(originalForm && state.busy && !state.canRequestAds
+                        && !state.sdkStarted && state.requestCount == 0,
+                        "Consent did not transition, but the original blocked GDPR form is not intact; refusing a retry.")
+            recordEvidence("original-gdpr-form-before-single-consent-retry")
+            try tapChoice("Consent")
+            let retried = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: moved, object: nil)],
+                                        timeout: networkTimeout)
+            try require(retried == .completed,
+                        "Original GDPR form did not transition after one documented Consent retry.")
+        }
+    }
+
+    /// UMP may show its IDFA explainer after GDPR, or proceed straight to ATT.
+    /// Continue advances only the explainer; deny the actual Apple prompt.
+    /// Completion without that prompt is still not an ATT pass.
     private func finishOptionalATTWithDenial() throws {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let nextStep = NSPredicate { [weak self] _, _ in
+            guard let self else { return false }
+            return springboard.alerts.buttons["Ask App Not to Track"].exists
+                || self.choice("Continue").exists
+                || (self.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)
+        }
+        let next = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: nextStep, object: nil)],
+                                 timeout: networkTimeout)
+        try require(next == .completed,
+                    "Neither the UMP IDFA Continue action, Apple ATT, nor UMP completion appeared. Last state: \(snapshotJSON() ?? "missing")")
+        if choice("Continue").exists {
+            let before = try waitForSnapshot("real UMP explainer is still in flight") { $0.busy }
+            XCTAssertFalse(before.canRequestAds)
+            recordEvidence("before-idfa-explainer-continue")
+            try tapChoice("Continue")
+        }
         let done = NSPredicate { [weak self] _, _ in
             springboard.alerts.buttons["Ask App Not to Track"].exists ||
                 (self?.snapshot().map { $0.updateCompleted && !$0.busy } ?? false)

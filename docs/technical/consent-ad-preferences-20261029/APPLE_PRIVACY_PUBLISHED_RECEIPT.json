@@ -1,0 +1,101 @@
+{
+  "verifiedAt": "2026-10-29T17:56:44.989449+00:00",
+  "appID": "6800144105",
+  "status": "PUBLISHED_VERIFIED_IN_APP_STORE_CONNECT_UI",
+  "authorizedBrowserException": "App Privacy answers are not editable through the public App Store Connect API; prior human exception retained.",
+  "change": {
+    "dataType": "DEVICE_ID",
+    "trackingBefore": false,
+    "trackingAfter": true
+  },
+  "otherSixDataTypesUnchanged": true,
+  "collectedDataTypeCount": 7,
+  "publishedAnswers": [
+    {
+      "dataType": "COARSE_LOCATION",
+      "collected": true,
+      "linked": true,
+      "tracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ]
+    },
+    {
+      "dataType": "DEVICE_ID",
+      "collected": true,
+      "linked": true,
+      "tracking": true,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ]
+    },
+    {
+      "dataType": "PRODUCT_INTERACTION",
+      "collected": true,
+      "linked": true,
+      "tracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ]
+    },
+    {
+      "dataType": "ADVERTISING_DATA",
+      "collected": true,
+      "linked": true,
+      "tracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ]
+    },
+    {
+      "dataType": "CRASH_DATA",
+      "collected": true,
+      "linked": false,
+      "tracking": false,
+      "purposes": [
+        "ANALYTICS"
+      ]
+    },
+    {
+      "dataType": "PERFORMANCE_DATA",
+      "collected": true,
+      "linked": false,
+      "tracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS",
+        "APP_FUNCTIONALITY"
+      ]
+    },
+    {
+      "dataType": "OTHER_DIAGNOSTIC_DATA",
+      "collected": true,
+      "linked": false,
+      "tracking": false,
+      "purposes": [
+        "THIRD_PARTY_ADVERTISING",
+        "ANALYTICS"
+      ]
+    }
+  ],
+  "previewReadback": "Datos usados para rastrearte: Identificadores",
+  "deviceIDReadback": "Publicidad de terceros y Análisis de datos; vinculados con la identidad; se utilizan con fines de seguimiento",
+  "privacyPolicyURL": "https://krazel.github.io/tarot-deck/privacy/",
+  "URLUnchanged": true,
+  "browserSaveSignal": "Publicada hace unos segundos",
+  "proofPrivateLocal": ".studio/tarot-consent-complete-20261029/apple-privacy-published-20261029.png",
+  "AppleDeveloperAgreement": {
+    "acceptance": "CONFIRMED_BY_HUMAN",
+    "acceptedByAgent": false
+  },
+  "appWideMetadataChanged": true,
+  "publicAppBinaryChanged": false,
+  "productionIDFAMessagePublished": false,
+  "notCertification": "Disclosure readback is not an archive/runtime audit or an App Review submission."
+}

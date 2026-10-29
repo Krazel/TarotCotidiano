@@ -1,0 +1,39 @@
+{
+  "checkedAt": "2026-10-29T18:49:31.376Z",
+  "version": "1.2.1",
+  "build": "1",
+  "buildID": "6ef2c5e9-0e21-458a-a14e-78d05e75aad9",
+  "processingState": "VALID",
+  "audience": "INTERNAL_ONLY",
+  "usesNonExemptEncryption": false,
+  "beta": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "NOT_APPLICABLE"
+  },
+  "group": {
+    "id": "ff63f09f-7e2f-4ed7-8a53-637205d523c4",
+    "name": "Testers",
+    "isInternalGroup": true,
+    "hasAccessToAllBuilds": true,
+    "buildRelationVerified": true
+  },
+  "locales": [
+    {
+      "locale": "es-ES",
+      "whatsNew": "Beta con anuncios de prueba. Comprueba el inicio y Opciones de publicidad, el rechazo y cambio posterior de elección, quitar anuncios con una suscripción activa y que las tiradas sigan sin banners. El flujo ATT propio de Tarot sigue pendiente de comprobación."
+    },
+    {
+      "locale": "en-US",
+      "whatsNew": "Test-ad beta. Check app startup and Advertising choices, refusal and later changes, ad removal with an active subscription, and no banners during readings. The Tarot-specific ATT message flow still requires separate verification."
+    }
+  ],
+  "appStoreDraft": {
+    "id": "655beebc-5013-4f14-8189-adadda184449",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "selectedBuild": null
+  },
+  "externalSubmitted": false,
+  "appReviewSubmitted": false,
+  "productionATTQA": false
+}

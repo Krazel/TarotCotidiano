@@ -1,0 +1,50 @@
+{
+  "checkedAt": "2026-10-29T19:50:41.234761+00:00",
+  "run": 40934397390,
+  "runUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40934397390",
+  "sourceSHA": "46c86096246fb28447162ef65438ae9ff73d5a56",
+  "trackingDomains": {
+    "status": "PASSED",
+    "executedCases": 6,
+    "skipped": 0,
+    "NSPrivacyTracking": true,
+    "domains": [
+      "googleads.g.doubleclick.net",
+      "pagead2.googleadservices.com"
+    ],
+    "logSHA256": "8935cc903cda1602a915d90a9f93125886bba4d3aa8fc63c0885e830fec71c47",
+    "promotedToSourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b"
+  },
+  "missingUsageDescription": {
+    "status": "PASSED",
+    "executedCases": 2,
+    "regions": [
+      "EEA",
+      "non-EEA"
+    ],
+    "independentPositiveControl": "PASSED_WITH_REAL_ATT_AUTHORIZATION",
+    "logSHA256": "fdaddd5d36d3063b31e7c6fd30664c39a44cc1cd74ca8617d9fd2605003f7797",
+    "positiveControlLogSHA256": "d42828ef0bd72d3a6d94bf9e7773662c8e9ded575d043e6283581f6c4004e443",
+    "scope": "Controlled compiled-simulator Info.plist/localization mutation; SDK resources and executable unchanged. Same UMP 3.1.0 startup path; not exact old distributed binary or physical-device certification."
+  },
+  "runtime": {
+    "iOS": "26.5",
+    "Xcode": "26.6 (17F113)"
+  },
+  "publisherMessages": {
+    "run": 40942070108,
+    "sourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b",
+    "status": "FAILED_5_OF_7_PASSED_QA_CORRECTIONS_PREPARED",
+    "expectedCases": 7,
+    "actualPublisherAppID": true,
+    "bannerInventory": "GOOGLE_SAMPLE_ONLY",
+    "passedCases": 5,
+    "failedCases": 2,
+    "failures": [
+      "GDPR form still present after first Consent tap; no TCF choice recorded. One bounded same-choice retry and real transition verification added; Continue support is separate, not the demonstrated cause.",
+      "US preferences saved with real GPP section7 present, but QA decoder returned indeterminate. Added normative sextet padding and official legacy v2 wire-layout compatibility, plus derived diagnostics; actual cause requires rerun."
+    ],
+    "productionBehaviorChangedByQAFixes": false
+  },
+  "vendorSupportContact": "NOT_SENT; explicitly declined by human"
+}

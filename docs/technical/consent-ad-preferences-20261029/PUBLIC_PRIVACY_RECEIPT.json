@@ -1,0 +1,33 @@
+{
+  "url": "https://krazel.github.io/tarot-deck/privacy/",
+  "repository": "Krazel/Krazel.github.io",
+  "path": "tarot-deck/privacy/index.html",
+  "commit": "df96ce6e6e14531158dd62f065e896667409fe66",
+  "blobSHA": "6317b3f62eb4d5b402f6bf0685dd674cc98e16fd",
+  "contentSHA256": "b45ce392ea5552aefaa0b7cac4d6fab14bbfbe794eab4b4ddc682932910ebd09",
+  "APIReadbackVerified": true,
+  "anonymousHTTPStatus": 200,
+  "anonymousContentVerified": true,
+  "scope": "EN/ES distinction internal 1.2.1(1) sample inventory versus production-capable candidate 1.2.1(2); public 1.2 unchanged",
+  "appStoreURLChanged": false,
+  "previousPublication": {
+    "verifiedAtUTC": "2026-10-29T17:53:27.1224262Z",
+    "status": "PUBLISHED_AND_VERIFIED",
+    "publicURL": "https://krazel.github.io/tarot-deck/privacy/",
+    "expectedSHA256": "7f4ec0cb6ee0073afd3b3513b2a3ca372e77cee03007184b6e08ef73716d2cd9",
+    "expectedCommit": "3765f9ef3559f6d5e4da481105e53fa02465e378",
+    "expectedContentBlobSHA": "06867e8ba1e12295afb568e898164c4bca4be402",
+    "apiBlobSHA": "06867e8ba1e12295afb568e898164c4bca4be402",
+    "apiSHA256": "7f4ec0cb6ee0073afd3b3513b2a3ca372e77cee03007184b6e08ef73716d2cd9",
+    "apiMatchesProposal": true,
+    "httpStatus": 200,
+    "httpSHA256": "7f4ec0cb6ee0073afd3b3513b2a3ca372e77cee03007184b6e08ef73716d2cd9",
+    "httpMatchesProposal": true,
+    "httpETag": "W/\"6ae3880e-4767\"",
+    "httpLastModified": "Thu, 29 Oct 2026 17:53:18 GMT",
+    "httpAge": "0",
+    "anonymousHTTP": true,
+    "writePerformedByVerifier": false,
+    "scope": "Only Tarot privacy policy publication verified; no assertion about build, CI, Apple review or account agreement."
+  }
+}

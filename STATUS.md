@@ -2,11 +2,19 @@
 
 Actualizado: 2026-10-29
 
-## Build de beta iniciada — repositorio público por autorización expresa, 29/10/2026
+## Beta 1.2.1 (1) disponible y candidata de tienda (2) en preparación — 29/10/2026
 
-A-076: el usuario autoriza expresamente hacer público el repo, compilar y volver a privado cuando esté todo aprobado. Historial local alcanzable revisado (1007blobs/368MB) sin patrones de claves ni archivos de firma; no había artefactos activos. Secretos en app-store-production, permisos Actions read y rama protegida para despliegues conservados. GitHub PUBLIC verificado por API; no cambio de plan ni gasto habilitado.
+A-076: GitHub PUBLIC autorizado y verificado para compilar con runner estándar sin activar gastos; volver a PRIVATE tras la aprobación indicada por el usuario. Se conservan secretos protegidos en app-store-production. No se desactiva el workflow interno tras el rechazo automático de esa limpieza; la candidata comercial usa su flujo separado y build 2.
 
-Iniciada build interna1.2.1(1), fuentee02e2954e2428000059cab049b91b62290a39eb5, run40918369100. Propósito TestFlight INTERNAL ONLY con anuncios Google de demostración y pruebas nativas antes de firma/subida. No apta para App Review por su audiencia interna; la futura candidata de tienda es una entrega separada. Estado inicial IN_PROGRESS, no afirmar subida todavía. Ya no bloquea la consulta de cuota privada para esta ejecución pública estándar autorizada. Manifiesto de tracking/dominios, QA del mensaje IDFA propio y publicación coherente de privacidad siguen pendientes antes de una candidata comercial. Mantener PUBLIC hasta la aprobación indicada; registrar y verificar su retorno a PRIVATE entonces.
+TestFlight interno 1.2.1 (1) VALID/IN_BETA_TESTING, grupo Testers verificado por API. Run 40929020703, fuente fcdfa4f944f710494da1c60e49067045253b56c5: 59 Core, compilación Debug y seis casos UMP/ATT reales PASS, firma y subida correctas. Usa inventario Google sample y audiencia INTERNAL_ONLY; no se puede seleccionar para App Review. Recibo TESTFLIGHT_RECEIPT.json.
+
+Audit 40934397390: seis casos de aceptación/rechazo/ATT/cambio de elección PASS con NSPrivacyTracking=true y los dos hosts observados googleads.g.doubleclick.net y pagead2.googleadservices.com. Dos escenarios EEA/no-EEA sin usage description y un control ATT independiente PASS, mismo UMP 3.1.0. Es un experimento de compatibilidad en simulador, no certificación del binario antiguo exacto ni de iPhone físico. Declaración comprobada incorporada a la candidata 1.2.1 (2), fuente 7364d51d43fea161977b4cda8a77f0f81451d28b.
+
+Mensajes IDFA y estados US publicados en EN/ES solo para Tarot, publisher correcto; mensaje europeo existente conservado. Primer QA de mensajes propios, run 40942070108: 5/7 PASS; correcciones de interacción GDPR y decoder GPP observacional preparadas, pendientes de nueva ejecución completa. Sin inventario real en simulador. El usuario rechaza contactar soporte; no se envía ninguna consulta. Recibos ADMOB_MESSAGES_PUBLISHED_RECEIPT.json y PRIVACY_AUDIT_RECEIPT.json.
+
+Política EN/ES publicada y comprobada por API/HTTP/SHA; App Privacy publicada, Device ID tracking=true y otros seis tipos conservados. Borrador Apple 1.2.1 PREPARE_FOR_SUBMISSION/MANUAL, sin build seleccionada ni revisión enviada. La candidata de tienda (2) requiere archive/inventario verificado y QA físico antes de declararse lista para revisión. La versión pública sigue siendo 1.2 (1), con anuncios activos y su configuración anterior.
+
+PR-003: actualización pendiente local, biblioteca D1 no sincronizada tras rechazo previo. El helper admitido requiere credencial privada por entrada estándar; no se ha reutilizado ninguna credencial ajena ni modificado el sitio para registrar datos. Los apartados siguientes son historia; este bloque y sus recibos describen el estado vigente.
 
 ## Preparación completa de monetización autorizada — 29/10/2026
 

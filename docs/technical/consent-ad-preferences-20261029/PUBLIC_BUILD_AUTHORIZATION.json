@@ -10,8 +10,41 @@
   "version": "1.2.1",
   "build": "1",
   "purpose": "INTERNAL_ONLY_TESTFLIGHT_SAMPLE_ADS",
-  "status": "IN_PROGRESS",
-  "uploaded": false,
+  "status": "INTERNAL_BETA_AVAILABLE_STORE_PREPARATION_CONTINUES",
+  "uploaded": true,
   "submittedForReview": false,
-  "costChangeEnabled": false
+  "costChangeEnabled": false,
+  "currentRunID": 40929020703,
+  "currentRunUrl": "https://github.com/Krazel/TarotCotidiano/actions/runs/40929020703",
+  "currentSourceSHA": "fcdfa4f944f710494da1c60e49067045253b56c5",
+  "attempts": [
+    {
+      "run": 40918369100,
+      "status": "FAILED_BEFORE_SIGNING",
+      "debugBuilt": true,
+      "coreTests": 59
+    },
+    {
+      "run": 40922012576,
+      "status": "FAILED_BEFORE_SIGNING",
+      "debugBuilt": true,
+      "coreTests": 59,
+      "rootCause": "Sample UMP IDFA explainer required real Continue/ATT interaction; no banner request was correctly made while pending."
+    },
+    {
+      "run": 40924634604,
+      "sourceSHA": "c81b161c984dd41f6c6093266e5b4ededb069546",
+      "status": "FAILED_BEFORE_SIGNING_AND_UPLOAD",
+      "change": "Real UMP explainer and OS ATT-denial XCTest bootstrap before banner smoke; six native UI cases remain required."
+    },
+    {
+      "run": 40929020703,
+      "sourceSHA": "fcdfa4f944f710494da1c60e49067045253b56c5",
+      "status": "SUCCESS_UPLOADED_VALID_IN_BETA_TESTING",
+      "coreTests": 59,
+      "realConsentATTUITests": 6
+    }
+  ],
+  "storeCandidateBuild": "2",
+  "storeCandidateSourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b"
 }

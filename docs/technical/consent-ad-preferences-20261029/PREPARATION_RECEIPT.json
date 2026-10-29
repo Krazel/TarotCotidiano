@@ -1,13 +1,6 @@
 {
-  "date": "2026-10-29",
-  "status": "PREPARED_NOT_RELEASE_READY",
-  "candidate": {
-    "version": "1.2.1",
-    "build": "1",
-    "compiled": false,
-    "uploaded": false,
-    "submitted": false
-  },
+  "checkedAt": "2026-10-29T19:50:41.234761+00:00",
+  "status": "INTERNAL_BETA_AVAILABLE_STORE_CANDIDATE_PREPARING",
   "authorization": "A-075: full optional UMP+ATT/IDFA+publisher first-party configuration and preparation for App Review",
   "configuration": {
     "publisherFirstPartyIDEnabled": true,
@@ -20,21 +13,67 @@
       "UMP": "3.1.0"
     }
   },
+  "publicApp": {
+    "version": "1.2",
+    "build": "1",
+    "ads": "ACTIVE",
+    "configuration": "Previous released non-personalized configuration"
+  },
+  "internalBeta": {
+    "version": "1.2.1",
+    "build": "1",
+    "run": 40929020703,
+    "sourceSHA": "fcdfa4f944f710494da1c60e49067045253b56c5",
+    "processingState": "VALID",
+    "audience": "INTERNAL_ONLY",
+    "state": "IN_BETA_TESTING",
+    "inventory": "GOOGLE_SAMPLE_ONLY",
+    "receipt": "TESTFLIGHT_RECEIPT.json"
+  },
+  "storeCandidate": {
+    "version": "1.2.1",
+    "build": "2",
+    "sourceSHA": "7364d51d43fea161977b4cda8a77f0f81451d28b",
+    "simulatorDebugCompiled": true,
+    "releaseArchived": false,
+    "uploaded": false,
+    "submitted": false
+  },
   "gates": {
-    "privateCINoSpend": "PENDING_BILLING_PERMISSION",
-    "nativeAndPhysicalQA": "NOT_RUN",
-    "trackingManifestDomains": "UNRESOLVED",
-    "remoteIDFA": "DRAFT_ONLY",
-    "publicPolicyAndAppleLabels": "PROPOSED_NOT_PUBLISHED"
+    "CI": "PUBLIC_STANDARD_RUNNER_AUTHORIZED_NO_SPEND_ENABLED",
+    "sampleConsentATT": "6_CASES_PASSED_IN_UPLOADED_INTERNAL_BETA",
+    "trackingManifestDomains": "6_CASES_PASSED_PROMOTED_TO_SOURCE",
+    "legacySDKCompatibility": "2_CASES_AND_INDEPENDENT_ATT_POSITIVE_CONTROL_PASSED",
+    "remoteIDFAAndUS": "PUBLISHED_TAROT_ONLY_EN_ES",
+    "publicPolicyAndAppleLabels": "PUBLISHED_VERIFIED",
+    "publisherMessageQA": "5_OF_7_PASSED_2_QA_CORRECTIONS_PREPARED_REQUIRES_RERUN",
+    "physicalDeviceQA": "NOT_CERTIFIED",
+    "storeCandidateArchiveAndInventory": "NOT_RUN"
   },
   "library": "PR-003 pending permitted CAS; not synchronized",
-  "evidence": [
-    "APPLE_DRAFT_RECEIPT.json",
-    "EXACT_SDK_MANIFEST.json",
-    "VALIDATION.json",
-    "CI_PLAN.md",
-    "NATIVE_QA_AND_ROLLOUT.json",
-    "PRIVACY_AUDIT_PROPOSED.json",
-    "PRIVACY_COPY_AND_REVIEW_PROPOSED.json"
-  ]
+  "review": {
+    "versionID": "655beebc-5013-4f14-8189-adadda184449",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "release": "MANUAL",
+    "selectedBuild": null,
+    "submitted": false
+  },
+  "previousPreparation": {
+    "date": "2026-10-29",
+    "status": "PREPARED_NOT_RELEASE_READY",
+    "candidate": {
+      "version": "1.2.1",
+      "build": "1",
+      "compiled": false,
+      "uploaded": false,
+      "submitted": false
+    },
+    "gates": {
+      "privateCINoSpend": "PENDING_BILLING_PERMISSION",
+      "nativeAndPhysicalQA": "NOT_RUN",
+      "trackingManifestDomains": "UNRESOLVED",
+      "remoteIDFA": "DRAFT_ONLY",
+      "publicPolicyAndAppleLabels": "PROPOSED_NOT_PUBLISHED"
+    }
+  }
 }

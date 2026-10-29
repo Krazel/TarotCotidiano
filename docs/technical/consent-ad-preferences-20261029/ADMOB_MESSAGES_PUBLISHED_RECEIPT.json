@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-10-29T19:50:41.234761+00:00",
+  "publisherID": "pub-3425091654264901",
+  "appID": "ca-app-pub-3425091654264901~4270953811",
+  "appleAppID": "6800144105",
+  "scope": "TAROT_ONLY",
+  "IDFA": {
+    "id": "54ac9f5311bbe2b2",
+    "name": "Tarot Deck IDFA EN-ES 1.2.1",
+    "status": "PUBLISHED",
+    "languages": [
+      "en-US",
+      "es"
+    ],
+    "neutralChoiceTextVerified": true
+  },
+  "USStates": {
+    "name": "Tarot Deck US states EN-ES",
+    "status": "PUBLISHED",
+    "languages": [
+      "en-US",
+      "es"
+    ],
+    "geographicCoverage": "All 20 currently offered US states plus future supported states",
+    "rejectEnabled": true
+  },
+  "existingEuropeanMessage": "Previously published; preserved",
+  "propagation": "Google indicates up to one hour; actual publisher-message simulator verification in progress",
+  "proof": "Private screenshots retained outside public product repository",
+  "otherAppsChanged": false,
+  "publisherWideRDPChanged": false
+}
