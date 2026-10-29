@@ -43,6 +43,10 @@ final class TarotAdConsent: ObservableObject {
     private var isStarting = false
     private var automaticPresentationAllowed = false
     private let logger = Logger(subsystem: "com.krazel.tarotdeck", category: "ads")
+    #if DEBUG
+    // Capture the real OS state before any UMP reset/update/presentation.
+    private let qaInitialTrackingAuthorizationRaw = ATTrackingManager.trackingAuthorizationStatus.rawValue
+    #endif
 
     init() {
         #if DEBUG
@@ -197,6 +201,7 @@ final class TarotAdConsent: ObservableObject {
             "sdkStarted": isStarted, "requestCount": requestCount,
             "formPresentations": formPresentations,
             "loadedBannerCount": loadedBannerCount,
+            "initialTrackingAuthorizationRaw": qaInitialTrackingAuthorizationRaw,
             "trackingAuthorization": qaTrackingAuthorization,
             "automaticPresentationAllowed": automaticPresentationAllowed,
             "bannerConfigured": TarotAdsConfiguration.bannerID != nil,

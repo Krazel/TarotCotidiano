@@ -1,0 +1,11 @@
+{
+  "status": "SIMULATOR_EXPERIMENT_NOT_RELEASE_CONFIGURATION",
+  "domains": [
+    "googleads.g.doubleclick.net",
+    "pagead2.googleadservices.com"
+  ],
+  "observedInTarot": "Run40924634604 actual GMA12.14 sample-banner process network logs under ATT denied; successful callback at18:02:56UTC. Exact hostnames, no wildcard or invented routing.",
+  "practiceReference": "Primary app-author manifests in sudopark/TodoCalendar@826b6b56 and wei18/Sudoku@4461a6dc use doubleclick.net/googleadservices.com. Their unrelated Analytics/Firebase/other domains are not copied.",
+  "purpose": "Test an explicit tracking declaration for the observed native ad-serving/measurement hosts, including whether denied ATT still permits sample ads. Success is simulator evidence, not a complete inventory of all future creative/vendor hosts or physical-device certification.",
+  "productionMutation": false
+}

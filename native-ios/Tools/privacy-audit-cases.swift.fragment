@@ -1,0 +1,45 @@
+    // Injected only into the simulator audit's existing XCTest class before
+    // build-for-testing. No consent/ATT result is supplied by this harness.
+    func testLegacyNoUsageDescriptionOutsideEEAAllowsSampleBanner() throws {
+        try verifyLegacyNoUsageDescription(eea: false)
+    }
+
+    func testLegacyNoUsageDescriptionEEAAllowsSampleBanner() throws {
+        try verifyLegacyNoUsageDescription(eea: true)
+    }
+
+    private func verifyLegacyNoUsageDescription(eea: Bool) throws {
+        // The workflow verifies the compiled main and localized usage keys are
+        // absent, then installs that exact app using test-without-building.
+        if eea {
+            try launchFresh()
+            try tapChoice("Consent")
+        } else {
+            launch(reset: true, eea: false)
+        }
+        let initial = try waitForSnapshot("actual ATT state at app initialization") { _ in true }
+        XCTAssertEqual(initial.initialTrackingAuthorizationRaw, 0,
+                       "A prior denial/restriction must not conceal a missing-description ATT request.")
+        let outcome = NSPredicate { [weak self] _, _ in
+            guard let self else { return false }
+            if let state = self.snapshot(), state.updateCompleted && !state.busy { return true }
+            return self.choice("Continue").exists
+        }
+        let result = XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: outcome, object: nil)],
+                                   timeout: networkTimeout)
+        try require(result == .completed, "Missing-description UMP flow neither finished nor offered its real explainer.")
+        // If UMP still offers the real explainer, exercise it to expose a
+        // missing-key crash or an unexpected Apple prompt rather than hiding it.
+        if choice("Continue").exists { try tapChoice("Continue") }
+        let state = try waitForSnapshot("missing usage description safely completes and loads a sample banner") {
+            $0.updateCompleted && !$0.busy && $0.canRequestAds && $0.sdkStarted
+                && $0.requestCount > 0 && $0.loadedBannerCount > 0
+                && $0.trackingAuthorization != "authorized"
+        }
+        XCTAssertTrue(["notDetermined", "denied", "restricted"].contains(state.trackingAuthorization))
+        XCTAssertEqual(app.state, .runningForeground)
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        XCTAssertFalse(springboard.alerts.buttons["Allow"].exists)
+        XCTAssertFalse(springboard.alerts.buttons["Ask App Not to Track"].exists)
+        recordEvidence(eea ? "legacy-no-usage-eea" : "legacy-no-usage-outside-eea")
+    }

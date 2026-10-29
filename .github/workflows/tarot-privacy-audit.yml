@@ -1,0 +1,151 @@
+name: Tarot disposable simulator privacy audit
+
+on:
+  workflow_dispatch:
+    inputs:
+      audit_confirmation:
+        description: "Google sample simulator experiment only; no signing or distribution"
+        required: true
+        default: "DO_NOT_RUN"
+        type: choice
+        options:
+          - "DO_NOT_RUN"
+          - "QA_ONLY_NO_SIGN_OR_UPLOAD"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tarot-privacy-audit
+  cancel-in-progress: false
+
+jobs:
+  simulator-audit:
+    if: ${{ github.ref == 'refs/heads/main' && github.event.repository.private == false && inputs.audit_confirmation == 'QA_ONLY_NO_SIGN_OR_UPLOAD' }}
+    runs-on: macos-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        audit_case: [legacy_no_usage, tracking_domains]
+    env:
+      AUDIT_CASE: ${{ matrix.audit_case }}
+
+    steps:
+      - name: Check out source without retained credentials
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Prepare runner-only experiment methods and evidence folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          [[ "$(git rev-parse HEAD)" == "$GITHUB_SHA" ]]
+          grep -Fq 'requirement = { kind = exactVersion; version = 12.14.0; };' native-ios/TarotDeck.xcodeproj/project.pbxproj
+          grep -Fq 'requirement = { kind = exactVersion; version = 3.1.0; };' native-ios/TarotDeck.xcodeproj/project.pbxproj
+          mkdir -p "$RUNNER_TEMP/TarotPrivacyEvidence"
+          echo "TAROT_AUDIT_EVIDENCE=$RUNNER_TEMP/TarotPrivacyEvidence" >> "$GITHUB_ENV"
+          xcodebuild -version > "$RUNNER_TEMP/TarotPrivacyEvidence/xcode-version.txt"
+          xcrun xcresulttool --help > "$RUNNER_TEMP/TarotPrivacyEvidence/xcresulttool-help.txt" 2>&1 || true
+          python3 native-ios/Tools/prepare-privacy-audit.py inject-tests \
+            --source native-ios/UITests/TarotConsentUITests.swift \
+            --fragment native-ios/Tools/privacy-audit-cases.swift.fragment \
+            --receipt "$RUNNER_TEMP/TarotPrivacyEvidence/injection.json"
+          python3 native-ios/Tools/prepare-privacy-audit.py cases --case "$AUDIT_CASE" \
+            > "$RUNNER_TEMP/TarotPrivacyEvidence/selected-cases.txt"
+
+      - name: Build disposable unsigned simulator tests with Google samples
+        shell: bash
+        run: |
+          set -euo pipefail
+          xcodebuild build-for-testing -project native-ios/TarotDeck.xcodeproj \
+            -scheme TarotDeckInternal -configuration Debug -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath "$RUNNER_TEMP/TarotPrivacyAudit" \
+            SWIFT_ACTIVE_COMPILATION_CONDITIONS="DEBUG TAROT_TEST_ADS" \
+            TAROT_ADS_MODE=test-only \
+            TAROT_ADMOB_APP_ID='ca-app-pub-3940256099942544~1458002511' \
+            TAROT_ADMOB_BANNER_ID='ca-app-pub-3940256099942544/2435281174' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            | tee "$TAROT_AUDIT_EVIDENCE/build.log"
+
+      - name: Establish real ATT authorization with the unmodified usage description
+        if: ${{ matrix.audit_case == 'legacy_no_usage' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$TAROT_AUDIT_EVIDENCE/control"
+          python3 native-ios/Tools/prepare-privacy-audit.py prepare-control \
+            --products "$RUNNER_TEMP/TarotPrivacyAudit/Build/Products" \
+            --receipt "$TAROT_AUDIT_EVIDENCE/control/positive-control.json" --github-env "$GITHUB_ENV"
+          python3 native-ios/Tools/prepare-privacy-audit.py create-simulator \
+            --case "$AUDIT_CASE" --output "$TAROT_AUDIT_EVIDENCE/control" --github-env "$GITHUB_ENV"
+          CONTROL_DEVICE_ID="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["udid"])' "$TAROT_AUDIT_EVIDENCE/control/device.json")"
+          CONTROL_XCTESTRUN="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["xctestrun"])' "$TAROT_AUDIT_EVIDENCE/control/positive-control.json")"
+          trap 'control_status=$?; trap - EXIT; xcrun simctl shutdown "$CONTROL_DEVICE_ID" || true; exit "$control_status"' EXIT
+          xcodebuild test-without-building -xctestrun "$CONTROL_XCTESTRUN" \
+            -destination "platform=iOS Simulator,id=$CONTROL_DEVICE_ID" \
+            -resultBundlePath "$TAROT_AUDIT_EVIDENCE/control/PositiveATTControl.xcresult" \
+            -parallel-testing-enabled NO \
+            -only-testing:TarotConsentUITests/TarotConsentUITests/testNonEEAATTAuthorizationAllowsTestBanner \
+            | tee "$TAROT_AUDIT_EVIDENCE/control/tests.log"
+          python3 native-ios/Tools/prepare-privacy-audit.py verify-control \
+            --receipt "$TAROT_AUDIT_EVIDENCE/control/positive-control.json" \
+            --log "$TAROT_AUDIT_EVIDENCE/control/tests.log"
+
+      - name: Patch the compiled app and verify its actual test target
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 native-ios/Tools/prepare-privacy-audit.py patch-app \
+            --case "$AUDIT_CASE" --products "$RUNNER_TEMP/TarotPrivacyAudit/Build/Products" \
+            --domains native-ios/Tools/privacy-audit-domains.json \
+            --github-env "$GITHUB_ENV" --receipt "$TAROT_AUDIT_EVIDENCE/patch.json"
+          python3 native-ios/Tools/prepare-privacy-audit.py verify-app \
+            --receipt "$TAROT_AUDIT_EVIDENCE/patch.json"
+
+      - name: Create a fresh simulator compatible with the selected SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 native-ios/Tools/prepare-privacy-audit.py create-simulator \
+            --case "$AUDIT_CASE" --output "$TAROT_AUDIT_EVIDENCE" --github-env "$GITHUB_ENV"
+          DEVICE_ID="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1]))["udid"])' "$TAROT_AUDIT_EVIDENCE/device.json")"
+          xcrun simctl io "$DEVICE_ID" screenshot "$TAROT_AUDIT_EVIDENCE/before-tests.png"
+
+      - name: Run the exact selected cases without rebuilding the patched app
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 native-ios/Tools/prepare-privacy-audit.py verify-app --receipt "$TAROT_AUDIT_EVIDENCE/patch.json"
+          CASES=()
+          while IFS= read -r case_selector; do CASES+=("$case_selector"); done < "$TAROT_AUDIT_EVIDENCE/selected-cases.txt"
+          [[ "${#CASES[@]}" -gt 0 ]]
+          xcodebuild test-without-building -xctestrun "$TAROT_AUDIT_XCTESTRUN" \
+            -destination "platform=iOS Simulator,id=$TAROT_AUDIT_DEVICE_ID" \
+            -resultBundlePath "$TAROT_AUDIT_EVIDENCE/PrivacyAudit.xcresult" \
+            -parallel-testing-enabled NO "${CASES[@]}" \
+            | tee "$TAROT_AUDIT_EVIDENCE/tests.log"
+          python3 native-ios/Tools/prepare-privacy-audit.py verify-results --case "$AUDIT_CASE" \
+            --log "$TAROT_AUDIT_EVIDENCE/tests.log" --receipt "$TAROT_AUDIT_EVIDENCE/results.json"
+          python3 native-ios/Tools/prepare-privacy-audit.py verify-app --receipt "$TAROT_AUDIT_EVIDENCE/patch.json"
+
+      - name: Capture final synthetic simulator screen
+        if: ${{ always() }}
+        shell: bash
+        run: |
+          if [[ -n "${TAROT_AUDIT_DEVICE_ID:-}" ]]; then
+            xcrun simctl io "$TAROT_AUDIT_DEVICE_ID" screenshot "$RUNNER_TEMP/TarotPrivacyEvidence/final.png" || true
+          fi
+
+      - name: Preserve only synthetic QA evidence for one day
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: TarotPrivacyAudit-${{ matrix.audit_case }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/TarotPrivacyEvidence/
+          if-no-files-found: ignore
+          retention-days: 1

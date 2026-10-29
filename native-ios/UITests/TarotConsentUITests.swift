@@ -17,6 +17,7 @@ final class TarotConsentUITests: XCTestCase {
         let requestCount: Int
         let formPresentations: Int
         let loadedBannerCount: Int
+        let initialTrackingAuthorizationRaw: Int
         let trackingAuthorization: String
         let purposeConsents: String?
         let vendorConsents: String?
