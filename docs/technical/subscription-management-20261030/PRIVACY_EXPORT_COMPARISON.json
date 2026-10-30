@@ -1,0 +1,27 @@
+{
+  "kind": "MANIFEST_EXPORT_COMPARISON",
+  "sourceCommit": "512426f1a8fb5561fca297dd56c34c7205a11ca0",
+  "version": "1.2.1",
+  "build": "3",
+  "automatedPrivacyCertification": false,
+  "comparisons": [
+    {
+      "path": "PrivacyInfo.xcprivacy",
+      "archiveSHA256": "12e068a71e2794f330151f6301c7824e9e982c0df771f60693a6c398efce8447",
+      "exportSHA256": "12e068a71e2794f330151f6301c7824e9e982c0df771f60693a6c398efce8447",
+      "declarationsMatch": true
+    },
+    {
+      "path": "Frameworks/GoogleMobileAds.framework/PrivacyInfo.xcprivacy",
+      "archiveSHA256": "69fb112582fc23fc06c635c961d262a3f7b4b5654d284787491de3000dadf9d2",
+      "exportSHA256": "69fb112582fc23fc06c635c961d262a3f7b4b5654d284787491de3000dadf9d2",
+      "declarationsMatch": true
+    },
+    {
+      "path": "Frameworks/UserMessagingPlatform.framework/PrivacyInfo.xcprivacy",
+      "archiveSHA256": "45b7adb99fcd2d962a1c800fbfcc1325b57a7fa4165f416182323bb5ffe9c900",
+      "exportSHA256": "45b7adb99fcd2d962a1c800fbfcc1325b57a7fa4165f416182323bb5ffe9c900",
+      "declarationsMatch": true
+    }
+  ]
+}

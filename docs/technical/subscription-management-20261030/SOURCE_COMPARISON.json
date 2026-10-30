@@ -1,0 +1,27 @@
+{
+  "previousCompiledSource": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
+  "candidateSource": "512426f1a8fb5561fca297dd56c34c7205a11ca0",
+  "scopes": [
+    "native-ios/TarotDeckApp",
+    "native-ios/Sources",
+    "native-ios/TarotDeck.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+  ],
+  "changedFiles": [
+    "native-ios/TarotDeckApp/Internal/SupporterStore.swift",
+    "native-ios/TarotDeckApp/Screens/Settings/SettingsView.swift"
+  ],
+  "verifiedUnchanged": [
+    "Consent handling",
+    "Ad requests and eligibility",
+    "Whole SupporterStore implementation including verified entitlement resolution",
+    "Production ad identifiers",
+    "Subscription product IDs and purchase handling; no price updates performed",
+    "SDK package pins",
+    "Privacy manifests and purpose strings"
+  ],
+  "supporterStoreClassSHA256": "7f519db7c4cec7710b0f97e010e06d319de5cf35578535899aa2f43aa14cb466",
+  "supporterNoticeChange": "Only adds an error notice for native subscription management, reusing localized existing strings.",
+  "testHarnessChange": "Continue uses one tap at its live app-relative centre with active-form and real Apple prompt/race guards. All ATT/banner assertions remain mandatory.",
+  "projectChange": "Separate numeric build bump to 3; no package or target configuration changes.",
+  "configuredMessageQA": "Prior six European/ATT cases and focused US case apply to the unchanged consent/ad-request implementation. This is source-equivalence evidence, not a claim that native subscription management was tested against a physical TestFlight account."
+}

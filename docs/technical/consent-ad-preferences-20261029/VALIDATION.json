@@ -11,7 +11,7 @@
     "GoogleUserMessagingPlatform exact pin and target linkage present",
     "Exactly two authorized remote SDK package references",
     "App and UI test targets retain iOS16 in both configurations",
-    "Candidate identity is 1.2.1 (2)",
+    "Candidate identity is 1.2.1 (3)",
     "Debug and Release merge advertising plist",
     "Build-specific identifiers and delayed measurement configured",
     "Publisher App ID is permitted only by the exact DEBUG simulator/sample-banner CMP guard; live banner IDs remain build-config only",

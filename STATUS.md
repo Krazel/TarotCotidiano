@@ -1,6 +1,14 @@
 # Estado de Tarot Deck
 
-Actualizado: 2026-10-29
+Actualizado: 2026-10-30
+
+## Gestión de suscripción de TestFlight corregida — 1.2.1 (3), 30/10/2026
+
+1.2.1 (3) disponible en TestFlight interno Testers, VALID/APP_STORE_ELIGIBLE; fuente `512426f1a8fb5561fca297dd56c34c7205a11ca0`, CI40975327409 SUCCESS. Gestionar suscripción presenta la hoja nativa de Apple en iOS para cancelar/cambiar también compras sandbox. Al cerrarla se revalidan los derechos; quitar anuncios continúa hasta vencimiento o revocación verificados. Sin estados de compra inventados ni cambios de producto/precio.
+
+59 Core, arranque/banner con ATT real denegado y seis casos nativos de consentimiento PASS (170.236s); firma/subida e inventario de tres manifiestos verificados. La cancelación con la cuenta TestFlight del propietario y la candidata en iPhone físico siguen pendientes de comprobación humana. Recibos: `docs/technical/subscription-management-20261030/`.
+
+Apple mantiene 1.2.1 PREPARE_FOR_SUBMISSION/MANUAL con build3 seleccionada, sin revisión enviada ni beta externa. La pública sigue 1.2 (1). A-076 PUBLIC hasta aprobación indicada; D1 PR-003 conserva pendiente por credencial privada no disponible, sin CAS ni afirmación de sincronización. Los apartados siguientes conservan la entrega anterior e historia.
 
 ## Candidata 1.2.1 (2) disponible en TestFlight y seleccionada en Apple — 29/10/2026
 

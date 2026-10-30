@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-10-30T00:16:07.971Z",
+  "version": "1.2.1",
+  "build": "3",
+  "buildID": "acf501ca-7178-47b1-956d-7a13856659bf",
+  "processingState": "VALID",
+  "audience": "APP_STORE_ELIGIBLE",
+  "usesNonExemptEncryption": false,
+  "beta": {
+    "autoNotifyEnabled": true,
+    "internalBuildState": "IN_BETA_TESTING",
+    "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+  },
+  "group": {
+    "id": "ff63f09f-7e2f-4ed7-8a53-637205d523c4",
+    "name": "Testers",
+    "isInternalGroup": true,
+    "buildRelationVerified": true
+  },
+  "locales": [
+    {
+      "locale": "en-US",
+      "whatsNew": "Fixes Manage Subscription in TestFlight: opens Apple subscription management inside the app to cancel or change a test subscription. Ad removal remains active until the sandbox subscription expires. Check Restore, regional privacy choices and optional ATT. Readings remain free of banners. This build may show real ads; do not tap banners during testing."
+    },
+    {
+      "locale": "es-ES",
+      "whatsNew": "Corrige Gestionar suscripción en TestFlight: abre la gestión de Apple dentro de la app para cancelar o cambiar la suscripción de prueba. Quitar anuncios sigue activo hasta que venza la suscripción sandbox. Comprueba Restaurar, las opciones regionales de privacidad y ATT opcional. Las tiradas siguen sin banners. Puede mostrar anuncios reales; no pulses los banners durante las pruebas."
+    }
+  ],
+  "sourceCommit": "512426f1a8fb5561fca297dd56c34c7205a11ca0",
+  "ciRunID": "40975327409",
+  "IPASHA256": "9e5abadb4999145af1112d0a83dbb65270ca3850ef228cd187a61ff405d2db61",
+  "inventory": "CUSTOM_MANIFEST_INVENTORY_NOT_XCODE_REPORT",
+  "appStoreDraft": {
+    "id": "655beebc-5013-4f14-8189-adadda184449",
+    "state": "PREPARE_FOR_SUBMISSION",
+    "selectedBuild": "acf501ca-7178-47b1-956d-7a13856659bf",
+    "releaseType": "MANUAL"
+  },
+  "externalSubmitted": false,
+  "appReviewSubmitted": false,
+  "physicalDeviceQACertified": false
+}

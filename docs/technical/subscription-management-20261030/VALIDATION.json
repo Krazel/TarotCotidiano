@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-30T00:16:30.604189+00:00",
+  "version": "1.2.1",
+  "build": "3",
+  "sourceCommit": "512426f1a8fb5561fca297dd56c34c7205a11ca0",
+  "run": 40975327409,
+  "runURL": "https://github.com/Krazel/TarotCotidiano/actions/runs/40975327409",
+  "conclusion": "success",
+  "coreTests": 59,
+  "sampleConsentATTTests": 6,
+  "sampleConsentATTFailures": 0,
+  "sampleConsentATTSeconds": 170.236,
+  "realATTDenialBootstrap": "PASS",
+  "logSHA256": "8a64584ff2aaccce99bbdaa546e1661c1a4343b21012ef6684f0c57e1037fc4f",
+  "physicalDeviceCertified": false,
+  "subscriptionCancellationWithHumanTestFlightAccount": "PENDING_PHYSICAL_DEVICE",
+  "nativeSubscriptionManagement": "COMPILED_IN_DEBUG_AND_SIGNED_RELEASE; native Apple UI and cancellation not certified by the existing consent tests",
+  "sourceComparisonReceipt": "SOURCE_COMPARISON.json",
+  "noEntitlementBypass": true,
+  "archiveExportManifests": 3,
+  "IPASHA256": "9e5abadb4999145af1112d0a83dbb65270ca3850ef228cd187a61ff405d2db61"
+}

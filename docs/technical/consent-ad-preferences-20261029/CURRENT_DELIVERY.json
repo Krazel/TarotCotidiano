@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-29T22:21:24.602428+00:00",
-  "status": "CONFIGURATION_COMPLETE_TESTFLIGHT2_AVAILABLE_APP_REVIEW_DRAFT_PREPARED",
+  "checkedAt": "2026-10-30T00:16:30.604189+00:00",
+  "status": "TESTFLIGHT3_AVAILABLE_NATIVE_SUBSCRIPTION_MANAGEMENT_CORRECTED_APP_REVIEW_DRAFT",
   "repository": {
     "name": "Krazel/TarotCotidiano",
     "visibility": "PUBLIC",
@@ -23,15 +23,15 @@
   },
   "storeCandidate": {
     "version": "1.2.1",
-    "build": "2",
-    "sourceCommit": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
-    "run": 40955667703,
+    "build": "3",
+    "sourceCommit": "512426f1a8fb5561fca297dd56c34c7205a11ca0",
+    "run": 40975327409,
     "state": "VALID_IN_BETA_TESTING",
     "inventory": "PRODUCTION",
     "uploadVerified": true,
     "appReviewSubmitted": false,
-    "buildID": "a146d127-d077-423a-88d4-7264f4111123",
-    "receipt": "STORE_TESTFLIGHT_RECEIPT.json",
+    "buildID": "acf501ca-7178-47b1-956d-7a13856659bf",
+    "receipt": "../subscription-management-20261030/TESTFLIGHT_RECEIPT.json",
     "audience": "APP_STORE_ELIGIBLE",
     "distribution": "INTERNAL_ONLY_GROUP_TESTERS; no external beta submitted"
   },
@@ -58,9 +58,31 @@
       "receipt": "PUBLISHER_US_VERIFIED_RECEIPT.json",
       "seconds": 537.897
     },
-    "AppCoreBaseUITestsProjectUnchangedAcrossTheseSources": true,
     "physicalDeviceCertified": false,
     "RCValidation": {
+      "checkedAt": "2026-10-30T00:16:30.604189+00:00",
+      "version": "1.2.1",
+      "build": "3",
+      "sourceCommit": "512426f1a8fb5561fca297dd56c34c7205a11ca0",
+      "run": 40975327409,
+      "runURL": "https://github.com/Krazel/TarotCotidiano/actions/runs/40975327409",
+      "conclusion": "success",
+      "coreTests": 59,
+      "sampleConsentATTTests": 6,
+      "sampleConsentATTFailures": 0,
+      "sampleConsentATTSeconds": 170.236,
+      "realATTDenialBootstrap": "PASS",
+      "logSHA256": "8a64584ff2aaccce99bbdaa546e1661c1a4343b21012ef6684f0c57e1037fc4f",
+      "physicalDeviceCertified": false,
+      "subscriptionCancellationWithHumanTestFlightAccount": "PENDING_PHYSICAL_DEVICE",
+      "nativeSubscriptionManagement": "COMPILED_IN_DEBUG_AND_SIGNED_RELEASE; native Apple UI and cancellation not certified by the existing consent tests",
+      "sourceComparisonReceipt": "SOURCE_COMPARISON.json",
+      "noEntitlementBypass": true,
+      "archiveExportManifests": 3,
+      "IPASHA256": "9e5abadb4999145af1112d0a83dbb65270ca3850ef228cd187a61ff405d2db61"
+    },
+    "configuredMessageCoverage": "Previous six European/ATT cases plus focused US case cover unchanged consent/ad-request code. Build3 changes Settings native subscription management and the build counter; SOURCE_COMPARISON.json proves the code boundary. No physical TestFlight cancellation claimed.",
+    "previousBuild2RCValidation": {
       "coreTests": 59,
       "sampleConsentATTTests": 6,
       "sampleConsentATTFailures": 0,
@@ -72,13 +94,13 @@
       "artifactContainsIPA": false,
       "logSHA256": "e1b2e1cdbc4ffc98118e38ef444fddc2710c565c539e0ce4701c86613811bc32"
     },
-    "configuredMessageCoverage": "Six European/ATT cases in40950542146 plus focused US case in40962897752; same App/Core/project/base-UI-test content, distinct test-harness commits and runs"
+    "HistoricalBuild2AppCoreBaseUITestsProjectUnchangedAcrossQASources": true
   },
   "AppleDraft": {
     "id": "655beebc-5013-4f14-8189-adadda184449",
     "state": "PREPARE_FOR_SUBMISSION",
     "release": "MANUAL",
-    "selectedBuild": "a146d127-d077-423a-88d4-7264f4111123",
+    "selectedBuild": "acf501ca-7178-47b1-956d-7a13856659bf",
     "reviewSubmitted": false
   },
   "library": {
@@ -88,5 +110,19 @@
   },
   "GoogleSupportContact": "NOT_SENT_EXPLICITLY_DECLINED",
   "spendingEnabled": false,
-  "remainingHumanQA": "Physical-device verification of the distributed candidate; not claimed by simulator evidence"
+  "remainingHumanQA": "Physical-device candidate verification, including opening native Manage Subscription, cancelling the sandbox subscription and checking banner return after verified expiry; cancellation alone does not remove an unexpired entitlement.",
+  "previousStoreCandidate": {
+    "version": "1.2.1",
+    "build": "2",
+    "sourceCommit": "634fddd71dfbec2fa42b4b702d13637a3a7fbcae",
+    "run": 40955667703,
+    "state": "VALID_IN_BETA_TESTING",
+    "inventory": "PRODUCTION",
+    "uploadVerified": true,
+    "appReviewSubmitted": false,
+    "buildID": "a146d127-d077-423a-88d4-7264f4111123",
+    "receipt": "STORE_TESTFLIGHT_RECEIPT.json",
+    "audience": "APP_STORE_ELIGIBLE",
+    "distribution": "INTERNAL_ONLY_GROUP_TESTERS; no external beta submitted"
+  }
 }
